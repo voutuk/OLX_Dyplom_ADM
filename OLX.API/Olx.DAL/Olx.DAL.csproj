@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Olx.BLL\Olx.BLL.csproj" />
+    <Folder Include="Data\EntityConfigs\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\EntityConfigs\" />
-    <Folder Include="Repositories\" />
+    <ProjectReference Include="..\Olx.BLL\Olx.BLL.csproj" />
   </ItemGroup>
 
 </Project>
