@@ -11,10 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDataProtection();
 
-builder.Services.AddOlxApiServices();
-builder.Services.AddOlxBLLServices();
-builder.Services.AddOlxDALServices();
-
+builder.Services.AddOlxApiServicesAndConfigurations();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

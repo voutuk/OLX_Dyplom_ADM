@@ -4,7 +4,7 @@ namespace Olx.DAL.Exstension
 {
     public static class OlxDALServiceExtensions
     {
-        public static void AddOlxDALServices(this IServiceCollection services)
+        public static void AddOlxDALConfigurations(this IServiceCollection services)
         {
            
         }

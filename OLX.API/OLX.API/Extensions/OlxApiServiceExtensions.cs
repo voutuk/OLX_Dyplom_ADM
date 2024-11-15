@@ -1,12 +1,17 @@
 ﻿using Microsoft.Extensions.FileProviders;
-using Microsoft.OpenApi.Models;
+using Olx.BLL.Exstensions;
+using Olx.DAL.Exstension;
+
 
 namespace OLX.API.Extensions
 {
     public static class OlxApiServiceExtensions
     {
-        public static void AddOlxApiServices(this IServiceCollection services)
+        public static void AddOlxApiServicesAndConfigurations(this IServiceCollection services)
         {
+            services.AddOlxDALConfigurations();
+            services.AddOlxBLLServices();
+
 
             services.AddCors(options =>
             {
