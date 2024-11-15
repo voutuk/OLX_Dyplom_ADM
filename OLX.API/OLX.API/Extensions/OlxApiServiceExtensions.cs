@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi.Models;
 
 namespace OLX.API.Extensions
 {
@@ -17,6 +18,23 @@ namespace OLX.API.Extensions
                            .AllowAnyMethod();
                 });
             });
+        }
+
+        public static void AddStaticFiles(this WebApplication app, IConfiguration configuration)
+        {
+            string imagesDir = Path.Combine(Directory.GetCurrentDirectory(), configuration["ImagesDir"]!);
+            string imagesPath = Path.Combine(Directory.GetCurrentDirectory(), configuration["ImagePath"]!);
+
+            if (!Directory.Exists(imagesDir))
+            {
+                Directory.CreateDirectory(imagesDir);
+            }
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(imagesDir),
+                RequestPath = imagesPath
+            });
+
         }
     }
 }
