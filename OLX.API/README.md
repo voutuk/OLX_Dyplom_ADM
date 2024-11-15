@@ -52,5 +52,3 @@ server {
 sudo systemctl restart nginx
 certbot
 ```
-
-/var/api-qubix.itstep.click/
