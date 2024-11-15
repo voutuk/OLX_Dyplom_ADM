@@ -5,7 +5,7 @@ namespace OLX.API.Extensions
 {
     public static class OlxApiServiceExtensions
     {
-        public static void AddOlxApiServices(this IServiceCollection services, IConfiguration configuration)
+        public static void AddOlxApiServices(this IServiceCollection services)
         {
 
             services.AddCors(options =>
@@ -20,8 +20,16 @@ namespace OLX.API.Extensions
             });
         }
 
-        public static void AddStaticFiles(this WebApplication app, IConfiguration configuration)
+        /// <summary>
+        /// Створення папки для файлів та шлях до файлів
+        /// </summary>
+        /// <param name="app"></param>
+        public static void AddStaticFiles(this WebApplication app)
         {
+            using var scope = app.Services.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
             string imagesDir = Path.Combine(Directory.GetCurrentDirectory(), configuration["ImagesDir"]!);
             string imagesPath = Path.Combine(Directory.GetCurrentDirectory(), configuration["ImagePath"]!);
 
