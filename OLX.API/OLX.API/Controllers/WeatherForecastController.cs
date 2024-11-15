@@ -29,5 +29,16 @@ namespace OLX.API.Controllers
             })
             .ToArray();
         }
+
+        [HttpPost("test")]
+        public IActionResult Test([FromBody] TestModel model )
+        {
+            return Ok(model);
+        }
     }
+}
+public class TestModel 
+{
+    public DateTime Time { get; set; }
+    public double Double { get; set; }
 }

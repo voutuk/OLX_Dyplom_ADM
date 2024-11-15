@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.FileProviders;
 using Olx.BLL.Exstensions;
 using Olx.DAL.Exstension;
+using OLX.API.Helpers.CustomJsonConverters;
 
 
 namespace OLX.API.Extensions
@@ -12,6 +13,11 @@ namespace OLX.API.Extensions
             services.AddOlxDALConfigurations();
             services.AddOlxBLLServices();
 
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new FlexibleDateTimeConverter());
+                options.JsonSerializerOptions.Converters.Add(new FlexibleDoubleConverter());
+            });
 
             services.AddCors(options =>
             {
