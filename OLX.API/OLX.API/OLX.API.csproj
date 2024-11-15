@@ -10,4 +10,15 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Olx.BLL\Olx.BLL.csproj" />
+    <ProjectReference Include="..\Olx.DAL\Olx.DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Middlewares\" />
+    <Folder Include="uploading\" />
+  </ItemGroup>
+
 </Project>
