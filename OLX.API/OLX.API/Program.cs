@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDataProtection();
 
-builder.Services.AddOlxApiServices(builder.Configuration);
+builder.Services.AddOlxApiServices();
 builder.Services.AddOlxBLLServices();
 builder.Services.AddOlxDALServices();
 
@@ -23,8 +23,8 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 app.UseCors("AllowOrigins");
 
-app.SeedData(builder.Configuration).Wait();
-app.AddStaticFiles(builder.Configuration);
+await app.SeedDataAsync();
+app.AddStaticFiles();
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseSwagger();
