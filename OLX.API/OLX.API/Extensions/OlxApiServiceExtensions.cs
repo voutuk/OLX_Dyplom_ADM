@@ -8,9 +8,9 @@ namespace OLX.API.Extensions
 {
     public static class OlxApiServiceExtensions
     {
-        public static void AddOlxApiServicesAndConfigurations(this IServiceCollection services)
+        public static void AddOlxApiServicesAndConfigurations(this IServiceCollection services,IConfiguration configuration)
         {
-            services.AddOlxDALConfigurations();
+            services.AddOlxDALConfigurations(configuration);
             services.AddOlxBLLServices();
 
             services.AddControllers().AddJsonOptions(options =>
