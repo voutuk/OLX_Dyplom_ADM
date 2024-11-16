@@ -42,7 +42,7 @@ namespace OLX.API.Extensions
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
             string imagesDir = Path.Combine(Directory.GetCurrentDirectory(), configuration["ImagesDir"]!);
-            string imagesPath = Path.Combine(Directory.GetCurrentDirectory(), configuration["ImagePath"]!);
+            string imagesPath = Path.Combine(Directory.GetCurrentDirectory(), configuration["ServerImagePath"]!);
 
             if (!Directory.Exists(imagesDir))
             {
