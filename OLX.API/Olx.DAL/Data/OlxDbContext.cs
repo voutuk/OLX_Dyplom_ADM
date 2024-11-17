@@ -11,7 +11,7 @@ namespace Olx.DAL.Data
 {
     public class OlxDbContext(IConfiguration configuration) : IdentityDbContext<OlxUser, IdentityRole<int>, int>
     {
-        private IConfiguration _configuration = configuration;
+        private readonly IConfiguration _configuration = configuration;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
