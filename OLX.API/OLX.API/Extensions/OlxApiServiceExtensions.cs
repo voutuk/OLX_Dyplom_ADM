@@ -1,7 +1,14 @@
-﻿using Microsoft.Extensions.FileProviders;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.FileProviders;
 using Olx.BLL.Exstensions;
 using Olx.DAL.Exstension;
 using OLX.API.Helpers.CustomJsonConverters;
+using Olx.BLL.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 
 namespace OLX.API.Extensions
@@ -17,6 +24,69 @@ namespace OLX.API.Extensions
             {
                 options.JsonSerializerOptions.Converters.Add(new FlexibleDateTimeConverter());
                 options.JsonSerializerOptions.Converters.Add(new FlexibleDoubleConverter());
+            });
+
+            var jwtOpts = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()!;
+
+           // services.AddScoped<IJwtService, JwtService>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(o =>
+                {
+                    o.RequireHttpsMetadata = false;
+                    o.IncludeErrorDetails = true;
+                    o.UseSecurityTokenValidators = true;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtOpts.Issuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
+                        ClockSkew = TimeSpan.Zero,
+                        SaveSigninToken = true,
+
+                    };
+                });
+
+            services.AddAuthorization(opts =>
+            {
+
+                opts.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                      .RequireAuthenticatedUser().Build();
+            });
+
+
+            var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+
+            services.AddSwaggerGen(setup =>
+            {
+                var fileDoc = Path.Combine(AppContext.BaseDirectory, $"{assemblyName}.xml");
+                setup.IncludeXmlComments(fileDoc);
+                // Include 'SecurityScheme' to use JWT Authentication
+                var jwtSecurityScheme = new OpenApiSecurityScheme
+                {
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+
+                setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+                setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { jwtSecurityScheme, Array.Empty<string>() }
+                });
             });
 
             services.AddCors(options =>
