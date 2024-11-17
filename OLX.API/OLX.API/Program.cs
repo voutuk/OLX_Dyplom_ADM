@@ -1,3 +1,4 @@
+using Olx.BLL.Exstensions;
 using Olx.DAL.Exstension;
 using OLX.API.Extensions;
 using OLX.API.Middlewares;
@@ -11,7 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDataProtection();
 
-builder.Services.AddOlxApiServicesAndConfigurations(builder.Configuration);
+builder.Services.AddOlxDbContext();
+builder.Services.AddOlxBLLServices();
+builder.Services.AddOlxApiConfigurations(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

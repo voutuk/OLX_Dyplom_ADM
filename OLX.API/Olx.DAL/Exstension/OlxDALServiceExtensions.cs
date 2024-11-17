@@ -13,14 +13,10 @@ namespace Olx.DAL.Exstension
 {
     public static class OlxDALServiceExtensions
     {
-        public static void AddOlxDALConfigurations(this IServiceCollection services,IConfiguration configuration)
+        public static void AddOlxDbContext(this IServiceCollection services)
         {
+            services.AddDbContext<OlxDbContext>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            var connectionString = configuration.GetConnectionString("DefaultConnection")!;
-            services.AddDbContext<OlxDbContext>(opts =>
-                opts.UseNpgsql(connectionString));
-            
             services.AddIdentity<OlxUser, IdentityRole<int>>(options =>
             {
                 options.Stores.MaxLengthForKeys = 128;

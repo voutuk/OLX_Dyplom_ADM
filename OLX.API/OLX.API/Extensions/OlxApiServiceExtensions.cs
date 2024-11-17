@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.FileProviders;
-using Olx.BLL.Exstensions;
-using Olx.DAL.Exstension;
 using OLX.API.Helpers.CustomJsonConverters;
 using Olx.BLL.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,11 +13,8 @@ namespace OLX.API.Extensions
 {
     public static class OlxApiServiceExtensions
     {
-        public static void AddOlxApiServicesAndConfigurations(this IServiceCollection services,IConfiguration configuration)
+        public static void AddOlxApiConfigurations(this IServiceCollection services,IConfiguration configuration)
         {
-            services.AddOlxDALConfigurations(configuration);
-            services.AddOlxBLLServices();
-
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new FlexibleDateTimeConverter());
@@ -46,13 +41,11 @@ namespace OLX.API.Extensions
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
                         ClockSkew = TimeSpan.Zero,
                         SaveSigninToken = true,
-
                     };
                 });
 
             services.AddAuthorization(opts =>
             {
-
                 opts.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
                       .RequireAuthenticatedUser().Build();
             });
