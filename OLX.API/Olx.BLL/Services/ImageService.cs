@@ -12,16 +12,10 @@ using System.Xml.Linq;
 
 namespace Olx.BLL.Services
 {
-    public class ImageService : IImageService
+    public class ImageService(IConfiguration config) : IImageService
     {
-        private readonly IConfiguration config;
-        private readonly string imgPath;
-
-        public ImageService(IConfiguration config)
-        {
-            this.config = config;
-            imgPath = Path.Combine(config["ImagesDir"]!);
-        }
+        private readonly IConfiguration config = config;
+        private readonly string imgPath = Path.Combine(config["ImagesDir"]!);
 
         public async Task<string> SaveImageAsync(IFormFile image)
         {
@@ -40,12 +34,8 @@ namespace Olx.BLL.Services
         {
             if (base64.Contains(','))
                 base64 = base64.Split(',')[1];
-
             var bytes = Convert.FromBase64String(base64);
-
-            var fileName = await SaveImageAsync(bytes);
-
-            return fileName;
+            return await SaveImageAsync(bytes);
         }
 
         public async Task<string> SaveImageAsync(byte[] bytes)
