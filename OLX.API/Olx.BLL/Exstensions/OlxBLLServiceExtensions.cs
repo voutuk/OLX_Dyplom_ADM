@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Olx.BLL.Interfaces;
+using Olx.BLL.Services;
 
 
 namespace Olx.BLL.Exstensions
@@ -10,6 +12,7 @@ namespace Olx.BLL.Exstensions
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddScoped<IImageService, ImageService>();
         }
     }
 }
