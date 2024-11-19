@@ -21,9 +21,7 @@ namespace OLX.API.Extensions
             {
                 foreach (var role in roles) {
                     if (! await roleManager.RoleExistsAsync(role))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole<int>{ Name = role });
-                    }
+                       await roleManager.CreateAsync(new IdentityRole<int>{ Name = role });
                 }
             }
 
@@ -53,13 +51,9 @@ namespace OLX.API.Extensions
                               
                     var result = await userManager.CreateAsync(newUser,user.Password);
                     if (result.Succeeded)
-                    {
                         await userManager.AddToRoleAsync(newUser, Roles.Admin);
-                    }
                     else
-                    {
                         Console.WriteLine($"Error create user \"{user.Email}\"");
-                    }
                 }
             }
         }

@@ -7,7 +7,8 @@ using Microsoft.Extensions.Configuration;
 
 namespace Olx.DAL.Data
 {
-    public class OlxDbContext(IConfiguration configuration) : IdentityDbContext<OlxUser, IdentityRole<int>, int>
+    public class OlxDbContext(DbContextOptions<OlxDbContext> options, 
+        IConfiguration configuration) : IdentityDbContext<OlxUser, IdentityRole<int>, int>(options)
     {
         private readonly IConfiguration _configuration = configuration;
 
