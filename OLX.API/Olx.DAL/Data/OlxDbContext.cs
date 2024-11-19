@@ -1,11 +1,9 @@
-﻿
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Olx.BLL.Entities;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
-using SixLabors.ImageSharp;
 
 namespace Olx.DAL.Data
 {

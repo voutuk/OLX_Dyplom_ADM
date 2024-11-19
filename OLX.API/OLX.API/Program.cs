@@ -10,8 +10,6 @@ CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDataProtection();
-
 builder.Services.AddOlxDbContext();
 builder.Services.AddOlxBLLServices();
 builder.Services.AddOlxApiConfigurations(builder.Configuration);
@@ -22,7 +20,6 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 app.UseCors("AllowOrigins");
 app.DataBaseMigrate();
-await app.SeedDataAsync();
 app.AddStaticFiles();
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
@@ -33,5 +30,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.SeedDataAsync();
 
 app.Run();

@@ -52,7 +52,6 @@ namespace OLX.API.Extensions
 
 
             var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-
             services.AddSwaggerGen(setup =>
             {
                 var fileDoc = Path.Combine(AppContext.BaseDirectory, $"{assemblyName}.xml");
