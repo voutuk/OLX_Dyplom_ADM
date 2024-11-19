@@ -5,14 +5,9 @@ using FluentValidation;
 
 namespace OLX.API.Middlewares
 {
-    public class GlobalExceptionHandlerMiddleware
+    public class GlobalExceptionHandlerMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public GlobalExceptionHandlerMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        private readonly RequestDelegate _next = next;
 
         public async Task Invoke(HttpContext context)
         {

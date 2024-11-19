@@ -29,32 +29,42 @@ namespace OLX.API.Extensions
             var userManager = serviceProvider.GetRequiredService<UserManager<OlxUser>>();
             if(!userManager.Users.Any())
             {
-                string userJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(),"JsonData/Users.json" );  
-                var userJson = File.ReadAllText(userJsonDataFile, Encoding.UTF8);
-                var usersData = JsonConvert.DeserializeObject<IEnumerable<SeaderUserModel>>(userJson)!;
-                var imageService = serviceProvider.GetRequiredService<IImageService>();
-                foreach (var user in usersData) 
+                string usersJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(),"JsonData/Users.json" );
+                if (File.Exists(usersJsonDataFile))
                 {
-                    var newUser = new OlxUser()
+                    var userJson = File.ReadAllText(usersJsonDataFile, Encoding.UTF8);
+                    try
                     {
-                        UserName = user.Email,
-                        Email = user.Email,
-                        PhoneNumber = user.PhoneNumber,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                    };
+                        var usersData = JsonConvert.DeserializeObject<IEnumerable<SeaderUserModel>>(userJson)
+                            ?? throw new JsonException();
+                        var imageService = serviceProvider.GetRequiredService<IImageService>();
+                        foreach (var user in usersData)
+                        {
+                            var newUser = new OlxUser
+                            {
+                                UserName = user.Email,
+                                Email = user.Email,
+                                PhoneNumber = user.PhoneNumber,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Image = user.ImageBase64 is not null
+                                ? await imageService.SaveImageAsync(user.ImageBase64)
+                                : await imageService.SaveImageFromUrlAsync(user.ImageUrl ?? "https://picsum.photos/800/600")
+                            };
 
-                    string? userImageData = user.ImageBase64 ?? user.ImageUrl;
-                    newUser.Image = userImageData is not null
-                        ? await imageService.SaveImageAsync(userImageData)
-                        : await imageService.SaveImageFromUrlAsync("https://picsum.photos/800/600");
-                              
-                    var result = await userManager.CreateAsync(newUser,user.Password);
-                    if (result.Succeeded)
-                        await userManager.AddToRoleAsync(newUser, Roles.Admin);
-                    else
-                        Console.WriteLine($"Error create user \"{user.Email}\"");
+                            var result = await userManager.CreateAsync(newUser, user.Password);
+                            if (result.Succeeded)
+                                await userManager.AddToRoleAsync(newUser, Roles.Admin);
+                            else
+                                Console.WriteLine($"Error create user \"{user.Email}\"");
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        Console.WriteLine("Error deserialize users json file");
+                    }
                 }
+                else Console.WriteLine("File \"JsonData/Users.json\" not found");  
             }
         }
     }

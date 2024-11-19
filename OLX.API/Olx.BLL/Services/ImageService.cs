@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
@@ -7,7 +6,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 using System.Net;
-using System.Xml.Linq;
+
 
 
 namespace Olx.BLL.Services
@@ -40,27 +39,20 @@ namespace Olx.BLL.Services
 
         public async Task<string> SaveImageAsync(byte[] bytes)
         {
-            List<int> sizes = config.GetRequiredSection("ImageSizes").Get<List<int>>()
-                ?? throw new Exception("ImageSizes reading error");
-
-            if (sizes.Count == 0)
-                throw new Exception("ImageSizes not inicialized");
-
             string imageName = $"{Path.GetRandomFileName()}.webp";
 
-            var tasks = sizes
+            var tasks = Sizes
                 .AsParallel()
                 .Select(s => SaveImageAsync(bytes, imageName, s))
                 .ToArray();
 
             await Task.WhenAll(tasks);
-
             return imageName;
         }
 
         private async Task SaveImageAsync(byte[] bytes, string name, int size)
         {
-            string dirSaveImage = Path.Combine(imgPath, $"{size}_{name}");
+            string imagePath = Path.Combine(imgPath, $"{size}_{name}");
 
             using var image = Image.Load(bytes);
             try
@@ -73,12 +65,12 @@ namespace Olx.BLL.Services
                         Mode = ResizeMode.Max
                     });
                 });
-                await image.SaveAsync(dirSaveImage, new WebpEncoder());
+                await image.SaveAsync(imagePath, new WebpEncoder());
             }
             catch (Exception e)
             {
-                DeleteImageIfExists(dirSaveImage);
-                throw new HttpException(e.Message, HttpStatusCode.InternalServerError);
+                DeleteImageIfExists(imagePath);
+                throw new Exception(e.Message);
             }
         }
 
@@ -125,10 +117,10 @@ namespace Olx.BLL.Services
             get
             {
                 List<int> sizes = config.GetRequiredSection("ImageSizes").Get<List<int>>()
-                ?? throw new HttpException("ImageSizes reading error", HttpStatusCode.InternalServerError);
+                ?? throw new Exception("Image sizes reading error");
 
                 if (sizes.Count == 0)
-                    throw new HttpException("ImageSizes not inicialized", HttpStatusCode.InternalServerError);
+                    throw new Exception("Image sizes not inicialized");
                 return sizes;
             }
         }

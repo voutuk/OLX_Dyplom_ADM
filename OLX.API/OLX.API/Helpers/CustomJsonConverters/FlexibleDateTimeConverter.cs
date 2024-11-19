@@ -7,7 +7,7 @@ namespace OLX.API.Helpers.CustomJsonConverters
     public class FlexibleDateTimeConverter : JsonConverter<DateTime>
     {
         private readonly string[] supportedFormats =
-        {
+        [
              // ISO-формати
             "yyyy-MM-ddTHH:mm:ss.fffZ",
             "yyyy-MM-ddTHH:mm:ss",
@@ -50,7 +50,7 @@ namespace OLX.API.Helpers.CustomJsonConverters
             "dd.MM.yyyyTHH:mm:sszzz",   // Європейський формат з часовою зоною
             "MM/dd/yyyyTHH:mm:sszzz",   // Американський формат з часовою зоною
             "dd/MM/yyyyTHH:mm:sszzz"    // Британський формат з часовою зоною
-        };
+        ];
 
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
