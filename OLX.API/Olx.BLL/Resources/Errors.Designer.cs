@@ -79,6 +79,24 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid login or password.
+        /// </summary>
+        internal static string InvalidLoginData {
+            get {
+                return ResourceManager.GetString("InvalidLoginData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid token.
+        /// </summary>
+        internal static string InvalidToken {
+            get {
+                return ResourceManager.GetString("InvalidToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Error read JWT setting.
         /// </summary>
         internal static string JwtSettingsReadError {

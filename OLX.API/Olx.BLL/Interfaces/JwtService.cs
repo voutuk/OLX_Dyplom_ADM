@@ -8,6 +8,7 @@ namespace Olx.BLL.Interfaces
     {
         Task<IEnumerable<Claim>> GetClaimsAsync(OlxUser user);
         string CreateToken(IEnumerable<Claim> claims);
-        string CreateRefreshToken();
+        string GetRefreshToken();
+        int GetRefreshTokenLiveTime();
     }
 }
