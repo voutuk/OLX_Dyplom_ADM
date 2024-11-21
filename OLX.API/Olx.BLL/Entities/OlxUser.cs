@@ -11,5 +11,6 @@ namespace Olx.BLL.Entities
         public DateTime LastActivity { get; set; } = DateTime.UtcNow;
         public string? WebSite { get; set; }
         public string? About { get; set; }
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
     }
 }

@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\EntityConfigs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Olx.BLL\Olx.BLL.csproj" />
   </ItemGroup>
 
