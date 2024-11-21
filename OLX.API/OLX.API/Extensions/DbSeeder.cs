@@ -47,9 +47,9 @@ namespace OLX.API.Extensions
                                 PhoneNumber = user.PhoneNumber,
                                 FirstName = user.FirstName,
                                 LastName = user.LastName,
-                                Image = user.ImageBase64 is not null
-                                ? await imageService.SaveImageAsync(user.ImageBase64)
-                                : await imageService.SaveImageFromUrlAsync(user.ImageUrl ?? "https://picsum.photos/800/600")
+                                Photo = user.PhotoBase64 is not null
+                                ? await imageService.SaveImageAsync(user.PhotoBase64)
+                                : await imageService.SaveImageFromUrlAsync(user.PhotoUrl ?? "https://picsum.photos/800/600")
                             };
 
                             var result = await userManager.CreateAsync(newUser, user.Password);

@@ -8,7 +8,9 @@
         public string? LastName { get; set; } 
         public string Role { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; }
-        public string? ImageBase64 { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? PhotoBase64 { get; set; }
+        public string? PhotoUrl { get; set; }
+        public string? WebSite { get; set; }
+        public string? About { get; set; }
     }
 }
