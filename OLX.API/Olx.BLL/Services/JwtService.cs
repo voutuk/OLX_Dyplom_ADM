@@ -31,6 +31,7 @@ namespace Olx.BLL.Services
         public string CreateToken(IEnumerable<Claim> claims)
         {
             var time = DateTime.UtcNow.AddMinutes(_jwtOpts.AccessTokenLifetimeInMinutes);
+           
             var credentials = getCredentials(_jwtOpts);
             var token = new JwtSecurityToken(
                 issuer: _jwtOpts.Issuer,

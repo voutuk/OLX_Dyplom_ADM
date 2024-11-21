@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json.Linq;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
