@@ -20,7 +20,7 @@ namespace Olx.BLL.Services
         private JwtOptions _jwtOpts = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()
                 ?? throw new HttpException(Errors.JwtSettingsReadError, HttpStatusCode.InternalServerError);
 
-        public string CreateRefreshToken()
+        public string GetRefreshToken()
         {
             var randomNumber = new byte[64];
             using var rng = RandomNumberGenerator.Create();
@@ -55,6 +55,8 @@ namespace Olx.BLL.Services
             claims.AddRange(roles.Select(role => new Claim("roles", role)));
             return claims;
         }
+
+        public int GetRefreshTokenLiveTime() => _jwtOpts.RefreshTokenLifetimeInDays;
 
         private SigningCredentials getCredentials(JwtOptions options)
         {

@@ -14,6 +14,7 @@ namespace Olx.BLL.Exstensions
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IAccountService, AccountService>();
         }
     }
 }
