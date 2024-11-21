@@ -15,6 +15,7 @@ namespace Olx.BLL.Interfaces
         Task AddRangeAsync(IEnumerable<TEntity> entities);
         void Delete(object id);
         Task DeleteAsync(object id);
+        void DeleteRange(IEnumerable<TEntity> entities);
         void Delete(TEntity entityToDelete);
         void Update(TEntity entityToUpdate);
         Task SaveAsync();
