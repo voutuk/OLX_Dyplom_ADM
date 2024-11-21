@@ -53,7 +53,9 @@ namespace OLX.API.Controllers
             Response.Cookies.Append(_configuration["RefreshTokenCookiesName"]!, token, new CookieOptions
             {
                 HttpOnly = true,
+                // Domain = "olx.com",
                 // Secure = true,
+                // Path = "/"
                 Expires = DateTime.Now.AddDays(double.Parse(_configuration["JwtOptions:RefreshTokenLifeTimeInDays"]!))
             });
         }

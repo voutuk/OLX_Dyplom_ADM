@@ -40,6 +40,16 @@ namespace Olx.DAL.Repositories
             if (entityToDelete != null)
                 Delete(entityToDelete);
         }
+        public  virtual void DeleteRange(IEnumerable<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                if (context.Entry(entity).State == EntityState.Detached)
+                   dbSet.Attach(entity);
+            }
+            dbSet.RemoveRange(entities);
+        }
+
         public virtual void Delete(TEntity entityToDelete)
         {
             if (context.Entry(entityToDelete).State == EntityState.Detached)
