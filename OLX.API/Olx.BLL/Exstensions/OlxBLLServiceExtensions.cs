@@ -13,6 +13,7 @@ namespace Olx.BLL.Exstensions
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IJwtService, JwtService>();
         }
     }
 }

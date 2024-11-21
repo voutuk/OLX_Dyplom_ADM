@@ -6,6 +6,10 @@ namespace Olx.BLL.Entities
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? Image { get; set; }
+        public string? Photo { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime LastActivity { get; set; } = DateTime.UtcNow;
+        public string? WebSite { get; set; }
+        public string? About { get; set; }
     }
 }

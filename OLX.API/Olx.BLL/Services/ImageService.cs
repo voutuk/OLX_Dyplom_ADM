@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
+using Olx.BLL.Resources;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
-using System.Net;
 
 
 
@@ -13,8 +12,8 @@ namespace Olx.BLL.Services
 {
     public class ImageService(IConfiguration config) : IImageService
     {
-        private readonly IConfiguration config = config;
-        private readonly string imgPath = Path.Combine(config["ImagesDir"]!);
+        private readonly IConfiguration _config = config;
+        private readonly string _imgPath = Path.Combine(config["ImagesDir"]!);
 
         public async Task<string> SaveImageAsync(IFormFile image)
         {
@@ -52,7 +51,7 @@ namespace Olx.BLL.Services
 
         private async Task SaveImageAsync(byte[] bytes, string name, int size)
         {
-            string imagePath = Path.Combine(imgPath, $"{size}_{name}");
+            string imagePath = Path.Combine(_imgPath, $"{size}_{name}");
 
             using var image = Image.Load(bytes);
             try
@@ -80,10 +79,10 @@ namespace Olx.BLL.Services
             return [.. (await Task.WhenAll(resultTasks.ToArray()))];
         }
 
-        public async Task<byte[]> LoadBytesAsync(string name) => await File.ReadAllBytesAsync(Path.Combine(imgPath, name));
+        public async Task<byte[]> LoadBytesAsync(string name) => await File.ReadAllBytesAsync(Path.Combine(_imgPath, name));
         
         public void DeleteImage(string nameWithFormat) => Sizes.AsParallel()
-            .ForAll(x => File.Delete(Path.Combine(imgPath, $"{x}_{nameWithFormat}")));
+            .ForAll(x => File.Delete(Path.Combine(_imgPath, $"{x}_{nameWithFormat}")));
 
         public void DeleteImages(IEnumerable<string> images) => images.AsParallel().ForAll(x => DeleteImage(x));
 
@@ -91,7 +90,7 @@ namespace Olx.BLL.Services
         {
             Sizes.AsParallel().ForAll(x =>
             {
-                var path = Path.Combine(imgPath, $"{x}_{nameWithFormat}");
+                var path = Path.Combine(_imgPath, $"{x}_{nameWithFormat}");
                 if (File.Exists(path))
                 {
                     File.Delete(path);
@@ -116,11 +115,11 @@ namespace Olx.BLL.Services
         {
             get
             {
-                List<int> sizes = config.GetRequiredSection("ImageSizes").Get<List<int>>()
-                ?? throw new Exception("Image sizes reading error");
+                List<int> sizes = _config.GetRequiredSection("ImageSizes").Get<List<int>>()
+                ?? throw new Exception(Errors.ImageSizesReadError);
 
                 if (sizes.Count == 0)
-                    throw new Exception("Image sizes not inicialized");
+                    throw new Exception(Errors.ImageSizesInitError);
                 return sizes;
             }
         }

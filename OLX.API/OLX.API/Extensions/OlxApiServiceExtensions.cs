@@ -13,6 +13,11 @@ namespace OLX.API.Extensions
 {
     public static class OlxApiServiceExtensions
     {
+        /// <summary>
+        /// Налаштування контроллерів,JWT,Swagger,CORS
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
         public static void AddOlxApiConfigurations(this IServiceCollection services,IConfiguration configuration)
         {
             services.AddControllers().AddJsonOptions(options =>
