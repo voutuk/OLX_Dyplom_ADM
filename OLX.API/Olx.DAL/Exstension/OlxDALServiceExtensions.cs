@@ -18,6 +18,9 @@ namespace Olx.DAL.Exstension
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddIdentity<OlxUser, IdentityRole<int>>(options =>
             {
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Тривалість блокування
+                options.Lockout.MaxFailedAccessAttempts = 5; // Кількість спроб
+                options.Lockout.AllowedForNewUsers = true; // Дозволити блокування нових користувачів
                 options.Stores.MaxLengthForKeys = 128;
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 5;

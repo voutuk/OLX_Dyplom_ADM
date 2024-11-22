@@ -33,7 +33,6 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshTokens([FromBody] string? refreshToken)
         {

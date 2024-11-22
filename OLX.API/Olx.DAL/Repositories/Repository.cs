@@ -2,12 +2,7 @@
 using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
 using Olx.BLL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Olx.DAL.Data;
 
 namespace Olx.DAL.Repositories
