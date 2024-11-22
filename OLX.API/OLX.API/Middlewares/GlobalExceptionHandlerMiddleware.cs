@@ -17,7 +17,10 @@ namespace OLX.API.Middlewares
             }
             catch (HttpException httpError)
             {
-                await CreateResponse(context, httpError.Status, httpError.Message);
+                if(httpError.Value is not null)
+                    await CreateResponse(context, httpError.Status, httpError.Value);
+                else
+                    await CreateResponse(context, httpError.Status,httpError.Message);
             }
             catch (ValidationException validationError)
             {

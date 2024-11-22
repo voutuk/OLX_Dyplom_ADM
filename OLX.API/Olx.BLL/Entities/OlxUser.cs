@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Olx.BLL.Helpers;
 
 namespace Olx.BLL.Entities
 {

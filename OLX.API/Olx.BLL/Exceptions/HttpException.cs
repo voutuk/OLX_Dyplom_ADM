@@ -8,9 +8,12 @@ namespace Olx.BLL.Exceptions
     public class HttpException : Exception
     {
         public HttpStatusCode Status { get; set; }
-        public HttpException(HttpStatusCode status)
+        public object? Value { get; }
+        
+        public HttpException(HttpStatusCode status, object? value = null)
         {
             Status = status;
+            Value = value;
         }
 
         public HttpException(string? message, HttpStatusCode status) : base(message)
@@ -18,13 +21,10 @@ namespace Olx.BLL.Exceptions
             Status = status;
         }
 
-        public HttpException(string? message, HttpStatusCode status, Exception? innerException) : base(message, innerException)
+        public HttpException(string? message, HttpStatusCode status, Exception? innerException, object? value = null) : base(message, innerException)
         {
             Status = status;
-        }
-
-        protected HttpException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
+            Value = value;
         }
     }
 }

@@ -268,7 +268,7 @@ namespace Olx.DAL.Migrations
 
                     b.HasIndex("OlxUserId");
 
-                    b.ToTable("RefreshToken");
+                    b.ToTable("RefreshToken", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
