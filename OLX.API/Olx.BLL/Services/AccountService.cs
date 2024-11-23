@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
 using Olx.BLL.Entities;
@@ -10,6 +11,7 @@ using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
+using Olx.BLL.Validators;
 using System.Net;
 
 
@@ -20,7 +22,9 @@ namespace Olx.BLL.Services
         IRepository<RefreshToken> tokenRepository,
         IRepository<OlxUser> _userRepository,
         IEmailService emailService,
-        IConfiguration configuration) : IAccountService
+        IConfiguration configuration,
+        IValidator<ResetPasswordModel> resetPasswordModelValidator,
+        IValidator<EmailConfirmationModel> emailConfirmationModelValidator) : IAccountService
     {
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
@@ -95,6 +99,7 @@ namespace Olx.BLL.Services
 
         public async Task EmailConfirmAsync(EmailConfirmationModel confirmationModel)
         {
+            emailConfirmationModelValidator.ValidateAndThrow(confirmationModel);
             var user = await userManager.FindByEmailAsync(confirmationModel.Email);
             if (user != null)
             {
@@ -122,6 +127,7 @@ namespace Olx.BLL.Services
 
         public async Task ResetPasswordAsync(ResetPasswordModel resetPasswordModel)
         {
+            resetPasswordModelValidator.ValidateAndThrow(resetPasswordModel);
             var user = await userManager.FindByEmailAsync(resetPasswordModel.Email);
             if (user is not null)
             {
@@ -157,7 +163,6 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
-
         
     }
 }

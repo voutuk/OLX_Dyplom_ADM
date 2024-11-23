@@ -59,6 +59,13 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
+        [HttpPost("password/reset")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel resetPasswordModel)
+        {
+            await accountService.ResetPasswordAsync(resetPasswordModel);
+            return Ok();
+        }
+
         private void SetHttpOnlyCookies(string token)
         {
             Response.Cookies.Append(configuration["RefreshTokenCookiesName"]!, token, new CookieOptions
