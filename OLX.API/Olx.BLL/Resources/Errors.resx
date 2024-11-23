@@ -132,4 +132,10 @@
   <data name="InvalidToken" xml:space="preserve">
     <value>Invalid token</value>
   </data>
+  <data name="InvalidConfirmationData" xml:space="preserve">
+    <value>Confirmation data error</value>
+  </data>
+  <data name="InvalidReserPasswordData" xml:space="preserve">
+    <value>Invalid reser password data</value>
+  </data>
 </root>

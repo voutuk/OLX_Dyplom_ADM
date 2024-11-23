@@ -10,8 +10,6 @@ namespace Olx.DAL.Data
     public class OlxDbContext(DbContextOptions<OlxDbContext> options, 
         IConfiguration configuration) : IdentityDbContext<OlxUser, IdentityRole<int>, int>(options)
     {
-        private readonly IConfiguration _configuration = configuration;
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -20,7 +18,7 @@ namespace Olx.DAL.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection")!;
+            var connectionString = configuration.GetConnectionString("DefaultConnection")!;
             optionsBuilder.UseNpgsql(connectionString);
         }
     }

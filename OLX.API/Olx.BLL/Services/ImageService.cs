@@ -12,7 +12,6 @@ namespace Olx.BLL.Services
 {
     public class ImageService(IConfiguration config) : IImageService
     {
-        private readonly IConfiguration _config = config;
         private readonly string _imgPath = Path.Combine(config["ImagesDir"]!);
 
         public async Task<string> SaveImageAsync(IFormFile image)
@@ -115,7 +114,7 @@ namespace Olx.BLL.Services
         {
             get
             {
-                List<int> sizes = _config.GetRequiredSection("ImageSizes").Get<List<int>>()
+                List<int> sizes = config.GetRequiredSection("ImageSizes").Get<List<int>>()
                 ?? throw new Exception(Errors.ImageSizesReadError);
 
                 if (sizes.Count == 0)

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Olx.BLL.Helpers
+﻿
+namespace Olx.BLL.Helpers.Options
 {
     public class JwtOptions
     {

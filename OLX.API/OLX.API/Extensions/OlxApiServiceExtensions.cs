@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.FileProviders;
 using OLX.API.Helpers.CustomJsonConverters;
-using Olx.BLL.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
+using Olx.BLL.Helpers.Options;
 
 
 namespace OLX.API.Extensions
@@ -27,8 +28,6 @@ namespace OLX.API.Extensions
             });
 
             var jwtOpts = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()!;
-
-           // services.AddScoped<IJwtService, JwtService>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(o =>
@@ -53,6 +52,11 @@ namespace OLX.API.Extensions
             {
                 opts.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
                       .RequireAuthenticatedUser().Build();
+            });
+
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromMinutes(Double.Parse(configuration["TokenLifespanMinutes"]!)); // Термін дії токенів для відновлення та підтвердження
             });
 
 

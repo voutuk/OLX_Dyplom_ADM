@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using NETCore.MailKit.Core;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
+using Olx.BLL.Helpers.Email;
 using Olx.BLL.Interfaces;
+using Olx.BLL.Models;
 using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
@@ -14,20 +18,16 @@ namespace Olx.BLL.Services
     public class AccountService(UserManager<OlxUser> userManager,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
-        IRepository<OlxUser> userRepository) : IAccountService
+        IRepository<OlxUser> _userRepository,
+        IEmailService emailService,
+        IConfiguration configuration) : IAccountService
     {
-        private readonly UserManager<OlxUser> _userManager = userManager;
-        private readonly IJwtService _jwtService = jwtService;
-        private readonly IRepository<RefreshToken> _tokenRepository = tokenRepository;
-        private readonly IRepository<OlxUser> _userRepository  = userRepository;
-
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            
+            var user = await userManager.FindByEmailAsync(model.Email);
             if (user != null) 
             {
-                if (await _userManager.IsLockedOutAsync(user))
+                if (await userManager.IsLockedOutAsync(user))
                 {
                     throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
                     {
@@ -36,9 +36,11 @@ namespace Olx.BLL.Services
                     });
                 }
 
-                if (!await _userManager.IsEmailConfirmedAsync(user))
+                if (!await userManager.IsEmailConfirmedAsync(user))
                 {
-                    //ToDo -=Send user confirmation email=-
+                    var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var email = EmailTemplates.GetEmailConfirmationTemplate(configuration["FrontendEmailConfirmationUrl"]!, confirmationToken,user.Email!);
+                    await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Підтвердження електронної пошти", email, true);
                     throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
                     {
                         Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
@@ -46,10 +48,10 @@ namespace Olx.BLL.Services
                     });
                 }
 
-                if (!await _userManager.CheckPasswordAsync(user, model.Password))
+                if (!await userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    await _userManager.AccessFailedAsync(user);
-                    if (await _userManager.IsLockedOutAsync(user))
+                    await userManager.AccessFailedAsync(user);
+                    if (await userManager.IsLockedOutAsync(user))
                     {
                         throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
                         {
@@ -60,10 +62,10 @@ namespace Olx.BLL.Services
                 }
                 else
                 {
-                    await _userManager.ResetAccessFailedCountAsync(user);
+                    await userManager.ResetAccessFailedCountAsync(user);
                     return new()
                     {
-                        AccessToken = _jwtService.CreateToken(await _jwtService.GetClaimsAsync(user)),
+                        AccessToken = jwtService.CreateToken(await jwtService.GetClaimsAsync(user)),
                         RefreshToken = await CreateRefreshToken(user.Id)
                     };
                 }    
@@ -74,8 +76,8 @@ namespace Olx.BLL.Services
         public async Task LogoutAsync(string refreshToken)
         {
             var token = await CheckRefreshTokenAsync(refreshToken);
-            await _tokenRepository.DeleteAsync(token.Id);
-            await _tokenRepository.SaveAsync();
+            await tokenRepository.DeleteAsync(token.Id);
+            await tokenRepository.SaveAsync();
         }
 
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
@@ -83,40 +85,79 @@ namespace Olx.BLL.Services
             var token = await CheckRefreshTokenAsync(refreshToken);
             var user = await _userRepository.GetItemBySpec(new OlxUserSpecs.GetByRefreshToken(token.Token)) 
                 ?? throw new HttpException(Errors.InvalidToken,HttpStatusCode.Unauthorized);
-            await _tokenRepository.DeleteAsync(token.Id);
+            await tokenRepository.DeleteAsync(token.Id);
             return new()
             {
-                AccessToken = _jwtService.CreateToken(await _jwtService.GetClaimsAsync(user)),
+                AccessToken = jwtService.CreateToken(await jwtService.GetClaimsAsync(user)),
                 RefreshToken = await CreateRefreshToken(user.Id)
             };
         }
 
+        public async Task EmailConfirmAsync(EmailConfirmationModel confirmationModel)
+        {
+            var user = await userManager.FindByEmailAsync(confirmationModel.Email);
+            if (user != null)
+            {
+                var result = await userManager.ConfirmEmailAsync(user, confirmationModel.Token);
+                if (result.Succeeded)
+                {
+                    var mail = EmailTemplates.GetEmailConfirmedTemplate(configuration["FrontendLoginUrl"]!);
+                    await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Електронна пошта підтверджена", mail, true);
+                    return;
+                }
+            }
+            throw new HttpException(Errors.InvalidConfirmationData, HttpStatusCode.BadRequest);
+        }
+
+        public async Task FogotPasswordAsync(string email) 
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user is not null) 
+            {
+                var passwordResetToken = await userManager.GeneratePasswordResetTokenAsync(user);
+                var mail = EmailTemplates.GetPasswordResetTemplate(configuration["FrontendResetPasswordUrl"]!, passwordResetToken,user.Email!);
+                await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Скидання пароля", mail, true);
+            }
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordModel resetPasswordModel)
+        {
+            var user = await userManager.FindByEmailAsync(resetPasswordModel.Email);
+            if (user is not null)
+            {
+                var result = await userManager.ResetPasswordAsync(user,resetPasswordModel.Token,resetPasswordModel.Password);
+                if (result.Succeeded) return;
+            }
+            throw new HttpException(Errors.InvalidReserPasswordData, HttpStatusCode.BadRequest);
+        }
+
         private async Task<string> CreateRefreshToken(int userId)
         {
-            var refeshToken = _jwtService.GetRefreshToken();
+            var refeshToken = jwtService.GetRefreshToken();
             var refreshTokenEntity = new RefreshToken
             {
                 Token = refeshToken,
                 OlxUserId = userId,
-                ExpirationDate = DateTime.UtcNow.AddDays(_jwtService.GetRefreshTokenLiveTime())
+                ExpirationDate = DateTime.UtcNow.AddDays(jwtService.GetRefreshTokenLiveTime())
             };
-            await _tokenRepository.AddAsync(refreshTokenEntity);
-            await _tokenRepository.SaveAsync();
+            await tokenRepository.AddAsync(refreshTokenEntity);
+            await tokenRepository.SaveAsync();
             return refeshToken;
         }
 
         private async Task<RefreshToken> CheckRefreshTokenAsync(string refreshToken)
         {
-            var token = await _tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
             if (token is not null)
             {
                 if (token.ExpirationDate > DateTime.UtcNow)
                     return token;
-                await _tokenRepository.DeleteAsync(token.Id);
-                await _tokenRepository.SaveAsync();
+                await tokenRepository.DeleteAsync(token.Id);
+                await tokenRepository.SaveAsync();
             }
             throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
 
+        
     }
 }

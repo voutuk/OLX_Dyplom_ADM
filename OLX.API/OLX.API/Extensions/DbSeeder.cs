@@ -29,7 +29,7 @@ namespace OLX.API.Extensions
             var userManager = serviceProvider.GetRequiredService<UserManager<OlxUser>>();
             if(!userManager.Users.Any())
             {
-                string usersJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(),"JsonData/Users.json" );
+                string usersJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(),"Helpers/JsonData/Users.json" );
                 if (File.Exists(usersJsonDataFile))
                 {
                     var userJson = File.ReadAllText(usersJsonDataFile, Encoding.UTF8);
