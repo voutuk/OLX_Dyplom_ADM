@@ -10,8 +10,6 @@ namespace Olx.BLL.Services
     public class TokenCleanupService (IConfiguration configuration, IServiceScopeFactory serviceScopeFactory) : BackgroundService
     {
         private readonly TimeSpan _interval = TimeSpan.FromDays(int.Parse(configuration["RefreshTokenCleanupIntervalInDays"]!)); // Перевірка щодня
-        private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("Token cleanup service started");
@@ -24,7 +22,7 @@ namespace Olx.BLL.Services
 
         private async Task CleanupExpiredTokensAsync()
         {
-            using var scope = _serviceScopeFactory.CreateScope();
+            using var scope = serviceScopeFactory.CreateScope();
             var refreshToketRepo = scope.ServiceProvider.GetRequiredService<IRepository<RefreshToken>>();
             var expiredTokens = await refreshToketRepo.GetListBySpec(new RefreshTokenSpecs.GetExpired(true));
 

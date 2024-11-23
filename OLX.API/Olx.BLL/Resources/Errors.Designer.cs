@@ -79,11 +79,29 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Confirmation data error.
+        /// </summary>
+        internal static string InvalidConfirmationData {
+            get {
+                return ResourceManager.GetString("InvalidConfirmationData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid login or password.
         /// </summary>
         internal static string InvalidLoginData {
             get {
                 return ResourceManager.GetString("InvalidLoginData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid reser password data.
+        /// </summary>
+        internal static string InvalidReserPasswordData {
+            get {
+                return ResourceManager.GetString("InvalidReserPasswordData", resourceCulture);
             }
         }
         

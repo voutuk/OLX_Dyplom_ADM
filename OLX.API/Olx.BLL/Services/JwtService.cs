@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
-using Olx.BLL.Helpers;
+using Olx.BLL.Helpers.Options;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Resources;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,7 +16,6 @@ namespace Olx.BLL.Services
 {
     public class JwtService(IConfiguration configuration, UserManager<OlxUser> userManager) : IJwtService
     {
-        private readonly UserManager<OlxUser> _userManager = userManager;
         private JwtOptions _jwtOpts = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()
                 ?? throw new HttpException(Errors.JwtSettingsReadError, HttpStatusCode.InternalServerError);
 
@@ -51,7 +50,7 @@ namespace Olx.BLL.Services
                 new ("phoneNumber", user.PhoneNumber ?? string.Empty),
                 new ("photo", user.Photo ?? string.Empty)
             };
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await userManager.GetRolesAsync(user);
             claims.AddRange(roles.Select(role => new Claim("roles", role)));
             return claims;
         }

@@ -10,8 +10,8 @@ CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOlxDbContext();
-builder.Services.AddOlxBLLServices();
+builder.Services.AddOlxDbContext(builder.Configuration);
+builder.Services.AddOlxBLLServices(builder.Configuration);
 builder.Services.AddOlxApiConfigurations(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();

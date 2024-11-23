@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="JsonData\" />
+    <Folder Include="Helpers\JsonData\" />
     <Folder Include="uploading\" />
   </ItemGroup>
 
