@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Models.Authentication;
+using Olx.BLL.Models.User;
 
 namespace OLX.API.Controllers
 {
@@ -63,6 +65,14 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel resetPasswordModel)
         {
             await accountService.ResetPasswordAsync(resetPasswordModel);
+            return Ok();
+        }
+
+        [Authorize(Roles = Roles.Admin)]
+        [HttpPost("block")]
+        public async Task<IActionResult> BlockUser([FromBody] UserBlockModel userBlockModel)
+        {
+            await accountService.BlockUserAsync(userBlockModel);
             return Ok();
         }
 

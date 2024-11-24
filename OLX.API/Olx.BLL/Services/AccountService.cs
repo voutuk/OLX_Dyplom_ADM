@@ -24,7 +24,8 @@ namespace Olx.BLL.Services
         IEmailService emailService,
         IConfiguration configuration,
         IValidator<ResetPasswordModel> resetPasswordModelValidator,
-        IValidator<EmailConfirmationModel> emailConfirmationModelValidator) : IAccountService
+        IValidator<EmailConfirmationModel> emailConfirmationModelValidator,
+        IValidator<UserBlockModel> userBlockModelValidator) : IAccountService
     {
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
@@ -36,7 +37,7 @@ namespace Olx.BLL.Services
                     throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
                     {
                         Message = "Ваш обліковий запис заблокований.",
-                        UnlockTime = user.LockoutEnd.HasValue ? user.LockoutEnd.Value.LocalDateTime : null
+                        UnlockTime = user.LockoutEnd.HasValue && user.LockoutEnd.Value != DateTimeOffset.MaxValue ? user.LockoutEnd.Value.LocalDateTime : null
                     });
                 }
 
@@ -136,6 +137,35 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidReserPasswordData, HttpStatusCode.BadRequest);
         }
+        public async Task BlockUserAsync(UserBlockModel userBlockModel)
+        {
+            userBlockModelValidator.ValidateAndThrow(userBlockModel);
+            var user = await userManager.FindByEmailAsync(userBlockModel.Email);
+            if (user is not null)
+            {
+                var result = userBlockModel.Block
+                    ? await userManager.SetLockoutEndDateAsync(user, userBlockModel.LockoutEndDate ?? DateTimeOffset.MaxValue)
+                    : await userManager.SetLockoutEndDateAsync(user, null);
+                if (result.Succeeded)
+                {
+                    if (userBlockModel.Block)
+                    {
+                        string lockoutEndMessage = userBlockModel.LockoutEndDate is null
+                            ? "На невизначений термін"
+                            : $"Заблокований до {userBlockModel.LockoutEndDate.Value.ToLongDateString()} {userBlockModel.LockoutEndDate.Value.ToLongTimeString()}";
+                        var accountBlockedTemplate = EmailTemplates.GetAccountBlockedTemplate(userBlockModel.BlockReason ?? "", lockoutEndMessage);
+                        await emailService.SendAsync("Kovalchuk.olex@gmail.com", "Ваш акаунт заблоковано", accountBlockedTemplate, true);
+                    }
+                    else
+                    {
+                        var accountUnblockedTemplate = EmailTemplates.GetAccountUnblockedTemplate();
+                        await emailService.SendAsync("Kovalchuk.olex@gmail.com", "Ваш акаунт розблоковано", accountUnblockedTemplate, true);
+                    }
+                    return;
+                } 
+            }
+            throw new HttpException(Errors.InvalidReserPasswordData, HttpStatusCode.BadRequest);
+        }
 
         private async Task<string> CreateRefreshToken(int userId)
         {
@@ -163,6 +193,7 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
+
         
     }
 }
