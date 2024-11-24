@@ -153,7 +153,13 @@
   <data name="StartUppercaseError" xml:space="preserve">
     <value>{PropertyName} must start with uppercase leter</value>
   </data>
-  <data name="SymbolsCountError" xml:space="preserve">
+  <data name="MinSymbolsCountError" xml:space="preserve">
     <value>{PropertyName} length must greater</value>
+  </data>
+  <data name="PasswordComfirmationError" xml:space="preserve">
+    <value>Invalid password comfirmation</value>
+  </data>
+  <data name="MaxSymbolsCountError" xml:space="preserve">
+    <value>{PropertyName}length must less</value>
   </data>
 </root>

@@ -1,9 +1,11 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
+using Olx.BLL.Helpers;
 using Olx.BLL.Helpers.Email;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
@@ -11,7 +13,6 @@ using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
-using Olx.BLL.Validators;
 using System.Net;
 
 
@@ -23,10 +24,45 @@ namespace Olx.BLL.Services
         IRepository<OlxUser> _userRepository,
         IEmailService emailService,
         IConfiguration configuration,
+        IMapper mapper,
+        IImageService imageService,
         IValidator<ResetPasswordModel> resetPasswordModelValidator,
         IValidator<EmailConfirmationModel> emailConfirmationModelValidator,
-        IValidator<UserBlockModel> userBlockModelValidator) : IAccountService
+        IValidator<UserBlockModel> userBlockModelValidator,
+        IValidator<UserCreationModel> userCreationModelValidator) : IAccountService
     {
+        private async Task<string> CreateRefreshToken(int userId)
+        {
+            var refeshToken = jwtService.GetRefreshToken();
+            var refreshTokenEntity = new RefreshToken
+            {
+                Token = refeshToken,
+                OlxUserId = userId,
+                ExpirationDate = DateTime.UtcNow.AddDays(jwtService.GetRefreshTokenLiveTime())
+            };
+            await tokenRepository.AddAsync(refreshTokenEntity);
+            await tokenRepository.SaveAsync();
+            return refeshToken;
+        }
+        private async Task<RefreshToken> CheckRefreshTokenAsync(string refreshToken)
+        {
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
+            if (token is not null)
+            {
+                if (token.ExpirationDate > DateTime.UtcNow)
+                    return token;
+                await tokenRepository.DeleteAsync(token.Id);
+                await tokenRepository.SaveAsync();
+            }
+            throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
+        }
+        private async Task SendEmailConfirmationMessage(OlxUser user)
+        {
+            var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var email = EmailTemplates.GetEmailConfirmationTemplate(configuration["FrontendEmailConfirmationUrl"]!, confirmationToken, user.Email!);
+            await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Підтвердження електронної пошти", email, true);
+        }
+
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
             var user = await userManager.FindByEmailAsync(model.Email);
@@ -43,9 +79,7 @@ namespace Olx.BLL.Services
 
                 if (!await userManager.IsEmailConfirmedAsync(user))
                 {
-                    var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var email = EmailTemplates.GetEmailConfirmationTemplate(configuration["FrontendEmailConfirmationUrl"]!, confirmationToken,user.Email!);
-                    await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Підтвердження електронної пошти", email, true);
+                    await SendEmailConfirmationMessage(user);
                     throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
                     {
                         Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
@@ -77,14 +111,12 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidLoginData, HttpStatusCode.BadRequest);
         }
-
         public async Task LogoutAsync(string refreshToken)
         {
             var token = await CheckRefreshTokenAsync(refreshToken);
             await tokenRepository.DeleteAsync(token.Id);
             await tokenRepository.SaveAsync();
         }
-
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
         {
             var token = await CheckRefreshTokenAsync(refreshToken);
@@ -97,7 +129,6 @@ namespace Olx.BLL.Services
                 RefreshToken = await CreateRefreshToken(user.Id)
             };
         }
-
         public async Task EmailConfirmAsync(EmailConfirmationModel confirmationModel)
         {
             emailConfirmationModelValidator.ValidateAndThrow(confirmationModel);
@@ -114,7 +145,6 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidConfirmationData, HttpStatusCode.BadRequest);
         }
-
         public async Task FogotPasswordAsync(string email) 
         {
             var user = await userManager.FindByEmailAsync(email);
@@ -125,7 +155,6 @@ namespace Olx.BLL.Services
                 await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Скидання пароля", mail, true);
             }
         }
-
         public async Task ResetPasswordAsync(ResetPasswordModel resetPasswordModel)
         {
             resetPasswordModelValidator.ValidateAndThrow(resetPasswordModel);
@@ -166,34 +195,17 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidReserPasswordData, HttpStatusCode.BadRequest);
         }
-
-        private async Task<string> CreateRefreshToken(int userId)
+        public async Task AddUserAsync(UserCreationModel userModel, bool isAdmin = false)
         {
-            var refeshToken = jwtService.GetRefreshToken();
-            var refreshTokenEntity = new RefreshToken
-            {
-                Token = refeshToken,
-                OlxUserId = userId,
-                ExpirationDate = DateTime.UtcNow.AddDays(jwtService.GetRefreshTokenLiveTime())
-            };
-            await tokenRepository.AddAsync(refreshTokenEntity);
-            await tokenRepository.SaveAsync();
-            return refeshToken;
+            userCreationModelValidator.ValidateAndThrow(userModel);
+            OlxUser user = mapper.Map<OlxUser>(userModel);
+            if(userModel.ImageFile is not null)
+               user.Photo = await imageService.SaveImageAsync(userModel.ImageFile);
+            var result = await userManager.CreateAsync(user,userModel.Password);
+            if (!result.Succeeded)
+                throw new HttpException(Errors.UserCreateError, HttpStatusCode.InternalServerError);
+            await userManager.AddToRoleAsync(user, isAdmin ? Roles.Admin : Roles.User);
+            await SendEmailConfirmationMessage(user);
         }
-
-        private async Task<RefreshToken> CheckRefreshTokenAsync(string refreshToken)
-        {
-            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
-            if (token is not null)
-            {
-                if (token.ExpirationDate > DateTime.UtcNow)
-                    return token;
-                await tokenRepository.DeleteAsync(token.Id);
-                await tokenRepository.SaveAsync();
-            }
-            throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
-        }
-
-        
     }
 }

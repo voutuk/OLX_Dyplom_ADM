@@ -142,6 +142,24 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на {PropertyName}length must less.
+        /// </summary>
+        internal static string MaxSymbolsCountError {
+            get {
+                return ResourceManager.GetString("MaxSymbolsCountError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на {PropertyName} length must greater.
+        /// </summary>
+        internal static string MinSymbolsCountError {
+            get {
+                return ResourceManager.GetString("MinSymbolsCountError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на {PropertyName} not be empty..
         /// </summary>
         internal static string NotEmpty {
@@ -160,20 +178,20 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid password comfirmation.
+        /// </summary>
+        internal static string PasswordComfirmationError {
+            get {
+                return ResourceManager.GetString("PasswordComfirmationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на {PropertyName} must start with uppercase leter.
         /// </summary>
         internal static string StartUppercaseError {
             get {
                 return ResourceManager.GetString("StartUppercaseError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на {PropertyName} length must greater.
-        /// </summary>
-        internal static string SymbolsCountError {
-            get {
-                return ResourceManager.GetString("SymbolsCountError", resourceCulture);
             }
         }
     }

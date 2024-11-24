@@ -138,4 +138,7 @@
   <data name="InvalidReserPasswordData" xml:space="preserve">
     <value>Invalid reser password data</value>
   </data>
+  <data name="UserCreateError" xml:space="preserve">
+    <value>User creation error</value>
+  </data>
 </root>

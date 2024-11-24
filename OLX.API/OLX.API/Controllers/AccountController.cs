@@ -76,6 +76,22 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = Roles.Admin)]
+        [HttpPut("new/admin")]
+        public async Task<IActionResult> AddAdmin([FromForm] UserCreationModel adminModel)
+        {
+            await accountService.AddUserAsync(adminModel,true);
+            return Ok();
+        }
+
+        
+        [HttpPut("new/user")]
+        public async Task<IActionResult> AddUser([FromForm] UserCreationModel userModel)
+        {
+            await accountService.AddUserAsync(userModel);
+            return Ok();
+        }
+
         private void SetHttpOnlyCookies(string token)
         {
             Response.Cookies.Append(configuration["RefreshTokenCookiesName"]!, token, new CookieOptions
