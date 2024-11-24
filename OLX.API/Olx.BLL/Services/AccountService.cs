@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
+using Newtonsoft.Json;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Helpers;
@@ -14,6 +15,7 @@ using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
 using System.Net;
+using System.Net.Http.Headers;
 
 
 namespace Olx.BLL.Services
@@ -56,11 +58,40 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
-        private async Task SendEmailConfirmationMessage(OlxUser user)
+        private async Task CreateUserAsync(OlxUser user,string? password = null, bool isAdmin = false)
+        {
+            var result = password is not null
+                ? await userManager.CreateAsync(user, password)
+                : await userManager.CreateAsync(user);
+            if (!result.Succeeded)
+                throw new HttpException(Errors.UserCreateError, HttpStatusCode.InternalServerError);
+            await userManager.AddToRoleAsync(user, isAdmin ? Roles.Admin : Roles.User);
+        }
+        private async Task SendEmailConfirmationMessageAsync(OlxUser user)
         {
             var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var email = EmailTemplates.GetEmailConfirmationTemplate(configuration["FrontendEmailConfirmationUrl"]!, confirmationToken, user.Email!);
             await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Підтвердження електронної пошти", email, true);
+        }
+        private async Task CheckEmailConfirmAsync(OlxUser user)
+        {
+            if (!await userManager.IsEmailConfirmedAsync(user))
+            {
+                await SendEmailConfirmationMessageAsync(user);
+                throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
+                {
+                    Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
+                    UnlockTime = null
+                });
+            }
+        }
+        private async Task<AuthResponse> GetAuthTokens(OlxUser user)
+        {
+            return new()
+            {
+                AccessToken = jwtService.CreateToken(await jwtService.GetClaimsAsync(user)),
+                RefreshToken = await CreateRefreshToken(user.Id)
+            };
         }
 
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
@@ -77,15 +108,7 @@ namespace Olx.BLL.Services
                     });
                 }
 
-                if (!await userManager.IsEmailConfirmedAsync(user))
-                {
-                    await SendEmailConfirmationMessage(user);
-                    throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
-                    {
-                        Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
-                        UnlockTime = null
-                    });
-                }
+                await CheckEmailConfirmAsync(user);
 
                 if (!await userManager.CheckPasswordAsync(user, model.Password))
                 {
@@ -102,32 +125,42 @@ namespace Olx.BLL.Services
                 else
                 {
                     await userManager.ResetAccessFailedCountAsync(user);
-                    return new()
-                    {
-                        AccessToken = jwtService.CreateToken(await jwtService.GetClaimsAsync(user)),
-                        RefreshToken = await CreateRefreshToken(user.Id)
-                    };
+                    return await GetAuthTokens(user);
                 }    
             }
             throw new HttpException(Errors.InvalidLoginData, HttpStatusCode.BadRequest);
+        }
+        public async Task<AuthResponse> GoogleLoginAsync(string googleAccessToken)
+        {
+            using HttpClient httpClient = new();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", googleAccessToken);
+            HttpResponseMessage response = await httpClient.GetAsync(configuration["GoogleUserInfoUrl"]);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            var userInfo = JsonConvert.DeserializeObject<GoogleUserInfo>(responseBody)!;
+            OlxUser user = await userManager.FindByEmailAsync(userInfo.Email) ?? mapper.Map<OlxUser>(userInfo);
+            if (user.Id == 0)
+            {
+                if (!String.IsNullOrEmpty(userInfo.Picture))
+                    user.Photo = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
+                await CreateUserAsync(user);
+                await CheckEmailConfirmAsync(user);
+            }
+            return await GetAuthTokens(user);
+        }
+        public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
+        {
+            var token = await CheckRefreshTokenAsync(refreshToken);
+            var user = await _userRepository.GetItemBySpec(new OlxUserSpecs.GetByRefreshToken(token.Token))
+                ?? throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
+            await tokenRepository.DeleteAsync(token.Id);
+            return await GetAuthTokens(user);
         }
         public async Task LogoutAsync(string refreshToken)
         {
             var token = await CheckRefreshTokenAsync(refreshToken);
             await tokenRepository.DeleteAsync(token.Id);
             await tokenRepository.SaveAsync();
-        }
-        public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
-        {
-            var token = await CheckRefreshTokenAsync(refreshToken);
-            var user = await _userRepository.GetItemBySpec(new OlxUserSpecs.GetByRefreshToken(token.Token)) 
-                ?? throw new HttpException(Errors.InvalidToken,HttpStatusCode.Unauthorized);
-            await tokenRepository.DeleteAsync(token.Id);
-            return new()
-            {
-                AccessToken = jwtService.CreateToken(await jwtService.GetClaimsAsync(user)),
-                RefreshToken = await CreateRefreshToken(user.Id)
-            };
         }
         public async Task EmailConfirmAsync(EmailConfirmationModel confirmationModel)
         {
@@ -201,11 +234,10 @@ namespace Olx.BLL.Services
             OlxUser user = mapper.Map<OlxUser>(userModel);
             if(userModel.ImageFile is not null)
                user.Photo = await imageService.SaveImageAsync(userModel.ImageFile);
-            var result = await userManager.CreateAsync(user,userModel.Password);
-            if (!result.Succeeded)
-                throw new HttpException(Errors.UserCreateError, HttpStatusCode.InternalServerError);
-            await userManager.AddToRoleAsync(user, isAdmin ? Roles.Admin : Roles.User);
-            await SendEmailConfirmationMessage(user);
+            await CreateUserAsync(user, userModel.Password, isAdmin);
+            if(!await userManager.IsEmailConfirmedAsync(user))
+                await SendEmailConfirmationMessageAsync(user);
         }
+        
     }
 }
