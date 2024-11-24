@@ -85,15 +85,14 @@ namespace OLX.API.Controllers
         }
 
         [Authorize(Roles = Roles.Admin)]
-        [HttpPut("new/admin")]
+        [HttpPut("register/admin")]
         public async Task<IActionResult> AddAdmin([FromForm] UserCreationModel adminModel)
         {
             await accountService.AddUserAsync(adminModel,true);
             return Ok();
         }
 
-        
-        [HttpPut("new/user")]
+        [HttpPut("register/user")]
         public async Task<IActionResult> AddUser([FromForm] UserCreationModel userModel)
         {
             await accountService.AddUserAsync(userModel);

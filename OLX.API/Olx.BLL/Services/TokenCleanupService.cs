@@ -9,7 +9,7 @@ namespace Olx.BLL.Services
 {
     public class TokenCleanupService (IConfiguration configuration, IServiceScopeFactory serviceScopeFactory) : BackgroundService
     {
-        private readonly TimeSpan _interval = TimeSpan.FromDays(int.Parse(configuration["RefreshTokenCleanupIntervalInDays"]!)); // Перевірка щодня
+        private readonly TimeSpan _interval = TimeSpan.FromDays(int.Parse(configuration["RefreshTokenCleanupIntervalDays"]!)); // Перевірка щодня
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("Token cleanup service started");
