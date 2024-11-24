@@ -20,6 +20,14 @@ namespace OLX.API.Controllers
             return Ok(authResponse);
         }
 
+        [HttpPost("login/google")]
+        public async Task<IActionResult> GoogleLogin([FromBody] string googleAccessToken)
+        {
+            var authResponse = await accountService.GoogleLoginAsync(googleAccessToken);
+            SetHttpOnlyCookies(authResponse.RefreshToken);
+            return Ok(authResponse);
+        }
+
         [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> LogOut([FromBody] string? refreshToken)
