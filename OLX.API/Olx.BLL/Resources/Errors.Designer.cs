@@ -122,5 +122,14 @@ namespace Olx.BLL.Resources {
                 return ResourceManager.GetString("JwtSettingsReadError", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на User creation error.
+        /// </summary>
+        internal static string UserCreateError {
+            get {
+                return ResourceManager.GetString("UserCreateError", resourceCulture);
+            }
+        }
     }
 }

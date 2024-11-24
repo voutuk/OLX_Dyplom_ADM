@@ -25,7 +25,6 @@ app.AddStaticFiles();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

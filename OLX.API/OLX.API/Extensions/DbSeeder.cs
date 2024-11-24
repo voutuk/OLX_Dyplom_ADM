@@ -49,12 +49,14 @@ namespace OLX.API.Extensions
                                 LastName = user.LastName,
                                 Photo = user.PhotoBase64 is not null
                                 ? await imageService.SaveImageAsync(user.PhotoBase64)
-                                : await imageService.SaveImageFromUrlAsync(user.PhotoUrl ?? "https://picsum.photos/800/600")
+                                : await imageService.SaveImageFromUrlAsync(user.PhotoUrl ?? "https://picsum.photos/800/600"),
+                                WebSite = user.WebSite,
+                                About = user.About
                             };
 
                             var result = await userManager.CreateAsync(newUser, user.Password);
                             if (result.Succeeded)
-                                await userManager.AddToRoleAsync(newUser, Roles.Admin);
+                                await userManager.AddToRoleAsync(newUser, user.Role);
                             else
                                 Console.WriteLine($"Error create user \"{user.Email}\"");
                         }
