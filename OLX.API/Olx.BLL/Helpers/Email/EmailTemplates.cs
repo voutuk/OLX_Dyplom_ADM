@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Net;
-using System.Reflection;
+﻿using System.Net;
+
 
 
 namespace Olx.BLL.Helpers.Email
@@ -31,5 +29,16 @@ namespace Olx.BLL.Helpers.Email
             html = html.Replace("[url]", url);
             return html;
         }
+
+        public static string GetAccountBlockedTemplate(string reason, string lockoutEnd)
+        {
+            var html = File.ReadAllText(Path.Combine(_path, "AccountBlocked.html"));
+            html = html.Replace("[reason]",reason);
+            html = html.Replace("[LockoutEnd]", lockoutEnd);
+            return html;
+        }
+
+        public static string GetAccountUnblockedTemplate() => File.ReadAllText(Path.Combine(_path, "AccountUnblocked.html"));
+        
     }
 }
