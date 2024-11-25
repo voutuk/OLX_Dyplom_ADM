@@ -71,7 +71,7 @@ namespace Olx.BLL.Services
         {
             var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var email = EmailTemplates.GetEmailConfirmationTemplate(configuration["FrontendEmailConfirmationUrl"]!, confirmationToken, user.Email!);
-            await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Підтвердження електронної пошти", email, true);
+            await emailService.SendAsync(user.Email, "Підтвердження електронної пошти", email, true);
         }
         private async Task CheckEmailConfirmAsync(OlxUser user)
         {
@@ -82,6 +82,17 @@ namespace Olx.BLL.Services
                 {
                     Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
                     UnlockTime = null
+                });
+            }
+        }
+        private async Task CheckLockedOutAsync(OlxUser user)
+        {
+            if (await userManager.IsLockedOutAsync(user))
+            {
+                throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
+                {
+                    Message = "Ваш обліковий запис заблокований.",
+                    UnlockTime = user.LockoutEnd.HasValue && user.LockoutEnd.Value != DateTimeOffset.MaxValue ? user.LockoutEnd.Value.LocalDateTime : null
                 });
             }
         }
@@ -99,15 +110,7 @@ namespace Olx.BLL.Services
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user != null) 
             {
-                if (await userManager.IsLockedOutAsync(user))
-                {
-                    throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
-                    {
-                        Message = "Ваш обліковий запис заблокований.",
-                        UnlockTime = user.LockoutEnd.HasValue && user.LockoutEnd.Value != DateTimeOffset.MaxValue ? user.LockoutEnd.Value.LocalDateTime : null
-                    });
-                }
-
+                await CheckLockedOutAsync(user);
                 await CheckEmailConfirmAsync(user);
 
                 if (!await userManager.CheckPasswordAsync(user, model.Password))
@@ -144,8 +147,9 @@ namespace Olx.BLL.Services
                 if (!String.IsNullOrEmpty(userInfo.Picture))
                     user.Photo = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
                 await CreateUserAsync(user);
-                await CheckEmailConfirmAsync(user);
             }
+            else  await CheckLockedOutAsync(user);
+            await CheckEmailConfirmAsync(user);
             return await GetAuthTokens(user);
         }
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
@@ -172,7 +176,7 @@ namespace Olx.BLL.Services
                 if (result.Succeeded)
                 {
                     var mail = EmailTemplates.GetEmailConfirmedTemplate(configuration["FrontendLoginUrl"]!);
-                    await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Електронна пошта підтверджена", mail, true);
+                    await emailService.SendAsync(user.Email, "Електронна пошта підтверджена", mail, true);
                     return;
                 }
             }
@@ -185,7 +189,7 @@ namespace Olx.BLL.Services
             {
                 var passwordResetToken = await userManager.GeneratePasswordResetTokenAsync(user);
                 var mail = EmailTemplates.GetPasswordResetTemplate(configuration["FrontendResetPasswordUrl"]!, passwordResetToken,user.Email!);
-                await emailService.SendAsync("Kovalchuk.Olex@gmail.com", "Скидання пароля", mail, true);
+                await emailService.SendAsync(user.Email, "Скидання пароля", mail, true);
             }
         }
         public async Task ResetPasswordAsync(ResetPasswordModel resetPasswordModel)
@@ -197,7 +201,7 @@ namespace Olx.BLL.Services
                 var result = await userManager.ResetPasswordAsync(user,resetPasswordModel.Token,resetPasswordModel.Password);
                 if (result.Succeeded) return;
             }
-            throw new HttpException(Errors.InvalidReserPasswordData, HttpStatusCode.BadRequest);
+            throw new HttpException(Errors.InvalidResetPasswordData, HttpStatusCode.BadRequest);
         }
         public async Task BlockUserAsync(UserBlockModel userBlockModel)
         {
@@ -216,17 +220,17 @@ namespace Olx.BLL.Services
                             ? "На невизначений термін"
                             : $"Заблокований до {userBlockModel.LockoutEndDate.Value.ToLongDateString()} {userBlockModel.LockoutEndDate.Value.ToLongTimeString()}";
                         var accountBlockedTemplate = EmailTemplates.GetAccountBlockedTemplate(userBlockModel.BlockReason ?? "", lockoutEndMessage);
-                        await emailService.SendAsync("Kovalchuk.olex@gmail.com", "Ваш акаунт заблоковано", accountBlockedTemplate, true);
+                        await emailService.SendAsync(user.Email, "Ваш акаунт заблоковано", accountBlockedTemplate, true);
                     }
                     else
                     {
                         var accountUnblockedTemplate = EmailTemplates.GetAccountUnblockedTemplate();
-                        await emailService.SendAsync("Kovalchuk.olex@gmail.com", "Ваш акаунт розблоковано", accountUnblockedTemplate, true);
+                        await emailService.SendAsync(user.Email, "Ваш акаунт розблоковано", accountUnblockedTemplate, true);
                     }
                     return;
                 } 
             }
-            throw new HttpException(Errors.InvalidReserPasswordData, HttpStatusCode.BadRequest);
+            throw new HttpException(Errors.InvalidResetPasswordData, HttpStatusCode.BadRequest);
         }
         public async Task AddUserAsync(UserCreationModel userModel, bool isAdmin = false)
         {

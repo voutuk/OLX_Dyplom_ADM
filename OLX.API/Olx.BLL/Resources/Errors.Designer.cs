@@ -99,9 +99,9 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid reser password data.
         /// </summary>
-        internal static string InvalidReserPasswordData {
+        internal static string InvalidResetPasswordData {
             get {
-                return ResourceManager.GetString("InvalidReserPasswordData", resourceCulture);
+                return ResourceManager.GetString("InvalidResetPasswordData", resourceCulture);
             }
         }
         
