@@ -10,7 +10,7 @@ if errorlevel 1 (
         timeout /t 5 /nobreak >nul
         goto waitForDocker
     )
-    echo Docker Desktop successfuly.
+    echo Docker Desktop successfuly started ...
 ) 
 
 ::echo Changing directory client...
