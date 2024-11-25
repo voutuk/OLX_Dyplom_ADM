@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
 using Newtonsoft.Json;
@@ -20,10 +21,10 @@ using System.Net.Http.Headers;
 
 namespace Olx.BLL.Services
 {
-    public class AccountService(UserManager<OlxUser> userManager,
+    public class AccountService(
+        UserManager<OlxUser> userManager,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
-        IRepository<OlxUser> userRepository,
         IEmailService emailService,
         IConfiguration configuration,
         IMapper mapper,
@@ -155,16 +156,19 @@ namespace Olx.BLL.Services
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
         {
             var token = await CheckRefreshTokenAsync(refreshToken);
-            var user = await userRepository.GetItemBySpec(new OlxUserSpecs.GetByRefreshToken(token.Token))
-                ?? throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
+            var user = userManager.Users.AsNoTracking().FirstOrDefault(x=>x.Id == token.OlxUserId)
+                  ?? throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
             await tokenRepository.DeleteAsync(token.Id);
             return await GetAuthTokens(user);
         }
         public async Task LogoutAsync(string refreshToken)
         {
-            var token = await CheckRefreshTokenAsync(refreshToken);
-            await tokenRepository.DeleteAsync(token.Id);
-            await tokenRepository.SaveAsync();
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
+            if (token is not null)
+            {
+                await tokenRepository.DeleteAsync(token.Id);
+                await tokenRepository.SaveAsync();
+            }
         }
         public async Task EmailConfirmAsync(EmailConfirmationModel confirmationModel)
         {
@@ -242,6 +246,5 @@ namespace Olx.BLL.Services
             if(!await userManager.IsEmailConfirmedAsync(user))
                 await SendEmailConfirmationMessageAsync(user);
         }
-        
     }
 }

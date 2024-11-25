@@ -32,7 +32,7 @@ namespace OLX.API.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> LogOut([FromBody] string? refreshToken)
         {
-            if (Request.Cookies.TryGetValue("refreshToken", out var token))
+            if (Request.Cookies.TryGetValue(configuration["RefreshTokenCookiesName"]!, out var token))
                 await accountService.LogoutAsync(token);
             else if (refreshToken is not null)
                 await accountService.LogoutAsync(refreshToken);
