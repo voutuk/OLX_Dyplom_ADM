@@ -9,3 +9,6 @@ docker compose up -d
 
 docker-compose down
 docker-compose down --rmi all --volumes
+
+chmod +x docker_actions.sh
+./docker_actions.sh
