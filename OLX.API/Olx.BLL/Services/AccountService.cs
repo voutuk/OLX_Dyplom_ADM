@@ -23,7 +23,7 @@ namespace Olx.BLL.Services
     public class AccountService(UserManager<OlxUser> userManager,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
-        IRepository<OlxUser> _userRepository,
+        IRepository<OlxUser> userRepository,
         IEmailService emailService,
         IConfiguration configuration,
         IMapper mapper,
@@ -77,7 +77,7 @@ namespace Olx.BLL.Services
         {
             if (!await userManager.IsEmailConfirmedAsync(user))
             {
-                await SendEmailConfirmationMessageAsync(user);
+                await SendEmailConfirmationMessageAsync(user);//??
                 throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
                 {
                     Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
@@ -155,7 +155,7 @@ namespace Olx.BLL.Services
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
         {
             var token = await CheckRefreshTokenAsync(refreshToken);
-            var user = await _userRepository.GetItemBySpec(new OlxUserSpecs.GetByRefreshToken(token.Token))
+            var user = await userRepository.GetItemBySpec(new OlxUserSpecs.GetByRefreshToken(token.Token))
                 ?? throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
             await tokenRepository.DeleteAsync(token.Id);
             return await GetAuthTokens(user);
