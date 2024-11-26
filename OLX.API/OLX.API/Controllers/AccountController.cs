@@ -99,6 +99,14 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = Roles.Admin)]
+        [HttpDelete("delete")]
+        public async Task<IActionResult> RemoveAccount([FromQuery] string email)
+        {
+            await accountService.RemoveAccountAsync(email);
+            return Ok();
+        }
+
         private void SetHttpOnlyCookies(string token)
         {
             Response.Cookies.Append(configuration["RefreshTokenCookiesName"]!, token, new CookieOptions
