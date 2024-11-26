@@ -23,6 +23,7 @@ namespace Olx.BLL.Services
 {
     public class AccountService(
         UserManager<OlxUser> userManager,
+        RoleManager<IdentityRole<int>> roleManager,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
         IEmailService emailService,
@@ -32,7 +33,8 @@ namespace Olx.BLL.Services
         IValidator<ResetPasswordModel> resetPasswordModelValidator,
         IValidator<EmailConfirmationModel> emailConfirmationModelValidator,
         IValidator<UserBlockModel> userBlockModelValidator,
-        IValidator<UserCreationModel> userCreationModelValidator) : IAccountService
+        IValidator<UserCreationModel> userCreationModelValidator,
+        IValidator<UserEditModel> userEditModelValidator) : IAccountService
     {
         private async Task<string> CreateRefreshToken(int userId)
         {
@@ -250,13 +252,38 @@ namespace Olx.BLL.Services
         {
             var user = await userManager.FindByEmailAsync(email) 
                 ?? throw new HttpException(Errors.InvalidUserEmail, HttpStatusCode.BadRequest);
+            var adminsCount = roleManager.Roles.Where(x => x.Name == Roles.Admin).Count();
+            if (adminsCount <= 1)
+                throw new HttpException(Errors.ActionBlocked, HttpStatusCode.Locked);
             var result = await userManager.DeleteAsync(user);
-            if (result.Succeeded) 
+            if (result.Succeeded)
             {
-                if(user.Photo is not null)
+                if (user.Photo is not null)
                     imageService.DeleteImageIfExists(user.Photo);
             }
             else throw new HttpException(Errors.UserRemoveError, HttpStatusCode.InternalServerError);
+        }
+        public async Task EditUserAsync(UserEditModel userEditModel, bool isAdmin)
+        {
+            var user = await userManager.FindByIdAsync(userEditModel.Id.ToString())
+                ?? throw new HttpException(Errors.InvalidUserId,HttpStatusCode.NotFound);
+            if (await userManager.IsInRoleAsync(user, Roles.Admin) && !isAdmin)
+                throw new HttpException(Errors.ActionBlocked,HttpStatusCode.Forbidden);
+            userEditModelValidator.ValidateAndThrow(userEditModel);
+            if (userEditModel.OldPassword is not null && userEditModel.Password is not null )
+            {
+                var result = await userManager.ChangePasswordAsync(user, userEditModel.OldPassword, userEditModel.Password);
+                if (!result.Succeeded)
+                    throw new HttpException(Errors.CurentPasswordIsNotValid,HttpStatusCode.BadRequest);
+            }
+            mapper.Map(userEditModel,user);
+            if (userEditModel.ImageFile is not null)
+            {
+                if(user.Photo is not null)
+                   imageService.DeleteImageIfExists(user.Photo);
+                user.Photo =  await imageService.SaveImageAsync(userEditModel.ImageFile);
+            }
+            await userManager.UpdateAsync(user);
         }
     }
 }

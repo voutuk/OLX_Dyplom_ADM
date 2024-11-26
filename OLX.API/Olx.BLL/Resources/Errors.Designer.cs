@@ -10,9 +10,8 @@
 
 namespace Olx.BLL.Resources {
     using System;
-    using System.Net;
-
-
+    
+    
     /// <summary>
     ///   Класс ресурса со строгой типизацией для поиска локализованных строк и т.д.
     /// </summary>
@@ -32,10 +31,7 @@ namespace Olx.BLL.Resources {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Errors() {
         }
-
-        public static HttpStatusCode InvalidUserEmail { get; internal set; }
-        public static HttpStatusCode UserRemoveError { get; internal set; }
-
+        
         /// <summary>
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
@@ -61,6 +57,24 @@ namespace Olx.BLL.Resources {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Action blocked.
+        /// </summary>
+        internal static string ActionBlocked {
+            get {
+                return ResourceManager.GetString("ActionBlocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Curent password is not valid.
+        /// </summary>
+        internal static string CurentPasswordIsNotValid {
+            get {
+                return ResourceManager.GetString("CurentPasswordIsNotValid", resourceCulture);
             }
         }
         
@@ -119,6 +133,24 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid user email.
+        /// </summary>
+        internal static string InvalidUserEmail {
+            get {
+                return ResourceManager.GetString("InvalidUserEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid user id.
+        /// </summary>
+        internal static string InvalidUserId {
+            get {
+                return ResourceManager.GetString("InvalidUserId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Error read JWT setting.
         /// </summary>
         internal static string JwtSettingsReadError {
@@ -133,6 +165,15 @@ namespace Olx.BLL.Resources {
         internal static string UserCreateError {
             get {
                 return ResourceManager.GetString("UserCreateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на User remove error.
+        /// </summary>
+        internal static string UserRemoveError {
+            get {
+                return ResourceManager.GetString("UserRemoveError", resourceCulture);
             }
         }
     }
