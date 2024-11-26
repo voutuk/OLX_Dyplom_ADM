@@ -147,4 +147,13 @@
   <data name="UserRemoveError" xml:space="preserve">
     <value>User remove error</value>
   </data>
+  <data name="ActionBlocked" xml:space="preserve">
+    <value>Action blocked</value>
+  </data>
+  <data name="InvalidUserId" xml:space="preserve">
+    <value>Invalid user id</value>
+  </data>
+  <data name="CurentPasswordIsNotValid" xml:space="preserve">
+    <value>Curent password is not valid</value>
+  </data>
 </root>

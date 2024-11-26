@@ -76,6 +76,22 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = Roles.User)]
+        [HttpPost("edit/user")]
+        public async Task<IActionResult> EditUser([FromForm] UserEditModel userEditModel)
+        {
+            await accountService.EditUserAsync(userEditModel);
+            return Ok();
+        }
+
+        [Authorize(Roles = Roles.Admin)]
+        [HttpPost("edit/admin")]
+        public async Task<IActionResult> EditAdmin([FromForm] UserEditModel userEditModel)
+        {
+            await accountService.EditUserAsync(userEditModel,true);
+            return Ok();
+        }
+
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("block")]
         public async Task<IActionResult> BlockUser([FromBody] UserBlockModel userBlockModel)

@@ -16,5 +16,6 @@ namespace Olx.BLL.Interfaces
         Task BlockUserAsync(UserBlockModel userBlockModel);
         Task AddUserAsync(UserCreationModel userModel,bool isAdmin = false);
         Task RemoveAccountAsync(string email);
+        Task EditUserAsync(UserEditModel userEditModel,bool isAdmin = false);
     }
 }

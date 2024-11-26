@@ -18,5 +18,6 @@ namespace Olx.BLL.Entities
         [StringLength(4000)]
         public string? About { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
+        public ICollection<Advert> Adverts { get; set; } = new HashSet<Advert>();
     }
 }

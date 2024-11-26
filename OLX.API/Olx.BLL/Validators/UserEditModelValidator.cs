@@ -5,18 +5,21 @@ using Olx.BLL.Resources;
 
 namespace Olx.BLL.Validators
 {
-    public class UserCreationModelValidator : AbstractValidator<UserCreationModel>
+    public class UserEditModelValidator : AbstractValidator<UserEditModel>
     {
-        public UserCreationModelValidator()
+        public UserEditModelValidator()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty().WithMessage(ValidationErrors.NotEmpty)
-                .EmailAddress().WithMessage(ValidationErrors.InvalidEmail);
+            RuleFor(x => x.OldPassword)
+                .Matches(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{6,}$")
+                .WithMessage(ValidationErrors.InvalidPassword)
+                .When(x => x.OldPassword is not null);
             RuleFor(x => x.Password)
                 .Matches(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{6,}$")
-                .WithMessage(ValidationErrors.InvalidPassword);
+                .WithMessage(ValidationErrors.InvalidPassword)
+                .When(x => x.OldPassword is not null && x.Password is not null);
             RuleFor(x => x.PasswordConfirmation)
-                .Equal(x => x.Password).WithMessage(ValidationErrors.NotMatchPasswordsError);
+                .Equal(x => x.Password).WithMessage(ValidationErrors.NotMatchPasswordsError)
+                .When(x => x.OldPassword is not null && x.Password is not null && x.PasswordConfirmation is not null);
             RuleFor(x => x.About)
                 .MaximumLength(4000).WithMessage($"{ValidationErrors.MaxSymbolsCountError} 4000 symbols")
                 .MinimumLength(40).WithMessage($"{ValidationErrors.MinSymbolsCountError} 40 symbols")
