@@ -10,8 +10,9 @@
 
 namespace Olx.BLL.Resources {
     using System;
-    
-    
+    using System.Net;
+
+
     /// <summary>
     ///   Класс ресурса со строгой типизацией для поиска локализованных строк и т.д.
     /// </summary>
@@ -31,7 +32,10 @@ namespace Olx.BLL.Resources {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Errors() {
         }
-        
+
+        public static HttpStatusCode InvalidUserEmail { get; internal set; }
+        public static HttpStatusCode UserRemoveError { get; internal set; }
+
         /// <summary>
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>

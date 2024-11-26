@@ -11,7 +11,8 @@ namespace Olx.DAL.Data.EntityConfigs
         {
             builder.HasOne(x => x.OlxUser)
                 .WithMany(x => x.RefreshTokens)
-                .HasForeignKey(x => x.OlxUserId);
+                .HasForeignKey(x => x.OlxUserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

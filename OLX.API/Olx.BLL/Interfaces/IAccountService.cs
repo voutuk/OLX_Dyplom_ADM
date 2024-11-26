@@ -15,5 +15,6 @@ namespace Olx.BLL.Interfaces
         Task ResetPasswordAsync(ResetPasswordModel resetPasswordModel);
         Task BlockUserAsync(UserBlockModel userBlockModel);
         Task AddUserAsync(UserCreationModel userModel,bool isAdmin = false);
+        Task RemoveAccountAsync(string email);
     }
 }

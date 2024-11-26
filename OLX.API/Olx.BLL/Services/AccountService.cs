@@ -246,5 +246,17 @@ namespace Olx.BLL.Services
             if(!await userManager.IsEmailConfirmedAsync(user))
                 await SendEmailConfirmationMessageAsync(user);
         }
+        public async Task RemoveAccountAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email) 
+                ?? throw new HttpException(Errors.InvalidUserEmail, HttpStatusCode.BadRequest);
+            var result = await userManager.DeleteAsync(user);
+            if (result.Succeeded) 
+            {
+                if(user.Photo is not null)
+                    imageService.DeleteImageIfExists(user.Photo);
+            }
+            else throw new HttpException(Errors.UserRemoveError, HttpStatusCode.InternalServerError);
+        }
     }
 }

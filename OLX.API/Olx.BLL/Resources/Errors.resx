@@ -141,4 +141,10 @@
   <data name="UserCreateError" xml:space="preserve">
     <value>User creation error</value>
   </data>
+  <data name="InvalidUserEmail" xml:space="preserve">
+    <value>Invalid user email</value>
+  </data>
+  <data name="UserRemoveError" xml:space="preserve">
+    <value>User remove error</value>
+  </data>
 </root>
