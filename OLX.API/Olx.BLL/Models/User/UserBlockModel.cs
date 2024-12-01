@@ -3,10 +3,10 @@ namespace Olx.BLL.Models.User
 {
     public class UserBlockModel
     {
-        public string Email { get; set; } = string.Empty;
-        public bool Block { get; set; }
-        public DateTime? LockoutEndDate { get; set; }
-        public string? BlockReason { get; set; }
+        public string Email { get; init; } = string.Empty;
+        public bool Block { get; init; }
+        public DateTime? LockoutEndDate { get; init; }
+        public string? BlockReason { get; init; }
 
     }
 }

@@ -10,6 +10,7 @@ if errorlevel 1 (
         timeout /t 5 /nobreak >nul
         goto waitForDocker
     )
+    timeout /t 2 /nobreak >nul
     echo Docker Desktop successfuly started ...
 ) 
 

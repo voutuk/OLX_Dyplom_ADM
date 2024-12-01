@@ -9,9 +9,8 @@ namespace Olx.DAL.Data.EntityConfigs
     {
         public void Configure(EntityTypeBuilder<FilterValue> builder)
         {
-            builder.HasOne(x => x.Filter)
-                .WithMany(x => x.Values)
-                .HasForeignKey(x=>x.FilterId);
+            builder.HasMany(x => x.Filters)
+                .WithMany(x => x.Values);
             builder.HasMany(x => x.Adverts)
                 .WithMany(x => x.FilterValues);
         }

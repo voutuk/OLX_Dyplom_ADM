@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Olx.DAL.Data;
@@ -11,9 +12,11 @@ using Olx.DAL.Data;
 namespace Olx.DAL.Migrations
 {
     [DbContext(typeof(OlxDbContext))]
-    partial class OlxDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241130194054_Add_to_FilterValue_hullable_foreign_key")]
+    partial class Add_to_FilterValue_hullable_foreign_key
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,21 +53,6 @@ namespace Olx.DAL.Migrations
                     b.HasIndex("FiltersId");
 
                     b.ToTable("CategoryFilter");
-                });
-
-            modelBuilder.Entity("FilterFilterValue", b =>
-                {
-                    b.Property<int>("FiltersId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ValuesId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("FiltersId", "ValuesId");
-
-                    b.HasIndex("ValuesId");
-
-                    b.ToTable("FilterFilterValue");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -279,12 +267,17 @@ namespace Olx.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("FilterId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FilterId");
 
                     b.ToTable("FilterValue");
                 });
@@ -437,21 +430,6 @@ namespace Olx.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FilterFilterValue", b =>
-                {
-                    b.HasOne("Olx.BLL.Entities.FilterEntities.Filter", null)
-                        .WithMany()
-                        .HasForeignKey("FiltersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Olx.BLL.Entities.FilterEntities.FilterValue", null)
-                        .WithMany()
-                        .HasForeignKey("ValuesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
@@ -527,6 +505,15 @@ namespace Olx.DAL.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("Olx.BLL.Entities.FilterEntities.FilterValue", b =>
+                {
+                    b.HasOne("Olx.BLL.Entities.FilterEntities.Filter", "Filter")
+                        .WithMany("Values")
+                        .HasForeignKey("FilterId");
+
+                    b.Navigation("Filter");
+                });
+
             modelBuilder.Entity("Olx.BLL.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Olx.BLL.Entities.OlxUser", "OlxUser")
@@ -543,6 +530,11 @@ namespace Olx.DAL.Migrations
                     b.Navigation("Adverts");
 
                     b.Navigation("Childs");
+                });
+
+            modelBuilder.Entity("Olx.BLL.Entities.FilterEntities.Filter", b =>
+                {
+                    b.Navigation("Values");
                 });
 
             modelBuilder.Entity("Olx.BLL.Entities.OlxUser", b =>

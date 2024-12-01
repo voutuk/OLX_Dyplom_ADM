@@ -4,7 +4,7 @@ namespace Olx.BLL.Models.User
 {
     public class UserBlockInfo
     {
-        public string? Message { get; set; }
-        public DateTime? UnlockTime { get; set; }
+        public string? Message { get; init; }
+        public DateTime? UnlockTime { get; init; }
     }
 }

@@ -106,6 +106,33 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid filter creation model data.
+        /// </summary>
+        internal static string InvalidFilterCreationModelData {
+            get {
+                return ResourceManager.GetString("InvalidFilterCreationModelData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid filter id.
+        /// </summary>
+        internal static string InvalidFilterId {
+            get {
+                return ResourceManager.GetString("InvalidFilterId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid filter value id.
+        /// </summary>
+        internal static string InvalidFilterValueId {
+            get {
+                return ResourceManager.GetString("InvalidFilterValueId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid login or password.
         /// </summary>
         internal static string InvalidLoginData {

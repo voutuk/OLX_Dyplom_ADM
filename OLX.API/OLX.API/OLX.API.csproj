@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Helpers\JsonData\Categories.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
@@ -24,8 +28,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\JsonData\" />
     <Folder Include="uploading\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Helpers\JsonData\Categories.json" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>
