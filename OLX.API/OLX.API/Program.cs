@@ -19,7 +19,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.UseCors("AllowOrigins");
-app.DataBaseMigrate();
 app.AddStaticFiles();
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
@@ -29,7 +28,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.DataBaseMigrate();
 await app.SeedDataAsync();
-
-app.Run();
+await app.RunAsync();
