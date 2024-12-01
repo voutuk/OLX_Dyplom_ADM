@@ -156,4 +156,13 @@
   <data name="CurentPasswordIsNotValid" xml:space="preserve">
     <value>Curent password is not valid</value>
   </data>
+  <data name="InvalidFilterCreationModelData" xml:space="preserve">
+    <value>Invalid filter creation model data</value>
+  </data>
+  <data name="InvalidFilterValueId" xml:space="preserve">
+    <value>Invalid filter value id</value>
+  </data>
+  <data name="InvalidFilterId" xml:space="preserve">
+    <value>Invalid filter id</value>
+  </data>
 </root>

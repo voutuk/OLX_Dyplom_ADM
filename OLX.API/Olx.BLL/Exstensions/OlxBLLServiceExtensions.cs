@@ -22,6 +22,7 @@ namespace Olx.BLL.Exstensions
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IFilterValueService, FilterValueService>();
             services.AddScoped<IFilterService, FilterService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddHostedService<TokenCleanupService>();

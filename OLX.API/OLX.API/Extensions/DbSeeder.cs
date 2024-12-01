@@ -89,7 +89,7 @@ namespace OLX.API.Extensions
                                 Name = x.Name,
                                 Values = x.Values.Select(z=> new FilterValue() { Value = z}).ToHashSet()
                             });
-                            await filterService.AddFiltersAsync(filters);
+                            await filterService.CreateAsync(filters);
                         }
                             
                     }

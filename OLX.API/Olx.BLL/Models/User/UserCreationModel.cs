@@ -6,14 +6,14 @@ namespace Olx.BLL.Models.User
 {
     public class UserCreationModel
     {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string PasswordConfirmation { get; set; } = string.Empty;
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public FormFile? ImageFile { get; set; }
-        public string? WebSite { get; set; }
-        public string? About { get; set; }
-        public string? PhoneNumber { get; set; }
+        public string Email { get; init; } = string.Empty;
+        public string Password { get; init; } = string.Empty;
+        public string PasswordConfirmation { get; init; } = string.Empty;
+        public string? FirstName { get; init; }
+        public string? LastName { get; init; }
+        public FormFile? ImageFile { get; init; }
+        public string? WebSite { get; init; }
+        public string? About { get; init; }
+        public string? PhoneNumber { get; init; }
     }
 }
