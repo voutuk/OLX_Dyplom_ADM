@@ -1,10 +1,8 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
-using Olx.BLL.Models;
-using Olx.BLL.Services;
+
 
 namespace OLX.API.Controllers
 {
