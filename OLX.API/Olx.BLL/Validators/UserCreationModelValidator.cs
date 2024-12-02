@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Olx.BLL.Helpers;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 
@@ -32,6 +33,9 @@ namespace Olx.BLL.Validators
             RuleFor(x => x.PhoneNumber)
                 .Matches(@"^\d{3}[-\s]{0,1}\d{3}[-\s]{0,1}\d{2}[-\s]{0,1}\d{2}$")
                 .WithMessage(ValidationErrors.InvalidPhoneNumber);
+            RuleFor(x => x.ImageFile)
+                .Must(x => FileTypes.AllowedImageFileTypes.Contains(x?.ContentType)).WithMessage(ValidationErrors.InvalidImageFileType)
+                .When(x => x.ImageFile != null);
         }
     }
 }

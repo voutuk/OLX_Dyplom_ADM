@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
+using Olx.BLL.Services;
 
 
 namespace OLX.API.Controllers
@@ -16,6 +17,14 @@ namespace OLX.API.Controllers
 
         [HttpPost("range")]
         public async Task<IActionResult> GetAll([FromBody]IEnumerable<int> ids) => Ok(await filterService.GetDtoByIds(ids));
+
+        [Authorize(Roles = Roles.Admin)]
+        [HttpPost("edit")]
+        public async Task<IActionResult> Edit([FromForm] FilterCreationModel filterEditModel)
+        {
+            await filterService.EditAsync(filterEditModel);
+            return Ok();
+        }
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("create")]

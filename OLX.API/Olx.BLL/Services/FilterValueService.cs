@@ -24,19 +24,16 @@ namespace Olx.BLL.Services
 
         public async Task CreateAsync(string value) => await CreateAsync(new FilterValue() { Value = value });
 
-        public async Task CreateAsync(IEnumerable<FilterValue> values)
-        {
-            await valueRepository.AddRangeAsync(values);
-            await valueRepository.SaveAsync();
-        }
-
+        
         public async Task CreateAsync(IEnumerable<string> values)
         {
             var valueEntities = values.Select(x => new FilterValue() { Value = x });
-            await CreateAsync(valueEntities);
+            await valueRepository.AddRangeAsync(valueEntities);
+            await valueRepository.SaveAsync();
         }
 
-        public async Task<IEnumerable<FilterValue>> GetByIdsAsync(IEnumerable<int> ids, bool tracking = false) => await valueRepository.GetListBySpec(new FilterValueSpecs.GetByIds(ids, tracking));
+        public async Task<IEnumerable<FilterValue>> GetByIdsAsync(IEnumerable<int> ids, bool tracking = false) => 
+            await valueRepository.GetListBySpec(new FilterValueSpecs.GetByIds(ids, tracking));
 
         public async Task<IEnumerable<FilterValueDto>> GetDtoByIdsAsync(IEnumerable<int> ids, bool tracking = false) =>
               mapper.Map<IEnumerable<FilterValueDto>>(await GetByIdsAsync(ids, tracking));

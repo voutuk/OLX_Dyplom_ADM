@@ -115,6 +115,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid image file type (png,jpeg,jpg,gif,webp).
+        /// </summary>
+        internal static string InvalidImageFileType {
+            get {
+                return ResourceManager.GetString("InvalidImageFileType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid password..
         /// </summary>
         internal static string InvalidPassword {

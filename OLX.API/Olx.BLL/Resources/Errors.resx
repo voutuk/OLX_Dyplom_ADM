@@ -165,4 +165,10 @@
   <data name="InvalidFilterId" xml:space="preserve">
     <value>Invalid filter id</value>
   </data>
+  <data name="InvalidCategoryId" xml:space="preserve">
+    <value>Invalid category id</value>
+  </data>
+  <data name="Invalidfghbsdfghdfg" xml:space="preserve">
+    <value>fdghdfghhfd</value>
+  </data>
 </root>
