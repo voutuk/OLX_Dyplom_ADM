@@ -2,7 +2,6 @@
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Models;
 using Olx.BLL.Models.Filter;
-using Olx.BLL.Pagination;
 
 
 namespace Olx.BLL.Interfaces
