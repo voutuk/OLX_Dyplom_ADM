@@ -5,7 +5,7 @@ using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
-using Olx.BLL.Models.Filter;
+using Olx.BLL.Models.FilterModels;
 using Olx.BLL.Pagination;
 using Olx.BLL.Pagination.Filters;
 using Olx.BLL.Pagination.SortData;

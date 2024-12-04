@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
-using Olx.BLL.Models.Filter;
-
-
+using Olx.BLL.Models.FilterModels;
 
 namespace OLX.API.Controllers
 {

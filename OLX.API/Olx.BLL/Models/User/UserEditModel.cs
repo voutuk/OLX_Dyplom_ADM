@@ -1,8 +1,12 @@
 ﻿
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Olx.BLL.Entities;
+
 
 namespace Olx.BLL.Models.User
 {
+    [AutoMap(typeof(OlxUser))]
     public class UserEditModel 
     {
         public int Id { get; init; }

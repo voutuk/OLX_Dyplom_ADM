@@ -1,5 +1,9 @@
-﻿namespace Olx.BLL.Models.Filter
+﻿using AutoMapper;
+using Olx.BLL.Entities.FilterEntities;
+
+namespace Olx.BLL.Models.FilterModels
 {
+    [AutoMap(typeof(Filter))]
     public class FilterCreationModel
     {
         public int Id { get; set; }

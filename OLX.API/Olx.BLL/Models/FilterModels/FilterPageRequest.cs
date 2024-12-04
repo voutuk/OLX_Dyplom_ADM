@@ -1,4 +1,4 @@
-﻿namespace Olx.BLL.Models.Filter
+﻿namespace Olx.BLL.Models.FilterModels
 {
     public class FilterPageRequest : PageRequest
     {

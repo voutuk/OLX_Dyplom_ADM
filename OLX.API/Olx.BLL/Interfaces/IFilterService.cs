@@ -1,7 +1,7 @@
 ﻿using Olx.BLL.DTOs;
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Models;
-using Olx.BLL.Models.Filter;
+using Olx.BLL.Models.FilterModels;
 
 
 namespace Olx.BLL.Interfaces

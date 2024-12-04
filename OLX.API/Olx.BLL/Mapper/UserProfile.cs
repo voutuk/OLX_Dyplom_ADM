@@ -11,8 +11,7 @@ namespace Olx.BLL.Mapper
         {
             CreateMap<UserCreationModel, OlxUser>()
                 .ForMember(x=>x.UserName,opt=>opt.MapFrom(x=>x.Email));
-            CreateMap<UserEditModel, OlxUser>();
-
+           
             CreateMap<GoogleUserInfo, OlxUser>()
                 .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.Given_Name))
                 .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.Family_Name))
