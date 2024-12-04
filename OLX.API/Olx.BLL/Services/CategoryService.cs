@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using Olx.BLL.DTOs;
+using Olx.BLL.DTOs.CategoryDtos;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Olx.BLL.Services
@@ -68,5 +69,31 @@ namespace Olx.BLL.Services
 
         public async Task<IEnumerable<CategoryDto>> GetMainAsync(bool tracking = false) =>
             mapper.Map<IEnumerable<CategoryDto>>(await categoryRepository.GetListBySpec(new CategorySpecs.GetMain(tracking)));
+
+        public async Task<CategoryChildsTreeDto> GetTreeAsync(int categoryId, bool tracking = false)
+        {
+            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(tracking));
+            var category = categories.FirstOrDefault(x=>x.Id == categoryId)
+                ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
+            category.Childs = BuildTree(categoryId, categories).ToHashSet();
+            return mapper.Map<CategoryChildsTreeDto>(category);
+        }
+
+        public async Task<IEnumerable<CategoryChildsTreeDto>> GetMainTreeAsync(bool tracking = false)
+        {
+            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(tracking));
+            return mapper.Map<IEnumerable<CategoryChildsTreeDto>> (BuildTree(null, categories));
+        }
+
+        private IEnumerable<Category> BuildTree(int? parentId, IEnumerable<Category> categories)
+        {
+            return categories
+                .Where(c => c.ParentId == parentId)
+                .Select(c =>
+                {
+                    c.Childs = BuildTree(c.Id, categories).ToHashSet();
+                    return c;
+                });
+        }
     }
 }

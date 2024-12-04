@@ -10,10 +10,8 @@ namespace Olx.BLL.Specifications
         {
             public GetAll(bool tracking = false) 
             {
-                Query.Include(x=>x.Parent)
-                     .Include(x=>x.Childs)
-                     .Include(x=>x.Filters)
-                     .AsTracking(tracking);
+                Query.AsTracking(tracking)
+                     .Include(x=>x.Filters);
             }
         }
 
@@ -21,11 +19,9 @@ namespace Olx.BLL.Specifications
         {
             public GetMain(bool tracking = false)
             {
-                Query.Where(x=>x.Parent == null)
-                     .Include(x => x.Parent)
-                     .Include(x => x.Childs)
+                Query.AsTracking(tracking)
                      .Include(x => x.Filters)
-                     .AsTracking(tracking);
+                     .Where(x => x.Parent == null);
             }
         }
     }

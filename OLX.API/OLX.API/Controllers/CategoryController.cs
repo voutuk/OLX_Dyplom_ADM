@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
-using Olx.BLL.Services;
 
 
 namespace OLX.API.Controllers
@@ -17,6 +16,12 @@ namespace OLX.API.Controllers
 
         [HttpGet("get/main")]
         public async Task<IActionResult> GetMain() => Ok(await categoryService.GetMainAsync());
+
+        [HttpGet("get/tree")]
+        public async Task<IActionResult> GetMainTree() => Ok(await categoryService.GetMainTreeAsync());
+
+        [HttpGet("get/tree/{id:int}")]
+        public async Task<IActionResult> GetTree([FromRoute]int id) => Ok(await categoryService.GetTreeAsync(id));
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("edit")]
