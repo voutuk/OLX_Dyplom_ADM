@@ -5,6 +5,10 @@ using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
+using Olx.BLL.Models.Filter;
+using Olx.BLL.Pagination;
+using Olx.BLL.Pagination.Filters;
+using Olx.BLL.Pagination.SortData;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
 using System.Net;
@@ -68,6 +72,19 @@ namespace Olx.BLL.Services
                 await filterRepository.SaveAsync();
             }
             else throw new HttpException(Errors.InvalidFilterId, HttpStatusCode.BadRequest);
+        }
+
+        public async Task<PageResponse<FilterDto>> GetPageAsync(FilterPageRequest pageRequest)
+        {
+            var paginationBuilder = new PaginationBuilder<Filter>(filterRepository);
+            FiltersFilter? filter = !String.IsNullOrEmpty(pageRequest.SearchName)? new FiltersFilter(pageRequest.SearchName) : null;
+            FilterSortData? sortData = pageRequest.SortIndex != 0 ? new FilterSortData(pageRequest.IsDescending,pageRequest.SortIndex) : null;
+            var page = await paginationBuilder.GetPageAsync(pageRequest.Page,pageRequest.Size, filter, sortData);
+            return new()
+            {
+                Total = page.Total,
+                Items = mapper.Map<IEnumerable<FilterDto>>(page.Items)
+            };
         }
     }
 }

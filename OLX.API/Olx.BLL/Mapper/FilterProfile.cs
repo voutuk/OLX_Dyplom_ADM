@@ -2,7 +2,7 @@
 using AutoMapper;
 using Olx.BLL.DTOs;
 using Olx.BLL.Entities.FilterEntities;
-using Olx.BLL.Models;
+using Olx.BLL.Models.Filter;
 
 namespace Olx.BLL.Mapper
 {

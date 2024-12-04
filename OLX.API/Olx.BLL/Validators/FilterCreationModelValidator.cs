@@ -1,6 +1,6 @@
 ﻿
 using FluentValidation;
-using Olx.BLL.Models;
+using Olx.BLL.Models.Filter;
 using Olx.BLL.Resources;
 
 namespace Olx.BLL.Validators

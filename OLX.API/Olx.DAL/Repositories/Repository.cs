@@ -18,6 +18,7 @@ namespace Olx.DAL.Repositories
             this.dbSet = context.Set<TEntity>();
         }
 
+        public virtual  IQueryable<TEntity> GetQuery(QueryTrackingBehavior tracking = QueryTrackingBehavior.NoTracking) => dbSet.AsTracking(tracking);
         public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> exp) => await dbSet.AnyAsync(exp);
 
         public virtual async Task<TEntity?> GetByIDAsync(object id) => await dbSet.FindAsync(id);
