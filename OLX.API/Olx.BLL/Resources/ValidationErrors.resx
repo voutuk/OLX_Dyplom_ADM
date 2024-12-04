@@ -162,4 +162,7 @@
   <data name="MaxSymbolsCountError" xml:space="preserve">
     <value>{PropertyName}length must less</value>
   </data>
+  <data name="InvalidImageFileType" xml:space="preserve">
+    <value>Invalid image file type (png,jpeg,jpg,gif,webp)</value>
+  </data>
 </root>

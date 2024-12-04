@@ -97,11 +97,29 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid category id.
+        /// </summary>
+        internal static string InvalidCategoryId {
+            get {
+                return ResourceManager.GetString("InvalidCategoryId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Confirmation data error.
         /// </summary>
         internal static string InvalidConfirmationData {
             get {
                 return ResourceManager.GetString("InvalidConfirmationData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на fdghdfghhfd.
+        /// </summary>
+        internal static string Invalidfghbsdfghdfg {
+            get {
+                return ResourceManager.GetString("Invalidfghbsdfghdfg", resourceCulture);
             }
         }
         

@@ -13,7 +13,8 @@ namespace Olx.DAL.Data.EntityConfigs
                 .WithMany(x => x.Categories);
             builder.HasOne(x => x.Parent)
                 .WithMany(x => x.Childs)
-                .HasForeignKey(x=>x.ParentId);
+                .HasForeignKey(x=>x.ParentId)
+                .OnDelete(DeleteBehavior.SetNull);
             builder.HasMany(x => x.Adverts)
                 .WithOne(x => x.Category)
                 .HasForeignKey(x=>x.CategoryId);

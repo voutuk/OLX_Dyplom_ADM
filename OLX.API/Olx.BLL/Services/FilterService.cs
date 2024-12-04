@@ -7,9 +7,7 @@ using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
-using System.Linq;
 using System.Net;
-
 
 
 namespace Olx.BLL.Services
@@ -20,20 +18,7 @@ namespace Olx.BLL.Services
         IFilterValueService filterValueService,
         IMapper mapper) : IFilterService
     {
-        public async Task CreateAsync(Filter filter)
-        {
-            await filterRepository.AddAsync(filter);
-            await filterRepository.SaveAsync();
-        }
-     
-        public async Task CreateAsync(string filterName, IEnumerable<string>? values = null)
-        {
-            var filter = new Filter() { Name = filterName };
-            if(values is not null)
-               filter.Values = values.Select(x=> new FilterValue() {Value = x }).ToHashSet();
-            await CreateAsync(filter);
-        }
-
+             
         public async Task CreateAsync(FilterCreationModel filterModel)
         {
             filterCreationModelValidator.ValidateAndThrow(filterModel);
@@ -48,22 +33,12 @@ namespace Olx.BLL.Services
             await filterRepository.SaveAsync();
         }
 
-        public async Task CreateAsync(IEnumerable<Filter> filters)
-        {
-            await filterRepository.AddRangeAsync(filters);
-            await filterRepository.SaveAsync();
-        }
-
-        public async Task<int> CountAsync() => await filterRepository.CountAsync();
-       
         public async Task<IEnumerable<Filter>> GetByIds(IEnumerable<int> ids, bool tracking = false) =>
             await filterRepository.GetListBySpec(new FilterSpecs.GetByIds(ids, tracking));
 
         public async Task<IEnumerable<FilterDto>> GetDtoByIds(IEnumerable<int> ids, bool tracking = false) =>
              mapper.Map<IEnumerable<FilterDto>>(await GetByIds(ids, tracking));
-            
-        public async Task<bool> IsFiltersAsync() => await filterRepository.AnyAsync();
-
+        
         public async Task<IEnumerable<FilterDto>> GetAll() =>
             mapper.Map<IEnumerable<FilterDto>>(await filterRepository.GetListBySpec(new FilterSpecs.GetAll()));
 
@@ -80,19 +55,16 @@ namespace Olx.BLL.Services
 
         public async Task EditAsync(FilterCreationModel filterModel)
         {
-            var filter = await filterRepository.GetItemBySpec( new FilterSpecs.GetById(filterModel.Id,true));
+            var filter = await filterRepository.GetByIDAsync(filterModel.Id);
             if (filter is not null)
             {
                 mapper.Map(filterModel,filter);
                 if (filterModel.ValuesIds is not null && filterModel.ValuesIds.Any())
-                {
-                    filter.Values = (await filterValueService.GetByIdsAsync(filterModel.ValuesIds)).ToHashSet();
-                }
-                
+                    filter.Values = (await filterValueService.GetByIdsAsync(filterModel.ValuesIds,true)).ToHashSet();
+                else filter.Values.Clear();
+
                 if (filterModel.NewValues is not null && filterModel.NewValues.Any())
-                {
-                    filter.Values= [.. filter.Values, .. filterModel.NewValues.Select(x => new FilterValue() { Value = x })];
-                }
+                   filter.Values= [.. filter.Values, .. filterModel.NewValues.Select(x => new FilterValue() { Value = x })];
                 await filterRepository.SaveAsync();
             }
             else throw new HttpException(Errors.InvalidFilterId, HttpStatusCode.BadRequest);

@@ -4,6 +4,7 @@ using Olx.BLL.Entities;
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
+using Olx.BLL.Specifications;
 using OLX.API.Models.Seeder;
 using System.Text;
 
@@ -28,7 +29,8 @@ namespace OLX.API.Extensions
 
             //Users seeder
             var userManager = serviceProvider.GetRequiredService<UserManager<OlxUser>>();
-            if(!userManager.Users.Any())
+            var imageService = serviceProvider.GetRequiredService<IImageService>();
+            if (!userManager.Users.Any())
             {
                 string usersJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(),"Helpers/JsonData/Users.json" );
                 if (File.Exists(usersJsonDataFile))
@@ -36,9 +38,8 @@ namespace OLX.API.Extensions
                     var userJson = File.ReadAllText(usersJsonDataFile, Encoding.UTF8);
                     try
                     {
-                        var usersData = JsonConvert.DeserializeObject<IEnumerable<SeaderUserModel>>(userJson)
+                        var usersData = JsonConvert.DeserializeObject<IEnumerable<SeederUserModel>>(userJson)
                             ?? throw new JsonException();
-                        var imageService = serviceProvider.GetRequiredService<IImageService>();
                         foreach (var user in usersData)
                         {
                             var newUser = new OlxUser
@@ -71,8 +72,8 @@ namespace OLX.API.Extensions
                 else Console.WriteLine("File \"JsonData/Users.json\" not found");  
             }
             //Filter seeder
-            var filterService = scope.ServiceProvider.GetService<IFilterService>();
-            if (filterService is not null && ! await filterService.IsFiltersAsync() )
+            var filterRepo = scope.ServiceProvider.GetService<IRepository<Filter>>();
+            if (filterRepo is not null && ! await filterRepo.AnyAsync() )
             {
                 string filtersJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(), "Helpers/JsonData/Filters.json");
                 if (File.Exists(filtersJsonDataFile))
@@ -89,7 +90,8 @@ namespace OLX.API.Extensions
                                 Name = x.Name,
                                 Values = x.Values.Select(z=> new FilterValue() { Value = z}).ToHashSet()
                             });
-                            await filterService.CreateAsync(filters);
+                            await filterRepo.AddRangeAsync(filters);
+                            await filterRepo.SaveAsync();
                         }
                             
                     }
@@ -101,35 +103,51 @@ namespace OLX.API.Extensions
                 else Console.WriteLine("File \"JsonData/Filter.json\" not found");
             }
             //Category seeder
-            //var filterService = scope.ServiceProvider.GetService<IFilterService>();
-            //if (filterService is not null && !await filterService.IsFiltersAsync())
-            //{
-            //    string filtersJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(), "Helpers/JsonData/Filters.json");
-            //    if (File.Exists(filtersJsonDataFile))
-            //    {
-            //        var filtersJson = File.ReadAllText(filtersJsonDataFile, Encoding.UTF8);
-            //        try
-            //        {
-            //            var filtersModels = JsonConvert.DeserializeObject<IEnumerable<SeederFilterModel>>(filtersJson)
-            //                ?? throw new JsonException();
-            //            if (filtersModels is not null && filtersModels.Any())
-            //            {
-            //                var filters = filtersModels.Select(x => new Filter()
-            //                {
-            //                    Name = x.Name,
-            //                    Values = x.Values.Select(z => new FilterValue() { Value = z }).ToHashSet()
-            //                });
-            //                await filterService.AddFiltersAsync(filters);
-            //            }
+            var categoryRepo = scope.ServiceProvider.GetService<IRepository<Category>>();
+            if (categoryRepo is not null && !await categoryRepo.AnyAsync())
+            {
+                string categoryJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(), "Helpers/JsonData/Categories.json");
+                if (File.Exists(categoryJsonDataFile))
+                {
+                    var filtersJson = File.ReadAllText(categoryJsonDataFile, Encoding.UTF8);
+                    try
+                    {
+                        var categoryModels = JsonConvert.DeserializeObject<IEnumerable<SeederCategoryModel>>(filtersJson)
+                            ?? throw new JsonException();
+                        if (categoryModels is not null && categoryModels.Any() && filterRepo is not null)
+                        {
+                            var filters = await filterRepo.GetListBySpec(new FilterSpecs.GetAll(true));
+                            await categoryRepo.AddRangeAsync(await GetCategories(categoryModels, filters,imageService));
+                            await categoryRepo.SaveAsync();
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        Console.WriteLine("Error deserialize categories json file");
+                    }
+                }
+                else Console.WriteLine("File \"JsonData/Categories.json\" not found");
+            }
+        }
 
-            //        }
-            //        catch (JsonException)
-            //        {
-            //            Console.WriteLine("Error deserialize filters json file");
-            //        }
-            //    }
-            //    else Console.WriteLine("File \"JsonData/Filter.json\" not found");
-            //}
+        private async static Task<IEnumerable<Category>> GetCategories(IEnumerable<SeederCategoryModel> models,IEnumerable<Filter> filters,IImageService imageService)
+        {
+            List<Category> categories = [];
+            foreach (var model in models)
+            {
+                var category = new Category()
+                {
+                    Name = model.Name,
+                    Image = !String.IsNullOrEmpty(model.Image) ? await imageService.SaveImageFromUrlAsync(model.Image) : null
+                };
+                if (model.Filters is not null && model.Filters.Any())
+                    category.Filters = filters.Where(x=> model.Filters.Contains(x.Name)).ToHashSet();
+                if (model.Childs is not null && model.Childs.Any())
+                    category.Childs = (await GetCategories(model.Childs, filters,imageService)).ToHashSet();
+                categories.Add(category);
+            }
+            return categories;
+
         }
     }
 }

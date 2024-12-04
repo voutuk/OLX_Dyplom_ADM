@@ -10,13 +10,20 @@ namespace Olx.BLL.Specifications
         {
             public GetByIds(IEnumerable<int> ids, bool tracking = false) =>
                 Query.Where(x => ids.Contains(x.Id))
-                     .AsTracking(tracking)
-                     .Include(x=>x.Values);
+                     .Include(x => x.Values)
+                     .AsTracking(tracking);
         }
         public class GetAll : Specification<Filter>
         {
             public GetAll( bool tracking = false) =>
                 Query.Include(x => x.Values)
+                     .AsTracking(tracking);
+        }
+        public class GetByNames : Specification<Filter>
+        {
+            public GetByNames(IEnumerable<string> names, bool tracking = false) =>
+                Query.Where(x=>names.Contains(x.Name))
+                     .Include(x => x.Values)
                      .AsTracking(tracking);
         }
         public class GetById : Specification<Filter>
