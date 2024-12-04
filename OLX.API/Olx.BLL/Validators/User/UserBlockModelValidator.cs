@@ -2,7 +2,7 @@
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 
-namespace Olx.BLL.Validators
+namespace Olx.BLL.Validators.User
 {
     public class UserBlockModelValidator : AbstractValidator<UserBlockModel>
     {

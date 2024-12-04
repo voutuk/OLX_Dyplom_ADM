@@ -1,5 +1,4 @@
-﻿
-namespace Olx.BLL.Models
+﻿namespace Olx.BLL.Models.Page
 {
     public class PageRequest
     {
