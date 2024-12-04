@@ -8,7 +8,9 @@ namespace Olx.BLL.Pagination.Filters
         public IQueryable<Filter> FilterQuery(IQueryable<Filter> query)
         {
             if (!string.IsNullOrWhiteSpace(searchString))
+            {
                 query = query.Where(x => x.Name.ToLower().Contains(searchString.ToLower()));
+            }
             return query;
         }
     }

@@ -7,7 +7,6 @@ using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
-using System.Collections.Generic;
 using System.Net;
 
 namespace Olx.BLL.Services
@@ -24,9 +23,14 @@ namespace Olx.BLL.Services
             validator.ValidateAndThrow(creationModel);
             var category = mapper.Map<Category>(creationModel);
             if (creationModel.ImageFile is not null)
-                 category.Image = await imageService.SaveImageAsync(creationModel.ImageFile);
+            {
+                category.Image = await imageService.SaveImageAsync(creationModel.ImageFile);
+            }
+
             if (creationModel.FiltersIds is not null && creationModel.FiltersIds.Any())
+            {
                 category.Filters = (await filterService.GetByIds(creationModel.FiltersIds)).ToHashSet();
+            }
             await categoryRepository.AddAsync(category);
             await categoryRepository.SaveAsync();
         }
@@ -39,7 +43,9 @@ namespace Olx.BLL.Services
                 categoryRepository.Delete(category);
                 await categoryRepository.SaveAsync();
                 if (category.Image is not null)
-                     imageService.DeleteImageIfExists(category.Image);
+                {
+                    imageService.DeleteImageIfExists(category.Image);
+                }
             }
             else throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
         }
@@ -53,12 +59,16 @@ namespace Olx.BLL.Services
             if (editModel.ImageFile is not null)
             {
                 if (category.Image is not null)
+                {
                     imageService.DeleteImageIfExists(category.Image);
+                }
                 category.Image = await imageService.SaveImageAsync(editModel.ImageFile);
             }
 
             if (editModel.FiltersIds is not null && editModel.FiltersIds.Any())
-               category.Filters = (await filterService.GetByIds(editModel.FiltersIds,true)).ToHashSet();
+            {
+                category.Filters = (await filterService.GetByIds(editModel.FiltersIds, true)).ToHashSet();
+            }
             else category.Filters.Clear();
             await categoryRepository.SaveAsync();
         }

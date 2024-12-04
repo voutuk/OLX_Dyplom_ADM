@@ -64,11 +64,15 @@ namespace Olx.BLL.Services
             {
                 mapper.Map(filterModel,filter);
                 if (filterModel.ValuesIds is not null && filterModel.ValuesIds.Any())
-                    filter.Values = (await filterValueService.GetByIdsAsync(filterModel.ValuesIds,true)).ToHashSet();
+                {
+                    filter.Values = (await filterValueService.GetByIdsAsync(filterModel.ValuesIds, true)).ToHashSet();
+                }
                 else filter.Values.Clear();
 
                 if (filterModel.NewValues is not null && filterModel.NewValues.Any())
-                   filter.Values= [.. filter.Values, .. filterModel.NewValues.Select(x => new FilterValue() { Value = x })];
+                {
+                    filter.Values = [.. filter.Values, .. filterModel.NewValues.Select(x => new FilterValue() { Value = x })];
+                }
                 await filterRepository.SaveAsync();
             }
             else throw new HttpException(Errors.InvalidFilterId, HttpStatusCode.BadRequest);
@@ -77,8 +81,8 @@ namespace Olx.BLL.Services
         public async Task<PageResponse<FilterDto>> GetPageAsync(FilterPageRequest pageRequest)
         {
             var paginationBuilder = new PaginationBuilder<Filter>(filterRepository);
-            FiltersFilter? filter = !String.IsNullOrEmpty(pageRequest.SearchName)? new FiltersFilter(pageRequest.SearchName) : null;
-            FilterSortData? sortData = pageRequest.SortIndex != 0 ? new FilterSortData(pageRequest.IsDescending,pageRequest.SortIndex) : null;
+            var filter = new FiltersFilter(pageRequest.SearchName);
+            var sortData =  new FilterSortData(pageRequest.IsDescending,pageRequest.SortIndex);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page,pageRequest.Size, filter, sortData);
             return new()
             {

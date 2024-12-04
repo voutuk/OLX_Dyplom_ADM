@@ -30,7 +30,9 @@ namespace Olx.BLL.Services
         public async Task<string> SaveImageAsync(string base64)
         {
             if (base64.Contains(','))
+            {
                 base64 = base64.Split(',')[1];
+            }
             var bytes = Convert.FromBase64String(base64);
             return await SaveImageAsync(bytes);
         }
@@ -100,7 +102,9 @@ namespace Olx.BLL.Services
         public void DeleteImagesIfExists(IEnumerable<string> images)
         {
             foreach (var image in images)
+            {
                 DeleteImageIfExists(image);
+            }
         }
 
         public async Task<string> SaveImageFromUrlAsync(string imageUrl)
@@ -115,11 +119,12 @@ namespace Olx.BLL.Services
             get
             {
                 List<int> sizes = config.GetRequiredSection("ImageSizes").Get<List<int>>()
-                ?? throw new Exception(Errors.ImageSizesReadError);
-
+                   ?? throw new Exception(Errors.ImageSizesReadError);
                 if (sizes.Count == 0)
+                {
                     throw new Exception(Errors.ImageSizesInitError);
-                return sizes;
+                }
+                 return sizes;
             }
         }
     }

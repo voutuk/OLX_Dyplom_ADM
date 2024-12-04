@@ -33,14 +33,18 @@ namespace Olx.DAL.Repositories
         {
             TEntity? entityToDelete = dbSet.Find(id);
             if (entityToDelete != null)
+            {
                 Delete(entityToDelete);
+            }    
         }
 
         public async virtual Task DeleteAsync(object id)
         {
             TEntity? entityToDelete = await dbSet.FindAsync(id);
             if (entityToDelete != null)
+            {
                 Delete(entityToDelete);
+            }
         }
 
         public  virtual void DeleteRange(IEnumerable<TEntity> entities)
@@ -48,7 +52,9 @@ namespace Olx.DAL.Repositories
             foreach (var entity in entities)
             {
                 if (context.Entry(entity).State == EntityState.Detached)
-                   dbSet.Attach(entity);
+                {
+                    dbSet.Attach(entity);
+                }
             }
             dbSet.RemoveRange(entities);
         }
