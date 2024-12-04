@@ -26,7 +26,7 @@ namespace Olx.BLL.Exstensions
             services.AddScoped<IFilterService, FilterService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddHostedService<TokenCleanupService>();
-
+            
             services.AddMailKit(optionBuilder =>
             {
                 MailSettings? settings = configuration.GetSection(nameof(MailSettings)).Get<MailSettings>()
