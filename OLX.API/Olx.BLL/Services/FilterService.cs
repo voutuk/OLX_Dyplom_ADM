@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using Olx.BLL.DTOs;
+using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
@@ -19,21 +19,14 @@ namespace Olx.BLL.Services
     public class FilterService(
         IRepository<Filter> filterRepository,
         IValidator<FilterCreationModel> filterCreationModelValidator,
-        IFilterValueService filterValueService,
+        IValidator<FilterEditModel> filterEditModelValidator,
         IMapper mapper) : IFilterService
     {
              
         public async Task CreateAsync(FilterCreationModel filterModel)
         {
             filterCreationModelValidator.ValidateAndThrow(filterModel);
-            Filter filter = new() {Name = filterModel.Name };
-            List<FilterValue> values = [];
-            if (filterModel.NewValues is not null && filterModel.NewValues.Any())
-                values.AddRange(filterModel.NewValues.Select(x => new FilterValue() { Value = x }));
-            if (filterModel.ValuesIds is not null && filterModel.ValuesIds.Any())
-                values.AddRange((await filterValueService.GetByIdsAsync(filterModel.ValuesIds,true)));
-            filter.Values = values;
-            await filterRepository.AddAsync(filter);
+            await filterRepository.AddAsync(mapper.Map<Filter>(filterModel));
             await filterRepository.SaveAsync();
         }
 
@@ -57,15 +50,17 @@ namespace Olx.BLL.Services
             else throw new HttpException(Errors.InvalidFilterId,HttpStatusCode.BadRequest);
         }
 
-        public async Task EditAsync(FilterCreationModel filterModel)
+        public async Task EditAsync(FilterEditModel filterModel)
         {
-            var filter = await filterRepository.GetByIDAsync(filterModel.Id);
+            filterEditModelValidator.ValidateAndThrow(filterModel);
+            var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id,true));
             if (filter is not null)
             {
                 mapper.Map(filterModel,filter);
-                if (filterModel.ValuesIds is not null && filterModel.ValuesIds.Any())
+                if (filterModel.OldValueIds is not null && filterModel.OldValueIds.Any())
                 {
-                    filter.Values = (await filterValueService.GetByIdsAsync(filterModel.ValuesIds, true)).ToHashSet();
+                    var values = filter.Values.Where(x => filterModel.OldValueIds.Contains(x.Id));
+                    filter.Values = values.ToHashSet();
                 }
                 else filter.Values.Clear();
 

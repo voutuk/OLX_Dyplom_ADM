@@ -34,7 +34,7 @@ namespace Olx.DAL.Migrations
 
                     b.HasIndex("FilterValuesId");
 
-                    b.ToTable("AdvertFilterValue");
+                    b.ToTable("AdvertFilterValue", (string)null);
                 });
 
             modelBuilder.Entity("CategoryFilter", b =>
@@ -49,22 +49,7 @@ namespace Olx.DAL.Migrations
 
                     b.HasIndex("FiltersId");
 
-                    b.ToTable("CategoryFilter");
-                });
-
-            modelBuilder.Entity("FilterFilterValue", b =>
-                {
-                    b.Property<int>("FiltersId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ValuesId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("FiltersId", "ValuesId");
-
-                    b.HasIndex("ValuesId");
-
-                    b.ToTable("FilterFilterValue");
+                    b.ToTable("CategoryFilter", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -223,7 +208,7 @@ namespace Olx.DAL.Migrations
 
                     b.HasIndex("OlxUserId");
 
-                    b.ToTable("Advert");
+                    b.ToTable("Advert", (string)null);
                 });
 
             modelBuilder.Entity("Olx.BLL.Entities.Category", b =>
@@ -250,7 +235,7 @@ namespace Olx.DAL.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("Olx.BLL.Entities.FilterEntities.Filter", b =>
@@ -268,7 +253,7 @@ namespace Olx.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Filter");
+                    b.ToTable("Filter", (string)null);
                 });
 
             modelBuilder.Entity("Olx.BLL.Entities.FilterEntities.FilterValue", b =>
@@ -279,6 +264,9 @@ namespace Olx.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("FilterId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -286,7 +274,9 @@ namespace Olx.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FilterValue");
+                    b.HasIndex("FilterId");
+
+                    b.ToTable("FilterValue", (string)null);
                 });
 
             modelBuilder.Entity("Olx.BLL.Entities.OlxUser", b =>
@@ -404,7 +394,7 @@ namespace Olx.DAL.Migrations
 
                     b.HasIndex("OlxUserId");
 
-                    b.ToTable("RefreshToken");
+                    b.ToTable("RefreshToken", (string)null);
                 });
 
             modelBuilder.Entity("AdvertFilterValue", b =>
@@ -433,21 +423,6 @@ namespace Olx.DAL.Migrations
                     b.HasOne("Olx.BLL.Entities.FilterEntities.Filter", null)
                         .WithMany()
                         .HasForeignKey("FiltersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("FilterFilterValue", b =>
-                {
-                    b.HasOne("Olx.BLL.Entities.FilterEntities.Filter", null)
-                        .WithMany()
-                        .HasForeignKey("FiltersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Olx.BLL.Entities.FilterEntities.FilterValue", null)
-                        .WithMany()
-                        .HasForeignKey("ValuesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -527,6 +502,17 @@ namespace Olx.DAL.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("Olx.BLL.Entities.FilterEntities.FilterValue", b =>
+                {
+                    b.HasOne("Olx.BLL.Entities.FilterEntities.Filter", "Filter")
+                        .WithMany("Values")
+                        .HasForeignKey("FilterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Filter");
+                });
+
             modelBuilder.Entity("Olx.BLL.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Olx.BLL.Entities.OlxUser", "OlxUser")
@@ -543,6 +529,11 @@ namespace Olx.DAL.Migrations
                     b.Navigation("Adverts");
 
                     b.Navigation("Childs");
+                });
+
+            modelBuilder.Entity("Olx.BLL.Entities.FilterEntities.Filter", b =>
+                {
+                    b.Navigation("Values");
                 });
 
             modelBuilder.Entity("Olx.BLL.Entities.OlxUser", b =>
