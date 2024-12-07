@@ -1,13 +1,20 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Olx.BLL.DTOs.CategoryDtos;
+using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities;
+using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
-using Olx.BLL.Models;
+using Olx.BLL.Models.FilterModels;
+using Olx.BLL.Models.Page;
+using Olx.BLL.Pagination.Filters;
+using Olx.BLL.Pagination.SortData;
+using Olx.BLL.Pagination;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
 using System.Net;
+using Olx.BLL.Models.Category;
 
 namespace Olx.BLL.Services
 {
@@ -104,6 +111,19 @@ namespace Olx.BLL.Services
                     c.Childs = BuildTree(c.Id, categories).ToHashSet();
                     return c;
                 });
+        }
+
+        public async Task<PageResponse<CategoryDto>> GetPageAsync(CategoryPageRequest pageRequest)
+        {
+            var paginationBuilder = new PaginationBuilder<Category>(categoryRepository);
+            var filter = new CategoryFilter(pageRequest.SearchName, pageRequest.ParentId);
+            var sortData = new CategorySortData(pageRequest.IsDescending, pageRequest.SortIndex);
+            var page = await paginationBuilder.GetPageAsync(pageRequest.Page, pageRequest.Size, filter, sortData);
+            return new()
+            {
+                Total = page.Total,
+                Items = mapper.Map<IEnumerable<CategoryDto>>(page.Items)
+            };
         }
     }
 }

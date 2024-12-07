@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Olx.BLL.Helpers;
-using Olx.BLL.Models;
+using Olx.BLL.Models.Category;
 using Olx.BLL.Resources;
 
 

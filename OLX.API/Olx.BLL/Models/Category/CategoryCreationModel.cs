@@ -2,7 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 
-namespace Olx.BLL.Models
+namespace Olx.BLL.Models.Category
 {
     public class CategoryCreationModel
     {

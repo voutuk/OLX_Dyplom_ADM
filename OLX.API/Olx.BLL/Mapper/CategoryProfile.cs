@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Olx.BLL.DTOs.CategoryDtos;
 using Olx.BLL.Entities;
-using Olx.BLL.Models;
+using Olx.BLL.Models.Category;
 
 
 namespace Olx.BLL.Mapper
