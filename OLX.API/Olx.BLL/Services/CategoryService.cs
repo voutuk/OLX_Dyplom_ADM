@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Olx.BLL.DTOs.CategoryDtos;
-using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities;
-using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
-using Olx.BLL.Models.FilterModels;
 using Olx.BLL.Models.Page;
 using Olx.BLL.Pagination.Filters;
 using Olx.BLL.Pagination.SortData;

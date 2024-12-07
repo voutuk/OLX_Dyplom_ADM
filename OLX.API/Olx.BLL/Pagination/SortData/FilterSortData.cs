@@ -13,7 +13,7 @@ namespace Olx.BLL.Pagination.SortData
                 {
                     1 => x => x.Id,
                     2 => x => x.Name,
-                    _ => x => x,
+                    _ => x => x.Id,
                 };
             return descending ? query.OrderByDescending(sortExpr) : query.OrderBy(sortExpr);
         }

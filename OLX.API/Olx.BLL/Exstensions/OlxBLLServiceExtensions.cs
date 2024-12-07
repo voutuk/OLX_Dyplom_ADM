@@ -25,7 +25,10 @@ namespace Olx.BLL.Exstensions
             services.AddScoped<IFilterValueService, FilterValueService>();
             services.AddScoped<IFilterService, FilterService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IAdvertService,AdvertService>();
+            services.AddScoped<IAdvertImageService, AdvertImageService>();
             services.AddHostedService<TokenCleanupService>();
+
             
             services.AddMailKit(optionBuilder =>
             {

@@ -20,6 +20,8 @@ namespace Olx.BLL.Entities
         public string Description { get; set; } = string.Empty;
         public bool IsContractPrice { get; set; }
         public decimal Price { get; set; }
+        public bool Approved { get; set; } = false;
+        public bool Blocked { get; set; } = false;
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public ICollection<FilterValue> FilterValues { get; set; }  = new HashSet<FilterValue>();
