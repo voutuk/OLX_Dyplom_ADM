@@ -21,7 +21,7 @@ namespace OLX.API.Controllers
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("edit")]
-        public async Task<IActionResult> Edit([FromForm] FilterCreationModel filterEditModel)
+        public async Task<IActionResult> Edit([FromForm] FilterEditModel filterEditModel)
         {
             await filterService.EditAsync(filterEditModel);
             return Ok();

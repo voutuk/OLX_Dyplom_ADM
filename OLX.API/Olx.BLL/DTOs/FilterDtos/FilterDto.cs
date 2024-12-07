@@ -3,7 +3,7 @@
 using AutoMapper;
 using Olx.BLL.Entities.FilterEntities;
 
-namespace Olx.BLL.DTOs
+namespace Olx.BLL.DTOs.FilterDtos
 {
     [AutoMap(typeof(Filter))]
     public class FilterDto
