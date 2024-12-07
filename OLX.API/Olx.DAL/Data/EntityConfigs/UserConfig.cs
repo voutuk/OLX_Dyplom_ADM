@@ -10,6 +10,9 @@ namespace Olx.DAL.Data.EntityConfigs
         public void Configure(EntityTypeBuilder<OlxUser> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.HasMany(x => x.Adverts)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId);
         }
     }
 }
