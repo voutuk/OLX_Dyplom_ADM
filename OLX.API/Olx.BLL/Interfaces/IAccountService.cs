@@ -1,4 +1,5 @@
-﻿using Olx.BLL.Models;
+﻿using Olx.BLL.Entities;
+using Olx.BLL.Models;
 using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 
@@ -17,5 +18,8 @@ namespace Olx.BLL.Interfaces
         Task AddUserAsync(UserCreationModel userModel,bool isAdmin = false);
         Task RemoveAccountAsync(string email);
         Task EditUserAsync(UserEditModel userEditModel,bool isAdmin = false);
+        Task AddToFavoritesAsync(int userId, int advertId);
+        Task RemoveFromFavoritesAsync(int userId, int advertId);
+        Task<IEnumerable<Advert>> GetFavoritesAsync(int userId);
     }
 }

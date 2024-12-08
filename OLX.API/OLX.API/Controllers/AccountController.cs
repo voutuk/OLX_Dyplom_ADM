@@ -5,6 +5,8 @@ using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
+using Olx.BLL.Services;
+using System.Security.Claims;
 
 namespace OLX.API.Controllers
 {
@@ -121,6 +123,33 @@ namespace OLX.API.Controllers
         {
             await accountService.RemoveAccountAsync(email);
             return Ok();
+        }
+
+        [Authorize(Roles = Roles.User)]
+        [HttpPost("/favorites/{advertId:int}")]
+        public async Task<IActionResult> AddToFavorites([FromRoute] int advertId)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            await accountService.AddToFavoritesAsync(userId, advertId);
+            return Ok();
+        }
+
+        [Authorize(Roles = Roles.User)]
+        [HttpDelete("/favorites/{advertId:int}")]
+        public async Task<IActionResult> RemoveFromFavorites([FromRoute] int advertId)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            await accountService.RemoveFromFavoritesAsync(userId, advertId);
+            return Ok();
+        }
+        
+        [Authorize(Roles = Roles.User)]
+        [HttpGet("/favorites")]
+        public async Task<IActionResult> GetFavorites()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var favorites = await accountService.GetFavoritesAsync(userId);
+            return Ok(favorites);
         }
 
         private void SetHttpOnlyCookies(string token)

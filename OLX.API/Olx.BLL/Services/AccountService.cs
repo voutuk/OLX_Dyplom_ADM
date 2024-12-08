@@ -26,6 +26,8 @@ namespace Olx.BLL.Services
         RoleManager<IdentityRole<int>> roleManager,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
+        IRepository<OlxUser> userRepository,
+        IRepository<Advert> advertRepository,
         IEmailService emailService,
         IConfiguration configuration,
         IMapper mapper,
@@ -306,6 +308,51 @@ namespace Olx.BLL.Services
                 user.Photo =  await imageService.SaveImageAsync(userEditModel.ImageFile);
             }
             await userManager.UpdateAsync(user);
+        }
+
+        public async Task AddToFavoritesAsync(int userId, int advertId)
+        {
+            var user = await userRepository.GetByIDAsync(userId);
+            if (user == null) throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+
+            
+            var advert = await advertRepository.GetByIDAsync(advertId);
+            if (advert == null) throw new HttpException("Оголошення не знайдено", HttpStatusCode.NotFound);
+
+            
+            if (user.FavoriteAdverts.All(a => a.Id != advertId))
+            {
+                user.FavoriteAdverts.Add(advert);
+                userRepository.Update(user); 
+                await userRepository.SaveAsync();
+            }
+        }
+
+        public async Task RemoveFromFavoritesAsync(int userId, int advertId)
+        {
+            var user = await userRepository.GetByIDAsync(userId);
+            if (user == null) throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+
+            var advertToRemove = user.FavoriteAdverts.FirstOrDefault(a => a.Id == advertId);
+            if (advertToRemove != null)
+            {
+                user.FavoriteAdverts.Remove(advertToRemove);
+                userRepository.Update(user);
+                await userRepository.SaveAsync();
+            }
+            else
+            {
+                throw new HttpException("Оголошення не знайдено у вибраних користувача", HttpStatusCode.BadRequest);
+            }
+        }
+
+        public async Task<IEnumerable<Advert>> GetFavoritesAsync(int userId)
+        {
+            var user = await userRepository.GetQuery()
+            .Include(u => u.FavoriteAdverts)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+            return user?.FavoriteAdverts ?? new List<Advert>();
         }
     }
 }
