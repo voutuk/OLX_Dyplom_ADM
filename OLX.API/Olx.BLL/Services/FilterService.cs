@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Olx.BLL.DTOs.FilterDtos;
+using Olx.BLL.Entities;
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
@@ -20,11 +23,22 @@ namespace Olx.BLL.Services
         IRepository<Filter> filterRepository,
         IValidator<FilterCreationModel> filterCreationModelValidator,
         IValidator<FilterEditModel> filterEditModelValidator,
-        IMapper mapper) : IFilterService
+        IMapper mapper,
+        UserManager<OlxUser> userManager,
+        IHttpContextAccessor httpContext) : IFilterService
     {
-             
+
+        private async Task<OlxUser> UpdateUserActivity()
+        {
+            var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
+              ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
+            curentUser.LastActivity = DateTime.UtcNow;
+            await userManager.UpdateAsync(curentUser);
+            return curentUser;
+        }
         public async Task CreateAsync(FilterCreationModel filterModel)
         {
+            await UpdateUserActivity();
             filterCreationModelValidator.ValidateAndThrow(filterModel);
             await filterRepository.AddAsync(mapper.Map<Filter>(filterModel));
             await filterRepository.SaveAsync();
@@ -52,6 +66,7 @@ namespace Olx.BLL.Services
 
         public async Task EditAsync(FilterEditModel filterModel)
         {
+            await UpdateUserActivity();
             filterEditModelValidator.ValidateAndThrow(filterModel);
             var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id,true));
             if (filter is not null)

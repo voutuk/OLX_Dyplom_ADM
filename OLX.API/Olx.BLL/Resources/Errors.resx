@@ -171,4 +171,10 @@
   <data name="Invalidfghbsdfghdfg" xml:space="preserve">
     <value>fdghdfghhfd</value>
   </data>
+  <data name="InvalidAdvertId" xml:space="preserve">
+    <value>Invalid advert id</value>
+  </data>
+  <data name="ErrorAthorizedUser" xml:space="preserve">
+    <value>Error authorized user</value>
+  </data>
 </root>

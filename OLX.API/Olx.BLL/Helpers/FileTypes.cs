@@ -9,7 +9,8 @@ namespace Olx.BLL.Helpers
             "image/jpeg",
             "image/jpg",
             "image/gif",
-            "image/webp"
+            "image/webp",
+            "image/existing"
         ];
     }
 }

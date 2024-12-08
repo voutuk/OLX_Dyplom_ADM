@@ -79,6 +79,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Error authorized user.
+        /// </summary>
+        internal static string ErrorAthorizedUser {
+            get {
+                return ResourceManager.GetString("ErrorAthorizedUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Image sizes not initializing.
         /// </summary>
         internal static string ImageSizesInitError {
@@ -93,6 +102,15 @@ namespace Olx.BLL.Resources {
         internal static string ImageSizesReadError {
             get {
                 return ResourceManager.GetString("ImageSizesReadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid advert id.
+        /// </summary>
+        internal static string InvalidAdvertId {
+            get {
+                return ResourceManager.GetString("InvalidAdvertId", resourceCulture);
             }
         }
         

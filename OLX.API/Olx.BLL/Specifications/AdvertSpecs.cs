@@ -1,0 +1,61 @@
+﻿using Ardalis.Specification;
+using Olx.BLL.Entities;
+
+
+namespace Olx.BLL.Specifications
+{
+    public static class AdvertSpecs
+    {
+        public class GetByIds : Specification<Advert>
+        {
+            public GetByIds(IEnumerable<int> ids, bool tracking = false)
+            {
+                Query.Include(x => x.FilterValues)
+                    .Include(x => x.Images)
+                    .AsTracking(tracking)
+                    .Where(x=> ids.Contains(x.Id));
+            }
+        }
+
+        public class GetUserAdvertById : Specification<Advert>
+        {
+            public GetUserAdvertById(int userId,int advertId, bool tracking = false)
+            {
+                Query.AsTracking(tracking)
+                    .Include(x=>x.Images)
+                    .Where(x =>x.UserId == userId && x.Id == advertId);
+            }
+        }
+
+        public class GetAll : Specification<Advert>
+        {
+            public GetAll( bool tracking = false)
+            {
+                Query
+                    .Include(x=>x.FilterValues)
+                    .Include(x=>x.Images)
+                    .AsTracking(tracking);
+            }
+        }
+        public class GetByUserId : Specification<Advert>
+        {
+            public GetByUserId(int userId, bool tracking = false)
+            {
+                Query.AsTracking(tracking)
+                    .Include(x => x.FilterValues)
+                    .Include(x => x.Images)
+                    .Where(x => x.UserId == userId);
+            }
+        }
+
+        public class GetById : Specification<Advert>
+        {
+            public GetById(int id, bool tracking = false)
+            {
+                Query.AsTracking(tracking)
+                    .Include(x=>x.Images)
+                    .Where(x => x.UserId == id);
+            }
+        }
+    }
+}

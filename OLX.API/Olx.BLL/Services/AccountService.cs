@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,7 @@ namespace Olx.BLL.Services
 {
     public class AccountService(
         UserManager<OlxUser> userManager,
-        RoleManager<IdentityRole<int>> roleManager,
+        IHttpContextAccessor  httpContext,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
         IEmailService emailService,
@@ -112,6 +113,14 @@ namespace Olx.BLL.Services
             };
         }
 
+        private async Task UpdateUserActivity() 
+        {
+            var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
+              ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
+            curentUser.LastActivity = DateTime.UtcNow;
+            await userManager.UpdateAsync(curentUser);
+        }
+
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
             var user = await userManager.FindByEmailAsync(model.Email);
@@ -171,6 +180,7 @@ namespace Olx.BLL.Services
         }
         public async Task LogoutAsync(string refreshToken)
         {
+            await UpdateUserActivity();
             var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
             if (token is not null)
             {
@@ -217,6 +227,7 @@ namespace Olx.BLL.Services
         }
         public async Task BlockUserAsync(UserBlockModel userBlockModel)
         {
+            await UpdateUserActivity();
             userBlockModelValidator.ValidateAndThrow(userBlockModel);
             var user = await userManager.FindByEmailAsync(userBlockModel.Email);
             if (user is not null)
@@ -243,9 +254,14 @@ namespace Olx.BLL.Services
                 } 
             }
             throw new HttpException(Errors.InvalidResetPasswordData, HttpStatusCode.BadRequest);
+
         }
         public async Task AddUserAsync(UserCreationModel userModel, bool isAdmin = false)
         {
+            if (isAdmin)
+            {
+                await UpdateUserActivity();
+            }
             userCreationModelValidator.ValidateAndThrow(userModel);
             OlxUser user = mapper.Map<OlxUser>(userModel);
             if (userModel.ImageFile is not null)
@@ -261,14 +277,18 @@ namespace Olx.BLL.Services
 
         public async Task RemoveAccountAsync(string email)
         {
+            await UpdateUserActivity();
             var user = await userManager.FindByEmailAsync(email) 
                 ?? throw new HttpException(Errors.InvalidUserEmail, HttpStatusCode.BadRequest);
-            var adminsCount = roleManager.Roles.Where(x => x.Name == Roles.Admin).Count();
-            if (adminsCount <= 1)
+            if (await userManager.IsInRoleAsync(user, Roles.Admin))
             {
-                throw new HttpException(Errors.ActionBlocked, HttpStatusCode.Locked);
+                var adminsCount =  await userManager.GetUsersInRoleAsync(Roles.Admin);
+                if (adminsCount.Count <= 1)
+                {
+                    throw new HttpException(Errors.ActionBlocked, HttpStatusCode.Locked);
+                }
             }
-                
+                     
             var result = await userManager.DeleteAsync(user);
             if (result.Succeeded)
             {
@@ -281,6 +301,7 @@ namespace Olx.BLL.Services
         }
         public async Task EditUserAsync(UserEditModel userEditModel, bool isAdmin)
         {
+            await UpdateUserActivity();
             var user = await userManager.FindByIdAsync(userEditModel.Id.ToString())
                 ?? throw new HttpException(Errors.InvalidUserId,HttpStatusCode.NotFound);
             if (await userManager.IsInRoleAsync(user, Roles.Admin) && !isAdmin)
