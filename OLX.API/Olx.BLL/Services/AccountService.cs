@@ -28,7 +28,6 @@ namespace Olx.BLL.Services
         IHttpContextAccessor  httpContext,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
-        IRepository<OlxUser> userRepository,
         IRepository<Advert> advertRepository,
         IEmailService emailService,
         IConfiguration configuration,
@@ -334,60 +333,44 @@ namespace Olx.BLL.Services
         }
 
 
-        public async Task AddToFavoritesAsync(int userId, int advertId)
+        public async Task AddToFavoritesAsync(int advertId)
         {
             var user = await UpdateUserActivity();
-            if (user.Id != userId)
-            {
-                throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
-            }
-
             
-            var advert = await advertRepository.GetByIDAsync(advertId);
-            if (advert == null) throw new HttpException("Оголошення не знайдено", HttpStatusCode.NotFound);
+            var advert = await advertRepository.GetByIDAsync(advertId)
+                ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
 
-            
             if (user.FavoriteAdverts.All(a => a.Id != advertId))
             {
                 user.FavoriteAdverts.Add(advert);
-                userRepository.Update(user); 
-                await userRepository.SaveAsync();
+                await userManager.UpdateAsync(user);
             }
         }
 
-        public async Task RemoveFromFavoritesAsync(int userId, int advertId)
+        public async Task RemoveFromFavoritesAsync(int advertId)
         {
             var user = await UpdateUserActivity();
-            if (user.Id != userId)
-            {
-                throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
-            }
 
             var advertToRemove = await advertRepository.GetItemBySpec(
-                new AdvertSpecs.GetFavoriteAdvertByUserIdAndAdvertId(userId, advertId)
+                new AdvertSpecs.GetFavoriteAdvertByUserIdAndAdvertId(user.Id, advertId)
             );
 
             if (advertToRemove != null)
             {
                 user.FavoriteAdverts.Remove(advertToRemove);
-                userRepository.Update(user);
-                await userRepository.SaveAsync();
+                await userManager.UpdateAsync(user);
             }
             else
             {
-                throw new HttpException("Оголошення не знайдено у вибраних користувача", HttpStatusCode.BadRequest);
+                throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync(int userId)
+        public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync()
         {
             var currentUser = await UpdateUserActivity();
-            if (currentUser.Id != userId)
-            {
-                throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
-            }
 
-            var favoriteAdverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetFavoritesByUserId(userId));
+            var favoriteAdverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetFavoritesByUserId(currentUser.Id));
 
             return favoriteAdverts.Any()
                 ? mapper.Map<IEnumerable<AdvertDto>>(favoriteAdverts)

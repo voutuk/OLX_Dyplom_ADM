@@ -126,26 +126,26 @@ namespace OLX.API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpPost("{userId:int}/favorites/{advertId:int}")]
-        public async Task<IActionResult> AddToFavorites([FromRoute] int userId, [FromRoute] int advertId)
+        [HttpPost("/favorites/add/{advertId:int}")]
+        public async Task<IActionResult> AddToFavorites([FromRoute] int advertId)
         {
-            await accountService.AddToFavoritesAsync(userId, advertId);
+            await accountService.AddToFavoritesAsync(advertId);
             return Ok();
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpDelete("{userId:int}/favorites/{advertId:int}")]
-        public async Task<IActionResult> RemoveFromFavorites([FromRoute] int userId, [FromRoute] int advertId)
+        [HttpDelete("/favorites/remove/{advertId:int}")]
+        public async Task<IActionResult> RemoveFromFavorites([FromRoute] int advertId)
         {
-            await accountService.RemoveFromFavoritesAsync(userId, advertId);
+            await accountService.RemoveFromFavoritesAsync(advertId);
             return Ok();
         }
         
         [Authorize(Roles = Roles.User)]
-        [HttpGet("{userId:int}/favorites")]
-        public async Task<IActionResult> GetFavorites([FromRoute] int userId)
+        [HttpGet("/favorites")]
+        public async Task<IActionResult> GetFavorites()
         {
-            var favorites = await accountService.GetFavoritesAsync(userId);
+            var favorites = await accountService.GetFavoritesAsync();
             return Ok(favorites);
         }
 
