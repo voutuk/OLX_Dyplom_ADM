@@ -5,8 +5,7 @@ using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
-using Olx.BLL.Services;
-using System.Security.Claims;
+
 
 namespace OLX.API.Controllers
 {
@@ -136,7 +135,7 @@ namespace OLX.API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpPost("/favorites/add/{advertId:int}")]
+        [HttpPost("favorites/add/{advertId:int}")]
         public async Task<IActionResult> AddToFavorites([FromRoute] int advertId)
         {
             await accountService.AddToFavoritesAsync(advertId);
@@ -144,7 +143,7 @@ namespace OLX.API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpDelete("/favorites/remove/{advertId:int}")]
+        [HttpDelete("favorites/remove/{advertId:int}")]
         public async Task<IActionResult> RemoveFromFavorites([FromRoute] int advertId)
         {
             await accountService.RemoveFromFavoritesAsync(advertId);
@@ -152,7 +151,7 @@ namespace OLX.API.Controllers
         }
         
         [Authorize(Roles = Roles.User)]
-        [HttpGet("/favorites")]
+        [HttpGet("favorites")]
         public async Task<IActionResult> GetFavorites()
         {
             var favorites = await accountService.GetFavoritesAsync();

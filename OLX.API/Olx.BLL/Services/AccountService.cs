@@ -350,28 +350,17 @@ namespace Olx.BLL.Services
         public async Task RemoveFromFavoritesAsync(int advertId)
         {
             var user = await UpdateUserActivity();
-
-            var advertToRemove = await advertRepository.GetItemBySpec(
-                new AdvertSpecs.GetFavoriteAdvertByUserIdAndAdvertId(user.Id, advertId)
-            );
-
-            if (advertToRemove != null)
-            {
-                user.FavoriteAdverts.Remove(advertToRemove);
-                await userManager.UpdateAsync(user);
-            }
-            else
-            {
-                throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
-            }
+            var advertToRemove = await advertRepository.GetItemBySpec( new AdvertSpecs.GetFavoriteAdvertByUserIdAndAdvertId(user.Id, advertId))
+                ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
+            user.FavoriteAdverts.Remove(advertToRemove);
+            await userManager.UpdateAsync(user);
+            
         }
 
         public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync()
         {
             var currentUser = await UpdateUserActivity();
-
             var favoriteAdverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetFavoritesByUserId(currentUser.Id));
-
             return favoriteAdverts.Any()
                 ? mapper.Map<IEnumerable<AdvertDto>>(favoriteAdverts)
                 : Enumerable.Empty<AdvertDto>();
