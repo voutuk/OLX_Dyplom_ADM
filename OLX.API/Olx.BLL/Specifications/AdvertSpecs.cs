@@ -57,5 +57,25 @@ namespace Olx.BLL.Specifications
                     .Where(x => x.UserId == id);
             }
         }
+
+        public class GetFavoritesByUserId : Specification<Advert>
+        {
+            public GetFavoritesByUserId(int userId, bool tracking = false)
+            {
+                Query.AsTracking(tracking)
+                    .Include(x => x.Images)
+                    .Where(x => x.FavoritedByUsers.Any(user => user.Id == userId));
+            }
+        }
+
+        public class GetFavoriteAdvertByUserIdAndAdvertId : Specification<Advert>
+        {
+            public GetFavoriteAdvertByUserIdAndAdvertId(int userId, int advertId, bool tracking = false)
+            {
+                Query.AsTracking(tracking)
+                     .Include(a => a.FavoritedByUsers)
+                     .Where(a => a.Id == advertId && a.FavoritedByUsers.Any(u => u.Id == userId));
+            }
+        }
     }
 }

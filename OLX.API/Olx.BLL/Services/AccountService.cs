@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
 using Newtonsoft.Json;
+using Olx.BLL.DTOs;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Helpers;
@@ -115,12 +116,13 @@ namespace Olx.BLL.Services
             };
         }
 
-        private async Task UpdateUserActivity() 
+        private async Task<OlxUser> UpdateUserActivity() 
         {
             var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
               ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
             curentUser.LastActivity = DateTime.UtcNow;
             await userManager.UpdateAsync(curentUser);
+            return curentUser;
         }
 
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
@@ -331,10 +333,14 @@ namespace Olx.BLL.Services
             await userManager.UpdateAsync(user);
         }
 
+
         public async Task AddToFavoritesAsync(int userId, int advertId)
         {
-            var user = await userRepository.GetByIDAsync(userId);
-            if (user == null) throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+            var user = await UpdateUserActivity();
+            if (user.Id != userId)
+            {
+                throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
+            }
 
             
             var advert = await advertRepository.GetByIDAsync(advertId);
@@ -351,10 +357,16 @@ namespace Olx.BLL.Services
 
         public async Task RemoveFromFavoritesAsync(int userId, int advertId)
         {
-            var user = await userRepository.GetByIDAsync(userId);
-            if (user == null) throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+            var user = await UpdateUserActivity();
+            if (user.Id != userId)
+            {
+                throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
+            }
 
-            var advertToRemove = user.FavoriteAdverts.FirstOrDefault(a => a.Id == advertId);
+            var advertToRemove = await advertRepository.GetItemBySpec(
+                new AdvertSpecs.GetFavoriteAdvertByUserIdAndAdvertId(userId, advertId)
+            );
+
             if (advertToRemove != null)
             {
                 user.FavoriteAdverts.Remove(advertToRemove);
@@ -367,13 +379,19 @@ namespace Olx.BLL.Services
             }
         }
 
-        public async Task<IEnumerable<Advert>> GetFavoritesAsync(int userId)
+        public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync(int userId)
         {
-            var user = await userRepository.GetQuery()
-            .Include(u => u.FavoriteAdverts)
-            .FirstOrDefaultAsync(u => u.Id == userId);
+            var currentUser = await UpdateUserActivity();
+            if (currentUser.Id != userId)
+            {
+                throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
+            }
 
-            return user?.FavoriteAdverts ?? new List<Advert>();
+            var favoriteAdverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetFavoritesByUserId(userId));
+
+            return favoriteAdverts.Any()
+                ? mapper.Map<IEnumerable<AdvertDto>>(favoriteAdverts)
+                : Enumerable.Empty<AdvertDto>();
         }
     }
 }
