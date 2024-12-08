@@ -26,5 +26,6 @@ namespace Olx.BLL.Entities
         public Category Category { get; set; }
         public ICollection<FilterValue> FilterValues { get; set; }  = new HashSet<FilterValue>();
         public ICollection<AdvertImage> Images { get; set; } = new HashSet<AdvertImage>();
+        public ICollection<OlxUser> FavoritedByUsers { get; set; } = new HashSet<OlxUser>();
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
 using Newtonsoft.Json;
+using Olx.BLL.DTOs;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Helpers;
@@ -27,6 +28,7 @@ namespace Olx.BLL.Services
         IHttpContextAccessor  httpContext,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
+        IRepository<Advert> advertRepository,
         IEmailService emailService,
         IConfiguration configuration,
         IMapper mapper,
@@ -113,12 +115,13 @@ namespace Olx.BLL.Services
             };
         }
 
-        private async Task UpdateUserActivity() 
+        private async Task<OlxUser> UpdateUserActivity() 
         {
             var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
               ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
             curentUser.LastActivity = DateTime.UtcNow;
             await userManager.UpdateAsync(curentUser);
+            return curentUser;
         }
 
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
@@ -327,6 +330,51 @@ namespace Olx.BLL.Services
                 user.Photo =  await imageService.SaveImageAsync(userEditModel.ImageFile);
             }
             await userManager.UpdateAsync(user);
+        }
+
+
+        public async Task AddToFavoritesAsync(int advertId)
+        {
+            var user = await UpdateUserActivity();
+            
+            var advert = await advertRepository.GetByIDAsync(advertId)
+                ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
+
+            if (user.FavoriteAdverts.All(a => a.Id != advertId))
+            {
+                user.FavoriteAdverts.Add(advert);
+                await userManager.UpdateAsync(user);
+            }
+        }
+
+        public async Task RemoveFromFavoritesAsync(int advertId)
+        {
+            var user = await UpdateUserActivity();
+
+            var advertToRemove = await advertRepository.GetItemBySpec(
+                new AdvertSpecs.GetFavoriteAdvertByUserIdAndAdvertId(user.Id, advertId)
+            );
+
+            if (advertToRemove != null)
+            {
+                user.FavoriteAdverts.Remove(advertToRemove);
+                await userManager.UpdateAsync(user);
+            }
+            else
+            {
+                throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
+            }
+        }
+
+        public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync()
+        {
+            var currentUser = await UpdateUserActivity();
+
+            var favoriteAdverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetFavoritesByUserId(currentUser.Id));
+
+            return favoriteAdverts.Any()
+                ? mapper.Map<IEnumerable<AdvertDto>>(favoriteAdverts)
+                : Enumerable.Empty<AdvertDto>();
         }
     }
 }
