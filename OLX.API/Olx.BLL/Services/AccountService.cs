@@ -131,6 +131,7 @@ namespace Olx.BLL.Services
             var currentUserId = int.Parse(userManager.GetUserId(httpContext.HttpContext?.User!)!);
             var currentUser = await userRepository.GetItemBySpec(new OlxUserSpecs.GetById(currentUserId, true))
                 ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
+            currentUser.LastActivity = DateTime.UtcNow;
             return currentUser;
         }
 
@@ -353,7 +354,6 @@ namespace Olx.BLL.Services
             {
                 user.FavoriteAdverts.Add(advert);
             }
-            user.LastActivity = DateTime.Now;
             await userManager.UpdateAsync(user);
         }
 
@@ -363,7 +363,6 @@ namespace Olx.BLL.Services
             var advertToRemove = user.FavoriteAdverts.FirstOrDefault(x => x.Id == advertId)
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             user.FavoriteAdverts.Remove(advertToRemove);
-            user.LastActivity = DateTime.Now;
             await userManager.UpdateAsync(user);
         }
 
