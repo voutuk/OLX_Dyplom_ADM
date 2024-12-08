@@ -12,5 +12,13 @@ namespace Olx.BLL.Specifications
                 .Where(x => x.RefreshTokens.Any(z => z.Token == token))
                 .AsTracking(tracking);
         }
+
+        public class GetById : Specification<OlxUser>
+        {
+            public GetById(int id, bool tracking = false) =>
+                Query.Include(x => x.FavoriteAdverts)
+                .Where(x => x.Id == id)
+                .AsTracking(tracking);
+        }
     }
 }

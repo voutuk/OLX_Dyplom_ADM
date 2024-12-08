@@ -15,6 +15,14 @@ namespace OLX.API.Controllers
     {
         private string _refreshTokenCookiesName = configuration["RefreshTokenCookiesName"]!;
 
+        [Authorize(Roles = Roles.User)]
+        [HttpGet("favorites")]
+        public async Task<IActionResult> GetFavorites()
+        {
+            var favorites = await accountService.GetFavoritesAsync();
+            return Ok(favorites);
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthRequest model )
         {
@@ -111,6 +119,14 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = Roles.User)]
+        [HttpPost("favorites/add/{advertId:int}")]
+        public async Task<IActionResult> AddToFavorites([FromRoute] int advertId)
+        {
+            await accountService.AddToFavoritesAsync(advertId);
+            return Ok();
+        }
+
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("register/admin")]
         public async Task<IActionResult> AddAdmin([FromForm] UserCreationModel adminModel)
@@ -125,7 +141,14 @@ namespace OLX.API.Controllers
             await accountService.AddUserAsync(userModel);
             return Ok();
         }
-
+        
+        [Authorize(Roles = Roles.User)]
+        [HttpDelete("favorites/remove/{advertId:int}")]
+        public async Task<IActionResult> RemoveFromFavorites([FromRoute] int advertId)
+        {
+            await accountService.RemoveFromFavoritesAsync(advertId);
+            return Ok();
+        }
         [Authorize(Roles = Roles.Admin)]
         [HttpDelete("delete")]
         public async Task<IActionResult> RemoveAccount([FromQuery] string email)
@@ -134,29 +157,6 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = Roles.User)]
-        [HttpPost("favorites/add/{advertId:int}")]
-        public async Task<IActionResult> AddToFavorites([FromRoute] int advertId)
-        {
-            await accountService.AddToFavoritesAsync(advertId);
-            return Ok();
-        }
-
-        [Authorize(Roles = Roles.User)]
-        [HttpDelete("favorites/remove/{advertId:int}")]
-        public async Task<IActionResult> RemoveFromFavorites([FromRoute] int advertId)
-        {
-            await accountService.RemoveFromFavoritesAsync(advertId);
-            return Ok();
-        }
-        
-        [Authorize(Roles = Roles.User)]
-        [HttpGet("favorites")]
-        public async Task<IActionResult> GetFavorites()
-        {
-            var favorites = await accountService.GetFavoritesAsync();
-            return Ok(favorites);
-        }
 
         private void SetHttpOnlyCookies(string token)
         {

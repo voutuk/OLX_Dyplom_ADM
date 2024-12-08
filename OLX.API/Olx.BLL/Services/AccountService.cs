@@ -17,6 +17,7 @@ using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
+using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -28,6 +29,7 @@ namespace Olx.BLL.Services
         IHttpContextAccessor  httpContext,
         IJwtService jwtService,
         IRepository<RefreshToken> tokenRepository,
+        IRepository<OlxUser> userRepository,
         IRepository<Advert> advertRepository,
         IEmailService emailService,
         IConfiguration configuration,
@@ -117,11 +119,19 @@ namespace Olx.BLL.Services
 
         private async Task<OlxUser> UpdateUserActivity() 
         {
-            var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
+            var currentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
               ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
-            curentUser.LastActivity = DateTime.UtcNow;
-            await userManager.UpdateAsync(curentUser);
-            return curentUser;
+            currentUser.LastActivity = DateTime.UtcNow;
+            await userManager.UpdateAsync(currentUser);
+            return currentUser;
+        }
+
+        private async Task<OlxUser> GetCurrentUser()
+        {
+            var currentUserId = int.Parse(userManager.GetUserId(httpContext.HttpContext?.User!)!);
+            var currentUser = await userRepository.GetItemBySpec(new OlxUserSpecs.GetById(currentUserId, true))
+                ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
+            return currentUser;
         }
 
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
@@ -317,7 +327,7 @@ namespace Olx.BLL.Services
                 var result = await userManager.ChangePasswordAsync(user, userEditModel.OldPassword, userEditModel.Password);
                 if (!result.Succeeded)
                 {
-                    throw new HttpException(Errors.CurentPasswordIsNotValid, HttpStatusCode.BadRequest);
+                    throw new HttpException(Errors.CurrentPasswordIsNotValid, HttpStatusCode.BadRequest);
                 }
             }
             mapper.Map(userEditModel,user);
@@ -335,35 +345,34 @@ namespace Olx.BLL.Services
 
         public async Task AddToFavoritesAsync(int advertId)
         {
-            var user = await UpdateUserActivity();
-            
-            var advert = await advertRepository.GetByIDAsync(advertId)
+            var user = await GetCurrentUser();
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(advertId,true))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
 
             if (user.FavoriteAdverts.All(a => a.Id != advertId))
             {
                 user.FavoriteAdverts.Add(advert);
-                await userManager.UpdateAsync(user);
             }
+            user.LastActivity = DateTime.Now;
+            await userManager.UpdateAsync(user);
         }
 
         public async Task RemoveFromFavoritesAsync(int advertId)
         {
-            var user = await UpdateUserActivity();
-            var advertToRemove = await advertRepository.GetItemBySpec( new AdvertSpecs.GetFavoriteAdvertByUserIdAndAdvertId(user.Id, advertId))
+            var user = await GetCurrentUser();
+            var advertToRemove = user.FavoriteAdverts.FirstOrDefault(x => x.Id == advertId)
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             user.FavoriteAdverts.Remove(advertToRemove);
+            user.LastActivity = DateTime.Now;
             await userManager.UpdateAsync(user);
-            
         }
 
         public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync()
         {
-            var currentUser = await UpdateUserActivity();
-            var favoriteAdverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetFavoritesByUserId(currentUser.Id));
-            return favoriteAdverts.Any()
-                ? mapper.Map<IEnumerable<AdvertDto>>(favoriteAdverts)
-                : Enumerable.Empty<AdvertDto>();
+            var user = await GetCurrentUser(); ;
+            return user.FavoriteAdverts.Count > 0
+                ? mapper.Map<IEnumerable<AdvertDto>>(user.FavoriteAdverts)
+                : [];
         }
     }
 }

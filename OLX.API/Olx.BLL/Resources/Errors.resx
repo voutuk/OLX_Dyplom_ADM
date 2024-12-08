@@ -153,8 +153,8 @@
   <data name="InvalidUserId" xml:space="preserve">
     <value>Invalid user id</value>
   </data>
-  <data name="CurentPasswordIsNotValid" xml:space="preserve">
-    <value>Curent password is not valid</value>
+  <data name="Curren" xml:space="preserve">
+    <value>Current password is not valid</value>
   </data>
   <data name="InvalidFilterCreationModelData" xml:space="preserve">
     <value>Invalid filter creation model data</value>
@@ -176,5 +176,8 @@
   </data>
   <data name="ErrorAthorizedUser" xml:space="preserve">
     <value>Error authorized user</value>
+  </data>
+  <data name="CurrentPasswordIsNotValid" xml:space="preserve">
+    <value>Current password is not valid</value>
   </data>
 </root>

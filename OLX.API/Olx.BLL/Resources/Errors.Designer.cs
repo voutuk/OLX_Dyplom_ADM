@@ -72,9 +72,9 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Curent password is not valid.
         /// </summary>
-        internal static string CurentPasswordIsNotValid {
+        internal static string CurrentPasswordIsNotValid {
             get {
-                return ResourceManager.GetString("CurentPasswordIsNotValid", resourceCulture);
+                return ResourceManager.GetString("CurrentPasswordIsNotValid", resourceCulture);
             }
         }
         
