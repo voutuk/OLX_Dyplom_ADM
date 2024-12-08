@@ -8,6 +8,7 @@ using SixLabors.ImageSharp.Processing;
 
 
 
+
 namespace Olx.BLL.Services
 {
     public class ImageService(IConfiguration config) : IImageService
@@ -101,10 +102,7 @@ namespace Olx.BLL.Services
 
         public void DeleteImagesIfExists(IEnumerable<string> images)
         {
-            foreach (var image in images)
-            {
-                DeleteImageIfExists(image);
-            }
+            images.AsParallel().ForAll(x => DeleteImageIfExists(x));
         }
 
         public async Task<string> SaveImageFromUrlAsync(string imageUrl)

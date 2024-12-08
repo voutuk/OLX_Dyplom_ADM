@@ -13,7 +13,7 @@ namespace Olx.BLL.Entities
         public string ContactEmail { get; set; } = string.Empty;
         [StringLength(128)]
         public string ContactPersone { get; set; } = string.Empty;
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.UtcNow;
         [StringLength(256)]
         public string Title { get; set; } = string.Empty;
         [StringLength(5000)]

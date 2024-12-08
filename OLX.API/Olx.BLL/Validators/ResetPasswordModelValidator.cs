@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Olx.BLL.Models;
 using Olx.BLL.Resources;
+using Olx.BLL.Validators.Extentions;
 
 namespace Olx.BLL.Validators
 {
@@ -12,8 +13,7 @@ namespace Olx.BLL.Validators
                 .NotEmpty().WithMessage(ValidationErrors.NotEmpty)
                 .EmailAddress().WithMessage(ValidationErrors.InvalidEmail);
             RuleFor(x => x.Password)
-                .MinimumLength(6).WithMessage($"{ValidationErrors.MinSymbolsCountError} 6 symbols")
-                .Matches(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{6,}$").WithMessage(ValidationErrors.InvalidPassword);
+                .Password().WithMessage(ValidationErrors.InvalidPassword);
             RuleFor(x => x.Token)
                 .NotEmpty().WithMessage(ValidationErrors.NotEmpty);
         }

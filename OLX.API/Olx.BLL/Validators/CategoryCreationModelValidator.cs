@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using Olx.BLL.Helpers;
 using Olx.BLL.Models.Category;
 using Olx.BLL.Resources;
+using Olx.BLL.Validators.Extentions;
 
 
 namespace Olx.BLL.Validators
@@ -13,7 +13,7 @@ namespace Olx.BLL.Validators
             RuleFor(x => x.Id)
                 .GreaterThanOrEqualTo(0).WithMessage(ValidationErrors.GreaterEqualZeroError);
             RuleFor(x => x.ImageFile)
-                .Must(x => FileTypes.AllowedImageFileTypes.Contains(x?.ContentType)).WithMessage(ValidationErrors.InvalidImageFileType)
+                .ImageFile()
                 .When(x => x.ImageFile != null);
             RuleFor(x => x.ParentId)
                 .GreaterThanOrEqualTo(0).WithMessage(ValidationErrors.GreaterEqualZeroError)
