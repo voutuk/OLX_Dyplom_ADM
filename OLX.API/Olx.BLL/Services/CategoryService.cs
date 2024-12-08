@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Olx.BLL.DTOs.CategoryDtos;
-using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities;
-using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
-using Olx.BLL.Models.FilterModels;
 using Olx.BLL.Models.Page;
 using Olx.BLL.Pagination.Filters;
 using Olx.BLL.Pagination.SortData;
@@ -15,6 +12,8 @@ using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
 using System.Net;
 using Olx.BLL.Models.Category;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace Olx.BLL.Services
 {
@@ -23,10 +22,21 @@ namespace Olx.BLL.Services
         IMapper mapper,
         IImageService imageService,
         IValidator<CategoryCreationModel> validator,
-        IFilterService filterService) : ICategoryService
+        IFilterService filterService,
+        UserManager<OlxUser> userManager,
+        IHttpContextAccessor httpContext) : ICategoryService
     {
+        private async Task<OlxUser> UpdateUserActivity()
+        {
+            var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
+              ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
+            curentUser.LastActivity = DateTime.UtcNow;
+            await userManager.UpdateAsync(curentUser);
+            return curentUser;
+        }
         public async Task CreateAsync(CategoryCreationModel creationModel)
         {
+            await UpdateUserActivity();
             validator.ValidateAndThrow(creationModel);
             var category = mapper.Map<Category>(creationModel);
             if (creationModel.ImageFile is not null)
@@ -44,6 +54,7 @@ namespace Olx.BLL.Services
 
         public async Task RemoveAsync(int id)
         {
+            await UpdateUserActivity();
             var category = await categoryRepository.GetByIDAsync(id);
             if (category is not null)
             {
@@ -59,6 +70,7 @@ namespace Olx.BLL.Services
 
         public async Task EditAsync(CategoryCreationModel editModel)
         {
+            await UpdateUserActivity();
             validator.ValidateAndThrow(editModel);
             var category = await categoryRepository.GetByIDAsync(editModel.Id)
                 ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);

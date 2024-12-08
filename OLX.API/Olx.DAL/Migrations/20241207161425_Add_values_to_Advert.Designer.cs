@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Olx.DAL.Data;
@@ -11,9 +12,11 @@ using Olx.DAL.Data;
 namespace Olx.DAL.Migrations
 {
     [DbContext(typeof(OlxDbContext))]
-    partial class OlxDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241207161425_Add_values_to_Advert")]
+    partial class Add_values_to_Advert
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,21 +38,6 @@ namespace Olx.DAL.Migrations
                     b.HasIndex("FilterValuesId");
 
                     b.ToTable("AdvertFilterValue");
-                });
-
-            modelBuilder.Entity("AdvertOlxUser", b =>
-                {
-                    b.Property<int>("FavoriteAdvertsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("FavoritedByUsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("FavoriteAdvertsId", "FavoritedByUsersId");
-
-                    b.HasIndex("FavoritedByUsersId");
-
-                    b.ToTable("UserFavorites", (string)null);
                 });
 
             modelBuilder.Entity("CategoryFilter", b =>
@@ -282,7 +270,7 @@ namespace Olx.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<int>("Priority")
+                    b.Property<int>("Position")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -489,21 +477,6 @@ namespace Olx.DAL.Migrations
                     b.HasOne("Olx.BLL.Entities.FilterEntities.FilterValue", null)
                         .WithMany()
                         .HasForeignKey("FilterValuesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AdvertOlxUser", b =>
-                {
-                    b.HasOne("Olx.BLL.Entities.Advert", null)
-                        .WithMany()
-                        .HasForeignKey("FavoriteAdvertsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Olx.BLL.Entities.OlxUser", null)
-                        .WithMany()
-                        .HasForeignKey("FavoritedByUsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

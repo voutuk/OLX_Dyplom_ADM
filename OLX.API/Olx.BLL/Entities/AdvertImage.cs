@@ -6,6 +6,6 @@ namespace Olx.BLL.Entities
     {
         public int AdvertId { get; set; }
         public Advert Advert { get; set; }
-        public int Position { get; set; }
+        public int Priority { get; set; }
     }
 }
