@@ -12,6 +12,8 @@ namespace OLX.API.Controllers
     [Route("api/[controller]")]
     public class AccountController(IAccountService accountService, IConfiguration configuration) : ControllerBase
     {
+        private string _refreshTokenCookiesName = configuration["RefreshTokenCookiesName"]!;
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthRequest model )
         {
@@ -29,26 +31,34 @@ namespace OLX.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("logout")]
+        [HttpPost("user/logout")]
         public async Task<IActionResult> LogOut([FromBody] string? refreshToken)
         {
-            if (Request.Cookies.TryGetValue(configuration["RefreshTokenCookiesName"]!, out var token))
+            if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var token))
+            {
                 await accountService.LogoutAsync(token);
+            }
             else if (refreshToken is not null)
+            {
                 await accountService.LogoutAsync(refreshToken);
+            }
             else return Unauthorized();
-            Response.Cookies.Delete(configuration["RefreshTokenCookiesName"]!);
+            Response.Cookies.Delete(_refreshTokenCookiesName);
             return Ok();
         }
 
-        [HttpPost("refresh")]
+        [HttpPost("user/refresh")]
         public async Task<IActionResult> RefreshTokens([FromBody] string? refreshToken)
         {
             string token;
-            if (Request.Cookies.TryGetValue("refreshToken", out var httpToken))
+            if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var httpToken))
+            {
                 token = httpToken;
+            }
             else if (refreshToken is not null)
+            {
                 token = refreshToken;
+            }
             else return Unauthorized();
             var authResponse = await accountService.RefreshTokensAsync(token);
             SetHttpOnlyCookies(authResponse.RefreshToken);
@@ -125,12 +135,12 @@ namespace OLX.API.Controllers
 
         private void SetHttpOnlyCookies(string token)
         {
-            Response.Cookies.Append(configuration["RefreshTokenCookiesName"]!, token, new CookieOptions
+            Response.Cookies.Append(_refreshTokenCookiesName, token, new CookieOptions
             {
                 HttpOnly = true,
                 // Domain = "olx.com",
                 // Secure = true,
-                // Path = "/"
+                Path = "/api/Account/user",
                 Expires = DateTime.Now.AddDays(double.Parse(configuration["JwtOptions:RefreshTokenLifeTimeInDays"]!))
             });
         }

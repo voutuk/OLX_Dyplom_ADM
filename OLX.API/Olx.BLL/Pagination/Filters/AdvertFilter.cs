@@ -9,11 +9,11 @@ namespace Olx.BLL.Pagination.Filters
         public decimal PriceFrom { get; init; }
         public decimal PriceTo { get; init; }
         public string? Search { get; init; }
-        public bool IsContractPrice { get; init; } = false;
-        public bool Approved { get; set; } = false;
-        public bool Blocked { get; set; } = false;
-        public IEnumerable<int>? CategoryIds { get; set; }
-        public IEnumerable<int>? Filters { get; set; }
+        public bool IsContractPrice { get; init; }
+        public bool Approved { get; init; }
+        public bool Blocked { get; init; } 
+        public IEnumerable<int>? CategoryIds { get; init; }
+        public IEnumerable<int>? Filters { get; init; }
         public IQueryable<Advert> FilterQuery(IQueryable<Advert> query)
         {
             if (CategoryIds is not null && CategoryIds.Any())
@@ -24,7 +24,7 @@ namespace Olx.BLL.Pagination.Filters
             {
                 query = query.Where(x => Filters.All(z => x.FilterValues.Any(v => v.Id == z)));
             }
-            if (PriceFrom !> 0)
+            if (PriceFrom > 0)
             {
                 query = query.Where(x => x.Price >= PriceFrom);
             }
