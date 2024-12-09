@@ -53,7 +53,7 @@ namespace Olx.BLL.Services
             advert.Images = await Task.WhenAll(images);
             if (advertModel.FilterValueIds.Count != 0)
             {
-                var values = await filterValueService.GetByIdsAsync(advertModel.FilterValueIds,true);
+                var values = await filterValueService.GetByIdsAsync(advertModel.FilterValueIds);
                 advert.FilterValues = values.ToHashSet();
             }
             await advertRepository.AddAsync(advert);
@@ -63,7 +63,7 @@ namespace Olx.BLL.Services
         public async Task DeleteAsync(int id)
         {
             await UpdateUserActivity();
-            var advert = await advertRepository.GetItemBySpec( new AdvertSpecs.GetById(id,true))
+            var advert = await advertRepository.GetItemBySpec( new AdvertSpecs.GetById(id,AdvertOpt.Images))
                 ?? throw new HttpException(Errors.InvalidAdvertId,HttpStatusCode.BadRequest);
             advertRepository.Delete(advert);
             await advertRepository.SaveAsync();
@@ -72,13 +72,13 @@ namespace Olx.BLL.Services
 
         public async Task<IEnumerable<AdvertDto>> GetRangeAsync(IEnumerable<int> ids)
         {
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByIds(ids));
+            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByIds(ids,AdvertOpt.NoTracking|AdvertOpt.Images|AdvertOpt.FilterValues));
             return adverts.Any() ? mapper.Map<IEnumerable<AdvertDto>>(adverts) : [];  
         }
 
         public async Task<IEnumerable<AdvertDto>> GetAllAsync()
         {
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetAll());
+            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetAll(AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues));
             return adverts.Any() ? mapper.Map<IEnumerable<AdvertDto>>(adverts) : [];
         }
 
@@ -89,20 +89,20 @@ namespace Olx.BLL.Services
             {
                 throw new HttpException(Errors.InvalidUserId,HttpStatusCode.BadRequest);
             }
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByUserId(userId));
+            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByUserId(userId, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues));
             return adverts.Any() ? mapper.Map<IEnumerable<AdvertDto>>(adverts) : [];
         }
 
         public async Task<AdvertDto> GetByIdAsync(int id)
         {
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             return mapper.Map<AdvertDto>(advert);
         }
 
         public async Task<IEnumerable<AdvertImageDto>> GetImagesAsync(int id)
         {
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             return mapper.Map<IEnumerable<AdvertImageDto>>(advert.Images);
         }
@@ -128,7 +128,7 @@ namespace Olx.BLL.Services
             {
                 throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
             }
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetUserAdvertById(curentUser.Id,advertModel.Id, true))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetUserAdvertById(curentUser.Id,advertModel.Id, AdvertOpt.Images))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
 
             mapper.Map(advertModel, advert);
@@ -167,7 +167,7 @@ namespace Olx.BLL.Services
             }
             if (advertModel.FilterValueIds.Count != 0)
             {
-                var values = await filterValueService.GetByIdsAsync(advertModel.FilterValueIds, true);
+                var values = await filterValueService.GetByIdsAsync(advertModel.FilterValueIds);
                 advert.FilterValues = values.ToHashSet();
             }
 
@@ -177,7 +177,7 @@ namespace Olx.BLL.Services
         public async Task ApproveAsync(int id)
         {
             await UpdateUserActivity();
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id,true))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             advert.Approved = true;
             await advertRepository.SaveAsync();
@@ -186,7 +186,7 @@ namespace Olx.BLL.Services
         public async Task SetBlockedStatusAsync(int id, bool status)
         {
             await UpdateUserActivity();
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, true))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id))
                  ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             advert.Blocked = status;
             await advertRepository.SaveAsync();

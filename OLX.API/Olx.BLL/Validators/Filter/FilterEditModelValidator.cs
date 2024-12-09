@@ -13,6 +13,7 @@ namespace Olx.BLL.Validators.Filter
                 .MaximumLength(100).WithMessage($"{ValidationErrors.MaxSymbolsCountError} 100 symbols")
                 .NotEmpty().WithMessage(ValidationErrors.NotEmpty);
             RuleFor(x => x.Id).GreaterThan(0).WithMessage(ValidationErrors.GreaterZeroError);
+            RuleFor(x => x.NewValues).NotEmpty().WithMessage(ValidationErrors.NotEmpty);
         }
     }
 }

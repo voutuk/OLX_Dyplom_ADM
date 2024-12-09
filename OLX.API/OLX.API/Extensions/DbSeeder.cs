@@ -116,7 +116,7 @@ namespace OLX.API.Extensions
                             ?? throw new JsonException();
                         if (categoryModels is not null && categoryModels.Any() && filterRepo is not null)
                         {
-                            var filters = await filterRepo.GetListBySpec(new FilterSpecs.GetAll(true));
+                            var filters = await filterRepo.GetListBySpec(new FilterSpecs.GetAll(FilterOpt.Values));
                             await categoryRepo.AddRangeAsync(await GetCategories(categoryModels, filters,imageService));
                             await categoryRepo.SaveAsync();
                         }

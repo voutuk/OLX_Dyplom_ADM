@@ -7,7 +7,7 @@ namespace Olx.BLL.Interfaces
     public interface IFilterValueService
     {
         Task<IEnumerable<FilterValueDto>> GetAllAsync();
-        Task<IEnumerable<FilterValue>> GetByIdsAsync(IEnumerable<int> ids, bool tracking = false);
-        Task<IEnumerable<FilterValueDto>> GetDtoByIdsAsync(IEnumerable<int> ids, bool tracking = false);
+        Task<IEnumerable<FilterValue>> GetByIdsAsync(IEnumerable<int> ids);
+        Task<IEnumerable<FilterValueDto>> GetDtoByIdsAsync(IEnumerable<int> ids);
     }
 }

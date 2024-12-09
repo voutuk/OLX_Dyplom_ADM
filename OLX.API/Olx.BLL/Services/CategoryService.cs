@@ -55,7 +55,7 @@ namespace Olx.BLL.Services
         public async Task RemoveAsync(int id)
         {
             await UpdateUserActivity();
-            var category = await categoryRepository.GetByIDAsync(id);
+            var category = await categoryRepository.GetItemBySpec(new CategorySpecs.GetById(id,CategoryOpt.Image));
             if (category is not null)
             {
                 categoryRepository.Delete(category);
@@ -72,7 +72,7 @@ namespace Olx.BLL.Services
         {
             await UpdateUserActivity();
             validator.ValidateAndThrow(editModel);
-            var category = await categoryRepository.GetByIDAsync(editModel.Id)
+            var category = await categoryRepository.GetItemBySpec( new CategorySpecs.GetById(editModel.Id,CategoryOpt.Image))
                 ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
             mapper.Map(editModel, category);
             if (editModel.ImageFile is not null)
@@ -86,31 +86,31 @@ namespace Olx.BLL.Services
 
             if (editModel.FiltersIds is not null && editModel.FiltersIds.Any())
             {
-                category.Filters = (await filterService.GetByIds(editModel.FiltersIds, true)).ToHashSet();
+                category.Filters = (await filterService.GetByIds(editModel.FiltersIds)).ToHashSet();
             }
             else category.Filters.Clear();
             await categoryRepository.SaveAsync();
         }
 
-        public async Task<IEnumerable<CategoryDto>> GetAllAsync(bool tracking = false) =>
-            mapper.Map<IEnumerable<CategoryDto>>( await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(tracking)));
+        public async Task<IEnumerable<CategoryDto>> GetAllAsync() =>
+            mapper.Map<IEnumerable<CategoryDto>>( await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.Filters)));
        
 
-        public async Task<IEnumerable<CategoryDto>> GetMainAsync(bool tracking = false) =>
-            mapper.Map<IEnumerable<CategoryDto>>(await categoryRepository.GetListBySpec(new CategorySpecs.GetMain(tracking)));
+        public async Task<IEnumerable<CategoryDto>> GetMainAsync() =>
+            mapper.Map<IEnumerable<CategoryDto>>(await categoryRepository.GetListBySpec(new CategorySpecs.GetMain(CategoryOpt.Filters)));
 
-        public async Task<CategoryChildsTreeDto> GetTreeAsync(int categoryId, bool tracking = false)
+        public async Task<CategoryChildsTreeDto> GetTreeAsync(int categoryId)
         {
-            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(tracking));
-            var category = categories.FirstOrDefault(x=>x.Id == categoryId)
+            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.Parent|CategoryOpt.Filters|CategoryOpt.NoTracking));
+            var category = categories.FirstOrDefault(x => x.Id == categoryId)
                 ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
             category.Childs = BuildTree(categoryId, categories).ToHashSet();
             return mapper.Map<CategoryChildsTreeDto>(category);
         }
 
-        public async Task<IEnumerable<CategoryChildsTreeDto>> GetMainTreeAsync(bool tracking = false)
+        public async Task<IEnumerable<CategoryChildsTreeDto>> GetMainTreeAsync()
         {
-            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(tracking));
+            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.Parent | CategoryOpt.Filters | CategoryOpt.NoTracking));
             return mapper.Map<IEnumerable<CategoryChildsTreeDto>> (BuildTree(null, categories));
         }
 

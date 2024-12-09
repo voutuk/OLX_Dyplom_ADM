@@ -7,10 +7,10 @@ namespace Olx.BLL.Interfaces
     public interface ICategoryService
     {
         Task<PageResponse<CategoryDto>> GetPageAsync(CategoryPageRequest pageRequest);
-        Task<IEnumerable<CategoryDto>> GetAllAsync(bool tracking = false);
-        Task<IEnumerable<CategoryDto>> GetMainAsync(bool tracking = false);
-        Task<CategoryChildsTreeDto> GetTreeAsync(int categoryId,bool tracking = false);
-        Task<IEnumerable<CategoryChildsTreeDto>> GetMainTreeAsync(bool tracking = false);
+        Task<IEnumerable<CategoryDto>> GetAllAsync();
+        Task<IEnumerable<CategoryDto>> GetMainAsync();
+        Task<CategoryChildsTreeDto> GetTreeAsync(int categoryId);
+        Task<IEnumerable<CategoryChildsTreeDto>> GetMainTreeAsync();
         Task CreateAsync(CategoryCreationModel creationModel);
         Task RemoveAsync(int id);
         Task EditAsync(CategoryCreationModel editModel);

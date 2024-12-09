@@ -19,7 +19,7 @@ namespace Olx.BLL.Pagination
             {
                 query = sortData.Sort(query);
             }
-            query = query.Skip((page - 1) * size).Take(size);
+            query = query.AsNoTracking().Skip((page - 1) * size).Take(size);
             return new()
             {
                 Total = total,

@@ -44,14 +44,17 @@ namespace Olx.BLL.Services
             await filterRepository.SaveAsync();
         }
 
-        public async Task<IEnumerable<Filter>> GetByIds(IEnumerable<int> ids, bool tracking = false) =>
-            await filterRepository.GetListBySpec(new FilterSpecs.GetByIds(ids, tracking));
+        public async Task<IEnumerable<Filter>> GetByIds(IEnumerable<int> ids) =>
+            await filterRepository.GetListBySpec(new FilterSpecs.GetByIds(ids, FilterOpt.Values));
 
-        public async Task<IEnumerable<FilterDto>> GetDtoByIds(IEnumerable<int> ids, bool tracking = false) =>
-             mapper.Map<IEnumerable<FilterDto>>(await GetByIds(ids, tracking));
-        
+        public async Task<IEnumerable<FilterDto>> GetDtoByIds(IEnumerable<int> ids)
+        {
+            var filters = await filterRepository.GetListBySpec(new FilterSpecs.GetByIds(ids, FilterOpt.Values|FilterOpt.NoTracking));
+            return mapper.Map<IEnumerable<FilterDto>>(filters);
+        }
+            
         public async Task<IEnumerable<FilterDto>> GetAll() =>
-            mapper.Map<IEnumerable<FilterDto>>(await filterRepository.GetListBySpec(new FilterSpecs.GetAll()));
+            mapper.Map<IEnumerable<FilterDto>>(await filterRepository.GetListBySpec(new FilterSpecs.GetAll(FilterOpt.Values|FilterOpt.NoTracking)));
 
         public async Task RemoveAsync(int id)
         {
@@ -68,7 +71,7 @@ namespace Olx.BLL.Services
         {
             await UpdateUserActivity();
             filterEditModelValidator.ValidateAndThrow(filterModel);
-            var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id,true));
+            var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id,FilterOpt.Values));
             if (filter is not null)
             {
                 mapper.Map(filterModel,filter);

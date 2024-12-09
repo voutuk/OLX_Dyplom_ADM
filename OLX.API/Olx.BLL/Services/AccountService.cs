@@ -129,7 +129,7 @@ namespace Olx.BLL.Services
         private async Task<OlxUser> GetCurrentUser()
         {
             var currentUserId = int.Parse(userManager.GetUserId(httpContext.HttpContext?.User!)!);
-            var currentUser = await userRepository.GetItemBySpec(new OlxUserSpecs.GetById(currentUserId, true))
+            var currentUser = await userRepository.GetItemBySpec(new OlxUserSpecs.GetById(currentUserId, UserOpt.FavoriteAdverts))
                 ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
             currentUser.LastActivity = DateTime.UtcNow;
             return currentUser;
@@ -347,7 +347,7 @@ namespace Olx.BLL.Services
         public async Task AddToFavoritesAsync(int advertId)
         {
             var user = await GetCurrentUser();
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(advertId,true))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(advertId))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
 
             if (user.FavoriteAdverts.All(a => a.Id != advertId))

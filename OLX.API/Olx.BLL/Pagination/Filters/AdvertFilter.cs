@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using Olx.BLL.Entities;
 using Olx.BLL.Pagination.Interfaces;
 
@@ -16,6 +17,7 @@ namespace Olx.BLL.Pagination.Filters
         public IEnumerable<int>? Filters { get; init; }
         public IQueryable<Advert> FilterQuery(IQueryable<Advert> query)
         {
+            query = query.Include(x => x.FilterValues).Include(x => x.Images);
             if (CategoryIds is not null && CategoryIds.Any())
             {
                 query = query.Where(x => CategoryIds.Any(z => z == x.CategoryId));

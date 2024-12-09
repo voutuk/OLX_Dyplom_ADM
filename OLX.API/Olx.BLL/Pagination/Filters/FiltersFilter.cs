@@ -1,4 +1,5 @@
-﻿using Olx.BLL.Entities.FilterEntities;
+﻿using Microsoft.EntityFrameworkCore;
+using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Pagination.Interfaces;
 
 namespace Olx.BLL.Pagination.Filters
@@ -7,6 +8,7 @@ namespace Olx.BLL.Pagination.Filters
     {
         public IQueryable<Filter> FilterQuery(IQueryable<Filter> query)
         {
+            query = query.Include(x => x.Values); 
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 query = query.Where(x => x.Name.ToLower().Contains(searchString.ToLower()));
