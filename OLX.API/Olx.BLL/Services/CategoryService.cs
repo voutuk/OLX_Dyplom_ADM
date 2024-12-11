@@ -14,6 +14,7 @@ using System.Net;
 using Olx.BLL.Models.Category;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Olx.BLL.Exstensions;
 
 namespace Olx.BLL.Services
 {
@@ -26,17 +27,10 @@ namespace Olx.BLL.Services
         UserManager<OlxUser> userManager,
         IHttpContextAccessor httpContext) : ICategoryService
     {
-        private async Task<OlxUser> UpdateUserActivity()
-        {
-            var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
-              ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
-            curentUser.LastActivity = DateTime.UtcNow;
-            await userManager.UpdateAsync(curentUser);
-            return curentUser;
-        }
+        
         public async Task CreateAsync(CategoryCreationModel creationModel)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             validator.ValidateAndThrow(creationModel);
             var category = mapper.Map<Category>(creationModel);
             if (creationModel.ImageFile is not null)
@@ -54,7 +48,7 @@ namespace Olx.BLL.Services
 
         public async Task RemoveAsync(int id)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             var category = await categoryRepository.GetItemBySpec(new CategorySpecs.GetById(id,CategoryOpt.Image));
             if (category is not null)
             {
@@ -70,7 +64,7 @@ namespace Olx.BLL.Services
 
         public async Task EditAsync(CategoryCreationModel editModel)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             validator.ValidateAndThrow(editModel);
             var category = await categoryRepository.GetItemBySpec( new CategorySpecs.GetById(editModel.Id,CategoryOpt.Image))
                 ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);

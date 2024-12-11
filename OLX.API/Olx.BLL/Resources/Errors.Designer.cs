@@ -70,7 +70,16 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Curent password is not valid.
+        ///   Ищет локализованную строку, похожую на Current password is not valid.
+        /// </summary>
+        internal static string Curren {
+            get {
+                return ResourceManager.GetString("Curren", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Current password is not valid.
         /// </summary>
         internal static string CurrentPasswordIsNotValid {
             get {
@@ -120,6 +129,24 @@ namespace Olx.BLL.Resources {
         internal static string InvalidCategoryId {
             get {
                 return ResourceManager.GetString("InvalidCategoryId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid chat id.
+        /// </summary>
+        internal static string InvalidChatId {
+            get {
+                return ResourceManager.GetString("InvalidChatId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid chatt id.
+        /// </summary>
+        internal static string InvalidChattId {
+            get {
+                return ResourceManager.GetString("InvalidChattId", resourceCulture);
             }
         }
         

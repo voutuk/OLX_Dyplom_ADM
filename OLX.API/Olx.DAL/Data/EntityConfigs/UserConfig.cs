@@ -16,6 +16,17 @@ namespace Olx.DAL.Data.EntityConfigs
             builder.HasMany(x => x.FavoriteAdverts)
                 .WithMany(x => x.FavoritedByUsers)
                 .UsingEntity(x => x.ToTable("UserFavorites"));
+
+            builder.HasMany(x => x.BuyChats)
+                .WithOne(x => x.Seller)
+                .HasForeignKey(x=>x.SellerId);
+            builder.HasMany(x => x.SellChats)
+                .WithOne(x => x.Buyer)
+                .HasForeignKey(x => x.BuyerId);
+            builder.HasMany(x => x.ChatMessages)
+                .WithOne(x => x.Sender)
+                .HasForeignKey(x => x.SenderId);
+
         }
     }
 }

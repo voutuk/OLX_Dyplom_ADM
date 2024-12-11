@@ -14,6 +14,7 @@ using Olx.BLL.Specifications;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Olx.BLL.Exstensions;
 
 
 namespace Olx.BLL.Services
@@ -27,18 +28,11 @@ namespace Olx.BLL.Services
         IMapper mapper,
         IValidator<AdvertCreationModel> advertCreationModelValidator) : IAdvertService
     {
-        private async Task<OlxUser> UpdateUserActivity()
-        {
-            var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
-              ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
-            curentUser.LastActivity = DateTime.UtcNow;
-            await userManager.UpdateAsync(curentUser);
-            return curentUser;
-        }
+        
         public async Task CreateAsync(AdvertCreationModel advertModel)
         {
             advertCreationModelValidator.ValidateAndThrow(advertModel);
-            var curentUser = await UpdateUserActivity();
+            var curentUser = await userManager.UpdateUserActivityAsync(httpContext);
             if (curentUser.Id != advertModel.UserId)
             {
                 throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
@@ -62,7 +56,7 @@ namespace Olx.BLL.Services
 
         public async Task DeleteAsync(int id)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             var advert = await advertRepository.GetItemBySpec( new AdvertSpecs.GetById(id,AdvertOpt.Images))
                 ?? throw new HttpException(Errors.InvalidAdvertId,HttpStatusCode.BadRequest);
             advertRepository.Delete(advert);
@@ -84,7 +78,7 @@ namespace Olx.BLL.Services
 
         public async Task<IEnumerable<AdvertDto>> GetByUserIdAsync(int userId)
         {
-            var curentUser = await UpdateUserActivity();
+            var curentUser = await userManager.UpdateUserActivityAsync(httpContext); 
             if (curentUser.Id != userId)
             {
                 throw new HttpException(Errors.InvalidUserId,HttpStatusCode.BadRequest);
@@ -123,7 +117,7 @@ namespace Olx.BLL.Services
         public async Task UpdateAsync(AdvertCreationModel advertModel)
         {
             advertCreationModelValidator.ValidateAndThrow(advertModel);
-            var curentUser = await UpdateUserActivity();
+            var curentUser = await userManager.UpdateUserActivityAsync(httpContext);
             if (curentUser.Id != advertModel.UserId)
             {
                 throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
@@ -176,7 +170,7 @@ namespace Olx.BLL.Services
 
         public async Task ApproveAsync(int id)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             advert.Approved = true;
@@ -185,7 +179,7 @@ namespace Olx.BLL.Services
 
         public async Task SetBlockedStatusAsync(int id, bool status)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id))
                  ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             advert.Blocked = status;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Olx.BLL.Entities.ChatEntities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Olx.BLL.Entities
@@ -20,5 +21,8 @@ namespace Olx.BLL.Entities
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
         public ICollection<Advert> Adverts { get; set; } = new HashSet<Advert>();
         public ICollection<Advert> FavoriteAdverts { get; set; } = new HashSet<Advert>();
+        public ICollection<ChatMessage> ChatMessages { get; set; } = new HashSet<ChatMessage>();
+        public ICollection<Chat> BuyChats { get; set; } = new HashSet<Chat>();
+        public ICollection<Chat> SellChats { get; set; } = new HashSet<Chat>();
     }
 }
