@@ -110,7 +110,7 @@ namespace OLX.API.Extensions
 
             string imagesDir = Path.Combine(Directory.GetCurrentDirectory(), configuration["ImagesDir"]!);
             string imagesPath = Path.Combine(Directory.GetCurrentDirectory(), configuration["ServerImagePath"]!);
-
+           
             if (!Directory.Exists(imagesDir))
             {
                 Directory.CreateDirectory(imagesDir);

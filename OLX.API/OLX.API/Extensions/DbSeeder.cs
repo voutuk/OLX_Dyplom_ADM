@@ -32,7 +32,8 @@ namespace OLX.API.Extensions
             var imageService = serviceProvider.GetRequiredService<IImageService>();
             if (!userManager.Users.Any())
             {
-                string usersJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(),"Helpers/JsonData/Users.json" );
+                Console.WriteLine("Start users seeder");
+                string usersJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!,"Users.json" );
                 if (File.Exists(usersJsonDataFile))
                 {
                     var userJson = File.ReadAllText(usersJsonDataFile, Encoding.UTF8);
@@ -73,9 +74,10 @@ namespace OLX.API.Extensions
             }
             //Filter seeder
             var filterRepo = scope.ServiceProvider.GetService<IRepository<Filter>>();
-            if (filterRepo is not null && ! await filterRepo.AnyAsync() )
+            if (filterRepo is not null && !await filterRepo.AnyAsync() )
             {
-                string filtersJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(), "Helpers/JsonData/Filters.json");
+                Console.WriteLine("Start filters seeder");
+                string filtersJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!, "Filters.json");
                 if (File.Exists(filtersJsonDataFile))
                 {
                     var filtersJson = File.ReadAllText(filtersJsonDataFile, Encoding.UTF8);
@@ -106,7 +108,8 @@ namespace OLX.API.Extensions
             var categoryRepo = scope.ServiceProvider.GetService<IRepository<Category>>();
             if (categoryRepo is not null && !await categoryRepo.AnyAsync())
             {
-                string categoryJsonDataFile = Path.Combine(Directory.GetCurrentDirectory(), "Helpers/JsonData/Categories.json");
+                Console.WriteLine("Start categories seeder");
+                string categoryJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!,"Categories.json");
                 if (File.Exists(categoryJsonDataFile))
                 {
                     var filtersJson = File.ReadAllText(categoryJsonDataFile, Encoding.UTF8);
@@ -116,7 +119,7 @@ namespace OLX.API.Extensions
                             ?? throw new JsonException();
                         if (categoryModels is not null && categoryModels.Any() && filterRepo is not null)
                         {
-                            var filters = await filterRepo.GetListBySpec(new FilterSpecs.GetAll(FilterOpt.Values));
+                            var filters = await filterRepo.GetListBySpec(new FilterSpecs.GetAll());
                             await categoryRepo.AddRangeAsync(await GetCategories(categoryModels, filters,imageService));
                             await categoryRepo.SaveAsync();
                         }
