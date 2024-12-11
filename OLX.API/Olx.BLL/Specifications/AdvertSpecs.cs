@@ -23,6 +23,7 @@ namespace Olx.BLL.Specifications
                             AdvertOpt.Category => query.Include(x => x.Category),
                             AdvertOpt.User => query.Include(x => x.User),
                             AdvertOpt.FavoritedByUsers => query.Include(x => x.FavoritedByUsers),
+                            AdvertOpt.Chats => query.Include(x => x.Chats),
                             _ => query
                         };
                     }

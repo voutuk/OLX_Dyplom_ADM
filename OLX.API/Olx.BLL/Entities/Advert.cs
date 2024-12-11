@@ -1,4 +1,5 @@
-﻿using Olx.BLL.Entities.FilterEntities;
+﻿using Olx.BLL.Entities.ChatEntities;
+using Olx.BLL.Entities.FilterEntities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Olx.BLL.Entities
@@ -27,5 +28,7 @@ namespace Olx.BLL.Entities
         public ICollection<FilterValue> FilterValues { get; set; }  = new HashSet<FilterValue>();
         public ICollection<AdvertImage> Images { get; set; } = new HashSet<AdvertImage>();
         public ICollection<OlxUser> FavoritedByUsers { get; set; } = new HashSet<OlxUser>();
+        public ICollection<Chat> Chats { get; set; } = new HashSet<Chat>();
+
     }
 }

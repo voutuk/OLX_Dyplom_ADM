@@ -6,6 +6,7 @@ using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities;
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Exceptions;
+using Olx.BLL.Exstensions;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models.FilterModels;
 using Olx.BLL.Models.Page;
@@ -28,17 +29,9 @@ namespace Olx.BLL.Services
         IHttpContextAccessor httpContext) : IFilterService
     {
 
-        private async Task<OlxUser> UpdateUserActivity()
-        {
-            var curentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
-              ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
-            curentUser.LastActivity = DateTime.UtcNow;
-            await userManager.UpdateAsync(curentUser);
-            return curentUser;
-        }
         public async Task CreateAsync(FilterCreationModel filterModel)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             filterCreationModelValidator.ValidateAndThrow(filterModel);
             await filterRepository.AddAsync(mapper.Map<Filter>(filterModel));
             await filterRepository.SaveAsync();
@@ -69,7 +62,7 @@ namespace Olx.BLL.Services
 
         public async Task EditAsync(FilterEditModel filterModel)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             filterEditModelValidator.ValidateAndThrow(filterModel);
             var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id,FilterOpt.Values));
             if (filter is not null)

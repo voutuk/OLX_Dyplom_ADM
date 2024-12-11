@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Olx.BLL.DTOs;
 using Olx.BLL.Entities;
 using Olx.BLL.Exceptions;
+using Olx.BLL.Exstensions;
 using Olx.BLL.Helpers;
 using Olx.BLL.Helpers.Email;
 using Olx.BLL.Interfaces;
@@ -117,15 +118,6 @@ namespace Olx.BLL.Services
             };
         }
 
-        private async Task<OlxUser> UpdateUserActivity() 
-        {
-            var currentUser = await userManager.GetUserAsync(httpContext.HttpContext?.User!)
-              ?? throw new HttpException(Errors.ErrorAthorizedUser, HttpStatusCode.InternalServerError);
-            currentUser.LastActivity = DateTime.UtcNow;
-            await userManager.UpdateAsync(currentUser);
-            return currentUser;
-        }
-
         private async Task<OlxUser> GetCurrentUser()
         {
             var currentUserId = int.Parse(userManager.GetUserId(httpContext.HttpContext?.User!)!);
@@ -194,7 +186,7 @@ namespace Olx.BLL.Services
         }
         public async Task LogoutAsync(string refreshToken)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
             if (token is not null)
             {
@@ -241,7 +233,7 @@ namespace Olx.BLL.Services
         }
         public async Task BlockUserAsync(UserBlockModel userBlockModel)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             userBlockModelValidator.ValidateAndThrow(userBlockModel);
             var user = await userManager.FindByEmailAsync(userBlockModel.Email);
             if (user is not null)
@@ -274,7 +266,7 @@ namespace Olx.BLL.Services
         {
             if (isAdmin)
             {
-                await UpdateUserActivity();
+                await userManager.UpdateUserActivityAsync(httpContext);
             }
             userCreationModelValidator.ValidateAndThrow(userModel);
             OlxUser user = mapper.Map<OlxUser>(userModel);
@@ -291,7 +283,7 @@ namespace Olx.BLL.Services
 
         public async Task RemoveAccountAsync(string email)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             var user = await userManager.FindByEmailAsync(email) 
                 ?? throw new HttpException(Errors.InvalidUserEmail, HttpStatusCode.BadRequest);
             if (await userManager.IsInRoleAsync(user, Roles.Admin))
@@ -315,7 +307,7 @@ namespace Olx.BLL.Services
         }
         public async Task EditUserAsync(UserEditModel userEditModel, bool isAdmin)
         {
-            await UpdateUserActivity();
+            await userManager.UpdateUserActivityAsync(httpContext);
             var user = await userManager.FindByIdAsync(userEditModel.Id.ToString())
                 ?? throw new HttpException(Errors.InvalidUserId,HttpStatusCode.NotFound);
             if (await userManager.IsInRoleAsync(user, Roles.Admin) && !isAdmin)

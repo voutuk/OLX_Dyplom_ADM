@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Olx.DAL.Data;
@@ -11,9 +12,11 @@ using Olx.DAL.Data;
 namespace Olx.DAL.Migrations
 {
     [DbContext(typeof(OlxDbContext))]
-    partial class OlxDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241211174513_Add_chat_entities")]
+    partial class Add_chat_entities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

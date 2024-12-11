@@ -8,7 +8,8 @@
         FilterValues = 1 << 2,
         User = 1 << 3,
         Category = 1 << 4,
-        FavoritedByUsers = 1 << 5
+        FavoritedByUsers = 1 << 5,
+        Chats = 1 << 6,
     }
 
     [Flags]
@@ -36,6 +37,21 @@
         RefreshTokens = 1 << 0,
         Adverts = 1 << 1,
         NoTracking = 1 << 2,
-        FavoriteAdverts = 1 << 3
+        FavoriteAdverts = 1 << 3,
+        ChatMessages = 1 << 4,
+        BuyChats = 1 << 5,
+        SellChats = 1 << 6,
+    }
+
+    [Flags]
+    public enum ChatOpt
+    {
+        Buyer = 1 << 0,
+        Advert = 1 << 1,
+        NoTracking = 1 << 2,
+        Seller = 1 << 3,
+        Messages = 1 << 4,
+        Advert_Images = 1 << 5,
+        Messages_Sender = 1 << 6
     }
 }

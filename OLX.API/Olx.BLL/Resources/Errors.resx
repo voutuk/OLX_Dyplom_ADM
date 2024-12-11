@@ -180,4 +180,10 @@
   <data name="CurrentPasswordIsNotValid" xml:space="preserve">
     <value>Current password is not valid</value>
   </data>
+  <data name="InvalidChatId" xml:space="preserve">
+    <value>Invalid chat id</value>
+  </data>
+  <data name="InvalidChattId" xml:space="preserve">
+    <value>Invalid chatt id</value>
+  </data>
 </root>
