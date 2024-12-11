@@ -15,19 +15,13 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> GetChats() => Ok(await chatService.GetUserChatsAsync());
 
         [Authorize(Roles = Roles.User)]
-        [HttpGet("chat/messages/{chatId:int}")]
+        [HttpGet("messages/{chatId:int}")]
         public async Task<IActionResult> GetChatsMessages([FromRoute]int chatId) => Ok(await chatService.GetChatMessagesAsync(chatId));
 
-        [Authorize(Roles = Roles.User)]
-        [HttpDelete("chat/user/delete/{chatId:int}")]
-        public async Task<IActionResult> RemoveForUser([FromRoute] int chatId)
-        {
-            await chatService.RemoveForUserAsync(chatId);
-            return Ok();
-        }
+        
 
         [Authorize(Roles = Roles.User)]
-        [HttpPut("send")]
+        [HttpPost("send")]
         public async Task<IActionResult> Send([FromBody] ChatMessageSendModel sendModel)
         {
             await chatService.SendMessageAsync(sendModel.ChatId, sendModel.Message);
@@ -43,7 +37,15 @@ namespace OLX.API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpDelete("chat/user/delete")]
+        [HttpDelete("user/delete/{chatId:int}")]
+        public async Task<IActionResult> RemoveForUser([FromRoute] int chatId)
+        {
+            await chatService.RemoveForUserAsync(chatId);
+            return Ok();
+        }
+
+        [Authorize(Roles = Roles.User)]
+        [HttpDelete("user/delete")]
         public async Task<IActionResult> RemoveForUser([FromBody] IEnumerable<int> chatId)
         {
             await chatService.RemoveForUserAsync(chatId);
@@ -51,7 +53,7 @@ namespace OLX.API.Controllers
         }
 
         [Authorize(Roles = Roles.Admin)]
-        [HttpDelete("chat/delete")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> RemoveAsync([FromBody] IEnumerable<int> chatId)
         {
             await chatService.Remove(chatId);
@@ -59,7 +61,7 @@ namespace OLX.API.Controllers
         }
 
         [Authorize(Roles = Roles.Admin)]
-        [HttpDelete("chat/delete/{chatId:int}")]
+        [HttpDelete("delete/{chatId:int}")]
         public async Task<IActionResult> RemoveAsync([FromRoute] int chatId)
         {
             await chatService.RemoveForUserAsync(chatId);
