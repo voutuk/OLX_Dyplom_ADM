@@ -55,6 +55,7 @@ namespace Olx.BLL.Services
             await tokenRepository.SaveAsync();
             return refeshToken;
         }
+
         private async Task<RefreshToken> CheckRefreshTokenAsync(string refreshToken)
         {
             var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
@@ -69,6 +70,7 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
+
         private async Task CreateUserAsync(OlxUser user,string? password = null, bool isAdmin = false)
         {
             var result = password is not null
@@ -80,12 +82,14 @@ namespace Olx.BLL.Services
             }
             await userManager.AddToRoleAsync(user, isAdmin ? Roles.Admin : Roles.User);
         }
+
         private async Task SendEmailConfirmationMessageAsync(OlxUser user)
         {
             var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var email = EmailTemplates.GetEmailConfirmationTemplate(configuration["FrontendEmailConfirmationUrl"]!, confirmationToken, user.Email!);
             await emailService.SendAsync(user.Email, "Підтвердження електронної пошти", email, true);
         }
+
         private async Task CheckEmailConfirmAsync(OlxUser user)
         {
             if (!await userManager.IsEmailConfirmedAsync(user))
@@ -98,6 +102,7 @@ namespace Olx.BLL.Services
                 });
             }
         }
+
         private async Task CheckLockedOutAsync(OlxUser user)
         {
             if (await userManager.IsLockedOutAsync(user))
@@ -155,6 +160,7 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidLoginData, HttpStatusCode.BadRequest);
         }
+
         public async Task<AuthResponse> GoogleLoginAsync(string googleAccessToken)
         {
             using HttpClient httpClient = new();
@@ -176,6 +182,7 @@ namespace Olx.BLL.Services
             await CheckEmailConfirmAsync(user);
             return await GetAuthTokens(user);
         }
+
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
         {
             var token = await CheckRefreshTokenAsync(refreshToken);
@@ -184,6 +191,7 @@ namespace Olx.BLL.Services
             await tokenRepository.DeleteAsync(token.Id);
             return await GetAuthTokens(user);
         }
+
         public async Task LogoutAsync(string refreshToken)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
@@ -210,6 +218,7 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidConfirmationData, HttpStatusCode.BadRequest);
         }
+
         public async Task FogotPasswordAsync(string email) 
         {
             var user = await userManager.FindByEmailAsync(email);
@@ -220,6 +229,7 @@ namespace Olx.BLL.Services
                 await emailService.SendAsync(user.Email, "Скидання пароля", mail, true);
             }
         }
+
         public async Task ResetPasswordAsync(ResetPasswordModel resetPasswordModel)
         {
             resetPasswordModelValidator.ValidateAndThrow(resetPasswordModel);
@@ -231,6 +241,7 @@ namespace Olx.BLL.Services
             }
             throw new HttpException(Errors.InvalidResetPasswordData, HttpStatusCode.BadRequest);
         }
+
         public async Task BlockUserAsync(UserBlockModel userBlockModel)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
@@ -262,6 +273,7 @@ namespace Olx.BLL.Services
             throw new HttpException(Errors.InvalidResetPasswordData, HttpStatusCode.BadRequest);
 
         }
+
         public async Task AddUserAsync(UserCreationModel userModel, bool isAdmin = false)
         {
             if (isAdmin)
@@ -305,24 +317,26 @@ namespace Olx.BLL.Services
             }
             else throw new HttpException(Errors.UserRemoveError, HttpStatusCode.InternalServerError);
         }
+
         public async Task EditUserAsync(UserEditModel userEditModel, bool isAdmin)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             var user = await userManager.FindByIdAsync(userEditModel.Id.ToString())
                 ?? throw new HttpException(Errors.InvalidUserId,HttpStatusCode.NotFound);
+
             if (await userManager.IsInRoleAsync(user, Roles.Admin) && !isAdmin)
             {
                 throw new HttpException(Errors.ActionBlocked, HttpStatusCode.Forbidden);
             }
+
             userEditModelValidator.ValidateAndThrow(userEditModel);
-            if (userEditModel.OldPassword is not null && userEditModel.Password is not null )
+            
+            var result = await userManager.ChangePasswordAsync(user, userEditModel.OldPassword!, userEditModel.Password!);
+            if (!result.Succeeded)
             {
-                var result = await userManager.ChangePasswordAsync(user, userEditModel.OldPassword, userEditModel.Password);
-                if (!result.Succeeded)
-                {
-                    throw new HttpException(Errors.CurrentPasswordIsNotValid, HttpStatusCode.BadRequest);
-                }
+                throw new HttpException(Errors.CurrentPasswordIsNotValid, HttpStatusCode.BadRequest);
             }
+            
             mapper.Map(userEditModel,user);
             if (userEditModel.ImageFile is not null)
             {
@@ -360,7 +374,7 @@ namespace Olx.BLL.Services
 
         public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync()
         {
-            var user = await GetCurrentUser(); ;
+            var user = await GetCurrentUser();
             return user.FavoriteAdverts.Count > 0
                 ? mapper.Map<IEnumerable<AdvertDto>>(user.FavoriteAdverts)
                 : [];

@@ -38,9 +38,10 @@ namespace Olx.BLL.Services
                 category.Image = await imageService.SaveImageAsync(creationModel.ImageFile);
             }
 
-            if (creationModel.FiltersIds is not null && creationModel.FiltersIds.Any())
+            if (creationModel.FilterIds?.Any() ?? false)
             {
-                category.Filters = (await filterService.GetByIds(creationModel.FiltersIds)).ToHashSet();
+                var filters = await filterService.GetByIds(creationModel.FilterIds);
+                category.Filters = filters.ToList();
             }
             await categoryRepository.AddAsync(category);
             await categoryRepository.SaveAsync();
@@ -78,9 +79,10 @@ namespace Olx.BLL.Services
                 category.Image = await imageService.SaveImageAsync(editModel.ImageFile);
             }
 
-            if (editModel.FiltersIds is not null && editModel.FiltersIds.Any())
+            if (editModel.FilterIds?.Any() ?? false)
             {
-                category.Filters = (await filterService.GetByIds(editModel.FiltersIds)).ToHashSet();
+                var filters = await filterService.GetByIds(editModel.FilterIds);
+                category.Filters = filters.ToList();
             }
             else category.Filters.Clear();
             await categoryRepository.SaveAsync();
@@ -114,7 +116,7 @@ namespace Olx.BLL.Services
                 .Where(c => c.ParentId == parentId)
                 .Select(c =>
                 {
-                    c.Childs = BuildTree(c.Id, categories).ToHashSet();
+                    c.Childs = BuildTree(c.Id, categories).ToList();
                     return c;
                 });
         }

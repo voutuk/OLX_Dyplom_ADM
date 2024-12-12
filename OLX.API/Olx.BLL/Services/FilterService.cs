@@ -51,37 +51,33 @@ namespace Olx.BLL.Services
 
         public async Task RemoveAsync(int id)
         {
-            var filter = await filterRepository.GetByIDAsync(id);
-            if (filter is not null)
-            {
-                filterRepository.Delete(filter);
-                await filterRepository.SaveAsync();
-            }
-            else throw new HttpException(Errors.InvalidFilterId,HttpStatusCode.BadRequest);
-        }
+            var filter = await filterRepository.GetByIDAsync(id)
+                ?? throw new HttpException(Errors.InvalidFilterId, HttpStatusCode.BadRequest);
+            filterRepository.Delete(filter);
+            await filterRepository.SaveAsync();
+          }
 
         public async Task EditAsync(FilterEditModel filterModel)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             filterEditModelValidator.ValidateAndThrow(filterModel);
-            var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id,FilterOpt.Values));
-            if (filter is not null)
+            var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id,FilterOpt.Values))
+                ?? throw new HttpException(Errors.InvalidFilterId, HttpStatusCode.BadRequest);
+            
+            mapper.Map(filterModel,filter);
+            if (filterModel.OldValueIds?.Any() ?? false)
             {
-                mapper.Map(filterModel,filter);
-                if (filterModel.OldValueIds is not null && filterModel.OldValueIds.Any())
-                {
-                    var values = filter.Values.Where(x => filterModel.OldValueIds.Contains(x.Id));
-                    filter.Values = values.ToHashSet();
-                }
-                else filter.Values.Clear();
-
-                if (filterModel.NewValues is not null && filterModel.NewValues.Any())
-                {
-                    filter.Values = [.. filter.Values, .. filterModel.NewValues.Select(x => new FilterValue() { Value = x })];
-                }
-                await filterRepository.SaveAsync();
+                var values = filter.Values.Where(x => filterModel.OldValueIds.Contains(x.Id));
+                filter.Values = values.ToList();
             }
-            else throw new HttpException(Errors.InvalidFilterId, HttpStatusCode.BadRequest);
+            else filter.Values.Clear();
+
+            if (filterModel.NewValues?.Any() ?? false)
+            {
+                filter.Values = [.. filter.Values, .. filterModel.NewValues.Select(x => new FilterValue() { Value = x })];
+            }
+            await filterRepository.SaveAsync();
+             
         }
 
         public async Task<PageResponse<FilterDto>> GetPageAsync(FilterPageRequest pageRequest)

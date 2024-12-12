@@ -19,8 +19,12 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> GetById([FromRoute] int id) => Ok(await advertService.GetByIdAsync(id));
 
         [Authorize(Roles = Roles.User)]
+        [HttpGet("get/user")]
+        public async Task<IActionResult> GetUserAdverts([FromRoute] int id) => Ok(await advertService.GetUserAdverts());
+
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet("get/user/{id:int}")]
-        public async Task<IActionResult> GetByUserId([FromRoute] int id) => Ok(await advertService.GetByUserIdAsync(id));
+        public async Task<IActionResult> GetByUserId([FromRoute] int id) => Ok(await advertService.GetByUserId(id));
 
         [HttpGet("get/images/{id:int}")]
         public async Task<IActionResult> GetImagesByUserId([FromRoute] int id) => Ok(await advertService.GetImagesAsync(id));

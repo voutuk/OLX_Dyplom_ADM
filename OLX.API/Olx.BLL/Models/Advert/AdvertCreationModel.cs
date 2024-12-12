@@ -7,15 +7,15 @@ namespace Olx.BLL.Models.Advert
     {
         public int Id { get; init; }
         public int UserId { get; init; }
-        public string PhoneNumber { get; set; } = string.Empty;
-        public string ContactEmail { get; set; } = string.Empty;
-        public string ContactPersone { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public bool IsContractPrice { get; set; }
-        public decimal Price { get; set; }
-        public int CategoryId { get; set; }
-        public ICollection<int> FilterValueIds { get; set; } = new HashSet<int>();
-        public ICollection<IFormFile> ImageFiles { get; set; } = new HashSet<IFormFile>();
+        public string PhoneNumber { get; init; } = string.Empty;
+        public string ContactEmail { get; init; } = string.Empty;
+        public string ContactPersone { get; init; } = string.Empty;
+        public string Title { get; init; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
+        public bool IsContractPrice { get; init; }
+        public decimal Price { get; init; }
+        public int CategoryId { get; init; }
+        public ICollection<int> FilterValueIds { get; init; } = new HashSet<int>();
+        public ICollection<IFormFile> ImageFiles { get; init; } = new HashSet<IFormFile>();
     }
 }

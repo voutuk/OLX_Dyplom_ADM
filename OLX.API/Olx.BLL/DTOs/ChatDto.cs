@@ -1,10 +1,6 @@
 ﻿using Olx.BLL.Entities.ChatEntities;
 using Olx.BLL.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Olx.BLL.DTOs
 {

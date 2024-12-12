@@ -14,12 +14,15 @@ namespace Olx.BLL.Pagination
             {
                 query = filter.FilterQuery(query);
             }
+
             var total = await query.CountAsync();
             if (sortData is not null)
             {
                 query = sortData.Sort(query);
             }
+
             query = query.AsNoTracking().Skip((page - 1) * size).Take(size);
+
             return new()
             {
                 Total = total,

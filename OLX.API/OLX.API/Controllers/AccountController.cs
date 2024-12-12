@@ -13,7 +13,7 @@ namespace OLX.API.Controllers
     [Route("api/[controller]")]
     public class AccountController(IAccountService accountService, IConfiguration configuration) : ControllerBase
     {
-        private string _refreshTokenCookiesName = configuration["RefreshTokenCookiesName"]!;
+        private readonly string _refreshTokenCookiesName = configuration["RefreshTokenCookiesName"]!;
 
         [Authorize(Roles = Roles.User)]
         [HttpGet("favorites")]
@@ -149,6 +149,7 @@ namespace OLX.API.Controllers
             await accountService.RemoveFromFavoritesAsync(advertId);
             return Ok();
         }
+
         [Authorize(Roles = Roles.Admin)]
         [HttpDelete("delete")]
         public async Task<IActionResult> RemoveAccount([FromQuery] string email)
@@ -156,7 +157,6 @@ namespace OLX.API.Controllers
             await accountService.RemoveAccountAsync(email);
             return Ok();
         }
-
 
         private void SetHttpOnlyCookies(string token)
         {

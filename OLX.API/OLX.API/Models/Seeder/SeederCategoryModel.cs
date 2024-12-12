@@ -6,6 +6,5 @@
         public string? Image { get; init; }
         public IEnumerable<SeederCategoryModel>? Childs { get; init; }
         public IEnumerable<String>? Filters { get; init; }
-
     }
 }

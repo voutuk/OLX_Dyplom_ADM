@@ -85,17 +85,16 @@ namespace OLX.API.Extensions
                     {
                         var filtersModels = JsonConvert.DeserializeObject<IEnumerable<SeederFilterModel>>(filtersJson)
                             ?? throw new JsonException();
-                        if (filtersModels is not null && filtersModels.Any())
+                        if (filtersModels.Any())
                         {
                             var filters = filtersModels.Select(x=> new Filter() 
                             { 
                                 Name = x.Name,
-                                Values = x.Values.Select(z=> new FilterValue() { Value = z}).ToHashSet()
+                                Values = x.Values.Select(z=> new FilterValue() { Value = z}).ToList()
                             });
                             await filterRepo.AddRangeAsync(filters);
                             await filterRepo.SaveAsync();
                         }
-                            
                     }
                     catch (JsonException)
                     {
@@ -117,7 +116,7 @@ namespace OLX.API.Extensions
                     {
                         var categoryModels = JsonConvert.DeserializeObject<IEnumerable<SeederCategoryModel>>(filtersJson)
                             ?? throw new JsonException();
-                        if (categoryModels is not null && categoryModels.Any() && filterRepo is not null)
+                        if (categoryModels.Any() && filterRepo is not null)
                         {
                             var filters = await filterRepo.GetListBySpec(new FilterSpecs.GetAll());
                             await categoryRepo.AddRangeAsync(await GetCategories(categoryModels, filters,imageService));
@@ -143,14 +142,20 @@ namespace OLX.API.Extensions
                     Name = model.Name,
                     Image = !String.IsNullOrEmpty(model.Image) ? await imageService.SaveImageFromUrlAsync(model.Image) : null
                 };
-                if (model.Filters is not null && model.Filters.Any())
-                    category.Filters = filters.Where(x=> model.Filters.Contains(x.Name)).ToHashSet();
-                if (model.Childs is not null && model.Childs.Any())
-                    category.Childs = (await GetCategories(model.Childs, filters,imageService)).ToHashSet();
+
+                if (model.Filters?.Any() ?? false)
+                {
+                    category.Filters = filters.Where(x => model.Filters.Contains(x.Name)).ToList();
+                }
+
+                if (model.Childs?.Any() ?? false)
+                {
+                    var childs = await GetCategories(model.Childs, filters, imageService);
+                    category.Childs = childs.ToList();
+                }
                 categories.Add(category);
             }
             return categories;
-
         }
     }
 }

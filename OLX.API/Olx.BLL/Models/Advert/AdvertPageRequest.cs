@@ -11,9 +11,9 @@ namespace Olx.BLL.Models.Advert
         public decimal PriceTo { get; init; }
         public string? Search { get; init; }
         public bool IsContractPrice { get; init; } = false;
-        public bool Approved { get; set; } = false;
-        public bool Blocked { get; set; } = false;
-        public IEnumerable<int>? CategoryIds { get; set; }
-        public IEnumerable<int>? Filters { get; set; }
+        public bool Approved { get; init; } = false;
+        public bool Blocked { get; init; } = false;
+        public IEnumerable<int>? CategoryIds { get; init; }
+        public IEnumerable<int>? Filters { get; init; }
     }
 }

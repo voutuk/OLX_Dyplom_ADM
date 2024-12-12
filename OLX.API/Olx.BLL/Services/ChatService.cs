@@ -48,14 +48,14 @@ namespace Olx.BLL.Services
         public async Task<IEnumerable<ChatMessageDto>> GetChatMessagesAsync(int chatId)
         {
             var chat = await chatRepository.GetItemBySpec(new ChatSpecs.GetById(chatId, ChatOpt.NoTracking | ChatOpt.Messages_Sender))
-                ?? throw new HttpException(Errors.InvalidChattId, HttpStatusCode.BadRequest);
+                ?? throw new HttpException(Errors.InvalidChatId, HttpStatusCode.BadRequest);
             return mapper.Map<IEnumerable<ChatMessageDto>>(chat.Messages);
         }
 
         public async Task<IEnumerable<ChatDto>> GetUserChatsAsync()
         {
             var user =  await userManager.UpdateUserActivityAsync(httpContext);
-            var chats = await chatRepository.GetListBySpec(new ChatSpecs.GetUserChats(user.Id, ChatOpt.NoTracking | ChatOpt.Advert_Images|ChatOpt.Buyer|ChatOpt.Seller));
+            var chats = await chatRepository.GetListBySpec(new ChatSpecs.GetUserChats(user.Id, ChatOpt.NoTracking | ChatOpt.Advert_Images | ChatOpt.Buyer | ChatOpt.Seller));
             return mapper.Map<IEnumerable<ChatDto>>(chats);
         }
 
@@ -80,7 +80,7 @@ namespace Olx.BLL.Services
         {
             var user = await userManager.UpdateUserActivityAsync(httpContext);
             var chat = await chatRepository.GetItemBySpec(new ChatSpecs.GetById(chatId))
-                ?? throw new HttpException(Errors.InvalidChattId, HttpStatusCode.BadRequest);
+                ?? throw new HttpException(Errors.InvalidChatId, HttpStatusCode.BadRequest);
             if (chat.BuyerId == user.Id)
             {
                 chat.IsDeletedForBuyer = true;
@@ -94,6 +94,7 @@ namespace Olx.BLL.Services
             var user = await userManager.UpdateUserActivityAsync(httpContext);
             var chats = await chatRepository.GetListBySpec(new ChatSpecs.GetByIds(chatIds))
                 ?? throw new HttpException(Errors.InvalidChattId, HttpStatusCode.BadRequest);
+
             foreach (var chat in chats)
             {
                 if (chat.BuyerId == user.Id)

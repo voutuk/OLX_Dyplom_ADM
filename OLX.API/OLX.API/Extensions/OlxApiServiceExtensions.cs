@@ -55,7 +55,6 @@ namespace OLX.API.Extensions
                 options.TokenLifespan = TimeSpan.FromMinutes(Double.Parse(configuration["TokenLifespanMinutes"]!)); // Термін дії токенів для відновлення та підтвердження
             });
 
-
             var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
             services.AddSwaggerGen(setup =>
             {
@@ -79,7 +78,6 @@ namespace OLX.API.Extensions
                 };
 
                 setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-
                 setup.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     { jwtSecurityScheme, Array.Empty<string>() }

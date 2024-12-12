@@ -18,8 +18,6 @@ namespace OLX.API.Controllers
         [HttpGet("messages/{chatId:int}")]
         public async Task<IActionResult> GetChatsMessages([FromRoute]int chatId) => Ok(await chatService.GetChatMessagesAsync(chatId));
 
-        
-
         [Authorize(Roles = Roles.User)]
         [HttpPost("send")]
         public async Task<IActionResult> Send([FromBody] ChatMessageSendModel sendModel)

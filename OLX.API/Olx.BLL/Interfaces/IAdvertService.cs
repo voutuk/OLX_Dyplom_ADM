@@ -8,7 +8,8 @@ namespace Olx.BLL.Interfaces
     {
         Task<PageResponse<AdvertDto>> GetPageAsync(AdvertPageRequest pageRequest);
         Task<IEnumerable<AdvertDto>> GetAllAsync();
-        Task<IEnumerable<AdvertDto>> GetByUserIdAsync(int userId);
+        Task<IEnumerable<AdvertDto>> GetUserAdverts();
+        Task<IEnumerable<AdvertDto>> GetByUserId(int userId);
         Task<AdvertDto> GetByIdAsync(int id);
         Task<IEnumerable<AdvertDto>> GetRangeAsync(IEnumerable<int> ids);
         Task<IEnumerable<AdvertImageDto>> GetImagesAsync(int advertId);

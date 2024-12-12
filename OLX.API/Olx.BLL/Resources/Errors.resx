@@ -186,4 +186,7 @@
   <data name="InvalidChattId" xml:space="preserve">
     <value>Invalid chatt id</value>
   </data>
+  <data name="AdvertIsBlocked" xml:space="preserve">
+    <value>Advert is blocked</value>
+  </data>
 </root>
