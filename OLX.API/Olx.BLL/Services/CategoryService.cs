@@ -28,7 +28,7 @@ namespace Olx.BLL.Services
         IHttpContextAccessor httpContext) : ICategoryService
     {
         
-        public async Task CreateAsync(CategoryCreationModel creationModel)
+        public async Task<CategoryDto> CreateAsync(CategoryCreationModel creationModel)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             validator.ValidateAndThrow(creationModel);
@@ -45,6 +45,7 @@ namespace Olx.BLL.Services
             }
             await categoryRepository.AddAsync(category);
             await categoryRepository.SaveAsync();
+            return mapper.Map<CategoryDto>(category);
         }
 
         public async Task RemoveAsync(int id)
@@ -63,7 +64,7 @@ namespace Olx.BLL.Services
             else throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
         }
 
-        public async Task EditAsync(CategoryCreationModel editModel)
+        public async Task<CategoryDto> EditAsync(CategoryCreationModel editModel)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             validator.ValidateAndThrow(editModel);
@@ -86,6 +87,7 @@ namespace Olx.BLL.Services
             }
             else category.Filters.Clear();
             await categoryRepository.SaveAsync();
+            return mapper.Map<CategoryDto>(category);
         }
 
         public async Task<IEnumerable<CategoryDto>> GetAllAsync() =>

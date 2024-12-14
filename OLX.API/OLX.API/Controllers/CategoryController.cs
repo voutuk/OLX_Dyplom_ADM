@@ -28,20 +28,12 @@ namespace OLX.API.Controllers
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("edit")]
-        public async Task<IActionResult> Edit([FromForm] CategoryCreationModel categoryEditModel)
-        {
-            await categoryService.EditAsync(categoryEditModel);
-            return Ok();
-        }
-
+        public async Task<IActionResult> Edit([FromForm] CategoryCreationModel categoryEditModel) => Ok(await categoryService.EditAsync(categoryEditModel));
+        
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("create")]
-        public async Task<IActionResult> Create([FromForm] CategoryCreationModel categoryCreationModel)
-        {
-            await categoryService.CreateAsync(categoryCreationModel);
-            return Ok();
-        }
-
+        public async Task<IActionResult> Create([FromForm] CategoryCreationModel categoryCreationModel) => Ok(await categoryService.CreateAsync(categoryCreationModel));
+      
         [Authorize(Roles = Roles.Admin)]
         [HttpDelete("delete/{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)

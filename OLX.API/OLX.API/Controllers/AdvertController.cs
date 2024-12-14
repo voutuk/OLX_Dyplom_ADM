@@ -53,20 +53,12 @@ namespace OLX.API.Controllers
 
         [Authorize(Roles = Roles.User)]
         [HttpPost("update")]
-        public async Task<IActionResult> Update([FromForm] AdvertCreationModel creationModel)
-        {
-            await advertService.UpdateAsync(creationModel);
-            return Ok();
-        }
-
+        public async Task<IActionResult> Update([FromForm] AdvertCreationModel creationModel) => Ok(await advertService.UpdateAsync(creationModel));
+        
         [Authorize(Roles = Roles.User)]
         [HttpPut("create")]
-        public async Task<IActionResult> Create([FromForm] AdvertCreationModel creationModel)
-        {
-            await advertService.CreateAsync(creationModel);
-            return Ok();
-        } 
-
+        public async Task<IActionResult> Create([FromForm] AdvertCreationModel creationModel) => Ok(await advertService.CreateAsync(creationModel));
+        
         [Authorize(Roles = Roles.Admin)]
         [HttpDelete("delete/{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)

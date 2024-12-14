@@ -29,7 +29,7 @@ namespace Olx.BLL.Services
         IValidator<AdvertCreationModel> advertCreationModelValidator) : IAdvertService
     {
        
-        public async Task CreateAsync(AdvertCreationModel advertModel)
+        public async Task<AdvertDto> CreateAsync(AdvertCreationModel advertModel)
         {
             advertCreationModelValidator.ValidateAndThrow(advertModel);
             var curentUser = await userManager.UpdateUserActivityAsync(httpContext);
@@ -54,6 +54,7 @@ namespace Olx.BLL.Services
 
             await advertRepository.AddAsync(advert);
             await advertRepository.SaveAsync();
+            return mapper.Map<AdvertDto>(advert);
         }
 
         public async Task DeleteAsync(int id)
@@ -121,7 +122,7 @@ namespace Olx.BLL.Services
             };
         }
 
-        public async Task UpdateAsync(AdvertCreationModel advertModel)
+        public async Task<AdvertDto> UpdateAsync(AdvertCreationModel advertModel)
         {
             advertCreationModelValidator.ValidateAndThrow(advertModel);
             var curentUser = await userManager.UpdateUserActivityAsync(httpContext);
@@ -173,6 +174,7 @@ namespace Olx.BLL.Services
             }
 
             await advertRepository.SaveAsync();
+            return mapper.Map<AdvertDto>(advert);
         }
 
         public async Task ApproveAsync(int id)

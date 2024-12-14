@@ -13,8 +13,8 @@ namespace Olx.BLL.Interfaces
         Task<AdvertDto> GetByIdAsync(int id);
         Task<IEnumerable<AdvertDto>> GetRangeAsync(IEnumerable<int> ids);
         Task<IEnumerable<AdvertImageDto>> GetImagesAsync(int advertId);
-        Task CreateAsync(AdvertCreationModel advertModel);
-        Task UpdateAsync(AdvertCreationModel advertModel);
+        Task<AdvertDto> CreateAsync(AdvertCreationModel advertModel);
+        Task<AdvertDto> UpdateAsync(AdvertCreationModel advertModel);
         Task DeleteAsync(int id);
         Task ApproveAsync(int id);
         Task SetBlockedStatusAsync(int advertId,bool status);

@@ -32,7 +32,6 @@ namespace Olx.BLL.Validators.Advert
                 .ImageFile().WithMessage(ValidationErrors.InvalidImageFileType);
             RuleFor(x => x.PhoneNumber)
                 .PhoneNumber().WithMessage(ValidationErrors.InvalidPhoneNumber);
-                
         }
     }
 }

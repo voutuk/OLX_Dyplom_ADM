@@ -29,12 +29,13 @@ namespace Olx.BLL.Services
         IHttpContextAccessor httpContext) : IFilterService
     {
 
-        public async Task CreateAsync(FilterCreationModel filterModel)
+        public async Task<FilterDto> CreateAsync(FilterCreationModel filterModel)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             filterCreationModelValidator.ValidateAndThrow(filterModel);
             await filterRepository.AddAsync(mapper.Map<Filter>(filterModel));
             await filterRepository.SaveAsync();
+            return mapper.Map<FilterDto>(filter);
         }
 
         public async Task<IEnumerable<Filter>> GetByIds(IEnumerable<int> ids) =>
@@ -57,7 +58,7 @@ namespace Olx.BLL.Services
             await filterRepository.SaveAsync();
           }
 
-        public async Task EditAsync(FilterEditModel filterModel)
+        public async Task<FilterDto> EditAsync(FilterEditModel filterModel)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             filterEditModelValidator.ValidateAndThrow(filterModel);
@@ -77,7 +78,7 @@ namespace Olx.BLL.Services
                 filter.Values = [.. filter.Values, .. filterModel.NewValues.Select(x => new FilterValue() { Value = x })];
             }
             await filterRepository.SaveAsync();
-             
+            return mapper.Map<FilterDto>(filter);
         }
 
         public async Task<PageResponse<FilterDto>> GetPageAsync(FilterPageRequest pageRequest)

@@ -10,5 +10,6 @@ namespace Olx.BLL.DTOs
         public int SenderId { get; set; }
         public int SenderName { get; set; }
         public int ChatId { get; set; }
+        public bool Readed { get; set; }
     }
 }

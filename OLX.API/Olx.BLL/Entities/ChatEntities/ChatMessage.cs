@@ -8,5 +8,6 @@ namespace Olx.BLL.Entities.ChatEntities
         public int SenderId { get; set; }
         public Chat Chat { get; set; }
         public int ChatId { get; set; }
+        public bool Readed { get; set; }
     }
 }

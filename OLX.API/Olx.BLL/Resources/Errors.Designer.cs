@@ -68,7 +68,15 @@ namespace Olx.BLL.Resources {
                 return ResourceManager.GetString("ActionBlocked", resourceCulture);
             }
         }
-        
+
+        internal static string AdvertIsBlocked
+        {
+            get
+            {
+                return ResourceManager.GetString("Advert is blocked", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Ищет локализованную строку, похожую на Current password is not valid.
         /// </summary>

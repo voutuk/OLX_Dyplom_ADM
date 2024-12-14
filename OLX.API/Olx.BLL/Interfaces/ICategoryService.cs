@@ -11,8 +11,8 @@ namespace Olx.BLL.Interfaces
         Task<IEnumerable<CategoryDto>> GetMainAsync();
         Task<CategoryChildsTreeDto> GetTreeAsync(int categoryId);
         Task<IEnumerable<CategoryChildsTreeDto>> GetMainTreeAsync();
-        Task CreateAsync(CategoryCreationModel creationModel);
+        Task<CategoryDto> CreateAsync(CategoryCreationModel creationModel);
         Task RemoveAsync(int id);
-        Task EditAsync(CategoryCreationModel editModel);
+        Task<CategoryDto> EditAsync(CategoryCreationModel editModel);
     }
 }
