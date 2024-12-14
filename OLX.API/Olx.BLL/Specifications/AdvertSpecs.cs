@@ -15,17 +15,16 @@ namespace Olx.BLL.Specifications
                 {
                     if (options.Value.HasFlag(option))
                     {
-                        _ = option switch
+                        switch (option) 
                         {
-                            AdvertOpt.Images => query.Include(x => x.Images),
-                            AdvertOpt.NoTracking => query.AsNoTracking(),
-                            AdvertOpt.FilterValues => query.Include(x => x.FilterValues),
-                            AdvertOpt.Category => query.Include(x => x.Category),
-                            AdvertOpt.User => query.Include(x => x.User),
-                            AdvertOpt.FavoritedByUsers => query.Include(x => x.FavoritedByUsers),
-                            AdvertOpt.Chats => query.Include(x => x.Chats),
-                            _ => query
-                        };
+                            case AdvertOpt.Images: query.Include(x => x.Images); break;
+                            case AdvertOpt.NoTracking: query.AsNoTracking(); break;
+                            case AdvertOpt.FilterValues: query.Include(x => x.FilterValues); break;
+                            case AdvertOpt.Category:  query.Include(x => x.Category); break;
+                            case AdvertOpt.User:  query.Include(x => x.User); break;
+                            case AdvertOpt.FavoritedByUsers:  query.Include(x => x.FavoritedByUsers); break;
+                            case AdvertOpt.Chats:  query.Include(x => x.Chats); break;
+                        }      
                     }
                 }
             }

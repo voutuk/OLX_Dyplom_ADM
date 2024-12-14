@@ -14,14 +14,13 @@ namespace Olx.BLL.Specifications
                 {
                     if (options.Value.HasFlag(option))
                     {
-                        _ = option switch
+                        switch(option)
                         {
-                           CategoryOpt.Parent => query.Include(x => x.Parent),
-                           CategoryOpt.NoTracking => query.AsNoTracking(),
-                           CategoryOpt.Childs => query.Include(x => x.Childs),
-                           CategoryOpt.Filters => query.Include(x => x.Adverts),
-                           CategoryOpt.Image => query.Include(x => x.Image),
-                            _ => query
+                            case CategoryOpt.Parent:  query.Include(x => x.Parent); break;
+                            case CategoryOpt.NoTracking: query.AsNoTracking(); break;
+                            case CategoryOpt.Childs:  query.Include(x => x.Childs); break;
+                            case CategoryOpt.Filters:  query.Include(x => x.Adverts); break;
+                            case CategoryOpt.Image:  query.Include(x => x.Image); break;
                         };
                     }
                 }

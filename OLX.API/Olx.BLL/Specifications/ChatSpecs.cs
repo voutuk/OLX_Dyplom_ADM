@@ -16,15 +16,14 @@ namespace Olx.BLL.Specifications
                 {
                     if (options.Value.HasFlag(option))
                     {
-                        _ = option switch
+                        switch(option)
                         {
-                            ChatOpt.Messages_Sender => query.Include(x => x.Messages).ThenInclude(x => x.Sender),
-                            ChatOpt.Advert_Images => query.Include(x => x.Advert).ThenInclude(x=>x.Images),
-                            ChatOpt.Buyer => query.Include(x => x.Buyer),
-                            ChatOpt.NoTracking => query.AsNoTracking(),
-                            ChatOpt.Advert => query.Include(x => x.Advert),
-                            ChatOpt.Messages => query.Include(x => x.Messages),
-                            _ => query
+                            case ChatOpt.Messages_Sender: query.Include(x => x.Messages).ThenInclude(x => x.Sender); break;
+                            case ChatOpt.Advert_Images: query.Include(x => x.Advert).ThenInclude(x => x.Images); break;
+                            case ChatOpt.Buyer: query.Include(x => x.Buyer); break;
+                            case ChatOpt.NoTracking: query.AsNoTracking(); break;
+                            case ChatOpt.Advert: query.Include(x => x.Advert); break;
+                            case ChatOpt.Messages: query.Include(x => x.Messages); break;
                         };
                     }
                 }

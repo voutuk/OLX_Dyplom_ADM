@@ -14,21 +14,21 @@ namespace Olx.BLL.Specifications
                 {
                     if (options.Value.HasFlag(option))
                     {
-                        _ = option switch
+                        switch(option)
                         {
-                            UserOpt.RefreshTokens => query.Include(x => x.RefreshTokens),
-                            UserOpt.NoTracking => query.AsNoTracking(),
-                            UserOpt.Adverts => query.Include(x => x.Adverts),
-                            UserOpt.FavoriteAdverts => query.Include(x => x.FavoriteAdverts),
-                            UserOpt.ChatMessages => query.Include(x => x.ChatMessages),
-                            UserOpt.SellChats => query.Include(x => x.SellChats.Where(z => z.IsDeletedForSeller)),
-                            UserOpt.BuyChats => query.Include(x => x.BuyChats.Where(z => z.IsDeletedForBuyer)),
-                            _ => query
+                            case UserOpt.RefreshTokens: query.Include(x => x.RefreshTokens); break;
+                            case UserOpt.NoTracking: query.AsNoTracking(); break;
+                            case UserOpt.Adverts: query.Include(x => x.Adverts); break;
+                            case UserOpt.FavoriteAdverts: query.Include(x => x.FavoriteAdverts); break;
+                            case UserOpt.ChatMessages: query.Include(x => x.ChatMessages); break;
+                            case UserOpt.SellChats: query.Include(x => x.SellChats.Where(z => z.IsDeletedForSeller)); break;
+                            case UserOpt.BuyChats: query.Include(x => x.BuyChats.Where(z => z.IsDeletedForBuyer)); break;
                         };
                     }
                 }
             }
         }
+
         public class GetByRefreshToken : Specification<OlxUser>
         {
             public GetByRefreshToken(string token, UserOpt? options = null)
