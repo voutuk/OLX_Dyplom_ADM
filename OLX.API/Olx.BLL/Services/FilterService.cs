@@ -33,7 +33,8 @@ namespace Olx.BLL.Services
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             filterCreationModelValidator.ValidateAndThrow(filterModel);
-            await filterRepository.AddAsync(mapper.Map<Filter>(filterModel));
+            var filter = mapper.Map<Filter>(filterModel);
+            await filterRepository.AddAsync(filter);
             await filterRepository.SaveAsync();
             return mapper.Map<FilterDto>(filter);
         }
