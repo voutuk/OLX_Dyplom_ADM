@@ -5,11 +5,11 @@ using Olx.BLL.Entities;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Specifications;
 
-namespace Olx.BLL.Services
+namespace Olx.BLL.Services.BackgroundServices
 {
-    public class TokenCleanupService (IConfiguration configuration, IServiceScopeFactory serviceScopeFactory) : BackgroundService
+    public class TokenCleanupService(IConfiguration configuration, IServiceScopeFactory serviceScopeFactory) : BackgroundService
     {
-        private readonly TimeSpan _interval = TimeSpan.FromDays(int.Parse(configuration["RefreshTokenCleanupIntervalDays"]!)); // Перевірка щодня
+        private readonly TimeSpan _interval = TimeSpan.FromHours(int.Parse(configuration["RefreshTokenCleanupIntervalHours"]!)); 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("Token cleanup service started");

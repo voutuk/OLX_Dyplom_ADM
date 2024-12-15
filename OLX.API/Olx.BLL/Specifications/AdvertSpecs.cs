@@ -69,7 +69,7 @@ namespace Olx.BLL.Specifications
             public GetById(int id, AdvertOpt? options = null)
             {
                 Include(Query, options);
-                Query.Where(x => x.UserId == id);
+                Query.Where(x => x.Id == id);
             }
         }
     }
