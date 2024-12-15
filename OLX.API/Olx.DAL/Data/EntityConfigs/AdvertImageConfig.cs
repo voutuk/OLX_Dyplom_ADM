@@ -12,7 +12,8 @@ namespace Olx.DAL.Data.EntityConfigs
             builder.HasKey(x => x.Id);
             builder.HasOne(x => x.Advert)
                 .WithMany(x => x.Images)
-                .HasForeignKey(x => x.AdvertId);
+                .HasForeignKey(x => x.AdvertId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

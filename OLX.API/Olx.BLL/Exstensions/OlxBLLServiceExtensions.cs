@@ -8,6 +8,7 @@ using Olx.BLL.Helpers.Options;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Resources;
 using Olx.BLL.Services;
+using Olx.BLL.Services.BackgroundServices;
 using System.Net;
 
 
@@ -29,8 +30,9 @@ namespace Olx.BLL.Exstensions
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IAdvertImageService, AdvertImageService>();
             services.AddHostedService<TokenCleanupService>();
+            services.AddHostedService<ImageCeanupService>();
 
-            
+
             services.AddMailKit(optionBuilder =>
             {
                 MailSettings? settings = configuration.GetSection(nameof(MailSettings)).Get<MailSettings>()

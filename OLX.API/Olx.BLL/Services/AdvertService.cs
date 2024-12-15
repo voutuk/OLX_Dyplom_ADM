@@ -60,11 +60,10 @@ namespace Olx.BLL.Services
         public async Task DeleteAsync(int id)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
-            var advert = await advertRepository.GetItemBySpec( new AdvertSpecs.GetById(id,AdvertOpt.Images))
+            var advert = await advertRepository.GetItemBySpec( new AdvertSpecs.GetById(id))
                 ?? throw new HttpException(Errors.InvalidAdvertId,HttpStatusCode.BadRequest);
             advertRepository.Delete(advert);
             await advertRepository.SaveAsync();
-            imageService.DeleteImagesIfExists(advert.Images.Select(x => x.Name));
         }
 
         public async Task<IEnumerable<AdvertDto>> GetRangeAsync(IEnumerable<int> ids)
@@ -136,14 +135,10 @@ namespace Olx.BLL.Services
 
             mapper.Map(advertModel, advert);
             var existingImagesNames = advertModel.ImageFiles.Where(x => x.ContentType == "image/existing").Select(x => x.FileName) ?? [];
-            if (existingImagesNames.Any())
+            var imagesToDelete = advert.Images.Where(x => !existingImagesNames.Contains(x.Name));
+            foreach (var image in imagesToDelete)
             {
-                var imagesToDelete = advert.Images.Where(x => !existingImagesNames.Contains(x.Name));
-                if (imagesToDelete.Any())
-                {
-                    advert.Images = advert.Images.Where(x => !imagesToDelete.Contains(x)).ToList();
-                    imageService.DeleteImages(imagesToDelete.Select(x => x.Name));
-                }
+                image.Advert = null;
             }
 
             if (advertModel.ImageFiles.Count != 0)
