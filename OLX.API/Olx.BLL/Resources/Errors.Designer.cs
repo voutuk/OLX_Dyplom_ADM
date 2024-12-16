@@ -68,21 +68,13 @@ namespace Olx.BLL.Resources {
                 return ResourceManager.GetString("ActionBlocked", resourceCulture);
             }
         }
-
-        internal static string AdvertIsBlocked
-        {
-            get
-            {
-                return ResourceManager.GetString("Advert is blocked", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Current password is not valid.
+        ///   Ищет локализованную строку, похожую на Advert is blocked.
         /// </summary>
-        internal static string Curren {
+        internal static string AdvertIsBlocked {
             get {
-                return ResourceManager.GetString("Curren", resourceCulture);
+                return ResourceManager.GetString("AdvertIsBlocked", resourceCulture);
             }
         }
         
@@ -119,6 +111,15 @@ namespace Olx.BLL.Resources {
         internal static string ImageSizesReadError {
             get {
                 return ResourceManager.GetString("ImageSizesReadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на InvalidAdminMessageId.
+        /// </summary>
+        internal static string InvalidAdminMessageId {
+            get {
+                return ResourceManager.GetString("InvalidAdminMessageId", resourceCulture);
             }
         }
         
