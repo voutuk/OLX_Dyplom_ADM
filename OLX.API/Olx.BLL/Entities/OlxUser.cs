@@ -24,5 +24,7 @@ namespace Olx.BLL.Entities
         public ICollection<ChatMessage> ChatMessages { get; set; } = new HashSet<ChatMessage>();
         public ICollection<Chat> BuyChats { get; set; } = new HashSet<Chat>();
         public ICollection<Chat> SellChats { get; set; } = new HashSet<Chat>();
+        public ICollection<AdminMessage> AdminMessages { get; set; } = new HashSet<AdminMessage>();
+
     }
 }

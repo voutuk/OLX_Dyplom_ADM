@@ -41,6 +41,7 @@
         ChatMessages = 1 << 4,
         BuyChats = 1 << 5,
         SellChats = 1 << 6,
+        AdminMessages = 1 << 7
     }
 
     [Flags]
@@ -52,6 +53,6 @@
         Seller = 1 << 3,
         Messages = 1 << 4,
         Advert_Images = 1 << 5,
-        Messages_Sender = 1 << 6
+        Messages_Sender = 1 << 6,
     }
 }

@@ -26,6 +26,9 @@ namespace Olx.DAL.Data.EntityConfigs
             builder.HasMany(x => x.ChatMessages)
                 .WithOne(x => x.Sender)
                 .HasForeignKey(x => x.SenderId);
+            builder.HasMany(x => x.AdminMessages)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId);
 
         }
     }

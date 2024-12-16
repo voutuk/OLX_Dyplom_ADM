@@ -153,8 +153,8 @@
   <data name="InvalidUserId" xml:space="preserve">
     <value>Invalid user id</value>
   </data>
-  <data name="Curren" xml:space="preserve">
-    <value>Current password is not valid</value>
+  <data name="InvalidAdminMessageId" xml:space="preserve">
+    <value>InvalidAdminMessageId</value>
   </data>
   <data name="InvalidFilterCreationModelData" xml:space="preserve">
     <value>Invalid filter creation model data</value>
