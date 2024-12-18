@@ -6,6 +6,7 @@ using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Specifications;
 using OLX.API.Models.Seeder;
+using System;
 using System.Text;
 
 namespace OLX.API.Extensions
@@ -129,6 +130,61 @@ namespace OLX.API.Extensions
                     }
                 }
                 else Console.WriteLine("File \"JsonData/Categories.json\" not found");
+            }
+            //Advert seeder
+            var filterValueRepo = scope.ServiceProvider.GetService<IRepository<FilterValue>>();
+            var advertRepo = scope.ServiceProvider.GetService<IRepository<Advert>>();
+            if (advertRepo is not null && !await advertRepo.AnyAsync())
+            {
+                Console.WriteLine("Start adverts seeder");
+                string advertsJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!, "Adverts.json");
+                if (File.Exists(advertsJsonDataFile))
+                {
+                    var advertsJson = File.ReadAllText(advertsJsonDataFile, Encoding.UTF8);
+                    try
+                    {
+                        var advertModels = JsonConvert.DeserializeObject<IEnumerable<SeederAdvertModel>>(advertsJson)
+                            ?? throw new JsonException();
+                        if (advertModels.Any())
+                        {
+                            var adverts = advertModels.Select(x => new Advert()
+                            {
+                                UserId = x.UserId,
+                                PhoneNumber = x.PhoneNumber,
+                                ContactEmail = x.ContactEmail,
+                                ContactPersone = x.ContactPersone,
+                                Title = x.Title,
+                                Description = x.Description,
+                                IsContractPrice = x.IsContractPrice,
+                                Price = x.Price,
+                                CategoryId = x.CategoryId,
+                                FilterValues = x.FilterValueIds.Select(id =>
+                                {
+                                    var filterValue = filterValueRepo.GetByIDAsync(id).Result;
+                                    if (filterValue == null)
+                                    {
+                                        throw new InvalidOperationException($"FilterValue with Id {id} not found.");
+                                    }
+                                    return filterValue;
+                                }).ToList(),
+                                Images = x.ImagePaths.Select((path, index) => new AdvertImage()
+                                {
+                                    Priority = index,
+                                    Name = path
+                                }).ToList()
+                            });
+                            Console.WriteLine($"Adding {adverts.Count()} adverts to the database.");
+                            await advertRepo.AddRangeAsync(adverts);
+                            await advertRepo.SaveAsync();
+                            Console.WriteLine("Adverts added to the database.");
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        Console.WriteLine("Error deserialize adverts json file");
+                    }
+                }
+                else Console.WriteLine("File \"Adverts.json\" not found");
             }
         }
 

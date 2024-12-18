@@ -16,5 +16,29 @@
     "lastName": "Величко",
     "role": "User",
     "phoneNumber": "0983356787"
-   }
+  },
+  {
+    "email": "User2@gmail.com",
+    "password": "User_2",
+    "firstName": "Іван",
+    "lastName": "Петренко",
+    "role": "User",
+    "phoneNumber": "0671234567"
+  },
+  {
+    "email": "User3@gmail.com",
+    "password": "User_3",
+    "firstName": "Олена",
+    "lastName": "Ковальчук",
+    "role": "User",
+    "phoneNumber": "0508765432"
+  },
+  {
+    "email": "User4@gmail.com",
+    "password": "User_4",
+    "firstName": "Анна",
+    "lastName": "Мельник",
+    "role": "Admin",
+    "phoneNumber": "0639876543"
+  }
 ]
