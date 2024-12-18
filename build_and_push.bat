@@ -7,7 +7,7 @@ if errorlevel 1 (
     :waitForDocker
     tasklist /FI "IMAGENAME eq Docker Desktop.exe" | find /I "Docker Desktop.exe" >nul
     if errorlevel 1 (
-        timeout /t 5 /nobreak >nul
+        timeout /t 10 /nobreak >nul
         goto waitForDocker
     )
     timeout /t 2 /nobreak >nul
