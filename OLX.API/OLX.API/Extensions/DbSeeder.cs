@@ -6,8 +6,8 @@ using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Specifications;
 using OLX.API.Models.Seeder;
-using System;
 using System.Text;
+
 
 namespace OLX.API.Extensions
 {
@@ -88,10 +88,10 @@ namespace OLX.API.Extensions
                             ?? throw new JsonException();
                         if (filtersModels.Any())
                         {
-                            var filters = filtersModels.Select(x=> new Filter() 
+                            var filters = filtersModels.Select(x => new Filter() 
                             { 
                                 Name = x.Name,
-                                Values = x.Values.Select(z=> new FilterValue() { Value = z}).ToList()
+                                Values = x.Values.Select(z => new FilterValue() { Value = z}).ToList()
                             });
                             await filterRepo.AddRangeAsync(filters);
                             await filterRepo.SaveAsync();
@@ -145,35 +145,35 @@ namespace OLX.API.Extensions
                     {
                         var advertModels = JsonConvert.DeserializeObject<IEnumerable<SeederAdvertModel>>(advertsJson)
                             ?? throw new JsonException();
-                        if (advertModels.Any())
+                        if (advertModels.Any() && filterValueRepo is not null)
                         {
-                            var adverts = advertModels.Select(x => new Advert()
+                            var advertsTasks = advertModels.Select(async (x) =>
                             {
-                                UserId = x.UserId,
-                                PhoneNumber = x.PhoneNumber,
-                                ContactEmail = x.ContactEmail,
-                                ContactPersone = x.ContactPersone,
-                                Title = x.Title,
-                                Description = x.Description,
-                                IsContractPrice = x.IsContractPrice,
-                                Price = x.Price,
-                                CategoryId = x.CategoryId,
-                                FilterValues = x.FilterValueIds.Select(id =>
-                                {
-                                    var filterValue = filterValueRepo.GetByIDAsync(id).Result;
-                                    if (filterValue == null)
+                                var filterValues = filterValueRepo.GetListBySpec(new FilterValueSpecs.GetByIds(x.FilterValueIds)).Result.ToList();
+                                var imagesTasks = x.ImagePaths.Select(async (path, index) =>
+                                    new AdvertImage()
                                     {
-                                        throw new InvalidOperationException($"FilterValue with Id {id} not found.");
-                                    }
-                                    return filterValue;
-                                }).ToList(),
-                                Images = x.ImagePaths.Select((path, index) => new AdvertImage()
+                                        Priority = index,
+                                        Name = await imageService.SaveImageFromUrlAsync(path)
+                                    });
+                                var images = await Task.WhenAll(imagesTasks);
+                                return new Advert()
                                 {
-                                    Priority = index,
-                                    Name = path
-                                }).ToList()
+                                    UserId = x.UserId,
+                                    PhoneNumber = x.PhoneNumber,
+                                    ContactEmail = x.ContactEmail,
+                                    ContactPersone = x.ContactPersone,
+                                    Title = x.Title,
+                                    Description = x.Description,
+                                    IsContractPrice = x.IsContractPrice,
+                                    Price = x.Price,
+                                    CategoryId = x.CategoryId,
+                                    FilterValues = filterValues,
+                                    Images = images
+                                };
                             });
-                            Console.WriteLine($"Adding {adverts.Count()} adverts to the database.");
+                            var adverts = await Task.WhenAll(advertsTasks);
+                            Console.WriteLine($"Adding {adverts.Length} adverts to the database.");
                             await advertRepo.AddRangeAsync(adverts);
                             await advertRepo.SaveAsync();
                             Console.WriteLine("Adverts added to the database.");
@@ -190,27 +190,22 @@ namespace OLX.API.Extensions
 
         private async static Task<IEnumerable<Category>> GetCategories(IEnumerable<SeederCategoryModel> models,IEnumerable<Filter> filters,IImageService imageService)
         {
-            List<Category> categories = [];
-            foreach (var model in models)
+            var categoryTasks =  models.Select(async (x) => 
             {
-                var category = new Category()
+                var advertFilters = x.Filters?.Any() ?? false ? filters.Where(z => x.Filters.Contains(z.Name)) : null;
+                var childs = x.Childs?.Any() ?? false ? await GetCategories(x.Childs, filters, imageService) : null;
+                var image = !String.IsNullOrEmpty(x.Image)
+                    ? await imageService.SaveImageFromUrlAsync(x.Image)
+                    : null;
+                return new Category()
                 {
-                    Name = model.Name,
-                    Image = !String.IsNullOrEmpty(model.Image) ? await imageService.SaveImageFromUrlAsync(model.Image) : null
+                    Name = x.Name,
+                    Image = x.Image,
+                    Filters = advertFilters?.ToArray() ?? [],
+                    Childs = childs?.ToArray() ?? []
                 };
-
-                if (model.Filters?.Any() ?? false)
-                {
-                    category.Filters = filters.Where(x => model.Filters.Contains(x.Name)).ToList();
-                }
-
-                if (model.Childs?.Any() ?? false)
-                {
-                    var childs = await GetCategories(model.Childs, filters, imageService);
-                    category.Childs = childs.ToList();
-                }
-                categories.Add(category);
-            }
+            });
+            var categories = await Task.WhenAll(categoryTasks);
             return categories;
         }
     }

@@ -12,6 +12,6 @@
         public decimal Price { get; init; }
         public int CategoryId { get; init; }
         public ICollection<int> FilterValueIds { get; init; } = new HashSet<int>();
-        public ICollection<string> ImagePaths { get; init; } = new HashSet<string>();
+        public ICollection<string> ImagePaths { get; init; } = [];
     }
 }
