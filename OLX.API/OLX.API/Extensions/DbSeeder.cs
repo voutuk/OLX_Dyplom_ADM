@@ -200,7 +200,7 @@ namespace OLX.API.Extensions
                 return new Category()
                 {
                     Name = x.Name,
-                    Image = x.Image,
+                    Image = image,
                     Filters = advertFilters?.ToArray() ?? [],
                     Childs = childs?.ToArray() ?? []
                 };

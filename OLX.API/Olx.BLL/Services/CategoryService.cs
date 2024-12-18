@@ -114,7 +114,7 @@ namespace Olx.BLL.Services
 
         private IEnumerable<Category> BuildTree(int? parentId, IEnumerable<Category> categories)
         {
-            return categories
+            return categories.AsParallel()
                 .Where(c => c.ParentId == parentId)
                 .Select(c =>
                 {
