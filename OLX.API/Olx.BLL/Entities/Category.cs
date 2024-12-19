@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Olx.BLL.Entities.FilterEntities;
 
 namespace Olx.BLL.Entities
@@ -7,6 +8,7 @@ namespace Olx.BLL.Entities
     public class Category : BaseNamedEntity
     {
         [StringLength(100)]
+        [Unicode(false)]
         public string? Image { get; set; }
         public int? ParentId { get; set; }
         public Category? Parent { get; set; }

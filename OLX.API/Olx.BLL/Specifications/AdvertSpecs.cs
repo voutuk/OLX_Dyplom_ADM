@@ -24,6 +24,7 @@ namespace Olx.BLL.Specifications
                             case AdvertOpt.User:  query.Include(x => x.User); break;
                             case AdvertOpt.FavoritedByUsers:  query.Include(x => x.FavoritedByUsers); break;
                             case AdvertOpt.Chats:  query.Include(x => x.Chats); break;
+                            case AdvertOpt.Settlement: query.Include(x => x.Settlement); break;
                         }      
                     }
                 }

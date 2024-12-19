@@ -11,6 +11,8 @@ namespace Olx.BLL.Validators.Advert
     {
         public AdvertCreationModelValidator()
         {
+            RuleFor(x => x.SettlementRef)
+                .NotEmpty().WithMessage(ValidationErrors.NotEmpty);
             RuleFor(x => x.Price)
                 .GreaterThanOrEqualTo(0).WithMessage(ValidationErrors.GreaterEqualZeroError);
             RuleFor(x => x.UserId)

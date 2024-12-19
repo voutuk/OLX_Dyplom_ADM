@@ -10,6 +10,7 @@
         Category = 1 << 4,
         FavoritedByUsers = 1 << 5,
         Chats = 1 << 6,
+        Settlement = 1 << 7
     }
 
     [Flags]
@@ -41,7 +42,8 @@
         ChatMessages = 1 << 4,
         BuyChats = 1 << 5,
         SellChats = 1 << 6,
-        AdminMessages = 1 << 7
+        AdminMessages = 1 << 7,
+        Settlement = 1 << 8
     }
 
     [Flags]

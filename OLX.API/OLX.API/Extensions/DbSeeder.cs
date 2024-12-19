@@ -169,7 +169,8 @@ namespace OLX.API.Extensions
                                     Price = x.Price,
                                     CategoryId = x.CategoryId,
                                     FilterValues = filterValues,
-                                    Images = images
+                                    Images = images,
+                                    SettlementRef = x.SettlementRef
                                 };
                             });
                             var adverts = await Task.WhenAll(advertsTasks);

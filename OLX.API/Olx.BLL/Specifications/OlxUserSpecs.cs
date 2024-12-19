@@ -24,6 +24,7 @@ namespace Olx.BLL.Specifications
                             case UserOpt.SellChats: query.Include(x => x.SellChats.Where(z => z.IsDeletedForSeller)); break;
                             case UserOpt.BuyChats: query.Include(x => x.BuyChats.Where(z => z.IsDeletedForBuyer)); break;
                             case UserOpt.AdminMessages: query.Include(x => x.AdminMessages.Where(z => !z.Deleted)); break;
+                            case UserOpt.Settlement: query.Include(x => x.Settlement); break;
                         };
                     }
                 }

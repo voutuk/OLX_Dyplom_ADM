@@ -223,6 +223,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid settlement id.
+        /// </summary>
+        internal static string InvalidSettlementId {
+            get {
+                return ResourceManager.GetString("InvalidSettlementId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid token.
         /// </summary>
         internal static string InvalidToken {

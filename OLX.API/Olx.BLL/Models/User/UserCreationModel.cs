@@ -15,5 +15,6 @@ namespace Olx.BLL.Models.User
         public string? WebSite { get; init; }
         public string? About { get; init; }
         public string? PhoneNumber { get; init; }
+        public string? SettlementRef { get; init; }
     }
 }

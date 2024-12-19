@@ -15,12 +15,15 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Olx.BLL.Exstensions;
+using Olx.BLL.Entities.NewPost;
 
 
 namespace Olx.BLL.Services
 {
     public class AdvertService(
         IRepository<Advert> advertRepository,
+        IRepository<Category> categorytRepository,
+        IRepository<Settlement> settlementRepository,
         UserManager<OlxUser> userManager,
         IFilterValueService filterValueService,
         IImageService imageService,
@@ -36,6 +39,14 @@ namespace Olx.BLL.Services
             if (curentUser.Id != advertModel.UserId)
             {
                 throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
+            }
+            if (!await categorytRepository.AnyAsync(x => x.Id == advertModel.CategoryId))
+            {
+                throw new HttpException(Errors.InvalidCategoryId, HttpStatusCode.BadRequest);
+            }
+            if (!await settlementRepository.AnyAsync(x => x.Ref == advertModel.SettlementRef))
+            {
+                throw new HttpException(Errors.InvalidSettlementId, HttpStatusCode.BadRequest);
             }
 
             var advert = mapper.Map<Advert>(advertModel);
@@ -132,7 +143,14 @@ namespace Olx.BLL.Services
 
             var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetUserAdvertById(curentUser.Id,advertModel.Id, AdvertOpt.Images))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
-
+            if (!await categorytRepository.AnyAsync(x => x.Id == advertModel.CategoryId))
+            {
+                throw new HttpException(Errors.InvalidCategoryId, HttpStatusCode.BadRequest);
+            }
+            if (!await settlementRepository.AnyAsync(x => x.Ref == advertModel.SettlementRef))
+            {
+                throw new HttpException(Errors.InvalidSettlementId, HttpStatusCode.BadRequest);
+            }
             mapper.Map(advertModel, advert);
             var existingImagesNames = advertModel.ImageFiles.Where(x => x.ContentType == "image/existing").Select(x => x.FileName) ?? [];
             var imagesToDelete = advert.Images.Where(x => !existingImagesNames.Contains(x.Name));

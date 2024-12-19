@@ -189,4 +189,7 @@
   <data name="AdvertIsBlocked" xml:space="preserve">
     <value>Advert is blocked</value>
   </data>
+  <data name="InvalidSettlementId" xml:space="preserve">
+    <value>Invalid settlement id</value>
+  </data>
 </root>

@@ -1,5 +1,7 @@
-﻿using Olx.BLL.Entities.ChatEntities;
+﻿using Microsoft.EntityFrameworkCore;
+using Olx.BLL.Entities.ChatEntities;
 using Olx.BLL.Entities.FilterEntities;
+using Olx.BLL.Entities.NewPost;
 using System.ComponentModel.DataAnnotations;
 
 namespace Olx.BLL.Entities
@@ -10,7 +12,9 @@ namespace Olx.BLL.Entities
         public OlxUser User { get; set; }
         [StringLength(13)]
         public string PhoneNumber { get; set; } = string.Empty;
+
         [StringLength(128)]
+        [Unicode(false)]
         public string ContactEmail { get; set; } = string.Empty;
         [StringLength(128)]
         public string ContactPersone { get; set; } = string.Empty;
@@ -23,6 +27,12 @@ namespace Olx.BLL.Entities
         public decimal Price { get; set; }
         public bool Approved { get; set; } = false;
         public bool Blocked { get; set; } = false;
+
+        [StringLength(36)]
+        [Unicode(false)]
+        public string SettlementRef { get; set; }
+        public Settlement Settlement { get; set; }
+
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public ICollection<FilterValue> FilterValues { get; set; }  = new HashSet<FilterValue>();

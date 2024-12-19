@@ -8,6 +8,7 @@ using NETCore.MailKit.Core;
 using Newtonsoft.Json;
 using Olx.BLL.DTOs;
 using Olx.BLL.Entities;
+using Olx.BLL.Entities.NewPost;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Exstensions;
 using Olx.BLL.Helpers;
@@ -32,6 +33,7 @@ namespace Olx.BLL.Services
         IRepository<RefreshToken> tokenRepository,
         IRepository<OlxUser> userRepository,
         IRepository<Advert> advertRepository,
+        IRepository<Settlement> settlementRepository,
         IEmailService emailService,
         IConfiguration configuration,
         IMapper mapper,
@@ -281,6 +283,10 @@ namespace Olx.BLL.Services
                 await userManager.UpdateUserActivityAsync(httpContext);
             }
             userCreationModelValidator.ValidateAndThrow(userModel);
+            if (!String.IsNullOrEmpty(userModel.SettlementRef) && !await settlementRepository.AnyAsync(x => x.Ref == userModel.SettlementRef))
+            {
+                throw new HttpException(Errors.InvalidSettlementId, HttpStatusCode.BadRequest);
+            }
             OlxUser user = mapper.Map<OlxUser>(userModel);
             if (userModel.ImageFile is not null)
             {
