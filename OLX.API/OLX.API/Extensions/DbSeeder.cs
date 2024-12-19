@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Olx.BLL.Entities;
 using Olx.BLL.Entities.FilterEntities;
+using Olx.BLL.Entities.NewPost;
 using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Specifications;
@@ -15,6 +16,7 @@ namespace OLX.API.Extensions
     {
         public static async Task SeedDataAsync(this WebApplication app)
         {
+           
             //Roles seeder
             using var scope = app.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
@@ -27,6 +29,18 @@ namespace OLX.API.Extensions
                        await roleManager.CreateAsync(new IdentityRole<int>{ Name = role });
                 }
             }
+
+            //NewPost seeder
+            using (var newPostService = scope.ServiceProvider.GetRequiredService<INewPostService>())
+            {
+                var areaRepo = scope.ServiceProvider.GetRequiredService<IRepository<Area>>();
+                if (!await areaRepo.AnyAsync())
+                {
+                    await newPostService.SeedNewPostDataAsync();
+                }
+            }
+
+          
 
             //Users seeder
             var userManager = serviceProvider.GetRequiredService<UserManager<OlxUser>>();
@@ -131,8 +145,11 @@ namespace OLX.API.Extensions
                 }
                 else Console.WriteLine("File \"JsonData/Categories.json\" not found");
             }
+           
+    
             //Advert seeder
             var filterValueRepo = scope.ServiceProvider.GetService<IRepository<FilterValue>>();
+            var settlementRepo = scope.ServiceProvider.GetService<IRepository<Settlement>>();
             var advertRepo = scope.ServiceProvider.GetService<IRepository<Advert>>();
             if (advertRepo is not null && !await advertRepo.AnyAsync())
             {
@@ -170,7 +187,8 @@ namespace OLX.API.Extensions
                                     CategoryId = x.CategoryId,
                                     FilterValues = filterValues,
                                     Images = images,
-                                    SettlementRef = x.SettlementRef
+                                    Settlement = await settlementRepo.GetByIDAsync(x.SettlementRef) ??
+                                      throw new NullReferenceException("settlement not found")
                                 };
                             });
                             var adverts = await Task.WhenAll(advertsTasks);

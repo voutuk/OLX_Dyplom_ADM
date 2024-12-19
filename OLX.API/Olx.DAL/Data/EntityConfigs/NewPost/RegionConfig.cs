@@ -11,8 +11,8 @@ namespace Olx.DAL.Data.EntityConfigs.NewPost
         public void Configure(EntityTypeBuilder<Region> builder)
         {
             builder.HasMany(x => x.Settlements)
-                .WithOne(x => x.Region)
-                .HasForeignKey(x => x.RegionRef);
+                .WithOne(x => x.SettlementRegion)
+                .HasForeignKey(x => x.Region);
         }
     }
 }

@@ -30,6 +30,7 @@ namespace Olx.BLL.Exstensions
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IAdminMessageService, AdminMessageService>();
             services.AddScoped<IAdvertImageService, AdvertImageService>();
+            services.AddScoped<INewPostService, NewPostService>();
             services.AddHostedService<TokenCleanupService>();
             services.AddHostedService<ImageCeanupService>();
 

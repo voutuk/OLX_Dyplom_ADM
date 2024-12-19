@@ -268,6 +268,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на New post request error.
+        /// </summary>
+        internal static string NewPostRequestError {
+            get {
+                return ResourceManager.GetString("NewPostRequestError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на User creation error.
         /// </summary>
         internal static string UserCreateError {

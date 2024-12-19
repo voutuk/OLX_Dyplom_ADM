@@ -192,4 +192,7 @@
   <data name="InvalidSettlementId" xml:space="preserve">
     <value>Invalid settlement id</value>
   </data>
+  <data name="NewPostRequestError" xml:space="preserve">
+    <value>New post request error</value>
+  </data>
 </root>

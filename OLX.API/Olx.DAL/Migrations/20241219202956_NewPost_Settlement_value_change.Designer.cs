@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Olx.DAL.Data;
@@ -11,9 +12,11 @@ using Olx.DAL.Data;
 namespace Olx.DAL.Migrations
 {
     [DbContext(typeof(OlxDbContext))]
-    partial class OlxDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241219202956_NewPost_Settlement_value_change")]
+    partial class NewPost_Settlement_value_change
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -539,7 +542,7 @@ namespace Olx.DAL.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("Region")
+                    b.Property<string>("SettlementRegionRef")
                         .IsRequired()
                         .HasMaxLength(36)
                         .IsUnicode(false)
@@ -552,7 +555,7 @@ namespace Olx.DAL.Migrations
 
                     b.HasKey("Ref");
 
-                    b.HasIndex("Region");
+                    b.HasIndex("SettlementRegionRef");
 
                     b.ToTable("Settlement");
                 });
@@ -940,7 +943,7 @@ namespace Olx.DAL.Migrations
                 {
                     b.HasOne("Olx.BLL.Entities.NewPost.Region", "SettlementRegion")
                         .WithMany("Settlements")
-                        .HasForeignKey("Region")
+                        .HasForeignKey("SettlementRegionRef")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

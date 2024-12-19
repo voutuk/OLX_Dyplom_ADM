@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Olx.BLL.Entities.NewPost
@@ -14,6 +15,7 @@ namespace Olx.BLL.Entities.NewPost
         [Unicode(false)]
         public string AreaRef { get; set; }
 
+        [JsonIgnore]
         public Area Area { get; set; }
 
         public ICollection<Settlement> Settlements  = new HashSet<Settlement>();
