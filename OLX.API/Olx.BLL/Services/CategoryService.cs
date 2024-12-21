@@ -15,6 +15,10 @@ using Olx.BLL.Models.Category;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Olx.BLL.Exstensions;
+using AutoMapper.QueryableExtensions;
+using Olx.BLL.Mapper;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace Olx.BLL.Services
 {
@@ -90,28 +94,25 @@ namespace Olx.BLL.Services
             return mapper.Map<CategoryDto>(category);
         }
 
-        public async Task<IEnumerable<CategoryDto>> GetAllAsync() =>
-            mapper.Map<IEnumerable<CategoryDto>>( await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.Filters)));
-       
-
-        public async Task<IEnumerable<CategoryDto>> GetMainAsync() =>
-            mapper.Map<IEnumerable<CategoryDto>>(await categoryRepository.GetListBySpec(new CategorySpecs.GetMain(CategoryOpt.Filters)));
-
-        public async Task<CategoryChildsTreeDto> GetTreeAsync(int categoryId)
+        public async Task<IEnumerable<CategoryDto>> GetAllTreeAsync()
+        { 
+            return await categoryRepository.GetQuery()
+                .Include(x => x.Childs).ThenInclude(x => x.Childs).ThenInclude(x => x.Childs)
+                .Where(c => c.ParentId == null)
+                .ProjectTo<CategoryDto>(mapper.ConfigurationProvider)
+                .ToListAsync();
+        } 
+                   
+        public async Task<CategoryDto> GetTreeAsync(int categoryId)
         {
             var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.Parent|CategoryOpt.Filters|CategoryOpt.NoTracking));
             var category = categories.FirstOrDefault(x => x.Id == categoryId)
                 ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
             category.Childs = BuildTree(categoryId, categories).ToHashSet();
-            return mapper.Map<CategoryChildsTreeDto>(category);
+            return mapper.Map<CategoryDto>(category);
         }
 
-        public async Task<IEnumerable<CategoryChildsTreeDto>> GetMainTreeAsync()
-        {
-            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.Parent | CategoryOpt.Filters | CategoryOpt.NoTracking));
-            return mapper.Map<IEnumerable<CategoryChildsTreeDto>> (BuildTree(null, categories));
-        }
-
+        
         private IEnumerable<Category> BuildTree(int? parentId, IEnumerable<Category> categories)
         {
             return categories.AsParallel()

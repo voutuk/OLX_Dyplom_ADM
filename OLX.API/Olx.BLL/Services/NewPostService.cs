@@ -5,6 +5,7 @@ using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models.NewPost;
 using Olx.BLL.Resources;
+using System.IO.Pipelines;
 using System.Net;
 using System.Text;
 
@@ -13,7 +14,10 @@ namespace Olx.BLL.Services
     
     public class NewPostService(
         IConfiguration configuration,
-        IRepository<Area> areaRepository) : INewPostService
+        IRepository<Area> areaRepository,
+        IRepository<Region> regionRepository,
+        IRepository<Warehous> warehousRepository,
+        IRepository<Settlement> settlementRepository) : INewPostService
     {
         private bool _disposedValue;
         private readonly HttpClient _httpClient = new();
@@ -33,7 +37,7 @@ namespace Olx.BLL.Services
                     var result = JsonConvert.DeserializeObject <NewPostResponseModel<T>>(requestResult);
                     if (result != null && result.Data.Length != 0)
                     {
-                        return result.Data.GroupBy(x => x.Ref).Select(z => z.Single());
+                        return result.Data;
                     }
                 }
                 return [];
@@ -60,7 +64,7 @@ namespace Olx.BLL.Services
                 }
                 else break;
             };
-            return warehouses;
+            return warehouses.AsParallel().GroupBy(x => x.Ref).Select(z => z.First());
         }
 
         public async Task<IEnumerable<Settlement>> GetSettlementsAsync()
@@ -77,7 +81,7 @@ namespace Olx.BLL.Services
                 }
                 else break;
             };
-            return settlement;
+            return settlement.AsParallel().GroupBy(x => x.Ref).Select(z => z.First());
         }
 
         public async Task<IEnumerable<Region>> GetRegionsAsync(IEnumerable<string> areaRefs)
@@ -100,64 +104,60 @@ namespace Olx.BLL.Services
             });
 
             var result = await Task.WhenAll(regionTasks);
-            return result.SelectMany(x => x);
+            return result.SelectMany(x => x).GroupBy(x => x.Ref).Select(z => z.First());
         }
 
-        public async Task<NewPostData> GetNewPostDataAsync()
-        {
-            Console.WriteLine("Завантаження даних Нової Пошти ...");
-            NewPostData newPostData = new()
-            {
-                Areas = await GetAreasAsync()
-            };
-            Console.WriteLine($"Області - {newPostData.Areas.Count()}");
-            var tasks = Enumerable.Range(1, 3).AsParallel().Select(async (index) =>
-            {
-                switch (index)
-                {
-                    case 1:
-                        newPostData.Warehous = await GetWarehousesAsync();
-                        Console.WriteLine($"Відділення - {newPostData.Warehous.Count()}");
-                        break;
-                    case 2:
-                        newPostData.Regions = await GetRegionsAsync(newPostData.Areas.Select(x => x.Ref));
-                        Console.WriteLine($"Paйони - {newPostData.Regions.Count()}");
-                        break;
-                    case 3:
-                        newPostData.Settlements = await GetSettlementsAsync();
-                        Console.WriteLine($"Населені пункти - {newPostData.Settlements.Count()}");
-                        break;
-                }
-            });
-            await Task.WhenAll(tasks);
-            return newPostData;
-        }
         public async Task SeedNewPostDataAsync()
         {
-            var newPostData = await GetNewPostDataAsync();
-            Console.WriteLine("Підготовка даних Нової Пошти до завантяження в базу даних...");
-            var areas = newPostData.Areas.Select( async area => 
-            {
-                var regions = newPostData.Regions.Where(x=>x.AreaRef == area.Ref).Select(region => 
-                {
-                    var settlements = newPostData.Settlements.Where(x => x.Region == region.Ref).Select(settlement => 
-                    {
-                        var warehouses = newPostData.Warehous.Where(x => x.SettlementRef == settlement.Ref);
-                        settlement.Warehous = warehouses.ToArray();
-                        return settlement;
-                    });
-                    region.Settlements = settlements.ToArray();
-                    return region;
-                });
-                area.Regions = regions.ToArray();
-                await areaRepository.AddAsync(area);
-                Console.WriteLine("Завантаження даних Нової Пошти в базу даних...");
-                await areaRepository.SaveAsync();
-            });
-            await Task.WhenAll(areas);
-           
-        }
+            //Console.WriteLine("Start");
+            //var settlements = await GetWarehousesAsync();
+            //var sRefs = settlements.Select(x => x.Ref);
+            //var warehouses = await GetWarehousesAsync();
+            //foreach (var item in warehouses)
+            //{
+            //    if (!sRefs.Contains(item.SettlementRef))
+            //    {
+            //        Console.WriteLine($"Ref - {item.Ref} SRef - {it}  Description - {item.Description}" );
+            //    }
+            //}
+            //Console.WriteLine("End");
+            //await Task.Delay(2000000);
+            //return;
 
+            Console.WriteLine("Завантаження даних Нової Пошти ...");
+            var areasTask = GetAreasAsync().ContinueWith( async x =>
+            {
+                var regionsTask = GetRegionsAsync(x.Result.Select(x => x.Ref));
+                Console.WriteLine($"Областей - {x.Result.Count()}");
+                await areaRepository.AddRangeAsync(x.Result);
+                await areaRepository.SaveAsync();
+               
+                var regions = await regionsTask;
+                Console.WriteLine($"Районів - {regions.Count()}");
+                await regionRepository.AddRangeAsync(regions);
+                await regionRepository.SaveAsync();
+            });
+           
+
+            var settlementsTask = GetSettlementsAsync().ContinueWith(async x =>
+            {
+                await areasTask;
+                Console.WriteLine($"Населених пунктів - {x.Result.Count()}");
+                await settlementRepository.AddRangeAsync(x.Result);
+                await settlementRepository.SaveAsync();
+            });
+
+            var warehousTask = GetWarehousesAsync().ContinueWith(async x =>
+            {
+                await settlementsTask;
+                Console.WriteLine($"Відділень - {x.Result.Count()}");
+                await warehousRepository.AddRangeAsync(x.Result);
+                await warehousRepository.SaveAsync();
+            });
+
+            await warehousTask;
+            Console.WriteLine("Завантаження даних Нової Пошти завершено...");
+        }
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -174,7 +174,5 @@ namespace Olx.BLL.Services
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-
-       
     }
 }

@@ -9,6 +9,8 @@ namespace Olx.DAL.Data.EntityConfigs.NewPost
     {
         public void Configure(EntityTypeBuilder<Settlement> builder)
         {
+            builder.Property(x => x.Region)
+                .HasConversion(v => string.IsNullOrWhiteSpace(v) ? null : v,v => v);
             builder.HasMany(x => x.Warehous)
                 .WithOne(x => x.Settlement)
                 .HasForeignKey(x => x.SettlementRef);

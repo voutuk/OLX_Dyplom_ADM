@@ -12,15 +12,9 @@ namespace OLX.API.Controllers
     public class CategoryController(ICategoryService categoryService) : ControllerBase
     {
         [HttpGet("get")]
-        public async Task<IActionResult> GetAll() => Ok(await categoryService.GetAllAsync());
+        public async Task<IActionResult> GetAll() => Ok(await categoryService.GetAllTreeAsync());
 
-        [HttpGet("get/main")]
-        public async Task<IActionResult> GetMain() => Ok(await categoryService.GetMainAsync());
-
-        [HttpGet("get/tree")]
-        public async Task<IActionResult> GetMainTree() => Ok(await categoryService.GetMainTreeAsync());
-
-        [HttpGet("get/tree/{id:int}")]
+        [HttpGet("get/{id:int}")]
         public async Task<IActionResult> GetTree([FromRoute]int id) => Ok(await categoryService.GetTreeAsync(id));
 
         [HttpPost("get/page")]

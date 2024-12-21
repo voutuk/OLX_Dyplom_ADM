@@ -1,4 +1,5 @@
-﻿namespace Olx.BLL.DTOs.CategoryDtos
+﻿
+namespace Olx.BLL.DTOs.CategoryDtos
 {
     public class CategoryDto
     {
@@ -7,5 +8,6 @@
         public string? Image { get; set; }
         public int? ParentId { get; set; }
         public IEnumerable<int> Filters { get; set; } = new HashSet<int>();
+        public IEnumerable<CategoryDto> Childs { get; set; } = new HashSet<CategoryDto>();
     }
 }
