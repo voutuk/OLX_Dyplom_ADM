@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Olx.DAL.Data;
@@ -11,9 +12,11 @@ using Olx.DAL.Data;
 namespace Olx.DAL.Migrations
 {
     [DbContext(typeof(OlxDbContext))]
-    partial class OlxDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241221194041_Add_tbl_to_tables")]
+    partial class Add_tbl_to_tables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -939,8 +942,7 @@ namespace Olx.DAL.Migrations
                 {
                     b.HasOne("Olx.BLL.Entities.NewPost.Region", "SettlementRegion")
                         .WithMany("Settlements")
-                        .HasForeignKey("Region")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("Region");
 
                     b.Navigation("SettlementRegion");
                 });

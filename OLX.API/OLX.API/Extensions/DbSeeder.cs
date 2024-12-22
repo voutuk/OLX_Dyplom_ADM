@@ -31,16 +31,14 @@ namespace OLX.API.Extensions
             }
 
             //NewPost seeder
-            //using (var newPostService = scope.ServiceProvider.GetRequiredService<INewPostService>())
-            //{
-            //    var areaRepo = scope.ServiceProvider.GetRequiredService<IRepository<Area>>();
-            //    if (!await areaRepo.AnyAsync())
-            //    {
-            //        await newPostService.SeedNewPostDataAsync();
-            //    }
-            //}
-
-          
+            using (var newPostService = scope.ServiceProvider.GetRequiredService<INewPostService>())
+            {
+                var areaRepo = scope.ServiceProvider.GetRequiredService<IRepository<Area>>();
+                if (!await areaRepo.AnyAsync())
+                {
+                    await newPostService.UpdateNewPostData();
+                }
+            }
 
             //Users seeder
             var userManager = serviceProvider.GetRequiredService<UserManager<OlxUser>>();
@@ -145,66 +143,66 @@ namespace OLX.API.Extensions
                 }
                 else Console.WriteLine("File \"JsonData/Categories.json\" not found");
             }
-           
-    
+
+
             //Advert seeder
-        //    var filterValueRepo = scope.ServiceProvider.GetService<IRepository<FilterValue>>();
-        //    var settlementRepo = scope.ServiceProvider.GetService<IRepository<Settlement>>();
-        //    var advertRepo = scope.ServiceProvider.GetService<IRepository<Advert>>();
-        //    if (advertRepo is not null && !await advertRepo.AnyAsync())
-        //    {
-        //        Console.WriteLine("Start adverts seeder");
-        //        string advertsJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!, "Adverts.json");
-        //        if (File.Exists(advertsJsonDataFile))
-        //        {
-        //            var advertsJson = File.ReadAllText(advertsJsonDataFile, Encoding.UTF8);
-        //            try
-        //            {
-        //                var advertModels = JsonConvert.DeserializeObject<IEnumerable<SeederAdvertModel>>(advertsJson)
-        //                    ?? throw new JsonException();
-        //                if (advertModels.Any() && filterValueRepo is not null)
-        //                {
-        //                    var advertsTasks = advertModels.Select(async (x) =>
-        //                    {
-        //                        var filterValues = filterValueRepo.GetListBySpec(new FilterValueSpecs.GetByIds(x.FilterValueIds)).Result.ToList();
-        //                        var imagesTasks = x.ImagePaths.Select(async (path, index) =>
-        //                            new AdvertImage()
-        //                            {
-        //                                Priority = index,
-        //                                Name = await imageService.SaveImageFromUrlAsync(path)
-        //                            });
-        //                        var images = await Task.WhenAll(imagesTasks);
-        //                        return new Advert()
-        //                        {
-        //                            UserId = x.UserId,
-        //                            PhoneNumber = x.PhoneNumber,
-        //                            ContactEmail = x.ContactEmail,
-        //                            ContactPersone = x.ContactPersone,
-        //                            Title = x.Title,
-        //                            Description = x.Description,
-        //                            IsContractPrice = x.IsContractPrice,
-        //                            Price = x.Price,
-        //                            CategoryId = x.CategoryId,
-        //                            FilterValues = filterValues,
-        //                            Images = images,
-        //                            Settlement = await settlementRepo.GetByIDAsync(x.SettlementRef) ??
-        //                              throw new NullReferenceException("settlement not found")
-        //                        };
-        //                    });
-        //                    var adverts = await Task.WhenAll(advertsTasks);
-        //                    Console.WriteLine($"Adding {adverts.Length} adverts to the database.");
-        //                    await advertRepo.AddRangeAsync(adverts);
-        //                    await advertRepo.SaveAsync();
-        //                    Console.WriteLine("Adverts added to the database.");
-        //                }
-        //            }
-        //            catch (JsonException)
-        //            {
-        //                Console.WriteLine("Error deserialize adverts json file");
-        //            }
-        //        }
-        //        else Console.WriteLine("File \"Adverts.json\" not found");
-        //    }
+            var filterValueRepo = scope.ServiceProvider.GetService<IRepository<FilterValue>>();
+            var settlementRepo = scope.ServiceProvider.GetService<IRepository<Settlement>>();
+            var advertRepo = scope.ServiceProvider.GetService<IRepository<Advert>>();
+            if (advertRepo is not null && !await advertRepo.AnyAsync())
+            {
+                Console.WriteLine("Start adverts seeder");
+                string advertsJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!, "Adverts.json");
+                if (File.Exists(advertsJsonDataFile))
+                {
+                    var advertsJson = File.ReadAllText(advertsJsonDataFile, Encoding.UTF8);
+                    try
+                    {
+                        var advertModels = JsonConvert.DeserializeObject<IEnumerable<SeederAdvertModel>>(advertsJson)
+                            ?? throw new JsonException();
+                        if (advertModels.Any() && filterValueRepo is not null)
+                        {
+                            var advertsTasks = advertModels.Select(async (x) =>
+                            {
+                                var filterValues = filterValueRepo.GetListBySpec(new FilterValueSpecs.GetByIds(x.FilterValueIds)).Result.ToList();
+                                var imagesTasks = x.ImagePaths.Select(async (path, index) =>
+                                    new AdvertImage()
+                                    {
+                                        Priority = index,
+                                        Name = await imageService.SaveImageFromUrlAsync(path)
+                                    });
+                                var images = await Task.WhenAll(imagesTasks);
+                                return new Advert()
+                                {
+                                    UserId = x.UserId,
+                                    PhoneNumber = x.PhoneNumber,
+                                    ContactEmail = x.ContactEmail,
+                                    ContactPersone = x.ContactPersone,
+                                    Title = x.Title,
+                                    Description = x.Description,
+                                    IsContractPrice = x.IsContractPrice,
+                                    Price = x.Price,
+                                    CategoryId = x.CategoryId,
+                                    FilterValues = filterValues,
+                                    Images = images,
+                                    Settlement = await settlementRepo.GetByIDAsync(x.SettlementRef) ??
+                                      throw new NullReferenceException("settlement not found")
+                                };
+                            });
+                            var adverts = await Task.WhenAll(advertsTasks);
+                            Console.WriteLine($"Adding {adverts.Length} adverts to the database.");
+                            await advertRepo.AddRangeAsync(adverts);
+                            await advertRepo.SaveAsync();
+                            Console.WriteLine("Adverts added to the database.");
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        Console.WriteLine("Error deserialize adverts json file");
+                    }
+                }
+                else Console.WriteLine("File \"Adverts.json\" not found");
+            }
         }
 
         private async static Task<IEnumerable<Category>> GetCategories(IEnumerable<SeederCategoryModel> models,IEnumerable<Filter> filters,IImageService imageService)

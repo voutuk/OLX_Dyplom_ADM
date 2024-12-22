@@ -1,9 +1,11 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Olx.BLL.Entities.NewPost
 {
+    [Table("tbl_Settlements")]
     public class Settlement : NewPostBaseEntity
     {
         [StringLength(100)]

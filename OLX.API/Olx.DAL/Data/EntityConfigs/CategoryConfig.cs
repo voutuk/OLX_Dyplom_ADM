@@ -10,7 +10,8 @@ namespace Olx.DAL.Data.EntityConfigs
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.HasMany(x => x.Filters)
-                .WithMany(x => x.Categories);
+                .WithMany(x => x.Categories)
+                .UsingEntity(x => x.ToTable("tbl_CategoryFilters"));
             builder.HasOne(x => x.Parent)
                 .WithMany(x => x.Childs)
                 .HasForeignKey(x=>x.ParentId)

@@ -14,7 +14,8 @@ namespace Olx.DAL.Data.EntityConfigs
                 .HasForeignKey(x => x.FilterId);
               
             builder.HasMany(x => x.Adverts)
-                .WithMany(x => x.FilterValues);
+                .WithMany(x => x.FilterValues)
+                .UsingEntity(x => x.ToTable("tbl_AdvertFilterValues"));
         }
     }
 }

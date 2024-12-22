@@ -19,7 +19,7 @@ namespace Olx.BLL.Models.NewPost
 
              
 
-        public NewPostRequestModel(string apiKey,string modelName,string calledMethod,int page = 1,int limit = 200,string areaRef = "")
+        public NewPostRequestModel(string apiKey,string modelName,string calledMethod,int page = 1,int limit = 0,string areaRef = "")
         {
             ApiKey = apiKey;
             ModelName = modelName;

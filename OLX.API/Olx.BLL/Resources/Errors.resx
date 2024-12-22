@@ -195,4 +195,16 @@
   <data name="NewPostRequestError" xml:space="preserve">
     <value>New post request error</value>
   </data>
+  <data name="NewPostDataUpdateError" xml:space="preserve">
+    <value>New post data update error</value>
+  </data>
+  <data name="InvalidSettlementRef" xml:space="preserve">
+    <value>Invalid settlement ref</value>
+  </data>
+  <data name="InvalidRegionRef" xml:space="preserve">
+    <value>Invalid region ref</value>
+  </data>
+  <data name="InvalidAreaRef" xml:space="preserve">
+    <value>Invalid area ref</value>
+  </data>
 </root>

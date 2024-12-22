@@ -1,8 +1,10 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Olx.BLL.Entities.ChatEntities
 {
+    [Table("tbl_ChatMessages")]
     public class ChatMessage : BaseEntity
     {
         [StringLength(2000)]

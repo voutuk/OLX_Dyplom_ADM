@@ -1,10 +1,12 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Olx.BLL.Entities.FilterEntities;
 
 namespace Olx.BLL.Entities
 {
+    [Table("tbl_Categories")]
     public class Category : BaseNamedEntity
     {
         [StringLength(100)]

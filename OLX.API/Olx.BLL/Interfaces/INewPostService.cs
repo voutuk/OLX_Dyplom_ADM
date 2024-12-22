@@ -1,18 +1,19 @@
-﻿
-
+﻿using Olx.BLL.DTOs.NewPost;
 using Olx.BLL.Entities.NewPost;
-using Olx.BLL.Models.NewPost;
-using System.Threading.Tasks;
 
 namespace Olx.BLL.Interfaces
 {
     public interface INewPostService : IDisposable
     {
-        Task<IEnumerable<Area>> GetAreasAsync() ;
-        Task<IEnumerable<Warehous>> GetWarehousesAsync();
-        Task<IEnumerable<Settlement>> GetSettlementsAsync();
-        Task<IEnumerable<Region>> GetRegionsAsync(IEnumerable<string> areaRefs);
-       // Task<NewPostData> GetNewPostDataAsync();
-        Task SeedNewPostDataAsync();
+        Task<IEnumerable<Area>> GetAreasDataAsync() ;
+        Task<IEnumerable<Warehous>> GetWarehousesDataAsync(IEnumerable<string> areaRefs);
+        Task<IEnumerable<Settlement>> GetSettlementsDataAsync();
+        Task<IEnumerable<Region>> GetRegionsDataAsync(IEnumerable<string> areaRefs);
+        Task<IEnumerable<AreaDto>> GetAreasAsync();
+        Task<IEnumerable<WarehousDto>> GetWarehousesBySettlementAsync(string settlementRef);
+        Task<IEnumerable<SettlementDto>> GetSettlementsByRegionAsync(string regionRef);
+        Task<IEnumerable<RegionDto>> GetRegionsAsync();
+        Task<IEnumerable<RegionDto>> GetRegionsByAreaAsync(string areaRef);
+        Task UpdateNewPostData();
     }
 }

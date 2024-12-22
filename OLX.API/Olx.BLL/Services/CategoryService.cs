@@ -95,17 +95,14 @@ namespace Olx.BLL.Services
         }
 
         public async Task<IEnumerable<CategoryDto>> GetAllTreeAsync()
-        { 
-            return await categoryRepository.GetQuery()
-                .Include(x => x.Childs)
-                .Where(c => c.ParentId == null)
-                .ProjectTo<CategoryDto>(mapper.ConfigurationProvider)
-                .ToListAsync();
+        {
+            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.NoTracking | CategoryOpt.Filters));
+            return mapper.Map<IEnumerable<CategoryDto>>(BuildTree(null, categories));
         } 
                    
         public async Task<CategoryDto> GetTreeAsync(int categoryId)
         {
-            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.Parent|CategoryOpt.Filters|CategoryOpt.NoTracking));
+            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.Filters | CategoryOpt.NoTracking));
             var category = categories.FirstOrDefault(x => x.Id == categoryId)
                 ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
             category.Childs = BuildTree(categoryId, categories).ToHashSet();

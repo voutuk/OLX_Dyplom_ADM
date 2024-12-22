@@ -13,7 +13,8 @@ namespace Olx.DAL.Data.EntityConfigs.NewPost
                 .HasConversion(v => string.IsNullOrWhiteSpace(v) ? null : v,v => v);
             builder.HasMany(x => x.Warehous)
                 .WithOne(x => x.Settlement)
-                .HasForeignKey(x => x.SettlementRef);
+                .HasForeignKey(x => x.SettlementRef)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.Adverts)
                .WithOne(x => x.Settlement)
                .HasForeignKey(x => x.SettlementRef);
