@@ -133,6 +133,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid area ref.
+        /// </summary>
+        internal static string InvalidAreaRef {
+            get {
+                return ResourceManager.GetString("InvalidAreaRef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid category id.
         /// </summary>
         internal static string InvalidCategoryId {
@@ -214,6 +223,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid region ref.
+        /// </summary>
+        internal static string InvalidRegionRef {
+            get {
+                return ResourceManager.GetString("InvalidRegionRef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid reser password data.
         /// </summary>
         internal static string InvalidResetPasswordData {
@@ -228,6 +246,15 @@ namespace Olx.BLL.Resources {
         internal static string InvalidSettlementId {
             get {
                 return ResourceManager.GetString("InvalidSettlementId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid settlement ref.
+        /// </summary>
+        internal static string InvalidSettlementRef {
+            get {
+                return ResourceManager.GetString("InvalidSettlementRef", resourceCulture);
             }
         }
         
@@ -264,6 +291,15 @@ namespace Olx.BLL.Resources {
         internal static string JwtSettingsReadError {
             get {
                 return ResourceManager.GetString("JwtSettingsReadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на New post data update error.
+        /// </summary>
+        internal static string NewPostDataUpdateError {
+            get {
+                return ResourceManager.GetString("NewPostDataUpdateError", resourceCulture);
             }
         }
         

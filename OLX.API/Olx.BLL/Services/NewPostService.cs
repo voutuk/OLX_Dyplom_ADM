@@ -1,11 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Olx.BLL.DTOs.NewPost;
 using Olx.BLL.Entities.NewPost;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models.NewPost;
 using Olx.BLL.Resources;
-using System.IO.Pipelines;
+using Olx.BLL.Specifications;
 using System.Net;
 using System.Text;
 
@@ -17,15 +19,17 @@ namespace Olx.BLL.Services
         IRepository<Area> areaRepository,
         IRepository<Region> regionRepository,
         IRepository<Warehous> warehousRepository,
-        IRepository<Settlement> settlementRepository) : INewPostService
+        IRepository<Settlement> settlementRepository,
+        IMapper mapper) : INewPostService
     {
         private bool _disposedValue;
         private readonly HttpClient _httpClient = new();
         private readonly string _newPostKey = configuration.GetValue<string>("NewPostApiKey")!;
         private readonly string _newPostUrl = configuration.GetValue<string>("NewPostApiUrl")!;
-        private async Task<IEnumerable<T>> GetNewPostData<T>(string modelName, string calledMethod,int page = 1,int limit = 200,string areaRef = "") where T : NewPostBaseEntity
+
+        private async Task<IEnumerable<T>> GetNewPostData<T>(string modelName, string calledMethod,int page = 1 , int limit = 200, string areaRef = "") where T : NewPostBaseEntity
         {
-            NewPostRequestModel postModel = new(_newPostKey, modelName, calledMethod,page,limit, areaRef);
+            NewPostRequestModel postModel = new(_newPostKey, modelName, calledMethod, page, limit, areaRef);
             string json = JsonConvert.SerializeObject(postModel);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _httpClient.PostAsync(_newPostUrl, content);
@@ -44,30 +48,39 @@ namespace Olx.BLL.Services
             }
             else
             {
-                throw new HttpException(Errors.NewPostRequestError, HttpStatusCode.InternalServerError);
+                throw new Exception(Errors.NewPostRequestError);
             }
         }
-        public async Task<IEnumerable<Area>> GetAreasAsync() => await GetNewPostData<Area>("Address", "getSettlementAreas");
-        
 
-        public async Task<IEnumerable<Warehous>> GetWarehousesAsync()
+        public async Task<IEnumerable<Area>> GetAreasDataAsync() => await GetNewPostData<Area>("Address", "getSettlementAreas");
+
+        public async Task<IEnumerable<Warehous>> GetWarehousesDataAsync(IEnumerable<string> areaRefs)
         {
-            List<Warehous> warehouses = [];
-            int page = 1;
-
-            while (true)
+            var warehousesTasks = areaRefs.Select(async (areaRef) =>
             {
-                var result = await GetNewPostData<Warehous>("Address", "getWarehouses", page++, 1000);
-                if (result.Any())
+                int page = 1;
+                List<Warehous> warehouses = [];
+                while (true)
                 {
-                    warehouses.AddRange(result);
-                }
-                else break;
-            };
-            return warehouses.AsParallel().GroupBy(x => x.Ref).Select(z => z.First());
+                    var result = await GetNewPostData<Warehous>("Address", "getWarehouses", page++, 1000, areaRef: areaRef);
+                    if (result.Any())
+                    {
+                        warehouses.AddRange(result);
+                    }
+                    else break;
+                };
+                return warehouses;
+            });
+
+            var result = await Task.WhenAll(warehousesTasks);
+            return result.AsParallel()
+                .SelectMany(x => x)
+                .Where(x=>x.SettlementRef != "00000000-0000-0000-0000-000000000000")
+                .GroupBy(x => x.Ref)
+                .Select(z => z.First());
         }
 
-        public async Task<IEnumerable<Settlement>> GetSettlementsAsync()
+        public async Task<IEnumerable<Settlement>> GetSettlementsDataAsync()
         {
             List<Settlement> settlement = [];
             int page = 1;
@@ -81,83 +94,179 @@ namespace Olx.BLL.Services
                 }
                 else break;
             };
-            return settlement.AsParallel().GroupBy(x => x.Ref).Select(z => z.First());
+            return settlement.AsParallel()
+                .GroupBy(x => x.Ref)
+                .Select(z => z.First());
         }
 
-        public async Task<IEnumerable<Region>> GetRegionsAsync(IEnumerable<string> areaRefs)
+        public async Task<IEnumerable<Region>> GetRegionsDataAsync(IEnumerable<string> areaRefs)
         {
-            var  regionTasks =  areaRefs.AsParallel().Select(async(areaRef) => 
+            List<Region> result = [];
+            foreach (var areaRef in areaRefs)
             {
-                List<Region> regions = [];
-                int page = 1;
-                while (true)
+                var regions = await GetNewPostData<Region>("Address", "getSettlementCountryRegion", areaRef: areaRef);
+                if (regions.Any())
                 {
-                    var result = await GetNewPostData<Region>("Address", "getSettlementCountryRegion", page++, areaRef: areaRef);
-                    if (result.Any())
+                    foreach (var region in regions) 
                     {
-                        result.AsParallel().ForAll(z => z.AreaRef = areaRef);
-                        regions.AddRange(result);
+                        region.AreaRef = areaRef;
                     }
-                    else break;
-                };
-                return regions;
-            });
-
-            var result = await Task.WhenAll(regionTasks);
-            return result.SelectMany(x => x).GroupBy(x => x.Ref).Select(z => z.First());
+                    result.AddRange(regions);
+                }
+            }
+            return result.AsParallel()
+                .GroupBy(x => x.Ref)
+                .Select(z => z.First());
         }
 
-        public async Task SeedNewPostDataAsync()
+        public async Task<IEnumerable<AreaDto>> GetAreasAsync() => 
+            mapper.Map<IEnumerable<AreaDto>>(await areaRepository.GetListBySpec(new NewPostDataSpecs.GetAreas()));
+
+        public async Task<IEnumerable<WarehousDto>> GetWarehousesBySettlementAsync(string settlementRef)
         {
-            //Console.WriteLine("Start");
-            //var settlements = await GetWarehousesAsync();
-            //var sRefs = settlements.Select(x => x.Ref);
-            //var warehouses = await GetWarehousesAsync();
-            //foreach (var item in warehouses)
-            //{
-            //    if (!sRefs.Contains(item.SettlementRef))
-            //    {
-            //        Console.WriteLine($"Ref - {item.Ref} SRef - {it}  Description - {item.Description}" );
-            //    }
-            //}
-            //Console.WriteLine("End");
-            //await Task.Delay(2000000);
-            //return;
-
-            Console.WriteLine("Завантаження даних Нової Пошти ...");
-            var areasTask = GetAreasAsync().ContinueWith( async x =>
+            if(!await settlementRepository.AnyAsync(x=> x.Ref == settlementRef))
             {
-                var regionsTask = GetRegionsAsync(x.Result.Select(x => x.Ref));
-                Console.WriteLine($"Областей - {x.Result.Count()}");
-                await areaRepository.AddRangeAsync(x.Result);
-                await areaRepository.SaveAsync();
-               
-                var regions = await regionsTask;
-                Console.WriteLine($"Районів - {regions.Count()}");
-                await regionRepository.AddRangeAsync(regions);
-                await regionRepository.SaveAsync();
-            });
-           
-
-            var settlementsTask = GetSettlementsAsync().ContinueWith(async x =>
-            {
-                await areasTask;
-                Console.WriteLine($"Населених пунктів - {x.Result.Count()}");
-                await settlementRepository.AddRangeAsync(x.Result);
-                await settlementRepository.SaveAsync();
-            });
-
-            var warehousTask = GetWarehousesAsync().ContinueWith(async x =>
-            {
-                await settlementsTask;
-                Console.WriteLine($"Відділень - {x.Result.Count()}");
-                await warehousRepository.AddRangeAsync(x.Result);
-                await warehousRepository.SaveAsync();
-            });
-
-            await warehousTask;
-            Console.WriteLine("Завантаження даних Нової Пошти завершено...");
+                throw new HttpException(Errors.InvalidSettlementRef,HttpStatusCode.BadRequest);
+            }
+            return mapper.Map<IEnumerable<WarehousDto>>(await warehousRepository.GetListBySpec(new NewPostDataSpecs.GetWarehousesBySettlement(settlementRef)));
         }
+
+        public async Task<IEnumerable<SettlementDto>> GetSettlementsByRegionAsync(string regionRef) 
+        {
+            if (!await regionRepository.AnyAsync(x => x.Ref == regionRef))
+            {
+                throw new HttpException(Errors.InvalidRegionRef, HttpStatusCode.BadRequest);
+            }
+            return mapper.Map<IEnumerable<SettlementDto>>(await settlementRepository.GetListBySpec(new NewPostDataSpecs.GetSettlementsByRegion(regionRef)));
+        }
+            
+
+        public async Task<IEnumerable<RegionDto>> GetRegionsAsync() =>
+            mapper.Map<IEnumerable<RegionDto>>(await regionRepository.GetListBySpec(new NewPostDataSpecs.GetRegions()));
+
+        public async Task<IEnumerable<RegionDto>> GetRegionsByAreaAsync(string areaRef) 
+        {
+            if (!await areaRepository.AnyAsync(x => x.Ref == areaRef))
+            {
+                throw new HttpException(Errors.InvalidAreaRef, HttpStatusCode.BadRequest);
+            }
+            return mapper.Map<IEnumerable<RegionDto>>(await regionRepository.GetListBySpec(new NewPostDataSpecs.GetRegionsByArea(areaRef)));
+        }
+            
+
+        public async Task UpdateNewPostData()
+        {
+            try 
+            {
+                Console.WriteLine("Start areas update ...");
+                var areasData = await GetAreasDataAsync();
+                var areas = await areaRepository.GetListBySpec(new NewPostDataSpecs.GetAreas(true));
+                if (areas.Any())
+                {
+                    var areasTasks = areasData.Select(async (areaData) =>
+                    {
+                        var area = areas.FirstOrDefault(x => x.Ref == areaData.Ref);
+                        if (area is not null)
+                        {
+                            mapper.Map(areaData,area);
+                        }
+                        else
+                        {
+                            await areaRepository.AddAsync(areaData);
+                        }
+                    });
+                    await Task.WhenAll(areasTasks);
+                }
+                else
+                {
+                    await areaRepository.AddRangeAsync(areasData);
+                }
+                await areaRepository.SaveAsync();
+
+                Console.WriteLine("Start regions update ...");
+                var regionsData = await GetRegionsDataAsync(areasData.Select(x => x.Ref));
+                var regions = await regionRepository.GetListBySpec(new NewPostDataSpecs.GetRegions(true));
+                if (regions.Any())
+                {
+                    foreach (var regionData in regionsData)
+                    {
+                        var region = regions.AsParallel().FirstOrDefault(x => x.Ref == regionData.Ref);
+                        if (region is not null)
+                        {
+                            mapper.Map(regionData, region);
+                        }
+                        else
+                        {
+                            await regionRepository.AddAsync(regionData);
+                        }
+                    }
+                }
+                else
+                {
+                    await regionRepository.AddRangeAsync(regionsData);
+                }
+                await regionRepository.SaveAsync();
+
+                Console.WriteLine("Start settlements update ...");
+                var settlementsData = await GetSettlementsDataAsync();
+                var settlements = await settlementRepository.GetListBySpec(new NewPostDataSpecs.GetSettlements(true));
+                if (settlements.Any())
+                {
+                    foreach (var settlementData in settlementsData)
+                    {
+                        var settlement = settlements.AsParallel().FirstOrDefault(x => x.Ref == settlementData.Ref);
+                        if (settlement is not null)
+                        {
+                            mapper.Map(settlementData, settlement);
+                        }
+                        else
+                        {
+                            await settlementRepository.AddAsync(settlementData);
+                        }
+                    }
+                }
+                else
+                {
+                    await settlementRepository.AddRangeAsync(settlementsData);
+                }
+                await settlementRepository.SaveAsync();
+
+                Console.WriteLine("Start warehouses update ...");
+                var warehousesData = await GetWarehousesDataAsync(areasData.Select(x => x.Ref));
+                var warehouses = await warehousRepository.GetListBySpec(new NewPostDataSpecs.GetWarehouses(true));
+                if (warehouses.Any())
+                {
+                    foreach (var warehousData in warehousesData)
+                    {
+                        var warehous = warehouses.AsParallel().FirstOrDefault(x => x.Ref == warehousData.Ref);
+                        if (warehous is not null)
+                        {
+                            mapper.Map(warehousData, warehous);
+                        }
+                        else
+                        {
+                            await warehousRepository.AddAsync(warehousData);
+                        }
+                    }
+                }
+                else
+                {
+                    await warehousRepository.AddRangeAsync(warehousesData);
+                }
+                await warehousRepository.SaveAsync();
+                Console.WriteLine("Update successfuly completed ...");
+                Console.WriteLine($"Areas - {areas.Count()}");
+                Console.WriteLine($"Regions - {regions.Count()}");
+                Console.WriteLine($"Settlements - {settlements.Count()}");
+                Console.WriteLine($"Warehouses - {warehouses.Count()}");
+            }
+            catch(Exception e) 
+            {
+                Console.WriteLine(e.Message);
+                throw new HttpException(Errors.NewPostDataUpdateError, HttpStatusCode.InternalServerError);
+            }
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)

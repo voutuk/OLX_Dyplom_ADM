@@ -33,15 +33,7 @@ namespace Olx.BLL.Specifications
                 Include(Query, options);
             }
         }
-
-        public class GetMain : Specification<Category>
-        {
-            public GetMain(CategoryOpt? options = null)
-            {
-                Include(Query, options);
-                Query.Where(x => x.Parent == null);
-            }
-        }
+       
         public class GetById : Specification<Category>
         {
             public GetById(int id,CategoryOpt? options = null)

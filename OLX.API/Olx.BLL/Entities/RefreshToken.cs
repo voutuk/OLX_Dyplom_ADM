@@ -1,8 +1,10 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Olx.BLL.Entities
 {
+    [Table("tbl_RefreshTokens")]
     public class RefreshToken :BaseEntity
     {
         public int OlxUserId { get; set; }

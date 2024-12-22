@@ -12,7 +12,7 @@ namespace Olx.BLL.Models.NewPost
         /// <summary>
         /// Кількість населених пунктів за 1 запит
         /// </summary>
-        public int Limit { get; set; } = 200;
+        public int Limit { get; set; }
 
         /// <summary>
         /// Посилання на область

@@ -3,9 +3,11 @@ using Olx.BLL.Entities.ChatEntities;
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Entities.NewPost;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Olx.BLL.Entities
 {
+    [Table("tbl_Adverts")]
     public class Advert : BaseEntity
     {
         public int UserId { get; set; }

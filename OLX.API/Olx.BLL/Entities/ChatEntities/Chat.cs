@@ -1,7 +1,10 @@
 ﻿
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Olx.BLL.Entities.ChatEntities
 {
+    [Table("tbl_Chats")]
     public class Chat : BaseEntity
     {
         public int AdvertId { get; set; }

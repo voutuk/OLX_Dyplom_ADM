@@ -12,7 +12,8 @@ namespace Olx.DAL.Data.EntityConfigs.NewPost
         {
             builder.HasMany(x => x.Settlements)
                 .WithOne(x => x.SettlementRegion)
-                .HasForeignKey(x => x.Region);
+                .HasForeignKey(x => x.Region)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

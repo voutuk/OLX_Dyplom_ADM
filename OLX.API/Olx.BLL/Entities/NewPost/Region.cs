@@ -3,9 +3,11 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Olx.BLL.Entities.NewPost
 {
+    [Table("tbl_Regions")]
     public class Region :NewPostBaseEntity
     {
         [StringLength(50)]

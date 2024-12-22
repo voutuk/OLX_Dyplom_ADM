@@ -1,8 +1,10 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Olx.BLL.Entities
 {
+    [Table("tbl_AdminMessages")]
     public class AdminMessage : BaseEntity
     {
         public bool FromAdmin { get; set; }
