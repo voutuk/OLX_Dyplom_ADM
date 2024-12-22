@@ -6,7 +6,7 @@ namespace Olx.BLL.Specifications
 {
     public static class CategorySpecs
     {
-        private static void Include(ISpecificationBuilder<Category> query, CategoryOpt? options)
+        private static void SetOptions(ISpecificationBuilder<Category> query, CategoryOpt? options)
         {
             if (options is not null)
             {
@@ -30,7 +30,7 @@ namespace Olx.BLL.Specifications
         {
             public GetAll(CategoryOpt? options = null) 
             {
-                Include(Query, options);
+                SetOptions(Query, options);
             }
         }
        
@@ -38,7 +38,7 @@ namespace Olx.BLL.Specifications
         {
             public GetById(int id,CategoryOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x => x.Id == id);
             }
         }

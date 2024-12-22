@@ -6,7 +6,7 @@ namespace Olx.BLL.Specifications
 {
     public static class OlxUserSpecs
     {
-        private static void Include(ISpecificationBuilder<OlxUser> query, UserOpt? options)
+        private static void SetOptions(ISpecificationBuilder<OlxUser> query, UserOpt? options)
         {
             if (options is not null)
             {
@@ -35,7 +35,7 @@ namespace Olx.BLL.Specifications
         {
             public GetByRefreshToken(string token, UserOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x => x.RefreshTokens.Any(z => z.Token == token));
             }
                 
@@ -45,7 +45,7 @@ namespace Olx.BLL.Specifications
         {
             public GetById(int id, UserOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x => x.Id == id);
             }
                 

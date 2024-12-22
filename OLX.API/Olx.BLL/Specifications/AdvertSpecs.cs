@@ -7,7 +7,7 @@ namespace Olx.BLL.Specifications
 {
     public static class AdvertSpecs
     {
-        private static void Include(ISpecificationBuilder<Advert> query, AdvertOpt? options)
+        private static void SetOptions(ISpecificationBuilder<Advert> query, AdvertOpt? options)
         {
             if (options is not null)
             {
@@ -35,7 +35,7 @@ namespace Olx.BLL.Specifications
         {
             public GetByIds(IEnumerable<int> ids, AdvertOpt? options = null)
             {
-                Include(Query,options);
+                SetOptions(Query,options);
                 Query.Where(x=> ids.Contains(x.Id));
             }
         }
@@ -44,7 +44,7 @@ namespace Olx.BLL.Specifications
         {
             public GetUserAdvertById(int userId,int advertId, AdvertOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x =>x.UserId == userId && x.Id == advertId);
             }
         }
@@ -53,14 +53,14 @@ namespace Olx.BLL.Specifications
         {
             public GetAll(AdvertOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
             }
         }
         public class GetByUserId : Specification<Advert>
         {
             public GetByUserId(int userId, AdvertOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x => x.UserId == userId);
             }
         }
@@ -69,7 +69,7 @@ namespace Olx.BLL.Specifications
         {
             public GetById(int id, AdvertOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x => x.Id == id);
             }
         }

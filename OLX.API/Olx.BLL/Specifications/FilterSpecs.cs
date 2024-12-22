@@ -6,7 +6,7 @@ namespace Olx.BLL.Specifications
 {
     public static class FilterSpecs
     {
-        private static void Include(ISpecificationBuilder<Filter> query, FilterOpt? options)
+        private static void SetOptions(ISpecificationBuilder<Filter> query, FilterOpt? options)
         {
             if (options is not null)
             {
@@ -28,20 +28,20 @@ namespace Olx.BLL.Specifications
         {
             public GetByIds(IEnumerable<int> ids, FilterOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x => ids.Contains(x.Id));
             }
                
         }
         public class GetAll : Specification<Filter>
         {
-            public GetAll(FilterOpt? options = null) => Include(Query, options);
+            public GetAll(FilterOpt? options = null) => SetOptions(Query, options);
         }
         public class GetByNames : Specification<Filter>
         {
             public GetByNames(IEnumerable<string> names, FilterOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x => names.Contains(x.Name));
             }
         }
@@ -49,7 +49,7 @@ namespace Olx.BLL.Specifications
         {
             public GetById(int id, FilterOpt? options = null)
             {
-                Include(Query, options);
+                SetOptions(Query, options);
                 Query.Where(x => x.Id == id);
             }
         }
