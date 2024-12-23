@@ -9,7 +9,7 @@ namespace Olx.BLL.Specifications
         {
             public GetAreas(bool tracking = false)
             {
-                Query.Include(x=>x.Regions)
+                Query.Include(x => x.Regions)
                     .AsTracking(tracking);
             }
         }
@@ -42,7 +42,8 @@ namespace Olx.BLL.Specifications
         {
             public GetRegionsByArea(string areaRef)
             {
-                Query.AsNoTracking().Where(x => x.AreaRef == areaRef);
+                Query.AsNoTracking()
+                    .Where(x => x.AreaRef == areaRef);
             }
         }
 
@@ -50,14 +51,16 @@ namespace Olx.BLL.Specifications
         {
             public GetWarehousesBySettlement(string settlementRef)
             {
-                Query.AsNoTracking().Where(x => x.SettlementRef == settlementRef);
+                Query.AsNoTracking()
+                    .Where(x => x.SettlementRef == settlementRef);
             }
         }
         public class GetSettlementsByRegion : Specification<Settlement>
         {
             public GetSettlementsByRegion(string regionRef)
             {
-                Query.AsNoTracking().Where(x => x.Region == regionRef);
+                Query.AsNoTracking()
+                    .Where(x => x.Region == regionRef);
             }
         }
 
