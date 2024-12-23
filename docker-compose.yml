@@ -39,10 +39,10 @@ services:
         condition: on-failure
         max_attempts: 5
   
-  # client:
-  #   container_name: olx_client_container
-  #   image: novakvova/storepd322-client
-  #   ports:
-  #     - "5092:80"
+  client:
+    container_name: olx_client_container
+    image: sashok9203/olx-client
+    ports:
+      - "5092:80"
       
 
