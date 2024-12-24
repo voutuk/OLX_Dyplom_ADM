@@ -96,7 +96,6 @@ namespace Olx.BLL.Services
         {
             if (!await userManager.IsEmailConfirmedAsync(user))
             {
-                await SendEmailConfirmationMessageAsync(user);//??
                 throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
                 {
                     Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
@@ -283,9 +282,13 @@ namespace Olx.BLL.Services
                 await userManager.UpdateUserActivityAsync(httpContext);
             }
             userCreationModelValidator.ValidateAndThrow(userModel);
-            if (!String.IsNullOrEmpty(userModel.SettlementRef) && !await settlementRepository.AnyAsync(x => x.Ref == userModel.SettlementRef))
+            if (!await settlementRepository.AnyAsync(x => x.Ref == userModel.SettlementRef))
             {
                 throw new HttpException(Errors.InvalidSettlementId, HttpStatusCode.BadRequest);
+            }
+            if (await userManager.FindByEmailAsync(userModel.Email) is not null)
+            {
+                throw new HttpException(Errors.EmailAlreadyExist, HttpStatusCode.BadRequest);
             }
             OlxUser user = mapper.Map<OlxUser>(userModel);
             if (userModel.ImageFile is not null)

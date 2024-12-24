@@ -176,7 +176,18 @@ namespace Olx.BLL.Resources {
                 return ResourceManager.GetString("InvalidConfirmationData", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Confirmation data error.
+        /// </summary>
+        internal static string EmailAlreadyExist
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailAlreadyExist", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Ищет локализованную строку, похожую на fdghdfghhfd.
         /// </summary>

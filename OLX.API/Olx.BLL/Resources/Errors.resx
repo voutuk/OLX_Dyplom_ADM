@@ -207,4 +207,7 @@
   <data name="InvalidAreaRef" xml:space="preserve">
     <value>Invalid area ref</value>
   </data>
+  <data name="EmailAlreadyExist" xml:space="preserve">
+    <value>Email already in use</value>
+  </data>
 </root>
