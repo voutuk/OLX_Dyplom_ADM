@@ -138,6 +138,8 @@ namespace Olx.BLL.Services
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user != null) 
             {
+                user.LastActivity = DateTime.UtcNow;
+                await userManager.UpdateAsync(user);
                 await CheckLockedOutAsync(user);
                 await CheckEmailConfirmAsync(user);
 
@@ -196,12 +198,10 @@ namespace Olx.BLL.Services
         public async Task LogoutAsync(string refreshToken)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
-            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
-            if (token is not null)
-            {
-                await tokenRepository.DeleteAsync(token.Id);
-                await tokenRepository.SaveAsync();
-            }
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken))
+                ?? throw new HttpException(Errors.InvalidToken ,HttpStatusCode.BadRequest);
+            await tokenRepository.DeleteAsync(token.Id);
+            await tokenRepository.SaveAsync();
         }
         public async Task EmailConfirmAsync(EmailConfirmationModel confirmationModel)
         {

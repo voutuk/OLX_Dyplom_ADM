@@ -39,7 +39,7 @@ namespace OLX.API.Controllers
             return Ok(authResponse);
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpPost("user/logout")]
         public async Task<IActionResult> LogOut([FromBody] string? refreshToken)
         {
@@ -51,7 +51,7 @@ namespace OLX.API.Controllers
             {
                 await accountService.LogoutAsync(refreshToken);
             }
-            else return Unauthorized();
+          //  else return Unauthorized();
             Response.Cookies.Delete(_refreshTokenCookiesName);
             return Ok();
         }
@@ -160,13 +160,16 @@ namespace OLX.API.Controllers
 
         private void SetHttpOnlyCookies(string token)
         {
+            var days = double.Parse(configuration["JwtOptions:RefreshTokenLifeTimeInDays"]!);
             Response.Cookies.Append(_refreshTokenCookiesName, token, new CookieOptions
             {
+                IsEssential = true,
                 HttpOnly = true,
-                // Domain = "olx.com",
-                // Secure = true,
-                Path = "/api/Account/user",
-                Expires = DateTime.Now.AddDays(double.Parse(configuration["JwtOptions:RefreshTokenLifeTimeInDays"]!))
+                Domain = "localhost",
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Path = "api/Account/user",
+                Expires = DateTime.UtcNow.AddDays(days)
             });
         }
     }
