@@ -32,14 +32,14 @@ namespace OLX.API.Controllers
         }
 
         [HttpPost("login/google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string googleAccessToken)
+        public async Task<IActionResult> GoogleLogin([FromQuery] string googleAccessToken)
         {
             var authResponse = await accountService.GoogleLoginAsync(googleAccessToken);
             SetHttpOnlyCookies(authResponse.RefreshToken);
             return Ok(authResponse);
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpPost("user/logout")]
         public async Task<IActionResult> LogOut([FromBody] string? refreshToken)
         {
@@ -51,7 +51,7 @@ namespace OLX.API.Controllers
             {
                 await accountService.LogoutAsync(refreshToken);
             }
-            else return Unauthorized();
+          //  else return Unauthorized();
             Response.Cookies.Delete(_refreshTokenCookiesName);
             return Ok();
         }
@@ -74,14 +74,21 @@ namespace OLX.API.Controllers
             return Ok(authResponse);
         }
 
-        [HttpPost("email")]
+        [HttpPost("email/confirm")]
         public async Task<IActionResult> ConfirmEmail([FromBody] EmailConfirmationModel confirmationModel)
         {
             await accountService.EmailConfirmAsync(confirmationModel);
             return Ok();
         }
 
-        [HttpPost("password")]
+        [HttpPost("email/sendconfirm")]
+        public async Task<IActionResult> SendConfirmEmail([FromQuery] string email)
+        {
+            await accountService.SendEmailConfirmationMessageAsync(email);
+            return Ok();
+        }
+
+        [HttpPost("password/fogot")]
         public async Task<IActionResult> FogotPassword([FromQuery] string email)
         {
             await accountService.FogotPasswordAsync(email);
@@ -160,13 +167,16 @@ namespace OLX.API.Controllers
 
         private void SetHttpOnlyCookies(string token)
         {
+            var days = double.Parse(configuration["JwtOptions:RefreshTokenLifeTimeInDays"]!);
             Response.Cookies.Append(_refreshTokenCookiesName, token, new CookieOptions
             {
-                HttpOnly = true,
-                // Domain = "olx.com",
-                // Secure = true,
-                Path = "/api/Account/user",
-                Expires = DateTime.Now.AddDays(double.Parse(configuration["JwtOptions:RefreshTokenLifeTimeInDays"]!))
+                IsEssential = true,
+                //  HttpOnly = true,
+                //Domain = "localhost",
+             //   SameSite = SameSiteMode.Strict,
+             //   Secure = true,
+                Path = "api/Account/user",
+                Expires = DateTime.UtcNow.AddDays(days)
             });
         }
     }

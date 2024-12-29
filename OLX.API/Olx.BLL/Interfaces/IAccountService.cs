@@ -8,6 +8,7 @@ namespace Olx.BLL.Interfaces
 {
     public interface IAccountService
     {
+        Task SendEmailConfirmationMessageAsync(string email);
         Task<AuthResponse> LoginAsync(AuthRequest model);
         Task<AuthResponse> GoogleLoginAsync(string googleAccessToken);
         Task LogoutAsync(string token);

@@ -13,8 +13,6 @@ namespace Olx.BLL.Validators.User
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage(ValidationErrors.NotEmpty)
                 .EmailAddress().WithMessage(ValidationErrors.InvalidEmail);
-            RuleFor(x => x.SettlementRef)
-               .NotEmpty().WithMessage(ValidationErrors.NotEmpty);
             RuleFor(x => x.Password)
                 .Password().WithMessage(ValidationErrors.InvalidPassword);
             RuleFor(x => x.PasswordConfirmation)

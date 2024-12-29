@@ -19,7 +19,7 @@ using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
-using System.Linq;
+using Olx.BLL.Validators;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -42,7 +42,8 @@ namespace Olx.BLL.Services
         IValidator<EmailConfirmationModel> emailConfirmationModelValidator,
         IValidator<UserBlockModel> userBlockModelValidator,
         IValidator<UserCreationModel> userCreationModelValidator,
-        IValidator<UserEditModel> userEditModelValidator) : IAccountService
+        IValidator<UserEditModel> userEditModelValidator,
+        IValidator<AuthRequest> authRequestValidator) : IAccountService
     {
         private async Task<string> CreateRefreshToken(int userId)
         {
@@ -88,7 +89,7 @@ namespace Olx.BLL.Services
         private async Task SendEmailConfirmationMessageAsync(OlxUser user)
         {
             var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            var email = EmailTemplates.GetEmailConfirmationTemplate(configuration["FrontendEmailConfirmationUrl"]!, confirmationToken, user.Email!);
+            var email = EmailTemplates.GetEmailConfirmationTemplate(configuration["FrontendEmailConfirmationUrl"]!, confirmationToken, user.Id);
             await emailService.SendAsync(user.Email, "Підтвердження електронної пошти", email, true);
         }
 
@@ -96,7 +97,7 @@ namespace Olx.BLL.Services
         {
             if (!await userManager.IsEmailConfirmedAsync(user))
             {
-                throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
+                throw new HttpException(HttpStatusCode.Forbidden, new UserBlockInfo
                 {
                     Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
                     UnlockTime = null
@@ -133,14 +134,34 @@ namespace Olx.BLL.Services
             return currentUser;
         }
 
+        private async Task RecaptcaVerify(string recaptcaToken, string action)
+        { 
+            using var httpClient = new HttpClient();
+            var response = await httpClient.PostAsync(
+                $"{configuration["RecaptchaApiUrl"]!}?secret={configuration["RecaptchaSecretKey"]!}&response={recaptcaToken}",
+                null);
+            var result = await response.Content.ReadAsStringAsync();
+            var verification = JsonConvert.DeserializeObject<RecaptchaVerificationResponse>(result);
+            if (verification?.Success != true || verification.Action != action || verification?.Score < 0.5)
+            {
+                throw new HttpException(HttpStatusCode.Forbidden, new UserBlockInfo
+                {
+                    Message = "reCAPTHCA перевірку не пройдено"
+                });
+            }
+        }
+
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
+            authRequestValidator.ValidateAndThrow(model);
+            await RecaptcaVerify(model.RecapthcaToken, model.Action);
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user != null) 
             {
+                user.LastActivity = DateTime.UtcNow;
+                await userManager.UpdateAsync(user);
                 await CheckLockedOutAsync(user);
                 await CheckEmailConfirmAsync(user);
-
                 if (!await userManager.CheckPasswordAsync(user, model.Password))
                 {
                     await userManager.AccessFailedAsync(user);
@@ -160,6 +181,13 @@ namespace Olx.BLL.Services
                 }    
             }
             throw new HttpException(Errors.InvalidLoginData, HttpStatusCode.BadRequest);
+        }
+
+        public async Task SendEmailConfirmationMessageAsync(string email) 
+        {
+            var user = await userManager.FindByEmailAsync(email)
+                ?? throw new HttpException(Errors.InvalidUserEmail,HttpStatusCode.BadRequest);
+            await SendEmailConfirmationMessageAsync(user);
         }
 
         public async Task<AuthResponse> GoogleLoginAsync(string googleAccessToken)
@@ -196,17 +224,16 @@ namespace Olx.BLL.Services
         public async Task LogoutAsync(string refreshToken)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
-            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
-            if (token is not null)
-            {
-                await tokenRepository.DeleteAsync(token.Id);
-                await tokenRepository.SaveAsync();
-            }
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken))
+                ?? throw new HttpException(Errors.InvalidToken ,HttpStatusCode.BadRequest);
+            await tokenRepository.DeleteAsync(token.Id);
+            await tokenRepository.SaveAsync();
         }
+
         public async Task EmailConfirmAsync(EmailConfirmationModel confirmationModel)
         {
             emailConfirmationModelValidator.ValidateAndThrow(confirmationModel);
-            var user = await userManager.FindByEmailAsync(confirmationModel.Email);
+            var user = await userManager.FindByIdAsync(confirmationModel.Id.ToString());
             if (user != null)
             {
                 var result = await userManager.ConfirmEmailAsync(user, confirmationModel.Token);
@@ -226,7 +253,7 @@ namespace Olx.BLL.Services
             if (user is not null) 
             {
                 var passwordResetToken = await userManager.GeneratePasswordResetTokenAsync(user);
-                var mail = EmailTemplates.GetPasswordResetTemplate(configuration["FrontendResetPasswordUrl"]!, passwordResetToken,user.Email!);
+                var mail = EmailTemplates.GetPasswordResetTemplate(configuration["FrontendResetPasswordUrl"]!, passwordResetToken,user.Id);
                 await emailService.SendAsync(user.Email, "Скидання пароля", mail, true);
             }
         }
@@ -234,7 +261,7 @@ namespace Olx.BLL.Services
         public async Task ResetPasswordAsync(ResetPasswordModel resetPasswordModel)
         {
             resetPasswordModelValidator.ValidateAndThrow(resetPasswordModel);
-            var user = await userManager.FindByEmailAsync(resetPasswordModel.Email);
+            var user = await userManager.FindByIdAsync(resetPasswordModel.UserId.ToString());
             if (user is not null)
             {
                 var result = await userManager.ResetPasswordAsync(user,resetPasswordModel.Token,resetPasswordModel.Password);
@@ -272,7 +299,6 @@ namespace Olx.BLL.Services
                 } 
             }
             throw new HttpException(Errors.InvalidResetPasswordData, HttpStatusCode.BadRequest);
-
         }
 
         public async Task AddUserAsync(UserCreationModel userModel, bool isAdmin = false)
@@ -281,8 +307,10 @@ namespace Olx.BLL.Services
             {
                 await userManager.UpdateUserActivityAsync(httpContext);
             }
+
             userCreationModelValidator.ValidateAndThrow(userModel);
-            if (!await settlementRepository.AnyAsync(x => x.Ref == userModel.SettlementRef))
+
+            if (!String.IsNullOrEmpty(userModel.SettlementRef) && !await settlementRepository.AnyAsync(x => x.Ref == userModel.SettlementRef))
             {
                 throw new HttpException(Errors.InvalidSettlementId, HttpStatusCode.BadRequest);
             }

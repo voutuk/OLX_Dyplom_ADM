@@ -9,9 +9,8 @@ namespace Olx.BLL.Validators
     {
         public ResetPasswordModelValidator()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty().WithMessage(ValidationErrors.NotEmpty)
-                .EmailAddress().WithMessage(ValidationErrors.InvalidEmail);
+            RuleFor(x => x.UserId)
+                .GreaterThan(0).WithMessage(ValidationErrors.GreaterZeroError);
             RuleFor(x => x.Password)
                 .Password().WithMessage(ValidationErrors.InvalidPassword);
             RuleFor(x => x.Token)

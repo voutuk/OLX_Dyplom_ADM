@@ -127,7 +127,7 @@
     <value>Image sizes not initializing</value>
   </data>
   <data name="InvalidLoginData" xml:space="preserve">
-    <value>Invalid login or password</value>
+    <value>Невірний логін або пароль</value>
   </data>
   <data name="InvalidToken" xml:space="preserve">
     <value>Invalid token</value>
@@ -209,5 +209,8 @@
   </data>
   <data name="EmailAlreadyExist" xml:space="preserve">
     <value>Email already in use</value>
+  </data>
+  <data name="ReCapthcaValidationError" xml:space="preserve">
+    <value>reCapthca validation error</value>
   </data>
 </root>
