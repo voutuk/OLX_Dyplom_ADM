@@ -32,7 +32,7 @@ namespace OLX.API.Controllers
         }
 
         [HttpPost("login/google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string googleAccessToken)
+        public async Task<IActionResult> GoogleLogin([FromQuery] string googleAccessToken)
         {
             var authResponse = await accountService.GoogleLoginAsync(googleAccessToken);
             SetHttpOnlyCookies(authResponse.RefreshToken);
@@ -74,14 +74,21 @@ namespace OLX.API.Controllers
             return Ok(authResponse);
         }
 
-        [HttpPost("email")]
+        [HttpPost("email/confirm")]
         public async Task<IActionResult> ConfirmEmail([FromBody] EmailConfirmationModel confirmationModel)
         {
             await accountService.EmailConfirmAsync(confirmationModel);
             return Ok();
         }
 
-        [HttpPost("password")]
+        [HttpPost("email/sendconfirm")]
+        public async Task<IActionResult> SendConfirmEmail([FromQuery] string email)
+        {
+            await accountService.SendEmailConfirmationMessageAsync(email);
+            return Ok();
+        }
+
+        [HttpPost("password/fogot")]
         public async Task<IActionResult> FogotPassword([FromQuery] string email)
         {
             await accountService.FogotPasswordAsync(email);
@@ -164,10 +171,10 @@ namespace OLX.API.Controllers
             Response.Cookies.Append(_refreshTokenCookiesName, token, new CookieOptions
             {
                 IsEssential = true,
-                HttpOnly = true,
-                Domain = "localhost",
-                SameSite = SameSiteMode.None,
-                Secure = true,
+                //  HttpOnly = true,
+                //Domain = "localhost",
+             //   SameSite = SameSiteMode.Strict,
+             //   Secure = true,
                 Path = "api/Account/user",
                 Expires = DateTime.UtcNow.AddDays(days)
             });

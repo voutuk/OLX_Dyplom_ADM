@@ -2,7 +2,7 @@
 {
     public class EmailConfirmationModel
     {
-        public string Email { get; init; } = string.Empty;
+        public int Id { get; init; }
         public string Token { get; init; } = string.Empty;
     }
 }

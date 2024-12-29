@@ -9,9 +9,8 @@ namespace Olx.BLL.Validators
     {
         public EmailComfirmationModelValidator()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty().WithMessage(ValidationErrors.NotEmpty)
-                .EmailAddress().WithMessage(ValidationErrors.InvalidEmail);
+            RuleFor(x => x.Id)
+                .GreaterThan(0).WithMessage(ValidationErrors.GreaterZeroError);
             RuleFor(x => x.Token)
                 .NotEmpty().WithMessage(ValidationErrors.NotEmpty);
         }

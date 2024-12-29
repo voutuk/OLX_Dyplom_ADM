@@ -1,22 +1,21 @@
 
 import { BellOutlined, DownOutlined, LogoutOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import './header.scss'
+import './style.scss'
 import { Avatar, Badge, Dropdown, MenuProps } from 'antd'
 import { Link, useNavigate } from 'react-router-dom';
 import { Images } from '../../../constants/images';
-import { RootState } from '../../../store';
 import { useSelector } from 'react-redux';
-import { getUser} from '../../../store/slices/userSlice';
-import { IUser } from '../../../models/account';
-import { APP_ENV } from '../../../constants/env';
+import { getUser } from '../../../store/slices/userSlice';
 import { useLogoutMutation } from '../../../services/accountServiceAuth';
+import { getUserDescr } from '../../../utilities/common_funct';
+import UserAvatar from '../../../components/layout/user_avatar';
 
 
 
 export const AdminHeader: React.FC = () => {
     const [logout] = useLogoutMutation();
     const navigator = useNavigate();
-    const user: IUser | null = useSelector((state: RootState) => getUser(state))
+    const user = useSelector(getUser)
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
@@ -61,8 +60,8 @@ export const AdminHeader: React.FC = () => {
                 </div>
                 <Dropdown menu={{ items }} trigger={['click']} className=' min-w-[180] px-5 cursor-pointer  flex-shrink-0 bg-orange-500 flex gap-2 justify-center items-center'>
                     <div>
-                        <Avatar className=" flex-shrink-0" size={40} src={user ? APP_ENV.IMAGES_100_URL + user.photo : Images.noImage} />
-                        <span className='flex-shrink-0  text-base text-nowrap'>{user?.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user?.email}</span>
+                        <UserAvatar size={40} user={user} />
+                        <span className='flex-shrink-0  text-base text-nowrap'>{user ? getUserDescr(user) : ''}</span>
                         <DownOutlined />
                     </div>
                 </Dropdown>

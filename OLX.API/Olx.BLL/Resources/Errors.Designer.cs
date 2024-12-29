@@ -88,6 +88,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Email already in use.
+        /// </summary>
+        internal static string EmailAlreadyExist {
+            get {
+                return ResourceManager.GetString("EmailAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Error authorized user.
         /// </summary>
         internal static string ErrorAthorizedUser {
@@ -176,18 +185,7 @@ namespace Olx.BLL.Resources {
                 return ResourceManager.GetString("InvalidConfirmationData", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Confirmation data error.
-        /// </summary>
-        internal static string EmailAlreadyExist
-        {
-            get
-            {
-                return ResourceManager.GetString("EmailAlreadyExist", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Ищет локализованную строку, похожую на fdghdfghhfd.
         /// </summary>
@@ -225,7 +223,7 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Invalid login or password.
+        ///   Ищет локализованную строку, похожую на Невірний логін або пароль.
         /// </summary>
         internal static string InvalidLoginData {
             get {
@@ -320,6 +318,15 @@ namespace Olx.BLL.Resources {
         internal static string NewPostRequestError {
             get {
                 return ResourceManager.GetString("NewPostRequestError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на reCapthca validation error.
+        /// </summary>
+        internal static string ReCapthcaValidationError {
+            get {
+                return ResourceManager.GetString("ReCapthcaValidationError", resourceCulture);
             }
         }
         

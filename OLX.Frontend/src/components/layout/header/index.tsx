@@ -1,20 +1,19 @@
 import { Avatar, Badge, Dropdown, MenuProps } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { BellOutlined, DownOutlined, LogoutOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Images } from "../../../../constants/images";
-import { RootState } from "../../../../store";
+import { Images } from "./../../../constants/images";
 import { useSelector } from "react-redux";
-import { getUser } from "../../../../store/slices/userSlice";
-import { IUser } from "../../../../models/account";
-import { APP_ENV } from "../../../../constants/env";
-import { useLogoutMutation } from "../../../../services/accountServiceAuth";
+import { getUser } from "./../../../store/slices/userSlice";
+import { useLogoutMutation } from "./../../../services/accountServiceAuth";
+import { getUserDescr } from "../../../utilities/common_funct";
+import UserAvatar from "../user_avatar";
 
 
 
 export const Header: React.FC = () => {
     const [logout] = useLogoutMutation();
     const navigator = useNavigate();
-    const user: IUser | null = useSelector((state: RootState) => getUser(state))
+    const user = useSelector(getUser)
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
@@ -35,17 +34,15 @@ export const Header: React.FC = () => {
             key: '3',
             onClick: async () => {
                 await logout({}).unwrap();
-                navigator('/')
             }
         },
     ];
 
-
     return (
-        <div className='h-[60px] bg-header sticky top-0 items-center flex-shrink-0 flex justify-between z-50'  >
+        <div className='h-[60px] bg-header sticky bg-blue-700 top-0 items-center flex-shrink-0 flex justify-between z-50'  >
             <div className='flex gap-6 items-center'>
                 <Avatar className='ml-3' size={46} src={Images.adminPanelImage} />
-                <span>Адмінпанель</span>
+                <span className="text-white">Site name</span>
             </div>
             <div className='flex gap-7 h-full'>
                 <div className='flex gap-5 flex-shrink-0 items-center'>
@@ -56,14 +53,17 @@ export const Header: React.FC = () => {
                         <MailOutlined className='text-xl text-white animate-wiggle' />
                     </Badge>
                 </div>
-                <Dropdown menu={{ items }} trigger={['click']} className='w-[180px] cursor-pointer  flex-shrink-0 bg-orange-500 flex gap-2 justify-center items-center'>
-                    <div>
-                        <Avatar className=" flex-shrink-0" size={40} src={user ? APP_ENV.IMAGES_100_URL + user.photo : Images.noImage} />
-                        <span className='flex-shrink-0  text-base text-nowrap'>Ivan Sapun</span>
-                        <DownOutlined />
-                    </div>
-                </Dropdown>
-
+                {user
+                ?
+                    <Dropdown menu={{ items }} trigger={['click']} className='px-3 cursor-pointer  flex-shrink-0 bg-orange-500 flex gap-2 justify-center items-center'>
+                        <div>
+                            <UserAvatar user={user} size={40} />
+                            <span className='flex-shrink-0  text-base text-nowrap'>{getUserDescr(user)}</span>
+                            <DownOutlined />
+                        </div>
+                    </Dropdown>
+                    :
+                    <span onClick={() => navigator('login')} className=" self-center px-4 text-white">Увійти</span>}
             </div>
         </div>
     )
