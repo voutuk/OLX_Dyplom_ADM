@@ -153,7 +153,7 @@ namespace Olx.BLL.Services
 
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
-            authRequestValidator.ValidateAndThrow(model);
+           // authRequestValidator.ValidateAndThrow(model);
             await RecaptcaVerify(model.RecapthcaToken, model.Action);
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user != null) 

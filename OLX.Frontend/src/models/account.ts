@@ -11,7 +11,16 @@ export interface IUser {
 
 export interface IUserState {
     user: IUser | null
+    auth: IUserAuth
     token: string | null
+}
+
+export interface IUserAuth {
+    isAdmin: boolean
+    isUser: boolean
+    isAuth: boolean
+    roles: string[]
+    location: string
 }
 
 export interface IAuthResponse {
@@ -21,9 +30,12 @@ export interface IAuthResponse {
 export interface ILoginRequest {
     email: string,
     password: string
-    remember: boolean | undefined
     recapthcaToken: string
     action: string
+}
+
+export interface ILoginLocalRequest extends ILoginRequest {
+    remember: boolean | undefined
 }
 
 export interface IGoogleLoginRequest {

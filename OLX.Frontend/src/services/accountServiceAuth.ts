@@ -19,8 +19,8 @@ export const accountApiAuth = createApi({
             },
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
-                    dispatch(logOut());
                     await queryFulfilled;
+                    dispatch(logOut());
                 } catch (error) {
                     console.error('Logout failed:', error);
                 }

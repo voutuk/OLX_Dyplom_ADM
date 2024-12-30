@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from "../utilities/baseQuery"
-import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginRequest, IResetPasswordModel } from "../models/account"
+import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IResetPasswordModel } from "../models/account"
 import { setCredentials } from '../store/slices/userSlice';
 
 export const accountApi = createApi({
@@ -10,12 +10,12 @@ export const accountApi = createApi({
 
     endpoints: (builder) => ({
 
-        login: builder.mutation<IAuthResponse, ILoginRequest>({
+        login: builder.mutation<IAuthResponse, ILoginLocalRequest>({
             query: (data) => {
                 return {
                     url: 'login',
                     method: 'POST',
-                    body: data,
+                    body: data as ILoginRequest,
                 }
             },
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {

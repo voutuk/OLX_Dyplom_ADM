@@ -1,22 +1,21 @@
 
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Checkbox, Divider, Form, Input, message } from 'antd';
-import { ILoginRequest } from '../../models/account';
+import { Button, Checkbox, Divider, Form, Input } from 'antd';
+import { ILoginLocalRequest } from '../../models/account';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../services/accountService';
-import { ILoginErrorData } from '../../models/Errors';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { isAdmin, isUser } from '../../store/slices/userSlice';
+import { getAuth } from '../../store/slices/userSlice';
 import { useGoogleLogin } from '@react-oauth/google';
-import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { APP_ENV } from '../../constants/env';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { ILoginErrorData } from '../../models/errors';
+import { toast } from 'react-toastify';
 
 const loginAction: string = 'login'
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const admin = useSelector(isAdmin)
-  const user = useSelector(isUser)
+  const { location, isAuth } = useSelector(getAuth)
   const [login] = useLoginMutation();
   const [googleLogin] = useGoogleLoginMutation();
   const [sendConfEmail] = useSendConfirmEmailMutation();
@@ -28,27 +27,24 @@ const LoginPage: React.FC = () => {
   const glLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const result = await googleLogin(({ token: tokenResponse.access_token, remember: remeber.current }))
-      if (result.error) {
-        message.error('Сталася помилка...')
-      }
-      else {
-        message.success('Ви успішно увійшли в свій акаунт')
+      if (!result.error) {
+        toast("Ви успішно увійшли в свій акаунт через", {
+          type: "success"
+        })
       }
     }
   });
 
   const sendConfirmEmail = async () => {
     const result = await sendConfEmail(loginEmail.current);
-    if (result.error) {
-      message.error('Сталася помилка при відправці листа підтвердження...')
-    }
-    else {
-      message.success('Лист підтвердження відправлено на вашу пошту')
+    if (!result.error) {
+      toast("Лист підтвердження відправлено на вашу пошту", {
+        type: "success"
+      })
     }
   }
 
-
-  const onFinish = async (loginModel: ILoginRequest) => {
+  const onFinish = async (loginModel: ILoginLocalRequest) => {
     setLoginError(undefined)
     if (executeRecaptcha) {
       loginModel.recapthcaToken = await executeRecaptcha(loginAction);
@@ -59,31 +55,26 @@ const LoginPage: React.FC = () => {
         setLoginError(result.error as ILoginErrorData);
       }
       else {
-        message.success('Ви успішно увійшли в свій акаунт')
+        toast("Ви успішно увійшли в свій акаунт через", {
+          type: "success"
+        })
       }
     }
-
   }
 
   useEffect(() => {
-    if (admin) {
-      navigate('/admin')
+    if (isAuth) {
+      navigate(location)
     }
-    else if (user) {
-      navigate('/')
-    }
-  }, [admin, user])
+  }, [isAuth])
 
   return (
-    <div className=' w-50 mx-auto my-4'>
+    <div id='#login' className=' w-50 mx-auto my-4'>
       <Divider className='fs-5 border-dark-subtle mb-5' orientation="left">Вхід</Divider>
       <Form
         layout='vertical'
         style={{
           maxWidth: 300,
-        }}
-        initialValues={{
-          remember: true,
         }}
         onFinish={onFinish}
         className='mx-auto text-center'
@@ -134,23 +125,13 @@ const LoginPage: React.FC = () => {
           Увійти з Google
         </Button>
 
-
-
         <Button onClick={() => navigate('/password/forgot')} className='mt-3' color="primary" variant="link">
           Забули пароль ?
         </Button>
 
-        <div hidden={!loginError} className='flex flex-col text-red-500 text-xs'>
-          <span className=' mt-4'>{loginError?.data.message || loginError?.data.Message}</span>
-          {loginError?.data.UnlockTime &&
-            <span>До {new Date(loginError?.data.UnlockTime).toLocaleDateString()} {new Date(loginError?.data.UnlockTime).toLocaleTimeString()}</span>
-          }
-
-          {loginError?.status === 403 &&
-            <Button onClick={sendConfirmEmail} color="primary" variant="link">Надіслати лист для підтвердження</Button>
-          }
-
-        </div>
+        {loginError?.status === 403 &&
+          <Button onClick={sendConfirmEmail} color="primary" variant="link">Надіслати лист для підтвердження</Button>
+        }
       </Form>
 
     </div>
