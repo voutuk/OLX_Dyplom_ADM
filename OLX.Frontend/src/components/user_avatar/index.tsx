@@ -1,8 +1,8 @@
 
 import { Avatar } from "antd";
 import { IUserAvatarProps } from "./props";
-import { getUserDescr, stringToColor } from "../../../utilities/common_funct";
-import { APP_ENV } from "../../../constants/env";
+import { getUserDescr, stringToColor } from "../../utilities/common_funct";
+import { APP_ENV } from "../../constants/env";
 
 
 

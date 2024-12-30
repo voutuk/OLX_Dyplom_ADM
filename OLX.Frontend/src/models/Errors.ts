@@ -8,3 +8,10 @@ export interface IUserLockoutError {
     Message: string | undefined
     UnlockTime: string | undefined
 }
+
+export interface IError{
+    id:number
+    status: number
+    message?: string;
+    data?: any
+}

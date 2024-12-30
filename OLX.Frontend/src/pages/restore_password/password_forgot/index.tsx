@@ -1,19 +1,18 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input } from "antd";
 import { useSendPasswordResetEmailMutation } from "../../../services/accountService";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ForgotPasswordPage: React.FC = () => {
   const [passFogot] = useSendPasswordResetEmailMutation()
-
   const navigator = useNavigate();
 
   const sendPassResetEmail = async (formResult: { email: string }) => {
     const result = await passFogot(formResult.email);
-    if (result.error) {
-      message.error('Сталася помилка при відправці листа відновлененя паролю...')
-    }
-    else {
-      message.success('Лист відновлененя паролю відправлено на вашу пошту')
+    if (!result.error) {
+      toast("Лист відновлененя паролю відправлено на вашу пошту", {
+        type: "success"
+      })
       navigator('/')
     }
   }
@@ -48,13 +47,9 @@ const ForgotPasswordPage: React.FC = () => {
         <Input type='large' />
       </Form.Item>
 
-
-
       <Button className='mt-3' style={{ width: 200 }} type="primary" htmlType="submit">
         Надіслати
       </Button>
-
-
     </Form>
   );
 };

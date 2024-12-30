@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { getUser } from '../../../store/slices/userSlice';
 import { useLogoutMutation } from '../../../services/accountServiceAuth';
 import { getUserDescr } from '../../../utilities/common_funct';
-import UserAvatar from '../../../components/layout/user_avatar';
+import UserAvatar from '../../../components/user_avatar';
 
 
 

@@ -1,32 +1,46 @@
 import { Button, Result } from "antd";
 import { ResultStatusType } from "antd/es/result";
-import React from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { getAuth } from "../../store/slices/userSlice";
+import { IErrorProps } from "./props";
 
-
-interface ErrorProps {
-    status?: string;
-    title?: string;
-    subTitle?: string;
-}
-
-const Error:React.FC<ErrorProps> = ({ status, title, subTitle }) => {
-  const [params] = useSearchParams() ;
+const Error: React.FC<IErrorProps> = ({ status, title, subTitle }) => {
+  const [params] = useSearchParams();
+  const {location} = useSelector(getAuth)
   const navigate = useNavigate();
-  const mainPage = params.get("location") === "homepage";
-  return (
-    <Result
-      status={(params.get("status") || status) as ResultStatusType}
-      title={ params.get("title") || title}
-      subTitle={params.get("subTitle") || subTitle}
-      extra={
-        !mainPage && (
-          <Button className=" w-auto" type="primary" onClick={() => navigate("/")}>
-            Повернутися на головну
-          </Button>
-        )
+  const locationData: IErrorProps | null = useLocation().state
+  const [errorData, setErrorData] = useState<IErrorProps>({})
+
+  useEffect(() => {
+    setErrorData({
+      location: params.get("location") || locationData?.location ,
+      status: params.get("status") || status || locationData?.status || status,
+      title: params.get("title") || title || locationData?.title || title,
+      subTitle: params.get("subTitle") || subTitle || locationData?.subTitle || subTitle
+    });
+  }, [params, locationData])
+
+ return (
+    <>
+      {
+        (params.size === 0 && !locationData && !status && !title && !subTitle)
+          ? <Navigate to={location} replace/>
+          : <Result
+            status={errorData.status as ResultStatusType}
+            title={errorData.title}
+            subTitle={errorData.subTitle}
+            extra={
+              errorData.location !== location && (
+                <Button className=" w-auto" type="primary" onClick={() => navigate(location)}>
+                  Повернутися на головну
+                </Button>
+              )
+            }
+          />
       }
-    />
+    </>
   );
 };
 

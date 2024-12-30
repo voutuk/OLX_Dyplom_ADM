@@ -1,4 +1,4 @@
-import { IUser } from "../../../models/account";
+import { IUser } from "../../models/account";
 
 export interface IUserAvatarProps{
     user:IUser | null

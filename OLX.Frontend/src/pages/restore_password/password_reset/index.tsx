@@ -1,6 +1,7 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useResetPasswordMutation } from "../../../services/accountService";
+import { toast } from "react-toastify";
 
 
 
@@ -13,15 +14,13 @@ const ResetPasswordPage: React.FC = () => {
         const token: string | null = searchParams.get("token")
         if (userId && token) {
             const result = await resetPassword(({ userId: userId, token: token, password: formResult.password }))
-            if (result.error) {
-                message.success('При зміні паролю сталася помилка')
-            }
-            else {
-                message.success('Пароль успішшно змінений')
+            if (!result.error) {
+                toast("Пароль успішшно змінений", {
+                    type: "success"
+                })
                 navigator('/login')
             }
         }
-
     }
     return (
         <Form
