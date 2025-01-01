@@ -9,6 +9,7 @@ const ResetPasswordPage: React.FC = () => {
     const [searchParams] = useSearchParams();
     const [resetPassword] = useResetPasswordMutation();
     const navigator = useNavigate();
+
     const onFinish = async (formResult: { password: string }) => {
         const userId: string | null = searchParams.get("id")
         const token: string | null = searchParams.get("token")
@@ -22,6 +23,7 @@ const ResetPasswordPage: React.FC = () => {
             }
         }
     }
+    
     return (
         <Form
             layout='vertical'

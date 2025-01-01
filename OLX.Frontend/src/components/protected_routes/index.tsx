@@ -1,24 +1,33 @@
 import { useSelector } from "react-redux";
-import { getAuth } from "../../store/slices/userSlice";
+import { getAuth } from "../../redux/slices/userSlice";
 import { Navigate, Outlet } from "react-router-dom";
-import Error from "../../pages/error";
 
-const ProtectedRoutes = ({ requiredRole }: { requiredRole?: string | string[] }) => {
-    const { roles, isAuth } = useSelector(getAuth);
-    if (!isAuth) return <Navigate to="/login" replace />;
-    let alow: boolean | undefined = true;
+type ProtectedRouteType = "User" | "Admin" | "UnAuth"
+
+const ProtectedRoutes = ({ requiredRole }: { requiredRole?: ProtectedRouteType | ProtectedRouteType[] }) => {
+    const { roles, isAuth, location } = useSelector(getAuth);
+
+    let routeAlow: boolean | undefined = false;
     if (requiredRole) {
-         alow = Array.isArray(requiredRole)
-         ? roles.some(role => requiredRole.includes(role)) 
-         : roles.includes(requiredRole as string)
+        if (Array.isArray(requiredRole)) {
+            routeAlow ||= !isAuth && requiredRole.includes("UnAuth");
+            if (Array.isArray(roles)) {
+                routeAlow ||= roles.some(role => requiredRole.includes(role as ProtectedRouteType))
+            }
+            else {
+                routeAlow ||= requiredRole.includes(roles as ProtectedRouteType)
+            }
+        }
+        else {
+            if (Array.isArray(roles)) {
+                routeAlow ||= roles.includes(requiredRole)
+            }
+            else {
+                routeAlow ||= roles === requiredRole
+            }
+        }
     }
-    return alow
-        ? <Outlet />
-        : <Error
-            status="403"
-            title="403"
-            subTitle="Вибачте, ви не маєте прав для доступу до цієї сторінки."
-        />;
+    return routeAlow ? <Outlet /> : !isAuth ? <Navigate to="/auth" replace /> : <Navigate to={`${location}`} replace />
 };
 
 export default ProtectedRoutes;

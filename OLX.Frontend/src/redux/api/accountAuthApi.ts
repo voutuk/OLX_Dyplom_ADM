@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { createBaseQueryWithAuth } from "../utilities/baseQuery"
-import { logOut } from '../store/slices/userSlice';
+import { createBaseQueryWithAuth } from "./baseQuery"
+import { logOut } from '../slices/userSlice';
 
 export const accountApiAuth = createApi({
     reducerPath: 'accountApiAuth',

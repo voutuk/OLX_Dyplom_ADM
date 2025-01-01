@@ -3,19 +3,19 @@ import { BellOutlined, DownOutlined, LogoutOutlined, MailOutlined, SettingOutlin
 import './style.scss'
 import { Avatar, Badge, Dropdown, MenuProps } from 'antd'
 import { Link, useNavigate } from 'react-router-dom';
-import { Images } from '../../../constants/images';
+import { Images } from '../../../../constants/images';
 import { useSelector } from 'react-redux';
-import { getUser } from '../../../store/slices/userSlice';
-import { useLogoutMutation } from '../../../services/accountServiceAuth';
-import { getUserDescr } from '../../../utilities/common_funct';
-import UserAvatar from '../../../components/user_avatar';
+import { getUserDescr } from '../../../../utilities/common_funct';
+import UserAvatar from '../../../user_avatar';
+import { useLogoutMutation } from '../../../../redux/api/accountAuthApi';
+import { getUser } from '../../../../redux/slices/userSlice';
 
 
 
 export const AdminHeader: React.FC = () => {
     const [logout] = useLogoutMutation();
-    const navigator = useNavigate();
     const user = useSelector(getUser)
+    const navigate = useNavigate();
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
@@ -36,7 +36,7 @@ export const AdminHeader: React.FC = () => {
             key: '3',
             onClick: async () => {
                 await logout({}).unwrap();
-                navigator('/')
+                navigate('/')
             }
 
         },

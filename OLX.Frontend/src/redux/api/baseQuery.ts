@@ -1,8 +1,8 @@
 
-import { APP_ENV } from '../constants/env';
+import { APP_ENV } from '../../constants/env';
 //import { IAuthResponse } from '../models/account';
-import { accountApiAuth } from '../services/accountServiceAuth';
-import { RootState } from '../store';
+import { accountApiAuth } from './accountAuthApi';
+import { RootState } from '..';
 //import { setCredentials } from '../store/slices/userSlice';
 import { BaseQueryApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query';
 

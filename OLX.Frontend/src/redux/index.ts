@@ -2,8 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from './slices/userSlice'
 import appReducer from './slices/appSlice'
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { accountApi } from "../services/accountService";
-import { accountApiAuth } from "../services/accountServiceAuth";
+import { accountApi } from "./api/accountApi";
+import { accountApiAuth } from "./api/accountAuthApi";
 import errorMiddleware from "./middlewares/errorMiddleware";
 import { setupListeners } from "@reduxjs/toolkit/query/react";
 
@@ -23,7 +23,7 @@ export const store = configureStore({
             accountApiAuth.middleware,
             errorMiddleware)
 })
-setupListeners(store.dispatch);
+//setupListeners(store.dispatch);
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 export const useAppDispatch: () => AppDispatch = useDispatch

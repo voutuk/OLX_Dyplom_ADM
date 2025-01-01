@@ -1,8 +1,8 @@
 import { Suspense } from "react"
 import { Outlet } from "react-router-dom"
-import GlobalFallback from "../../../components/global_fallback"
+import GlobalFallback from "../../../global_fallback"
 
-export const AdminContent: React.FC = () => {
+export const Content: React.FC = () => {
     return (
         <main className='flex-grow' >
             <Suspense fallback={<GlobalFallback />}>

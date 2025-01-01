@@ -1,12 +1,12 @@
 import { Avatar, Badge, Dropdown, MenuProps } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { BellOutlined, DownOutlined, LogoutOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Images } from "./../../../constants/images";
 import { useSelector } from "react-redux";
-import { getUser } from "./../../../store/slices/userSlice";
-import { useLogoutMutation } from "./../../../services/accountServiceAuth";
-import { getUserDescr } from "../../../utilities/common_funct";
-import UserAvatar from "../../user_avatar";
+import { Images } from "../../../../constants/images";
+import { useLogoutMutation } from "../../../../redux/api/accountAuthApi";
+import { getUser } from "../../../../redux/slices/userSlice";
+import { getUserDescr } from "../../../../utilities/common_funct";
+import UserAvatar from "../../../user_avatar";
 
 
 
@@ -17,12 +17,12 @@ export const Header: React.FC = () => {
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
-            label: <Link to={'/userprofile'}>Профіль</Link>,
+            label: <Link to={'user/userprofile'}>Профіль</Link>,
             key: '0',
         },
         {
             icon: <SettingOutlined />,
-            label: <Link to={'/usersettings'}>Налаштування</Link>,
+            label: <Link to={'user/usersettings'}>Налаштування</Link>,
             key: '1',
         },
         {
@@ -63,7 +63,7 @@ export const Header: React.FC = () => {
                         </div>
                     </Dropdown>
                     :
-                    <span onClick={() => navigator('login')} className=" self-center px-4 text-white">Увійти</span>}
+                    <span onClick={() => navigator('auth')} className=" self-center px-4 text-white">Увійти</span>}
             </div>
         </div>
     )

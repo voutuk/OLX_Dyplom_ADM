@@ -6,24 +6,24 @@ import { RootState } from '..';
 
 const getUserFromToken = (token: string | null): IUser | null => token ? jwtParse(token) : null
 const getUserAuth = (user: IUser | null): IUserAuth => {
-    return {
+    return ({
         isAdmin: user !== null && user.roles.includes('Admin'),
         isUser: user !== null && user.roles.includes('User'),
         isAuth: user !== null,
         location: user?.roles.includes('Admin') ? '/admin' : '/',
         roles: user?.roles || []
-    }
+    })
 }
 
 const userInit = (): IUserState => {
     const token: string | null = sessionStorage.getItem(APP_ENV.ACCESS_KEY) || localStorage.getItem(APP_ENV.ACCESS_KEY);
     const user = getUserFromToken(token)
     const auth = getUserAuth(user);
-    return {
+    return ({
         user: user,
         token: token,
         auth: auth
-    }
+    })
 }
 
 const initialState: IUserState = userInit();

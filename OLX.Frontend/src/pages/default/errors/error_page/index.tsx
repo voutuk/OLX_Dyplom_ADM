@@ -3,8 +3,8 @@ import { ResultStatusType } from "antd/es/result";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { getAuth } from "../../store/slices/userSlice";
-import { IErrorProps } from "./props";
+import { getAuth } from "../../../../redux/slices/userSlice";
+import { IErrorProps } from "./props/index";
 
 const Error: React.FC<IErrorProps> = ({ status, title, subTitle }) => {
   const [params] = useSearchParams();

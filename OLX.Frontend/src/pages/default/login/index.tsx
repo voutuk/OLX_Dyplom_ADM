@@ -1,28 +1,30 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Checkbox, Divider, Form, Input } from 'antd';
-import { ILoginLocalRequest } from '../../models/account';
-import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../services/accountService';
+import { ILoginLocalRequest } from '../../../models/account';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { getAuth } from '../../store/slices/userSlice';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { ILoginErrorData } from '../../models/errors';
 import { toast } from 'react-toastify';
+import { IError } from '../../../models/errors';
+import { useSelector } from 'react-redux';
+import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
+import { getAuth } from '../../../redux/slices/userSlice';
 
 const loginAction: string = 'login'
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { location, isAuth } = useSelector(getAuth)
   const [login] = useLoginMutation();
   const [googleLogin] = useGoogleLoginMutation();
   const [sendConfEmail] = useSendConfirmEmailMutation();
-  const [loginError, setLoginError] = useState<ILoginErrorData | undefined>(undefined)
+  const [loginError, setLoginError] = useState<IError | undefined>(undefined)
   const { executeRecaptcha } = useGoogleReCaptcha();
   const loginEmail = useRef<string>('')
   const remeber = useRef<boolean>(true)
+  const { isAuth, location } = useSelector(getAuth)
+  
+  useEffect(()=>{ if(isAuth)navigate(location)},[isAuth])
 
   const glLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -52,7 +54,7 @@ const LoginPage: React.FC = () => {
       const result = await login(loginModel);
       if (result.error) {
         loginEmail.current = loginModel.email;
-        setLoginError(result.error as ILoginErrorData);
+        setLoginError(result.error as IError);
       }
       else {
         toast("Ви успішно увійшли в свій акаунт через", {
@@ -62,11 +64,7 @@ const LoginPage: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    if (isAuth) {
-      navigate(location)
-    }
-  }, [isAuth])
+ 
 
   return (
     <div id='#login' className=' w-50 mx-auto my-4'>
@@ -125,7 +123,7 @@ const LoginPage: React.FC = () => {
           Увійти з Google
         </Button>
 
-        <Button onClick={() => navigate('/password/forgot')} className='mt-3' color="primary" variant="link">
+        <Button onClick={() => navigate('password')} className='mt-3' color="primary" variant="link">
           Забули пароль ?
         </Button>
 

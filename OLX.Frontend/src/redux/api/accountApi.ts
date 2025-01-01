@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { createBaseQuery } from "../utilities/baseQuery"
-import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IResetPasswordModel } from "../models/account"
-import { setCredentials } from '../store/slices/userSlice';
+import { createBaseQuery } from "./baseQuery"
+import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IResetPasswordModel } from "../../models/account"
+import { setCredentials } from '../slices/userSlice';
 
 export const accountApi = createApi({
     reducerPath: 'accountApi',
@@ -35,7 +35,6 @@ export const accountApi = createApi({
                 return {
                     url: `login/google?googleAccessToken=${data.token}`,
                     method: 'POST',
-                   
                 }
             },
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {

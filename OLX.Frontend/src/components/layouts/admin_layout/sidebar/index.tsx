@@ -1,19 +1,18 @@
 import { Avatar, Divider } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { useState } from "react";
-import { Images } from "../../../constants/images";
+import { Images } from "../../../../constants/images";
 import { AdminSideBarMenu } from "../menu";
-import { IUser } from "../../../models/account";
+import { IUser } from "../../../../models/account";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { getUser } from "../../../store/slices/userSlice";
-import { APP_ENV } from "../../../constants/env";
+import { APP_ENV } from "../../../../constants/env";
 import './sidebar.scss'
+import { getUser } from "../../../../redux/slices/userSlice";
 
 
 export const SideBar: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
-    const user: IUser | null = useSelector((state: RootState) => getUser(state))
+    const user: IUser | null = useSelector(getUser)
     return (
       <Sider width={288} theme='dark' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="flex flex-col">
