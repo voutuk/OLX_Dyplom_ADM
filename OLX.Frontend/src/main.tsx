@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import './index.css'
+import './index.scss'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
@@ -8,8 +8,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { APP_ENV } from './constants/env.ts'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { ToastContainer, Zoom } from 'react-toastify'
-import ErrorHendler from './components/error_hendler/index.tsx'
 import RedirectHendler from './components/redirect_hendler/index.tsx'
+import ErrorHendler from './components/error_hendler/index.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -29,8 +29,8 @@ createRoot(document.getElementById('root')!).render(
             pauseOnHover
             theme="light"
             transition={Zoom} />
-          <RedirectHendler />
-          <ErrorHendler />
+            <RedirectHendler />
+            <ErrorHendler />
           <App />
         </GoogleReCaptchaProvider>
       </GoogleOAuthProvider>

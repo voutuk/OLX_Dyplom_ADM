@@ -1,7 +1,7 @@
 import { Button, Form, Input } from "antd";
-import { useSendPasswordResetEmailMutation } from "../../../services/accountService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useSendPasswordResetEmailMutation } from "../../../../redux/api/accountApi";
 
 const ForgotPasswordPage: React.FC = () => {
   const [passFogot] = useSendPasswordResetEmailMutation()

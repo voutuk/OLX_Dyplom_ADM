@@ -100,7 +100,8 @@ namespace Olx.BLL.Services
                 throw new HttpException(HttpStatusCode.Forbidden, new UserBlockInfo
                 {
                     Message = "Ваша пошта не підтверджена. Перевірте email для підтвердження.",
-                    UnlockTime = null
+                    UnlockTime = null,
+                    Email = user.Email
                 });
             }
         }

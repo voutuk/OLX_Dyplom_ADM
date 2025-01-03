@@ -6,7 +6,7 @@ import { Navigate, useLocation, useNavigate, useSearchParams } from "react-route
 import { getAuth } from "../../../../redux/slices/userSlice";
 import { IErrorProps } from "./props/index";
 
-const Error: React.FC<IErrorProps> = ({ status, title, subTitle }) => {
+const ErrorPage: React.FC<IErrorProps> = ({ status, title, subTitle }) => {
   const [params] = useSearchParams();
   const {location} = useSelector(getAuth)
   const navigate = useNavigate();
@@ -28,6 +28,7 @@ const Error: React.FC<IErrorProps> = ({ status, title, subTitle }) => {
         (params.size === 0 && !locationData && !status && !title && !subTitle)
           ? <Navigate to={location} replace/>
           : <Result
+          className="w-full content-center"
             status={errorData.status as ResultStatusType}
             title={errorData.title}
             subTitle={errorData.subTitle}
@@ -44,4 +45,4 @@ const Error: React.FC<IErrorProps> = ({ status, title, subTitle }) => {
   );
 };
 
-export default Error;
+export default ErrorPage;

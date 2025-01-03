@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useConfirmEmailMutation } from "../../services/accountService";
 import { Button, Spin } from "antd";
+import { useConfirmEmailMutation } from "../../../redux/api/accountApi";
 
 const EmailConfirmationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -14,6 +14,7 @@ const EmailConfirmationPage: React.FC = () => {
     (async () => {
       const userId: string | null = searchParams.get("id")
       const token: string | null = searchParams.get("token")
+      console.log(userId, token)
       if (userId && token) {
         const result = await emailConfirm(({ id: userId, token: token }))
         if (!result.error) {
@@ -31,7 +32,7 @@ const EmailConfirmationPage: React.FC = () => {
       <Spin size="small" spinning={isLoading} />
       <h3>{!confirmOk ? 'Підтвердження електронної пошти ....' : 'Електронну пошту успішно підтверджено !!!'}</h3>
       <h4 className='text-red-600' hidden={!error}>Сталася помилка підтвердження електронної пошти</h4>
-      <Button className='w-1/6 mt-4' hidden={!confirmOk && !error} onClick={() => navigate('/login')}>Увійти</Button>
+      <Button className='w-1/6 mt-4' hidden={!confirmOk && !error} onClick={() => navigate('/auth')}>{confirmOk ? "Увійти" : "На головну"}</Button>
     </div>
   );
 };

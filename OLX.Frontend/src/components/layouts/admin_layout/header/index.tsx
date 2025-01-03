@@ -19,12 +19,12 @@ export const AdminHeader: React.FC = () => {
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
-            label: <Link to={'/userprofile'}>Профіль</Link>,
+            label: <Link to={'/admin/rofile'}>Профіль</Link>,
             key: '0',
         },
         {
             icon: <SettingOutlined />,
-            label: <Link to={'/usersettings'}>Налаштування</Link>,
+            label: <Link to={'/admin/settings'}>Налаштування</Link>,
             key: '1',
         },
         {

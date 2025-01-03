@@ -1,15 +1,13 @@
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Button, Checkbox, Divider, Form, Input } from 'antd';
 import { ILoginLocalRequest } from '../../../models/account';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { toast } from 'react-toastify';
-import { IError } from '../../../models/errors';
-import { useSelector } from 'react-redux';
+import { IError, IUserLockoutError } from '../../../models/errors';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
-import { getAuth } from '../../../redux/slices/userSlice';
 
 const loginAction: string = 'login'
 
@@ -20,11 +18,8 @@ const LoginPage: React.FC = () => {
   const [sendConfEmail] = useSendConfirmEmailMutation();
   const [loginError, setLoginError] = useState<IError | undefined>(undefined)
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const loginEmail = useRef<string>('')
+  const loginEmail = useRef<string | undefined>('')
   const remeber = useRef<boolean>(true)
-  const { isAuth, location } = useSelector(getAuth)
-  
-  useEffect(()=>{ if(isAuth)navigate(location)},[isAuth])
 
   const glLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -34,16 +29,29 @@ const LoginPage: React.FC = () => {
           type: "success"
         })
       }
+      else {
+        loginEmail.current = ((result.error as IError).data as IUserLockoutError).Email;
+        setLoginError(result.error as IError);
+      }
     }
   });
 
   const sendConfirmEmail = async () => {
-    const result = await sendConfEmail(loginEmail.current);
-    if (!result.error) {
-      toast("Лист підтвердження відправлено на вашу пошту", {
-        type: "success"
+    if (loginEmail.current) {
+      const result = await sendConfEmail(loginEmail.current);
+      if (!result.error) {
+        setLoginError(undefined)
+        toast("Лист підтвердження відправлено на вашу пошту", {
+          type: "success"
+        })
+      }
+    }
+    else {
+      toast("Сталася помилка при відправці листа підтвердження", {
+        type: "error"
       })
     }
+
   }
 
   const onFinish = async (loginModel: ILoginLocalRequest) => {
@@ -53,7 +61,7 @@ const LoginPage: React.FC = () => {
       loginModel.action = loginAction
       const result = await login(loginModel);
       if (result.error) {
-        loginEmail.current = loginModel.email;
+        loginEmail.current = ((result.error as IError).data as IUserLockoutError).Email;
         setLoginError(result.error as IError);
       }
       else {
@@ -64,7 +72,7 @@ const LoginPage: React.FC = () => {
     }
   }
 
- 
+
 
   return (
     <div id='#login' className=' w-50 mx-auto my-4'>

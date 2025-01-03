@@ -1,8 +1,8 @@
 import { IUser } from "../models/account"
 
-export const getUserDescr = (user: IUser ): string  => {
+export const getUserDescr = (user: IUser | null ): string  => {
 
-    return user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user?.email
+    return user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.email || ''
 }
 
 export function stringToColor(string: string | null) {

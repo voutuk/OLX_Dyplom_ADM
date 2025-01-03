@@ -23,7 +23,7 @@ export const store = configureStore({
             accountApiAuth.middleware,
             errorMiddleware)
 })
-//setupListeners(store.dispatch);
+setupListeners(store.dispatch);
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 export const useAppDispatch: () => AppDispatch = useDispatch

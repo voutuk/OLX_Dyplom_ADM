@@ -6,5 +6,6 @@ namespace Olx.BLL.Models.User
     {
         public string? Message { get; init; }
         public DateTime? UnlockTime { get; init; }
+        public string? Email { get; init; }
     }
 }

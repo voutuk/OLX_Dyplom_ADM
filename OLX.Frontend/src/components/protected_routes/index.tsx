@@ -27,6 +27,9 @@ const ProtectedRoutes = ({ requiredRole }: { requiredRole?: ProtectedRouteType |
             }
         }
     }
+    else {
+        routeAlow = isAuth
+    }
     return routeAlow ? <Outlet /> : !isAuth ? <Navigate to="/auth" replace /> : <Navigate to={`${location}`} replace />
 };
 

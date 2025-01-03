@@ -1,7 +1,7 @@
 import { Button, Form, Input } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useResetPasswordMutation } from "../../../services/accountService";
 import { toast } from "react-toastify";
+import { useResetPasswordMutation } from "../../../../redux/api/accountApi";
 
 
 
@@ -19,7 +19,7 @@ const ResetPasswordPage: React.FC = () => {
                 toast("Пароль успішшно змінений", {
                     type: "success"
                 })
-                navigator('/login')
+                navigator('/auth')
             }
         }
     }
