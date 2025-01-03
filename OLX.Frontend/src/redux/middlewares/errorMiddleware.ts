@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
     if (isRejectedWithValue(action)) {
         const error: IError = action.payload as IError;
-        error.id = Date.now();
         switch (error.status) {
             case 403:
             case 423:

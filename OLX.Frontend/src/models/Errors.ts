@@ -7,7 +7,6 @@ export interface IUserLockoutError {
 }
 
 export interface IError {
-    id: number
     status: number
     message?: string;
     data?: IUserLockoutError | any

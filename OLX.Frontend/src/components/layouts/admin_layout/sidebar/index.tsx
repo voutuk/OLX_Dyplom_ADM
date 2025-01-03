@@ -35,6 +35,6 @@ export const SideBar: React.FC = () => {
             <Divider type="horizontal" variant="solid" className="border-red-400 m-0 p-0 mb-7" />
           </>}
       </div>
-      <AdminSideBarMenu />
+      <AdminSideBarMenu collapsed={collapsed}/>
     </Sider>)
 }
