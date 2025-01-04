@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities;
 using Olx.BLL.Entities.FilterEntities;
@@ -84,7 +85,8 @@ namespace Olx.BLL.Services
 
         public async Task<PageResponse<FilterDto>> GetPageAsync(FilterPageRequest pageRequest)
         {
-            var paginationBuilder = new PaginationBuilder<Filter>(filterRepository);
+            var query = filterRepository.GetQuery().Include(x => x.Values);
+            var paginationBuilder = new PaginationBuilder<Filter>(query);
             var filter = new FiltersFilter(pageRequest.SearchName);
             var sortData =  new FilterSortData(pageRequest.IsDescending,pageRequest.SortIndex);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page,pageRequest.Size, filter, sortData);
