@@ -213,4 +213,7 @@
   <data name="ReCapthcaValidationError" xml:space="preserve">
     <value>reCapthca validation error</value>
   </data>
+  <data name="InvalidRole" xml:space="preserve">
+    <value>Invalid role name</value>
+  </data>
 </root>

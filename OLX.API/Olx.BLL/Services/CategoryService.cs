@@ -123,7 +123,8 @@ namespace Olx.BLL.Services
 
         public async Task<PageResponse<CategoryDto>> GetPageAsync(CategoryPageRequest pageRequest)
         {
-            var paginationBuilder = new PaginationBuilder<Category>(categoryRepository);
+            var query = categoryRepository.GetQuery().Include(x => x.Filters);
+            var paginationBuilder = new PaginationBuilder<Category>(query);
             var filter = new CategoryFilter(pageRequest.SearchName, pageRequest.ParentId);
             var sortData = new CategorySortData(pageRequest.IsDescending, pageRequest.SortIndex);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page, pageRequest.Size, filter, sortData);

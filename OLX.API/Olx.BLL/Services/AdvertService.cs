@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Olx.BLL.Exstensions;
 using Olx.BLL.Entities.NewPost;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Olx.BLL.Services
@@ -121,7 +122,10 @@ namespace Olx.BLL.Services
 
         public async Task<PageResponse<AdvertDto>> GetPageAsync(AdvertPageRequest pageRequest)
         {
-            var paginationBuilder = new PaginationBuilder<Advert>(advertRepository);
+            var query = advertRepository.GetQuery()
+                .Include(x => x.FilterValues)
+                .Include(x => x.Images);
+            var paginationBuilder = new PaginationBuilder<Advert>(query);
             var filter = mapper.Map<AdvertFilter>(pageRequest);
             var sortData = new AdvertSortData(pageRequest.IsDescending, pageRequest.SortIndex);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page, pageRequest.Size, filter, sortData);

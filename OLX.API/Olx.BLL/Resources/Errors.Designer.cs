@@ -250,6 +250,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid role name.
+        /// </summary>
+        internal static string InvalidRole {
+            get {
+                return ResourceManager.GetString("InvalidRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid settlement id.
         /// </summary>
         internal static string InvalidSettlementId {
