@@ -14,6 +14,9 @@ namespace OLX.API.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> Get() => Ok(await userService.Get());
 
+        [HttpGet("get/locked")]
+        public async Task<IActionResult> GetLocked() => Ok(await userService.GetLocked());
+
         [HttpGet("get/admin")]
         public async Task<IActionResult> GetAdmins() => Ok(await userService.Get(true));
 

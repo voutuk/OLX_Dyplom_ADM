@@ -13,7 +13,6 @@ namespace Olx.BLL.DTOs
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Photo { get; set; }
-        public DateTime? LockoutEnd { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastActivity { get; set; }
         public string? WebSite { get; set; }

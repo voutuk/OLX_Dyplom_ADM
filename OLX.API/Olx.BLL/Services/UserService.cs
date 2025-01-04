@@ -59,7 +59,7 @@ namespace Olx.BLL.Services
         {
             var adminsIds = await _getAdminsIds();
             var query = userRepo.GetQuery()
-                .Where(x => adminsIds.Any(z => z == x.Id == isAdmin))
+                .Where(x => adminsIds.Any(z => z == x.Id == isAdmin) && (x.LockoutEnd != null && x.LockoutEnd <= DateTime.Now))
                 .AsNoTracking()
                 .Include(x => x.Settlement)
                 .Include(x => x.Adverts)
@@ -75,5 +75,12 @@ namespace Olx.BLL.Services
                 
             };
         }
+
+        public async Task<IEnumerable<OlxUserDto>> GetLocked() 
+        {
+            var users = await userRepo.GetListBySpec( new OlxUserSpecs.GetLocked(UserOpt.Settlement | UserOpt.NoTracking | UserOpt.Adverts | UserOpt.FavoriteAdverts));
+            return mapper.Map<IEnumerable<OlxUserDto>>(users);
+        } 
+        
     }
 }
