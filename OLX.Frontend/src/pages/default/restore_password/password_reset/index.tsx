@@ -7,7 +7,7 @@ import { useResetPasswordMutation } from "../../../../redux/api/accountApi";
 
 const ResetPasswordPage: React.FC = () => {
     const [searchParams] = useSearchParams();
-    const [resetPassword] = useResetPasswordMutation();
+    const [resetPassword,{isLoading}] = useResetPasswordMutation();
     const navigator = useNavigate();
 
     const onFinish = async (formResult: { password: string }) => {
@@ -87,7 +87,7 @@ const ResetPasswordPage: React.FC = () => {
                 <Input.Password />
             </Form.Item>
 
-            <Button className='mt-3' style={{ width: 200 }} type="primary" htmlType="submit">
+            <Button loading={isLoading} className='mt-3' style={{ width: 200 }} type="primary" htmlType="submit">
                 Оновити пароль
             </Button>
         </Form>

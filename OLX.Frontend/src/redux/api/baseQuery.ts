@@ -37,7 +37,6 @@ export const createBaseQueryWithAuth = (endpoint: string) => {
                     token = newToken;
                     const remember = state.user.auth.remember
                     api.dispatch(setCredentials({ token: newToken, remember: remember }))
-
                 }
                 else if(response.error){
                     return response

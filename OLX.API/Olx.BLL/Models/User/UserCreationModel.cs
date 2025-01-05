@@ -16,5 +16,7 @@ namespace Olx.BLL.Models.User
         public string? About { get; init; }
         public string? PhoneNumber { get; init; }
         public string? SettlementRef { get; init; }
+        public string RecapthcaToken { get; init; } = string.Empty;
+        public string Action { get; init; } = string.Empty;
     }
 }

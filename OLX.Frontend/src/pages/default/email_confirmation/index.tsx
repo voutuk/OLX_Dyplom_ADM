@@ -28,7 +28,7 @@ const EmailConfirmationPage: React.FC = () => {
 
   return (
 
-    <div className="flex flex-col h-full justify-center gap-3 items-center">
+    <div className="flex flex-1 flex-col h-full justify-center gap-3 items-center">
       <Spin size="small" spinning={isLoading} />
       <h3>{!confirmOk ? 'Підтвердження електронної пошти ....' : 'Електронну пошту успішно підтверджено !!!'}</h3>
       <h4 className='text-red-600' hidden={!error}>Сталася помилка підтвердження електронної пошти</h4>

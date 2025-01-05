@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useSendPasswordResetEmailMutation } from "../../../../redux/api/accountApi";
 
 const ForgotPasswordPage: React.FC = () => {
-  const [passFogot] = useSendPasswordResetEmailMutation()
+  const [passFogot,{isLoading}] = useSendPasswordResetEmailMutation()
   const navigator = useNavigate();
 
   const sendPassResetEmail = async (formResult: { email: string }) => {
@@ -47,7 +47,7 @@ const ForgotPasswordPage: React.FC = () => {
         <Input type='large' />
       </Form.Item>
 
-      <Button className='mt-3' style={{ width: 200 }} type="primary" htmlType="submit">
+      <Button loading={isLoading} className='mt-3' style={{ width: 200 }} type="primary" htmlType="submit">
         Надіслати
       </Button>
     </Form>

@@ -42,8 +42,7 @@ namespace Olx.BLL.Services
         IValidator<EmailConfirmationModel> emailConfirmationModelValidator,
         IValidator<UserBlockModel> userBlockModelValidator,
         IValidator<UserCreationModel> userCreationModelValidator,
-        IValidator<UserEditModel> userEditModelValidator,
-        IValidator<AuthRequest> authRequestValidator) : IAccountService
+        IValidator<UserEditModel> userEditModelValidator) : IAccountService
     {
         private async Task<string> CreateRefreshToken(int userId)
         {
@@ -154,7 +153,6 @@ namespace Olx.BLL.Services
 
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
-           // authRequestValidator.ValidateAndThrow(model);
             await RecaptcaVerify(model.RecapthcaToken, model.Action);
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user != null) 
@@ -308,6 +306,7 @@ namespace Olx.BLL.Services
             {
                 await userManager.UpdateUserActivityAsync(httpContext);
             }
+            await RecaptcaVerify(userModel.RecapthcaToken,userModel.Action);
 
             userCreationModelValidator.ValidateAndThrow(userModel);
 
