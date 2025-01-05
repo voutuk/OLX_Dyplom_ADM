@@ -6,9 +6,10 @@ import ProtectedRoutes from './components/protected_routes';
 import ErrorPage from './pages/default/errors/error_page';
 import GlobalFallback from './components/global_fallback';
 
-const AdminCreate= React.lazy(() => import('./pages/admin/admins/new_admin'));
+const ReCaptcha= React.lazy(() => import('./components/google_recaptca'));
+const AdminCreate = React.lazy(() => import('./pages/admin/admins/new_admin'));
 const AdminsTable = React.lazy(() => import('./pages/admin/admins/admins_table'));
-const AdminFilterTable= React.lazy(() => import('./pages/admin/filters/filter_table'));
+const AdminFilterTable = React.lazy(() => import('./pages/admin/filters/filter_table'));
 const AdminFilterEdit = React.lazy(() => import('./pages/admin/filters/filter_edit'));
 const AdminFilterCreate = React.lazy(() => import('./pages/admin/filters/filter_create'));
 const AdminCategoryEdit = React.lazy(() => import('./pages/admin/categories/category_edit'));
@@ -40,8 +41,14 @@ function App() {
             <Route path="error" element={<ErrorPage />} />
 
             <Route path="auth">
-              <Route index element={<LoginPage />} />
-              <Route path="register" element={<RegisterPage />} />
+              <Route index element={
+                <ReCaptcha >
+                  <LoginPage />
+                </ReCaptcha>} />
+              <Route path="register" element={
+                <ReCaptcha >
+                  <RegisterPage />
+                </ReCaptcha>} />
               <Route path="emailconfirm" element={<EmailConfirmationPage />} />
               <Route path="password">
                 <Route index element={<ForgotPasswordPage />} />

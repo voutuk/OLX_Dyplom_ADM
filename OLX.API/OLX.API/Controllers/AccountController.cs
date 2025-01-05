@@ -39,20 +39,18 @@ namespace OLX.API.Controllers
             return Ok(authResponse);
         }
 
-       // [Authorize]
         [HttpPost("user/logout")]
         public async Task<IActionResult> LogOut([FromBody] string? refreshToken)
         {
             if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var token))
             {
                 await accountService.LogoutAsync(token);
+                Response.Cookies.Delete(_refreshTokenCookiesName);
             }
             else if (refreshToken is not null)
             {
                 await accountService.LogoutAsync(refreshToken);
             }
-          //  else return Unauthorized();
-            Response.Cookies.Delete(_refreshTokenCookiesName);
             return Ok();
         }
 

@@ -1,7 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from "./baseQuery"
 import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IResetPasswordModel } from "../../models/account"
-import { setCredentials } from '../slices/userSlice';
+import { logOut, setCredentials } from '../slices/userSlice';
+import { setRedirect } from '../slices/appSlice';
 
 export const accountApi = createApi({
     reducerPath: 'accountApi',
@@ -16,6 +17,7 @@ export const accountApi = createApi({
                     url: 'login',
                     method: 'POST',
                     body: data as ILoginRequest,
+                    timeout:10000
                 }
             },
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
@@ -26,6 +28,25 @@ export const accountApi = createApi({
                     }
                 } catch (error) {
                     console.error('Login failed:', error);
+                }
+            },
+        }),
+
+        logout: builder.mutation({
+            query: () => {
+                return {
+                    url: 'user/logout',
+                    method: 'POST',
+                    credentials: "include",
+                    timeout: 10000
+                }
+            },
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(logOut());
+                } catch (error) {
+                    console.error('Logout failed:', error);
                 }
             },
         }),
@@ -111,4 +132,5 @@ export const {
     useConfirmEmailMutation,
     useSendPasswordResetEmailMutation,
     useResetPasswordMutation,
-    useGoogleLoginMutation } = accountApi
+    useGoogleLoginMutation,
+    useLogoutMutation } = accountApi

@@ -3,7 +3,7 @@ import userReducer from './slices/userSlice'
 import appReducer from './slices/appSlice'
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { accountApi } from "./api/accountApi";
-import { accountApiAuth } from "./api/accountAuthApi";
+//import { accountApiAuth } from "./api/accountAuthApi";
 import errorMiddleware from "./middlewares/errorMiddleware";
 import { setupListeners } from "@reduxjs/toolkit/query/react";
 
@@ -14,13 +14,13 @@ export const store = configureStore({
         app: appReducer,
         //[productApi.reducerPath]: productApi.reducer,
         [accountApi.reducerPath]: accountApi.reducer,
-        [accountApiAuth.reducerPath]: accountApiAuth.reducer,
+       // [accountApiAuth.reducerPath]: accountApiAuth.reducer,
        // [categoryApi.reducerPath]: categoryApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
             accountApi.middleware,
-            accountApiAuth.middleware,
+         //   accountApiAuth.middleware,
             errorMiddleware)
 })
 setupListeners(store.dispatch);

@@ -8,8 +8,9 @@ import { MenuProps } from "./props";
 
 
 
-const getOpenMenuItem = (location: string, items: MenuItem[]): string => {
-    return items.filter(x => x.children?.some(z => z.key === location))[0].key;
+const getOpenMenuItem = (location: string, items: MenuItem[]): string[] => {
+    const key = items.filter(x => x.children?.some(z => z.key === location))[0]?.key || undefined
+    return key ? [key] : []
 }
 
 const items: MenuItem[] = [
@@ -93,12 +94,12 @@ const items: MenuItem[] = [
     }
 ]
 
-export const AdminSideBarMenu: React.FC<MenuProps> = ({collapsed}) => {
+export const AdminSideBarMenu: React.FC<MenuProps> = ({ collapsed }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [menuData, setMenuData] = useState<MenuData>(({
         selected: location.pathname,
-        openKeys: [getOpenMenuItem(location.pathname, items)]
+        openKeys: getOpenMenuItem(location.pathname, items)
     }))
 
     const handleSelect = ({ key, keyPath }: { key: string, keyPath: string[] }) => {
@@ -110,14 +111,14 @@ export const AdminSideBarMenu: React.FC<MenuProps> = ({collapsed}) => {
         setMenuData(prev => ({ ...prev, openKeys: keys }));
     }
 
-    useEffect(()=>{
-        if(!collapsed)
-        {
+    useEffect(() => {
+        if (!collapsed) {
             setTimeout(() => {
-                setMenuData(prev => ({ ...prev,openKeys:[getOpenMenuItem(location.pathname, items)] }));
+                const openKey = getOpenMenuItem(location.pathname, items);
+                setMenuData(prev => ({ ...prev, openKeys: openKey }));
             }, 400);
         }
-    },[collapsed])
+    }, [collapsed])
 
     return (
         <Menu
@@ -128,7 +129,7 @@ export const AdminSideBarMenu: React.FC<MenuProps> = ({collapsed}) => {
             onOpenChange={handleOnOpen}
             onSelect={handleSelect}
             selectedKeys={[menuData.selected]
-             
+
             }
         />
     )

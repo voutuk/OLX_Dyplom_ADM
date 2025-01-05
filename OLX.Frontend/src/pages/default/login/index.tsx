@@ -13,8 +13,8 @@ const loginAction: string = 'login'
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const [login] = useLoginMutation();
-  const [googleLogin] = useGoogleLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
+  const [googleLogin, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
   const [sendConfEmail] = useSendConfirmEmailMutation();
   const [loginError, setLoginError] = useState<IError | undefined>(undefined)
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
         })
       }
       else {
-        loginEmail.current = ((result.error as IError).data as IUserLockoutError).Email;
+        loginEmail.current = ((result.error as IError).data as IUserLockoutError)?.Email || undefined;
         setLoginError(result.error as IError);
       }
     }
@@ -59,9 +59,10 @@ const LoginPage: React.FC = () => {
     if (executeRecaptcha) {
       loginModel.recapthcaToken = await executeRecaptcha(loginAction);
       loginModel.action = loginAction
+      console.log(loginModel)
       const result = await login(loginModel);
       if (result.error) {
-        loginEmail.current = ((result.error as IError).data as IUserLockoutError).Email;
+        loginEmail.current = ((result.error as IError)?.data as IUserLockoutError)?.Email || undefined;
         setLoginError(result.error as IError);
       }
       else {
@@ -81,6 +82,9 @@ const LoginPage: React.FC = () => {
         layout='vertical'
         style={{
           maxWidth: 300,
+        }}
+        initialValues={{
+          remember: true
         }}
         onFinish={onFinish}
         className='mx-auto text-center'
@@ -120,14 +124,14 @@ const LoginPage: React.FC = () => {
           name="remember"
           valuePropName="checked"
         >
-          <Checkbox onChange={(event) => { remeber.current = event.target.checked }} defaultChecked>Запам'ятати мене</Checkbox>
+          <Checkbox onChange={(event) => { remeber.current = event.target.checked }}>Запам'ятати мене</Checkbox>
         </Form.Item>
 
-        <Button className='mt-3' style={{ width: 200 }} type="primary" htmlType="submit">
+        <Button loading={isLoading} className='mt-3' style={{ width: 200 }} type="primary" htmlType="submit">
           Увійти
         </Button>
 
-        <Button className='mt-3' onClick={() => glLogin()} style={{ width: 200 }} type="primary" >
+        <Button loading={isGoogleLoading} className='mt-3' onClick={() => glLogin()} style={{ width: 200 }} type="primary" >
           Увійти з Google
         </Button>
 
@@ -138,6 +142,7 @@ const LoginPage: React.FC = () => {
         {loginError?.status === 403 &&
           <Button onClick={sendConfirmEmail} color="primary" variant="link">Надіслати лист для підтвердження</Button>
         }
+
       </Form>
 
     </div>

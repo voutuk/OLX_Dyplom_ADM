@@ -18,7 +18,8 @@ export interface IUserState {
 export interface IUserAuth {
     isAdmin: boolean
     isUser: boolean
-    isAuth: boolean
+    isAuth: boolean,
+    remember: boolean,
     roles: string[]
     location: string
 }

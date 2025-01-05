@@ -2,20 +2,19 @@
 import { BellOutlined, DownOutlined, LogoutOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import './style.scss'
 import { Avatar, Badge, Dropdown, MenuProps } from 'antd'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Images } from '../../../../constants/images';
 import { useSelector } from 'react-redux';
 import { getUserDescr } from '../../../../utilities/common_funct';
 import UserAvatar from '../../../user_avatar';
-import { useLogoutMutation } from '../../../../redux/api/accountAuthApi';
 import { getUser } from '../../../../redux/slices/userSlice';
+import { useLogoutMutation } from '../../../../redux/api/accountApi';
 
 
 
 export const AdminHeader: React.FC = () => {
     const [logout] = useLogoutMutation();
     const user = useSelector(getUser)
-    const navigate = useNavigate();
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
@@ -36,9 +35,7 @@ export const AdminHeader: React.FC = () => {
             key: '3',
             onClick: async () => {
                 await logout({}).unwrap();
-                navigate('/')
             }
-
         },
     ];
 

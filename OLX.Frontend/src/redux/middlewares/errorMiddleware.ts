@@ -2,6 +2,10 @@ import { isRejectedWithValue, Middleware, MiddlewareAPI } from '@reduxjs/toolkit
 import { setError, setRedirect } from '../slices/appSlice';
 import { IError } from '../../models/errors';
 import { toast } from 'react-toastify';
+import { RootState } from '..';
+import { logOut } from '../slices/userSlice';
+
+
 
 
 const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
@@ -21,7 +25,12 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                 }
                 break;
             case 401:
-                api.dispatch(setRedirect('/'))
+                if((api.getState() as RootState).user){
+                    api.dispatch(logOut())
+                }
+                else{
+                    api.dispatch(setRedirect('/auth'))
+                }
                 break;
             default:
                 api.dispatch(setError(error))

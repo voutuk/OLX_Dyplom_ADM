@@ -3,10 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { BellOutlined, DownOutlined, LogoutOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
 import { Images } from "../../../../constants/images";
-import { useLogoutMutation } from "../../../../redux/api/accountAuthApi";
 import { getUser } from "../../../../redux/slices/userSlice";
 import { getUserDescr } from "../../../../utilities/common_funct";
 import UserAvatar from "../../../user_avatar";
+import { useLogoutMutation } from "../../../../redux/api/accountApi";
 
 
 

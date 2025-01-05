@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "..";
 import { IError } from "../../models/errors";
 
+
 export interface IAppState {
     error: IError | null
     redirect: string | null
