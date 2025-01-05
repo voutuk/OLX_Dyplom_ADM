@@ -1,7 +1,7 @@
 const HomePage:React.FC = () => {
   
     return (
-      <div className=" text-center">Home page</div>
+      <div className=" flex-1 flex justify-center items-center">Home page</div>
     );
   };
   

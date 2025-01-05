@@ -2,7 +2,6 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from "./baseQuery"
 import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IResetPasswordModel } from "../../models/account"
 import { logOut, setCredentials } from '../slices/userSlice';
-import { setRedirect } from '../slices/appSlice';
 
 export const accountApi = createApi({
     reducerPath: 'accountApi',
