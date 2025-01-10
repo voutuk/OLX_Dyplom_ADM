@@ -11,7 +11,7 @@ import { getUnreadedCount, getUser } from '../../../../redux/slices/userSlice';
 import { useLogoutMutation } from '../../../../redux/api/accountApi';
 import { useAppSelector } from '../../../../redux';
 import { useEffect } from 'react';
-import { useGetUserMessagesQuery } from '../../../../redux/api/adminMessageApi';
+import { useGetAdminMessagesQuery } from '../../../../redux/api/adminMessageApi';
 
 
 
@@ -19,7 +19,7 @@ export const AdminHeader: React.FC = () => {
     const [logout] = useLogoutMutation();
     const user = useSelector(getUser)
     const unreadMesssageCount = useAppSelector(getUnreadedCount)
-    const { refetch } = useGetUserMessagesQuery();
+    const { refetch } = useGetAdminMessagesQuery();
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
