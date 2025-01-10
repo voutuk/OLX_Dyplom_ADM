@@ -8,6 +8,8 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Olx.BLL.Helpers.Options;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 
 namespace OLX.API.Extensions
@@ -46,7 +48,23 @@ namespace OLX.API.Extensions
                     ValidateLifetime = true,
                     ValidIssuer = jwtOpts.Issuer,
                     ValidateIssuerSigningKey = true,
-                    ClockSkew = TimeSpan.Zero
+                    NameClaimType = ClaimTypes.NameIdentifier,
+                    ClockSkew = TimeSpan.FromMinutes(1)
+                };
+                cfg.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context => {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hub"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
   

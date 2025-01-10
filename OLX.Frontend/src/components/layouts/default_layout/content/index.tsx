@@ -4,7 +4,7 @@ import GlobalFallback from "../../../global_fallback"
 
 export const Content: React.FC = () => {
     return (
-        <main className='flex-1 flex' >
+        <main className='flex-1 flex ' >
             <Suspense fallback={<GlobalFallback />}>
                 <Outlet />
             </Suspense>

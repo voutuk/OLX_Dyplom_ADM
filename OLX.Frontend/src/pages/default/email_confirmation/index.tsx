@@ -14,7 +14,6 @@ const EmailConfirmationPage: React.FC = () => {
     (async () => {
       const userId: string | null = searchParams.get("id")
       const token: string | null = searchParams.get("token")
-      console.log(userId, token)
       if (userId && token) {
         const result = await emailConfirm(({ id: userId, token: token }))
         if (!result.error) {

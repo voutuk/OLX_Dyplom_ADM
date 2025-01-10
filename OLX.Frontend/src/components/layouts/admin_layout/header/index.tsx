@@ -1,5 +1,5 @@
 
-import { BellOutlined, DownOutlined, LogoutOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import './style.scss'
 import { Avatar, Badge, Dropdown, MenuProps } from 'antd'
 import { Link } from 'react-router-dom';
@@ -7,14 +7,19 @@ import { Images } from '../../../../constants/images';
 import { useSelector } from 'react-redux';
 import { getUserDescr } from '../../../../utilities/common_funct';
 import UserAvatar from '../../../user_avatar';
-import { getUser } from '../../../../redux/slices/userSlice';
+import { getUnreadedCount, getUser } from '../../../../redux/slices/userSlice';
 import { useLogoutMutation } from '../../../../redux/api/accountApi';
+import { useAppSelector } from '../../../../redux';
+import { useEffect } from 'react';
+import { useGetUserMessagesQuery } from '../../../../redux/api/adminMessageApi';
 
 
 
 export const AdminHeader: React.FC = () => {
     const [logout] = useLogoutMutation();
     const user = useSelector(getUser)
+    const unreadMesssageCount = useAppSelector(getUnreadedCount)
+    const { refetch } = useGetUserMessagesQuery();
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
@@ -39,7 +44,7 @@ export const AdminHeader: React.FC = () => {
         },
     ];
 
-
+    useEffect(() => { refetch() }, [user])
     return (
         <div className='h-[60px] bg-header sticky top-0 items-center flex-shrink-0 flex justify-between z-50'  >
             <div className='flex gap-6 items-center'>
@@ -48,11 +53,8 @@ export const AdminHeader: React.FC = () => {
             </div>
             <div className='flex gap-7 h-full'>
                 <div className='flex gap-5 flex-shrink-0 items-center'>
-                    <Badge count={2} size='small' >
-                        <BellOutlined className='text-xl text-white animate-pulse' />
-                    </Badge>
-                    <Badge count={4} size='small'>
-                        <MailOutlined className='text-xl text-white animate-wiggle' />
+                    <Badge count={unreadMesssageCount} size='small' className={unreadMesssageCount > 0 ? "animate-pulse" : ''}>
+                        <MailOutlined className='text-xl text-white' />
                     </Badge>
                 </div>
                 <Dropdown menu={{ items }} trigger={['click']} className=' min-w-[180] px-5 cursor-pointer  flex-shrink-0 bg-orange-500 flex gap-2 justify-center items-center'>

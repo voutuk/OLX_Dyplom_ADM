@@ -23,7 +23,7 @@ export const accountApi = createApi({
                 try {
                     const result = await queryFulfilled;
                     if (result.data && result.data.accessToken) {
-                        dispatch(setCredentials({ token: result.data.accessToken, remember: arg.remember }))
+                        dispatch(setCredentials({ token: result.data.accessToken, refreshToken: result.data.refreshToken,remember: arg.remember }))
                     }
                 } catch (error) {
                     console.error('Login failed:', error);
@@ -61,7 +61,7 @@ export const accountApi = createApi({
                 try {
                     const result = await queryFulfilled;
                     if (result.data && result.data.accessToken) {
-                        dispatch(setCredentials({ token: result.data.accessToken, remember: arg.remember }))
+                        dispatch(setCredentials({  token: result.data.accessToken, refreshToken: result.data.refreshToken,remember: arg.remember }))
                     }
                 } catch (error) {
                     console.error('Login failed:', error);

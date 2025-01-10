@@ -8,6 +8,7 @@ const IMAGES_400_URL: string = IMAGES_URL +'/400_';
 const IMAGES_800_URL: string = IMAGES_URL +'/800_';
 const IMAGES_1200_URL: string = IMAGES_URL +'/1200_';
 const ACCESS_KEY: string = import.meta.env.VITE_APP_ACCESS_KEY;
+const REFRESH_KEY: string = import.meta.env.VITE_APP_REFRESH_KEY;
 const APP_MODE: string = import.meta.env.VITE_APP_APP_MODE;
 const GOOGLE_CLIENT_ID: string = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 const RECAPTCHA_SITE_KEY: string = import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY;
@@ -25,5 +26,6 @@ export const APP_ENV = {
     ACCESS_KEY,
     APP_MODE,
     GOOGLE_CLIENT_ID,
-    RECAPTCHA_SITE_KEY
+    RECAPTCHA_SITE_KEY,
+    REFRESH_KEY
 };

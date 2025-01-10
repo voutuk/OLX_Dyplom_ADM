@@ -55,16 +55,16 @@ namespace OLX.API.Controllers
         }
 
         [HttpPost("user/refresh")]
-        public async Task<IActionResult> RefreshTokens([FromBody] string? refreshToken)
+        public async Task<IActionResult> RefreshTokens([FromBody] RefreshRequest? refreshRequest)
         {
             string token;
             if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var httpToken))
             {
                 token = httpToken;
             }
-            else if (refreshToken is not null)
+            else if (refreshRequest is not null)
             {
-                token = refreshToken;
+                token = refreshRequest.RefreshToken;
             }
             else return Unauthorized();
             var authResponse = await accountService.RefreshTokensAsync(token);

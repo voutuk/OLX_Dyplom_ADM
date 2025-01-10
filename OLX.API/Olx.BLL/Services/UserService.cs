@@ -14,6 +14,7 @@ using Olx.BLL.Pagination.SortData;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Olx.BLL.Services
 {
@@ -37,11 +38,11 @@ namespace Olx.BLL.Services
         public async Task<IEnumerable<OlxUserDto>> Get(bool isAdmin = false) 
         {
             var adminsIds = await _getAdminsIds();
-            var users = await userRepo.GetListBySpec(
-                isAdmin
-                ? new OlxUserSpecs.GetByIds(adminsIds, UserOpt.Settlement | UserOpt.NoTracking | UserOpt.Adverts | UserOpt.FavoriteAdverts)
-                : new OlxUserSpecs.GetExcludIds(adminsIds, UserOpt.Settlement | UserOpt.NoTracking | UserOpt.Adverts | UserOpt.FavoriteAdverts));
-            return mapper.Map<IEnumerable<OlxUserDto>>(users);
+            var users = await mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery()
+                .AsNoTracking()
+                .Where(x => isAdmin == adminsIds.Contains(x.Id)))
+                .ToListAsync();
+            return users;
         } 
 
         public async Task<OlxUserDto> Get(int id, bool isAdmin = false) 
@@ -58,21 +59,17 @@ namespace Olx.BLL.Services
         public async Task<PageResponse<OlxUserDto>> Get(UserPageRequest userPageRequest, bool isAdmin = false)
         {
             var adminsIds = await _getAdminsIds();
-            var query = userRepo.GetQuery()
-                .Where(x => adminsIds.Any(z => z == x.Id == isAdmin) && (x.LockoutEnd != null && x.LockoutEnd <= DateTime.Now))
-                .AsNoTracking()
-                .Include(x => x.Settlement)
-                .Include(x => x.Adverts)
-                .Include(x => x.FavoriteAdverts);
-            var paginationBuilder = new PaginationBuilder<OlxUser>(query);
+            var query = mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery()
+                .Where(x => adminsIds.Any(z => z == x.Id == isAdmin) && (x.LockoutEnd == null || x.LockoutEnd > DateTime.Now))
+                .AsNoTracking());
+            var paginationBuilder = new PaginationBuilder<OlxUserDto>(query);
             var userFilter = mapper.Map<OlxUserFilter>(userPageRequest);
             var sortData = new OlxUserSortData(userPageRequest.IsDescending,userPageRequest.SortIndex);
             var page = await paginationBuilder.GetPageAsync(userPageRequest.Page,userPageRequest.Size,userFilter,sortData);
             return new()
             {
                 Total = page.Total,
-                Items = mapper.Map<IEnumerable<OlxUserDto>>(page.Items)
-                
+                Items = page.Items
             };
         }
 

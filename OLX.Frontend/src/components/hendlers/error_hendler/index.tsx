@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { clearError, getError } from "../../redux/slices/appSlice";
+import { clearError, getError } from "../../../redux/slices/appSlice";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getAuth } from "../../redux/slices/userSlice";
+import { getAuth } from "../../../redux/slices/userSlice";
 
 
 
