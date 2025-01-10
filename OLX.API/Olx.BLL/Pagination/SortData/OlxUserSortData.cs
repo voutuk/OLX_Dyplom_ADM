@@ -1,15 +1,16 @@
 ﻿
+using Olx.BLL.DTOs;
 using Olx.BLL.Entities;
 using Olx.BLL.Pagination.Interfaces;
 using System.Linq.Expressions;
 
 namespace Olx.BLL.Pagination.SortData
 {
-    public class OlxUserSortData(bool descending, int sortIndex) : IPaginationSortData<OlxUser>
+    public class OlxUserSortData(bool descending, int sortIndex) : IPaginationSortData<OlxUserDto>
     {
-        public IQueryable<OlxUser> Sort(IQueryable<OlxUser> query)
+        public IQueryable<OlxUserDto> Sort(IQueryable<OlxUserDto> query)
         {
-            Expression<Func<OlxUser, object?>>? sortExpr =
+            Expression<Func<OlxUserDto, object?>>? sortExpr =
                  sortIndex switch
                  {
                      1 => x => x.Id,
@@ -21,10 +22,9 @@ namespace Olx.BLL.Pagination.SortData
                      7 => x => x.FirstName,
                      8 => x => x.LastName,
                      9 => x => x.LastName,
-                     10 => x => x.LockoutEnd,
-                     11 => x => x.CreatedDate,
-                     12 => x => x.LastActivity,
-                     13 => x => x.SettlementRef,
+                     10 => x => x.CreatedDate,
+                     11 => x => x.LastActivity,
+                     12 => x => x.SettlementRef,
                      _ => x => x.Id,
                  };
             return descending ? query.OrderByDescending(sortExpr) : query.OrderBy(sortExpr);

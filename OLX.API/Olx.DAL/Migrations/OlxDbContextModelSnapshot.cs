@@ -203,7 +203,36 @@ namespace Olx.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Olx.BLL.Entities.AdminMessage", b =>
+            modelBuilder.Entity("Olx.BLL.Entities.AdminMessages.AdminMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Readed")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("tbl_AdminMessages");
+                });
+
+            modelBuilder.Entity("Olx.BLL.Entities.AdminMessages.Message", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -216,28 +245,14 @@ namespace Olx.DAL.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("FromAdmin")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("Readed")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("tbl_AdminMessages");
+                    b.ToTable("tbl_Messages");
                 });
 
             modelBuilder.Entity("Olx.BLL.Entities.Advert", b =>
@@ -809,13 +824,19 @@ namespace Olx.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Olx.BLL.Entities.AdminMessage", b =>
+            modelBuilder.Entity("Olx.BLL.Entities.AdminMessages.AdminMessage", b =>
                 {
-                    b.HasOne("Olx.BLL.Entities.OlxUser", "User")
+                    b.HasOne("Olx.BLL.Entities.AdminMessages.Message", "Message")
                         .WithMany("AdminMessages")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Olx.BLL.Entities.OlxUser", "User")
+                        .WithMany("AdminMessages")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Message");
 
                     b.Navigation("User");
                 });
@@ -974,6 +995,11 @@ namespace Olx.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("OlxUser");
+                });
+
+            modelBuilder.Entity("Olx.BLL.Entities.AdminMessages.Message", b =>
+                {
+                    b.Navigation("AdminMessages");
                 });
 
             modelBuilder.Entity("Olx.BLL.Entities.Advert", b =>

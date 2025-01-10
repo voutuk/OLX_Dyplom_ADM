@@ -10,13 +10,13 @@ namespace Olx.BLL.Pagination
         {
             if (filter is not null)
             {
-                query = filter.FilterQuery((IQueryable<TEntity>)query);
+                query = filter.FilterQuery(query);
             }
 
             var total = await query.CountAsync();
             if (sortData is not null)
             {
-                query = sortData.Sort((IQueryable<TEntity>)query);
+                query = sortData.Sort(query);
             }
 
             query = query.AsNoTracking().Skip((page - 1) * size).Take(size);

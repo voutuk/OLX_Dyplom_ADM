@@ -56,7 +56,7 @@ namespace Olx.BLL.Specifications
             public GetByIds(IEnumerable<int> ids, UserOpt? options = null)
             {
                 SetOptions(Query, options);
-                Query.Where(x => ids.Contains(x.Id) && (x.LockoutEnd != null && x.LockoutEnd <= DateTime.Now));
+                Query.Where(x => ids.Contains(x.Id) && (x.LockoutEnd == null || x.LockoutEnd <= DateTime.Now));
             }
 
         }
@@ -65,7 +65,7 @@ namespace Olx.BLL.Specifications
             public GetExcludIds(IEnumerable<int> ids, UserOpt? options = null)
             {
                 SetOptions(Query, options);
-                Query.Where(x => !ids.Contains(x.Id) && (x.LockoutEnd != null && x.LockoutEnd <= DateTime.Now));
+                Query.Where(x => !ids.Contains(x.Id) && (x.LockoutEnd == null || x.LockoutEnd <= DateTime.Now));
             }
 
         }

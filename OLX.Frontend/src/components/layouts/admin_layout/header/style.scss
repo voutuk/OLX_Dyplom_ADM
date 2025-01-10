@@ -1,5 +1,5 @@
+@use '../../../../styles//global-colors.scss' as colors;
 .bg-header{
-    background-color: rgb(28, 56, 85);
-    /* background-image:url('../../../images/pattern_h.png');
-    background-attachment: fixed */
+    background-color: colors.$sideBarColor;
+ 
    }

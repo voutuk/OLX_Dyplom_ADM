@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Olx.BLL.Exstensions;
 using Olx.DAL.Exstension;
 using OLX.API.Extensions;
+using OLX.API.Hubs;
 using OLX.API.Middlewares;
 using System.Globalization;
-using System.Net;
+
 
 var defaultCulture = CultureInfo.InvariantCulture;
 CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
@@ -18,6 +19,7 @@ builder.Services.AddOlxApiConfigurations(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 //if (builder.Environment.IsDevelopment())
 //{
@@ -41,13 +43,15 @@ app.UseCookiePolicy(new CookiePolicyOptions
     MinimumSameSitePolicy = SameSiteMode.Strict,
     HttpOnly = HttpOnlyPolicy.Always,
     // При включении HTTPS нужно вернуть CookieSecurePolicy.Always
-    Secure = CookieSecurePolicy.None,
+    Secure = CookieSecurePolicy.Always,
     
 });
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHttpsRedirection();
+app.MapHub<MessageHub>("/hub");
+//app.UseHttpsRedirection();
 app.MapControllers();
+
 app.DataBaseMigrate();
 await app.SeedDataAsync();
 await app.RunAsync();

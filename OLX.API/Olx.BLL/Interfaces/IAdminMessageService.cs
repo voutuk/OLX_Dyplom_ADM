@@ -1,5 +1,4 @@
-﻿
-using Olx.BLL.DTOs;
+﻿using Olx.BLL.DTOs.AdminMessage;
 using Olx.BLL.Models;
 
 namespace Olx.BLL.Interfaces
@@ -12,7 +11,6 @@ namespace Olx.BLL.Interfaces
         Task<AdminMessageDto> GetById(int id);
         Task<AdminMessageDto> UserCreate(AdminMessageCreationModel messageCreationModel);
         Task<AdminMessageDto> AdminCreate(AdminMessageCreationModel messageCreationModel);
-        Task AdminCreateRange(AdminMessageCreationModel messageCreationModel);
         Task SoftDelete(int id);
         Task Delete(int id);
         Task SetReaded(int id);

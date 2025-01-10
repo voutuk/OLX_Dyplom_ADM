@@ -10,7 +10,7 @@ namespace OLX.API.Controllers
     [ApiController]
     public class AdminMessageController(IAdminMessageService adminMessageService) : ControllerBase
     {
-       
+        [Authorize]
         [HttpGet("get/{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id) => Ok(await adminMessageService.GetById(id));
 
@@ -41,8 +41,6 @@ namespace OLX.API.Controllers
             await adminMessageService.SetReaded(messageIds);
             return Ok();
         }
-
-
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("create/admin")]

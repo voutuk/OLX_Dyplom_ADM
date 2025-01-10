@@ -12,26 +12,40 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
     if (isRejectedWithValue(action)) {
         const error: IError = action.payload as IError;
         switch (error.status) {
-            case 403:
             case 423:
-            case 400:
-                toast(error.data.message || error.data.Message, {
-                    type: 'info'
-                })
-                if (error.data.Message && error.data.UnlockTime) {
+                if (error.data?.Message && error.data?.UnlockTime) {
                     toast(`До ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`, {
-                        type: 'info'
+                        type: 'info',
+                        style: { width: 'fit-content' }
                     })
                 }
                 break;
             case 401:
-                if((api.getState() as RootState).user){
+                if ((api.getState() as RootState).user) {
                     api.dispatch(logOut())
                 }
-                else{
+                else {
                     api.dispatch(setRedirect('/auth'))
                 }
                 break;
+            case 400:
+                if (error.data?.length && error.data?.length > 0) {
+                    error.data?.forEach((element: any) => {
+
+                        toast(`Error: "${element.ErrorMessage}"  Property: "${element.PropertyName}" Value: "${element.AttemptedValue}"`, {
+                            type: 'error',
+                            style: { width: 'fit-content' }
+                        })
+                    });
+                }
+            case 404:
+            case 403:
+                toast(error.data?.message || error.message, {
+                    type: 'info',
+                    style: { width: 'fit-content' }
+                })
+                break;
+
             default:
                 api.dispatch(setError(error))
         }

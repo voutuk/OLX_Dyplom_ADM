@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NETCore.MailKit.Extensions;
@@ -34,6 +35,7 @@ namespace Olx.BLL.Exstensions
             services.AddScoped<INewPostService, NewPostService>();
             services.AddHostedService<TokenCleanupService>();
             services.AddHostedService<ImageCeanupService>();
+           
 
 
             services.AddMailKit(optionBuilder =>

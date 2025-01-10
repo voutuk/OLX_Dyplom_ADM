@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { clearError, getRedirect } from "../../redux/slices/appSlice";
+import { clearError, getRedirect } from "../../../redux/slices/appSlice";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuth } from "../../redux/slices/userSlice";
+import { getAuth } from "../../../redux/slices/userSlice";
 
 const RedirectHendler: React.FC = () => {
     const redirect = useSelector(getRedirect);

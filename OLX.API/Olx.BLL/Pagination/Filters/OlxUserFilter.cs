@@ -1,10 +1,10 @@
 ﻿
-using Olx.BLL.Entities;
+using Olx.BLL.DTOs;
 using Olx.BLL.Pagination.Interfaces;
 
 namespace Olx.BLL.Pagination.Filters
 {
-    public class OlxUserFilter : IPaginationFilter<OlxUser>
+    public class OlxUserFilter : IPaginationFilter<OlxUserDto>
     {
         public string? EmailSearch { get; init; }
         public string? PhoneNumberSearch { get; init; }
@@ -13,7 +13,7 @@ namespace Olx.BLL.Pagination.Filters
         public string? WebSiteSearch { get; init; }
         public string? SettlementRefSearch { get; init; }
 
-        public IQueryable<OlxUser> FilterQuery(IQueryable<OlxUser> query)
+        public IQueryable<OlxUserDto> FilterQuery(IQueryable<OlxUserDto> query)
         {
             if (!String.IsNullOrWhiteSpace(EmailSearch))
             {
@@ -37,7 +37,7 @@ namespace Olx.BLL.Pagination.Filters
             }
             if (!String.IsNullOrWhiteSpace(SettlementRefSearch))
             {
-                query = query.Where(x => x.Settlement != null && x.Settlement.Ref == SettlementRefSearch);
+                query = query.Where(x => x.SettlementRef != null && x.SettlementRef == SettlementRefSearch);
             }
             return query;
         }

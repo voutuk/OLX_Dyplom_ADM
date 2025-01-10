@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Olx.BLL.Entities.AdminMessages;
 using Olx.BLL.Entities.ChatEntities;
 using Olx.BLL.Entities.NewPost;
 using System.ComponentModel.DataAnnotations;

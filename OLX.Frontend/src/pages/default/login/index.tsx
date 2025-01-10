@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
     onSuccess: async (tokenResponse) => {
       const result = await googleLogin(({ token: tokenResponse.access_token, remember: remeber.current }))
       if (!result.error) {
-        toast("Ви успішно увійшли в свій акаунт через", {
+        toast("Ви успішно увійшли в свій акаунт", {
           type: "success"
         })
       }
@@ -59,14 +59,13 @@ const LoginPage: React.FC = () => {
     if (executeRecaptcha) {
       loginModel.recapthcaToken = await executeRecaptcha(loginAction);
       loginModel.action = loginAction
-      console.log(loginModel)
       const result = await login(loginModel);
       if (result.error) {
         loginEmail.current = ((result.error as IError)?.data as IUserLockoutError)?.Email || undefined;
         setLoginError(result.error as IError);
       }
       else {
-        toast("Ви успішно увійшли в свій акаунт через", {
+        toast("Ви успішно увійшли в свій акаунт", {
           type: "success"
         })
       }
