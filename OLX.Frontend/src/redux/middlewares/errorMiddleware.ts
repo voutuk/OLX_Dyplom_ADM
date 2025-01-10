@@ -29,6 +29,8 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                 }
                 break;
             case 400:
+            case 404:
+            case 403:
                 if (error.data?.length && error.data?.length > 0) {
                     error.data?.forEach((element: any) => {
 
@@ -38,12 +40,12 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                         })
                     });
                 }
-            case 404:
-            case 403:
-                toast(error.data?.message || error.message, {
-                    type: 'info',
-                    style: { width: 'fit-content' }
-                })
+                else {
+                    toast(error.data?.message || error.message || error.data?.Message, {
+                        type: 'info',
+                        style: { width: 'fit-content' }
+                    })
+                }
                 break;
 
             default:
