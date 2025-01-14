@@ -10,11 +10,11 @@ using Olx.BLL.Entities.AdminMessages;
 using Olx.BLL.Exceptions;
 using Olx.BLL.Exstensions;
 using Olx.BLL.Helpers;
+using Olx.BLL.Hubs;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
-using OLX.API.Hubs;
 using System.Net;
 
 
@@ -27,9 +27,7 @@ namespace Olx.BLL.Services
         IHttpContextAccessor httpContext,
         IValidator<AdminMessageCreationModel> validator,
         IMapper mapper,
-        IHubContext<MessageHub> hubContext,
-        RoleManager<IdentityRole<int>> roleManager,
-        IRepository<IdentityUserRole<int>> userRolesRepo
+        IHubContext<MessageHub> hubContext
         ) : IAdminMessageService
     {
         public async Task<AdminMessageDto> UserCreate(AdminMessageCreationModel messageCreationModel)
@@ -41,12 +39,7 @@ namespace Olx.BLL.Services
             currentUser.AdminMessages.Add(adminMessage);
             await userManager.UpdateAsync(currentUser);
             var messageDto = mapper.Map<AdminMessageDto>(adminMessage);
-            var adminRole = await roleManager.FindByNameAsync(Roles.Admin)
-               ?? throw new HttpException(Errors.InvalidRole, HttpStatusCode.InternalServerError);
-            var adminIds = userRolesRepo.GetQuery()
-                .Where(x => x.RoleId == adminRole.Id)
-                .Select(z => z.UserId.ToString());
-            await hubContext.Clients.Users(adminIds)
+            await hubContext.Clients.Group("Admins")
                .SendAsync(HubMethods.ReceiveUserMessage, adminMessage);
             return messageDto;
         }
@@ -116,9 +109,11 @@ namespace Olx.BLL.Services
             else 
             {
                 IEnumerable<int> usersIds;
+                bool allUsers = false;
                 if (messageCreationModel.UserIds is null || !messageCreationModel.UserIds.Any())
                 {
                     usersIds = await userManager.Users.Select(x => x.Id).ToArrayAsync();
+                    allUsers = true;
                 }
                 else 
                 {
@@ -142,8 +137,17 @@ namespace Olx.BLL.Services
                     await adminMessageRepo.SaveAsync();
                    
                     var messageDto = mapper.Map<AdminMessageDto>(adminMessage);
-                    await hubContext.Clients.Users(usersIds.Select(x => x.ToString()).ToArray())
-                         .SendAsync(HubMethods.ReceiveAdminMessage, messageDto);
+                    if (!allUsers)
+                    {
+                        await hubContext.Clients.Users(usersIds.Select(x => x.ToString()).ToArray())
+                        .SendAsync(HubMethods.ReceiveAdminMessage, messageDto);
+                    }
+                    else 
+                    {
+                        await hubContext.Clients.Group("Users")
+                       .SendAsync(HubMethods.ReceiveAdminMessage, messageDto);
+                    }
+                   
                     return messageDto;
                 }
             }

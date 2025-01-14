@@ -5,6 +5,9 @@ import { jwtParse } from '../../utilities/jwtParser';
 import { RootState } from '..';
 import { IAdminMesssage } from '../../models/adminMesssage';
 
+
+
+
 const getUserFromToken = (token: string | null): IUser | null => token ? jwtParse(token) : null
 const getUserAuth = (user: IUser | null, remember?: boolean | undefined): IUserAuth => {
     return ({
@@ -31,7 +34,7 @@ const userInit = (): IUserState => {
         token: token,
         auth: auth,
         messages: [],
-        refreshToken: refreshToken
+        refreshToken: refreshToken,
     })
 }
 
@@ -46,6 +49,7 @@ const userSlice = createSlice({
             state.token = token
             state.refreshToken = refreshToken
             state.auth = getUserAuth(state.user, remember)
+            
             if (state.user !== null) {
                 if (state.user.roles.includes('User') && remember) {
                     localStorage.setItem(APP_ENV.ACCESS_KEY, token);
@@ -91,8 +95,9 @@ const userSlice = createSlice({
 export const getUser = (state: RootState) => state.user.user;
 export const getAuth = (state: RootState) => state.user.auth;
 export const getToken = (state: RootState) => state.user.token;
+export const getRefreshToken = (state: RootState) => state.user.refreshToken
 export const getUnreadedCount = (state: RootState) => state.user.messages.filter(x => !x.readed).length;
 export const getMessages = (state: RootState) => state.user.messages;
 
-export const { setCredentials, logOut ,addMessage, removeMessage, setReaded, clearMessages, setMessages} = userSlice.actions
+export const { setCredentials, logOut, addMessage, removeMessage, setReaded, clearMessages, setMessages } = userSlice.actions
 export default userSlice.reducer

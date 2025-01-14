@@ -3,21 +3,24 @@ import { Link, useNavigate } from "react-router-dom";
 import { BellOutlined, DownOutlined, LogoutOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
 import { Images } from "../../../../constants/images";
-import { getUnreadedCount, getUser } from "../../../../redux/slices/userSlice";
+import { getRefreshToken, getUnreadedCount, getUser } from "../../../../redux/slices/userSlice";
 import { getUserDescr } from "../../../../utilities/common_funct";
 import UserAvatar from "../../../user_avatar";
 import { useLogoutMutation } from "../../../../redux/api/accountApi";
 import { useAppSelector } from "../../../../redux";
 import { useGetUserMessagesQuery } from "../../../../redux/api/adminMessageApi";
 import { useEffect } from "react";
+import { useSignalR } from "../../../hendlers/signalR/signalRContext";
 
 
 export const Header: React.FC = () => {
+    const signalRConnection = useSignalR();
     const [logout] = useLogoutMutation();
     const navigator = useNavigate();
     const user = useSelector(getUser)
     const unreadMesssageCount = useAppSelector(getUnreadedCount)
     const {data,refetch} = useGetUserMessagesQuery();
+    const refreshToken = useAppSelector(getRefreshToken)
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
@@ -37,7 +40,8 @@ export const Header: React.FC = () => {
             label: 'Вийти',
             key: '3',
             onClick: async () => {
-                await logout({}).unwrap();
+                await signalRConnection?.connection?.invoke("Disconnect");
+                await logout(refreshToken || '').unwrap();
             }
         },
     ];

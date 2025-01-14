@@ -7,17 +7,20 @@ import { Images } from '../../../../constants/images';
 import { useSelector } from 'react-redux';
 import { getUserDescr } from '../../../../utilities/common_funct';
 import UserAvatar from '../../../user_avatar';
-import { getUnreadedCount, getUser } from '../../../../redux/slices/userSlice';
+import { getRefreshToken, getUnreadedCount, getUser } from '../../../../redux/slices/userSlice';
 import { useLogoutMutation } from '../../../../redux/api/accountApi';
 import { useAppSelector } from '../../../../redux';
 import { useEffect } from 'react';
 import { useGetAdminMessagesQuery } from '../../../../redux/api/adminMessageApi';
+import { useSignalR } from '../../../hendlers/signalR/signalRContext';
 
 
 
 export const AdminHeader: React.FC = () => {
     const [logout] = useLogoutMutation();
+    const signalRConnection = useSignalR();
     const user = useSelector(getUser)
+    const refreshToken = useAppSelector(getRefreshToken)
     const unreadMesssageCount = useAppSelector(getUnreadedCount)
     const { refetch } = useGetAdminMessagesQuery();
     const items: MenuProps['items'] = [
@@ -39,7 +42,8 @@ export const AdminHeader: React.FC = () => {
             label: 'Вийти',
             key: '3',
             onClick: async () => {
-                await logout({}).unwrap();
+                await signalRConnection?.connection?.invoke("Disconnect");
+                await logout(refreshToken || '').unwrap();
             }
         },
     ];

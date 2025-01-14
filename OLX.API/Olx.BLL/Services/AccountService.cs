@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
@@ -13,6 +14,7 @@ using Olx.BLL.Exceptions;
 using Olx.BLL.Exstensions;
 using Olx.BLL.Helpers;
 using Olx.BLL.Helpers.Email;
+using Olx.BLL.Hubs;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Models.Authentication;
@@ -42,7 +44,9 @@ namespace Olx.BLL.Services
         IValidator<EmailConfirmationModel> emailConfirmationModelValidator,
         IValidator<UserBlockModel> userBlockModelValidator,
         IValidator<UserCreationModel> userCreationModelValidator,
-        IValidator<UserEditModel> userEditModelValidator) : IAccountService
+        IValidator<UserEditModel> userEditModelValidator,
+        IHubContext<MessageHub> hubContext
+        ) : IAccountService
     {
         private async Task<string> CreateRefreshToken(int userId)
         {
@@ -222,7 +226,6 @@ namespace Olx.BLL.Services
 
         public async Task LogoutAsync(string refreshToken)
         {
-            await userManager.UpdateUserActivityAsync(httpContext);
             var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken))
                 ?? throw new HttpException(Errors.InvalidToken ,HttpStatusCode.BadRequest);
             await tokenRepository.DeleteAsync(token.Id);

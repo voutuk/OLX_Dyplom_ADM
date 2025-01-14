@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.CookiePolicy;
 using Olx.BLL.Exstensions;
+using Olx.BLL.Hubs;
 using Olx.DAL.Exstension;
 using OLX.API.Extensions;
-using OLX.API.Hubs;
 using OLX.API.Middlewares;
 using System.Globalization;
 

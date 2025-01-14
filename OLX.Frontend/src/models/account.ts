@@ -1,3 +1,4 @@
+import { HubConnection } from "@microsoft/signalr"
 import { IAdminMesssage } from "./adminMesssage"
 
 export interface IUser {

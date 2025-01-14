@@ -3,6 +3,7 @@ import { createBaseQuery } from "./baseQuery"
 import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IResetPasswordModel } from "../../models/account"
 import { logOut, setCredentials } from '../slices/userSlice';
 
+
 export const accountApi = createApi({
     reducerPath: 'accountApi',
     baseQuery: createBaseQuery('Account'),
@@ -16,14 +17,14 @@ export const accountApi = createApi({
                     url: 'login',
                     method: 'POST',
                     body: data as ILoginRequest,
-                    timeout:10000
+                    timeout: 10000
                 }
             },
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
                     const result = await queryFulfilled;
                     if (result.data && result.data.accessToken) {
-                        dispatch(setCredentials({ token: result.data.accessToken, refreshToken: result.data.refreshToken,remember: arg.remember }))
+                        dispatch(setCredentials({ token: result.data.accessToken, refreshToken: result.data.refreshToken, remember: arg.remember }))
                     }
                 } catch (error) {
                     console.error('Login failed:', error);
@@ -31,12 +32,13 @@ export const accountApi = createApi({
             },
         }),
 
-        logout: builder.mutation({
-            query: () => {
+        logout: builder.mutation<void, string>({
+            query: (token) => {
                 return {
                     url: 'user/logout',
                     method: 'POST',
                     credentials: "include",
+                    body: { refreshToken: token },
                     timeout: 10000
                 }
             },
@@ -61,7 +63,7 @@ export const accountApi = createApi({
                 try {
                     const result = await queryFulfilled;
                     if (result.data && result.data.accessToken) {
-                        dispatch(setCredentials({  token: result.data.accessToken, refreshToken: result.data.refreshToken,remember: arg.remember }))
+                        dispatch(setCredentials({ token: result.data.accessToken, refreshToken: result.data.refreshToken, remember: arg.remember }))
                     }
                 } catch (error) {
                     console.error('Login failed:', error);
