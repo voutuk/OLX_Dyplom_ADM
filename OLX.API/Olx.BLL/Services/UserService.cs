@@ -14,7 +14,7 @@ using Olx.BLL.Pagination.SortData;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
+
 
 namespace Olx.BLL.Services
 {
@@ -60,7 +60,7 @@ namespace Olx.BLL.Services
         {
             var adminsIds = await _getAdminsIds();
             var query = mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery()
-                .Where(x => adminsIds.Any(z => z == x.Id == isAdmin) && (x.LockoutEnd == null || x.LockoutEnd > DateTime.Now))
+                .Where(x => adminsIds.Any(z => z == x.Id == isAdmin) && (x.LockoutEnd == null || x.LockoutEnd < DateTime.Now))
                 .AsNoTracking());
             var paginationBuilder = new PaginationBuilder<OlxUserDto>(query);
             var userFilter = mapper.Map<OlxUserFilter>(userPageRequest);

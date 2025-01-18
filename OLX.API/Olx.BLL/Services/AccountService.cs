@@ -2,7 +2,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
@@ -42,11 +41,8 @@ namespace Olx.BLL.Services
         IImageService imageService,
         IValidator<ResetPasswordModel> resetPasswordModelValidator,
         IValidator<EmailConfirmationModel> emailConfirmationModelValidator,
-        IValidator<UserBlockModel> userBlockModelValidator,
         IValidator<UserCreationModel> userCreationModelValidator,
-        IValidator<UserEditModel> userEditModelValidator,
-        IHubContext<MessageHub> hubContext
-        ) : IAccountService
+        IValidator<UserEditModel> userEditModelValidator) : IAccountService
     {
         private async Task<string> CreateRefreshToken(int userId)
         {
@@ -275,32 +271,42 @@ namespace Olx.BLL.Services
         public async Task BlockUserAsync(UserBlockModel userBlockModel)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
-            userBlockModelValidator.ValidateAndThrow(userBlockModel);
-            var user = await userManager.FindByEmailAsync(userBlockModel.Email);
-            if (user is not null)
+            if (userBlockModel.UserIds.Any())
             {
-                var result = userBlockModel.Block
-                    ? await userManager.SetLockoutEndDateAsync(user, userBlockModel.LockoutEndDate ?? DateTimeOffset.MaxValue)
-                    : await userManager.SetLockoutEndDateAsync(user, null);
-                if (result.Succeeded)
+                var users = await userManager.Users.Where(x => userBlockModel.UserIds.Contains(x.Id)).ToArrayAsync();
+                if (users.Length > 0)
                 {
-                    if (userBlockModel.Block)
+                    foreach (var user in users)
                     {
-                        string lockoutEndMessage = userBlockModel.LockoutEndDate is null
-                            ? "На невизначений термін"
-                            : $"Заблокований до {userBlockModel.LockoutEndDate.Value.ToLongDateString()} {userBlockModel.LockoutEndDate.Value.ToLongTimeString()}";
-                        var accountBlockedTemplate = EmailTemplates.GetAccountBlockedTemplate(userBlockModel.BlockReason ?? "", lockoutEndMessage);
-                        await emailService.SendAsync(user.Email, "Ваш акаунт заблоковано", accountBlockedTemplate, true);
-                    }
-                    else
-                    {
-                        var accountUnblockedTemplate = EmailTemplates.GetAccountUnblockedTemplate();
-                        await emailService.SendAsync(user.Email, "Ваш акаунт розблоковано", accountUnblockedTemplate, true);
+                        if (!await userManager.IsLockedOutAsync(user)) 
+                        {
+                            var result = userBlockModel.Lock
+                                   ? await userManager.SetLockoutEndDateAsync(user, userBlockModel.LockoutEndDate.HasValue ? userBlockModel.LockoutEndDate.Value.ToUniversalTime() : DateTime.MaxValue.ToUniversalTime())
+                                   : await userManager.SetLockoutEndDateAsync(user, null);
+                            if (result.Succeeded)
+                            {
+                                if (userBlockModel.Lock)
+                                {
+                                    string lockoutEndMessage = userBlockModel.LockoutEndDate is null
+                                        ? "На невизначений термін"
+                                        : $"Заблокований до {userBlockModel.LockoutEndDate.Value.ToLongDateString()} {userBlockModel.LockoutEndDate.Value.ToLongTimeString()}";
+                                    var accountBlockedTemplate = EmailTemplates.GetAccountBlockedTemplate(userBlockModel.LockReason ?? "", lockoutEndMessage);
+                                    await emailService.SendAsync(user.Email, "Ваш акаунт заблоковано", accountBlockedTemplate, true);
+                                }
+                                else
+                                {
+                                    var accountUnblockedTemplate = EmailTemplates.GetAccountUnblockedTemplate();
+                                    await emailService.SendAsync(user.Email, "Ваш акаунт розблоковано", accountUnblockedTemplate, true);
+                                }
+                                continue;
+                            }
+                        }
+                        else throw new HttpException(Errors.UserAlreadyLocked, HttpStatusCode.BadRequest);
                     }
                     return;
-                } 
+                }
             }
-            throw new HttpException(Errors.InvalidResetPasswordData, HttpStatusCode.BadRequest);
+            throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
         }
 
         public async Task AddUserAsync(UserCreationModel userModel, bool isAdmin = false)

@@ -18,7 +18,6 @@ export const adminMessageAuthApi = createApi({
                     // timeout: 10000,
                 }
             },
-
         }),
 
         createUserMessage: builder.mutation<IAdminMesssage, IAdminMesssageCreationModel>({
@@ -30,7 +29,6 @@ export const adminMessageAuthApi = createApi({
                     // timeout: 10000,
                 }
             },
-
         }),
 
         getAdminMessages: builder.query<IAdminMesssage[], void>({
@@ -63,7 +61,7 @@ export const adminMessageAuthApi = createApi({
                 }
             },
             providesTags: ["Messeges"],
-            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     const result = await queryFulfilled;
                     if (result.data && result.data.length > 0) {

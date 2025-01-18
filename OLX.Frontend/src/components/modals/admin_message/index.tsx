@@ -1,26 +1,25 @@
 import { Form, Input, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import { useState } from "react";
+import { AdminModalProps } from "../props";
 
 
-interface AdminMessageModalProps {
-    isOpen: boolean,
-    onConfirm: Function
-    onCancel: Function
-    title?: string
-}
-
-const AdminMessage: React.FC<AdminMessageModalProps> = ({ isOpen, onConfirm, onCancel, title }) => {
+const AdminMessage: React.FC<AdminModalProps> = ({ isOpen, onConfirm, onCancel, title }) => {
 
     const [form] = Form.useForm();
+    const [loading,setLoading] = useState<boolean>(false)
 
     const handleOk = async () => {
         form
             .validateFields()
             .then(async (_values) => {
+                setLoading(true)
                 await onConfirm({
-                    message:form.getFieldValue('message'),
-                    subject:form.getFieldValue('subject')})
-                form.resetFields();    
+                    message: form.getFieldValue('message'),
+                    subject: form.getFieldValue('subject')
+                })
+                form.resetFields();
+                setLoading(false)
             })
             .catch((info) => {
                 console.log('Validate Failed:', info);
@@ -40,7 +39,11 @@ const AdminMessage: React.FC<AdminMessageModalProps> = ({ isOpen, onConfirm, onC
             open={isOpen}
             onOk={handleOk}
             onCancel={handleCancel}
-
+            okButtonProps={{
+                loading:loading
+            }}
+            okText="Надіслати"
+            cancelText='Відмінити'
         >
             <Form
                 form={form}

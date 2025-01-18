@@ -1,133 +1,41 @@
 import { PageHeader } from "../../../../components/page_header";
-import { CheckOutlined, ExclamationCircleFilled, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
-import { Modal, Pagination, Table, TableColumnsType } from "antd";
+import { Pagination, Table, TableColumnsType } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../../../models/user";
-import UserAvatar from "../../../../components/user_avatar";
-import { getDateTime } from "../../../../utilities/common_funct";
 import PageHeaderButton from "../../../../components/page_header_button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TableRowSelection } from "antd/es/table/interface";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import AdminMessage from "../../../../components/modals/admin_message";
 import FilterAltOffOutlinedIcon from '@mui/icons-material/FilterAltOffOutlined';
-import RemoveDoneOutlinedIcon from '@mui/icons-material/RemoveDoneOutlined';
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
 import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined';
+import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useCreateAdminMessageMutation } from "../../../../redux/api/adminMessageApi";
 import { toast } from "react-toastify";
-
-const columns: TableColumnsType<IOlxUser> = [
-    {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
-        ellipsis: true,
-        width: 50,
-        fixed: 'left',
-        align: 'center'
-    },
-    {
-        title: 'Фото',
-        dataIndex: 'photo',
-        key: 'photo',
-        ellipsis: true,
-        render: (_, user: IOlxUser) => <UserAvatar user={user} size={40} />,
-        width: 80,
-        fixed: 'left',
-        align: 'center'
-    },
-    {
-        title: "Прізвище",
-        dataIndex: 'lastName',
-        key: 'lastName',
-        ellipsis: true,
-        width: 120,
-        render: (value: string) => <span >{value ? value : "- - - - - - "}</span>,
-        fixed: 'left',
-    },
-    {
-        title: "Ім'я",
-        dataIndex: 'firstName',
-        key: 'firstName',
-        ellipsis: true,
-        width: 120,
-        render: (value: string) => <span >{value ? value : "- - - - - - "}</span>,
-    },
-    {
-        title: "Телефон",
-        dataIndex: 'phoneNumber',
-        key: 'phoneNumber',
-        ellipsis: true,
-        width: 100,
-        render: (value: string, user: IOlxUser) =>
-            <div className="flex gap-5">
-                <span >{value ? value : "- - - - - - "}</span>
-                {user.phoneNumberConfirmed && <CheckOutlined className=" text-green-700" />}
-            </div>,
-        align: 'center'
-    },
-    {
-        title: "Електронна пошта",
-        dataIndex: 'email',
-        key: 'email',
-        ellipsis: true,
-        width: 250,
-        render: (value: string, user: IOlxUser) =>
-            <div className="flex gap-5">
-                <span >{value}</span>
-                {user.emailConfirmed && <CheckOutlined className=" text-green-700" />}
-            </div>
-    },
-
-    {
-        title: "Населений пункт",
-        dataIndex: 'settlementDescrption',
-        key: 'settlementDescrption',
-        width: 150,
-        render: (value: string) => <span >{value ? value : "- - - - - - "}</span>,
-    },
-
-    {
-        title: "Оголошеня",
-        key: 'advertCount',
-        render: (_, user: IOlxUser) => <span >{user.adverts.length}</span>,
-        width: 110,
-        align: 'center'
-    },
-    {
-        title: "Дата реєстрації",
-        dataIndex: 'createdDate',
-        key: 'createdDate',
-        render: (value: string) => <span >{getDateTime(value)}</span>,
-        width: 160,
-        align: 'center'
-    },
-    {
-        title: "Остання активність",
-        dataIndex: 'lastActivity',
-        key: 'lastActivity',
-        render: (value: string) => <span >{getDateTime(value)}</span>,
-        width: 160,
-        align: 'center'
-    },
-    {
-        key: 'actions',
-        ellipsis: true,
-        width: 100,
-        render: () => <span >Actions</span>,
-        fixed: 'right',
-        align: 'center'
-    },
+import { userTableColumns } from "../constants";
+import IconButton from "@mui/material/IconButton/IconButton";
+import Tooltip from "@mui/material/Tooltip/Tooltip";
+import { getUserDescr } from "../../../../utilities/common_funct";
+import { useLockUnlockUsersMutation } from "../../../../redux/api/accountAuthApi";
+import AdminLock from "../../../../components/modals/admin_user_lock";
+import { IUserLockModel } from "../../../../models/account";
 
 
-];
 
 const UsersPage: React.FC = () => {
-    const { confirm } = Modal;
+
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+    const selectedUser = useRef<number | undefined>();
+
     const [sendAdminMesssage] = useCreateAdminMessageMutation();
     const [isAdminMessageOpen, setAminMessageOpen] = useState<boolean>(false);
+    const [isAdminLockOpen, setAminLockOpen] = useState<boolean>(false);
+    const adminModalTitle = useRef<string>('')
+    const [lockUsers] = useLockUnlockUsersMutation();
     const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>({
         size: paginatorConfig.pagination.defaultPageSize,
         page: paginatorConfig.pagination.defaultCurrent,
@@ -139,19 +47,87 @@ const UsersPage: React.FC = () => {
         lastNameSearch: '',
         webSiteSearch: '',
         settlementRefSearch: '',
-
     })
     const { data, isLoading, refetch } = useGetUserPageQuery(pageRequest);
 
-    // const sendMessage = async (message: string) => {
-    //     selectedUsers.forEach(element => console.log(message + ' sended ' + element + '-user'));
-    //     setAminMessageOpen(false)
-    // }
+    const currentTaleColumns: TableColumnsType<IOlxUser> = [
+        {
+            key: 'actions',
+            ellipsis: true,
+            width: 135,
+            render: (_, user: IOlxUser) =>
+                <div className='flex'>
+                    <Tooltip title="Написати повідомлення">
+                        <IconButton onClick={() => sendMessage(user.id)} color="info" size="small">
+                            <MessageOutlinedIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Блокувати">
+                        <IconButton onClick={() => lockUser(user.id)} color="warning" size="small">
+                            <LockOutlinedIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Видалити">
+                        <IconButton color="error" size="small">
+                            <DeleteForeverIcon />
+                        </IconButton>
+                    </Tooltip>
+
+
+                </div>,
+            fixed: 'right',
+            align: 'center'
+        }
+    ]
+    const columns = [...userTableColumns, ...currentTaleColumns]
+
+    const getUserName = (userId: number) => getUserDescr(data?.items.find(x => x.id === userId) || null)
+
+    const sendMessage = async (userId: number) => {
+        adminModalTitle.current = adminModalTitle.current = `Повідомлення для користувача "${getUserName(userId)}"`
+        setAminMessageOpen(true)
+        selectedUser.current = userId;
+    }
+
+    const lockUser = (userId: number) => {
+        selectedUser.current = userId;
+        setAminLockOpen(true)
+    }
+
+    const onLockUsers = async (data: any) => {
+        const result = await lockUsers({
+            userIds: selectedUser.current ? [selectedUser.current] : selectedUsers,
+            lockReason: data.lockReason,
+            lock: true,
+            lockoutEndDate: data.lockEndDate
+        })
+        if (!result.error) {
+            toast(`Користувач${selectedUsers.length > 1 ? 'ів' : 'а'} заблоковано`, {
+                type: 'info',
+                style: { width: 'fit-content' }
+            })
+            setSelectedUsers([])
+            selectedUser.current = undefined;
+            refetch()
+            setAminLockOpen(false)
+        }
+    }
+
+    const onGroupeLockUsers = async () => {
+        if (selectedUsers.length === 1) {
+            adminModalTitle.current = adminModalTitle.current = `Блокування користувача "${getUserName(selectedUsers[0])}"`
+        }
+        else {
+            adminModalTitle.current = "Блокування обраних користувачів"
+        }
+        setAminLockOpen(true)
+    }
 
     const sendGroupeMessage = async (data: any) => {
-        console.log(data.message, data.subject)
         const result = await sendAdminMesssage({
-            userIds: selectedUsers,
+            userIds: selectedUser.current ? [selectedUser.current] : selectedUsers,
             content: data.message,
             subject: data.subject
         })
@@ -161,25 +137,21 @@ const UsersPage: React.FC = () => {
                 style: { width: 'fit-content' }
             })
             setAminMessageOpen(false)
-            setSelectedUsers([])
-
+            selectedUser.current = undefined;
         }
     }
 
     const onGroupeMessageSend = () => {
         if (selectedUsers.length === 0) {
-            confirm({
-                title: 'Відправка повідомлень',
-                icon: <ExclamationCircleFilled />,
-                content: 'Ви не обрали користувачів.Відправити повідомлення всім користувачам?',
-                okText: 'Відправити',
-                cancelText: 'Скасувати',
-                onOk() { setAminMessageOpen(true) }
-            });
+            adminModalTitle.current = "Повідомлення для всіх користувачів"
+        }
+        else if (selectedUsers.length === 1) {
+            adminModalTitle.current = `Повідомлення для користувача "${getUserName(selectedUsers[0])}"`
         }
         else {
-            setAminMessageOpen(true)
+            adminModalTitle.current = "Повідомлення для обраних користувачів"
         }
+        setAminMessageOpen(true)
     }
 
     const pageHeaderButtons = [
@@ -195,8 +167,16 @@ const UsersPage: React.FC = () => {
             key='clear_select'
             onButtonClick={() => setSelectedUsers([])}
             className="w-[35px] h-[35px] bg-red-700"
-            buttonIcon={<RemoveDoneOutlinedIcon className="text-lg" />}
+            buttonIcon={<IndeterminateCheckBoxOutlinedIcon className="text-lg" />}
             tooltipMessage="Очистити вибрані"
+            tooltipColor="gray"
+            disabled={selectedUsers.length === 0} />,
+        <PageHeaderButton
+            key='block_users'
+            onButtonClick={onGroupeLockUsers}
+            className="w-[35px] h-[35px] bg-yellow-700"
+            buttonIcon={<LockOutlinedIcon className="text-lg" />}
+            tooltipMessage="Блокувати акаунт"
             tooltipColor="gray"
             disabled={selectedUsers.length === 0} />,
         <PageHeaderButton
@@ -253,7 +233,12 @@ const UsersPage: React.FC = () => {
                 isOpen={isAdminMessageOpen}
                 onConfirm={sendGroupeMessage}
                 onCancel={() => setAminMessageOpen(false)}
-                title="Нове повідомлення" />
+                title={adminModalTitle.current} />
+            <AdminLock
+                isOpen={isAdminLockOpen}
+                onConfirm={onLockUsers}
+                onCancel={() => setAminLockOpen(false)}
+                title={adminModalTitle.current} />
 
             <PageHeader
                 title="Всі окористувачі"

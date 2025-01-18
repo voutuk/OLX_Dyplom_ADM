@@ -216,4 +216,7 @@
   <data name="InvalidRole" xml:space="preserve">
     <value>Invalid role name</value>
   </data>
+  <data name="UserAlreadyLocked" xml:space="preserve">
+    <value>User already locked</value>
+  </data>
 </root>

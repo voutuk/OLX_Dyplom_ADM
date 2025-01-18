@@ -61,3 +61,10 @@ export interface IResetPasswordModel {
     password: string
 }
 
+export interface IUserLockModel{
+    userIds:number[]
+    lock:boolean
+    lockoutEndDate?:string
+    lockReason?:string
+}
+

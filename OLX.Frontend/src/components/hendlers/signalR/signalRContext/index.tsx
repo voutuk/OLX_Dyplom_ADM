@@ -2,7 +2,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { APP_ENV } from '../../../../constants/env';
 import { useAppSelector } from '../../../../redux';
-import { getToken } from '../../../../redux/slices/userSlice';
+import { getToken, getUser } from '../../../../redux/slices/userSlice';
 
 interface SignalRContextType {
     connection: HubConnection | null | undefined;
@@ -11,6 +11,7 @@ interface SignalRContextType {
 const SignalRContext = createContext<SignalRContextType | null>(null);
 
 export const SignalRProvider: React.FC<{ children: ReactNode | ReactNode[] }> = ({ children }) => {
+    const user = useAppSelector(getUser)
     const token = useAppSelector(getToken)
     const [signalRConnection, setSignalConnection] = useState<HubConnection | null | undefined>();
     const signaConnectionRef = useRef<HubConnection | null | undefined>();
@@ -26,12 +27,18 @@ export const SignalRProvider: React.FC<{ children: ReactNode | ReactNode[] }> = 
         }
     }
 
+    const closeSignalConnection = () => {
+        signalRConnection?.stop();
+        setSignalConnection(null)
+        signaConnectionRef.current = null;
+    }
+
     useEffect(() => {
         (async () => {
             if (token) {
                 const signaConnection = new HubConnectionBuilder()
                     .withUrl(`${APP_ENV.SERVER_HOST}/hub`, {
-                        accessTokenFactory: () => token || ""
+                        accessTokenFactory: () =>  token || ""
                     })
                     .withAutomaticReconnect()
                     .build();
@@ -39,6 +46,11 @@ export const SignalRProvider: React.FC<{ children: ReactNode | ReactNode[] }> = 
                 try {
                     await signaConnection?.start();
                     await signaConnection?.invoke('Connect')
+                    signaConnection?.onreconnecting((error) => {
+                        if (error) {
+                            closeSignalConnection();
+                        }
+                    })
                     signaConnection?.onclose(() => {
                         window.removeEventListener("beforeunload", tabCloseListener);
                     })
@@ -53,9 +65,7 @@ export const SignalRProvider: React.FC<{ children: ReactNode | ReactNode[] }> = 
                 signaConnectionRef.current = signaConnection;
             }
             else {
-                signalRConnection?.stop();
-                setSignalConnection(null)
-                signaConnectionRef.current = null;
+                closeSignalConnection();
             }
         })()
 

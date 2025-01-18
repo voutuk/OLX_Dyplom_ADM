@@ -14,7 +14,7 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
         switch (error.status) {
             case 423:
                 if (error.data?.Message && error.data?.UnlockTime) {
-                    toast(`До ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`, {
+                    toast(`${error.data?.Message} до ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`, {
                         type: 'info',
                         style: { width: 'fit-content' }
                     })
