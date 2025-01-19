@@ -8,6 +8,7 @@ import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { toast } from 'react-toastify';
 import { IError, IUserLockoutError } from '../../../models/errors';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
+import PrimaryButton from '../../../components/primary_button';
 
 const loginAction: string = 'login'
 
@@ -126,13 +127,9 @@ const LoginPage: React.FC = () => {
           <Checkbox onChange={(event) => { remeber.current = event.target.checked }}>Запам'ятати мене</Checkbox>
         </Form.Item>
 
-        <Button loading={isLoading} className='mt-3' style={{ width: 200 }} type="primary" htmlType="submit">
-          Увійти
-        </Button>
-
-        <Button loading={isGoogleLoading} className='mt-3' onClick={() => glLogin()} style={{ width: 200 }} type="primary" >
-          Увійти з Google
-        </Button>
+        
+        <PrimaryButton title='Увійти' htmlType='submit' isLoading={isLoading}/>
+        <PrimaryButton title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading}/>
 
         <Button onClick={() => navigate('password')} className='mt-3' color="primary" variant="link">
           Забули пароль ?
