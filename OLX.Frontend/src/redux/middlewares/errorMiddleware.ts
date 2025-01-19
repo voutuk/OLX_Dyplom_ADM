@@ -13,8 +13,12 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
         const error: IError = action.payload as IError;
         switch (error.status) {
             case 423:
-                if (error.data?.Message && error.data?.UnlockTime) {
-                    toast(`${error.data?.Message} до ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`, {
+                if (error.data?.Message) {
+                    const lockMessage  =  error.data?.UnlockTime 
+                    ?`до  ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`
+                    : "На невизначений термін"
+
+                    toast(`${error.data?.Message} ${lockMessage}`, {
                         type: 'info',
                         style: { width: 'fit-content' }
                     })

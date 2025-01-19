@@ -223,6 +223,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на User already has current locked status.
+        /// </summary>
+        internal static string InvalidLockedOperation {
+            get {
+                return ResourceManager.GetString("InvalidLockedOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Невірний логін або пароль.
         /// </summary>
         internal static string InvalidLoginData {
@@ -336,15 +345,6 @@ namespace Olx.BLL.Resources {
         internal static string ReCapthcaValidationError {
             get {
                 return ResourceManager.GetString("ReCapthcaValidationError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на User already locked.
-        /// </summary>
-        internal static string UserAlreadyLocked {
-            get {
-                return ResourceManager.GetString("UserAlreadyLocked", resourceCulture);
             }
         }
         

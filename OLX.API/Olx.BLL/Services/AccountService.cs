@@ -13,14 +13,12 @@ using Olx.BLL.Exceptions;
 using Olx.BLL.Exstensions;
 using Olx.BLL.Helpers;
 using Olx.BLL.Helpers.Email;
-using Olx.BLL.Hubs;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
 using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
-using Olx.BLL.Validators;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -107,12 +105,13 @@ namespace Olx.BLL.Services
 
         private async Task CheckLockedOutAsync(OlxUser user)
         {
+            
             if (await userManager.IsLockedOutAsync(user))
             {
                 throw new HttpException(HttpStatusCode.Locked, new UserBlockInfo
                 {
                     Message = "Ваш обліковий запис заблокований.",
-                    UnlockTime = user.LockoutEnd.HasValue && user.LockoutEnd.Value != DateTimeOffset.MaxValue ? user.LockoutEnd.Value.LocalDateTime : null
+                    UnlockTime = user.LockoutEnd.HasValue && user.LockoutEnd.Value.Year < 9000 ? user.LockoutEnd.Value.LocalDateTime : null
                 });
             }
         }
@@ -272,36 +271,38 @@ namespace Olx.BLL.Services
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             if (userBlockModel.UserIds.Any())
-            {
+            { 
                 var users = await userManager.Users.Where(x => userBlockModel.UserIds.Contains(x.Id)).ToArrayAsync();
                 if (users.Length > 0)
                 {
                     foreach (var user in users)
                     {
-                        if (!await userManager.IsLockedOutAsync(user)) 
+                        bool userLocked = await userManager.IsLockedOutAsync(user);
+                        if (!userLocked && userBlockModel.Lock)
                         {
-                            var result = userBlockModel.Lock
-                                   ? await userManager.SetLockoutEndDateAsync(user, userBlockModel.LockoutEndDate.HasValue ? userBlockModel.LockoutEndDate.Value.ToUniversalTime() : DateTime.MaxValue.ToUniversalTime())
-                                   : await userManager.SetLockoutEndDateAsync(user, null);
+                            var result = await userManager.SetLockoutEndDateAsync(user, userBlockModel.LockoutEndDate.HasValue ? userBlockModel.LockoutEndDate.Value.ToUniversalTime() : DateTime.MaxValue.ToUniversalTime());
                             if (result.Succeeded)
                             {
-                                if (userBlockModel.Lock)
-                                {
-                                    string lockoutEndMessage = userBlockModel.LockoutEndDate is null
-                                        ? "На невизначений термін"
-                                        : $"Заблокований до {userBlockModel.LockoutEndDate.Value.ToLongDateString()} {userBlockModel.LockoutEndDate.Value.ToLongTimeString()}";
-                                    var accountBlockedTemplate = EmailTemplates.GetAccountBlockedTemplate(userBlockModel.LockReason ?? "", lockoutEndMessage);
-                                    await emailService.SendAsync(user.Email, "Ваш акаунт заблоковано", accountBlockedTemplate, true);
-                                }
-                                else
-                                {
-                                    var accountUnblockedTemplate = EmailTemplates.GetAccountUnblockedTemplate();
-                                    await emailService.SendAsync(user.Email, "Ваш акаунт розблоковано", accountUnblockedTemplate, true);
-                                }
+
+                                string lockoutEndMessage = userBlockModel.LockoutEndDate is null
+                                    ? "На невизначений термін"
+                                    : $"Заблокований до {userBlockModel.LockoutEndDate.Value.ToLongDateString()} {userBlockModel.LockoutEndDate.Value.ToLongTimeString()}";
+                                var accountBlockedTemplate = EmailTemplates.GetAccountBlockedTemplate(userBlockModel.LockReason ?? "", lockoutEndMessage);
+                                await emailService.SendAsync(user.Email, "Ваш акаунт заблоковано", accountBlockedTemplate, true);
                                 continue;
                             }
                         }
-                        else throw new HttpException(Errors.UserAlreadyLocked, HttpStatusCode.BadRequest);
+                        else if (userLocked && !userBlockModel.Lock)
+                        {
+                            var result = await userManager.SetLockoutEndDateAsync(user, null);
+                            if (result.Succeeded)
+                            {
+                                var accountUnblockedTemplate = EmailTemplates.GetAccountUnblockedTemplate();
+                                await emailService.SendAsync(user.Email, "Ваш акаунт розблоковано", accountUnblockedTemplate, true);
+                                continue;
+                            }
+                        }
+                        else throw new HttpException(Errors.InvalidLockedOperation, HttpStatusCode.BadRequest);
                     }
                     return;
                 }
@@ -309,7 +310,7 @@ namespace Olx.BLL.Services
             throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
         }
 
-        public async Task AddUserAsync(UserCreationModel userModel, bool isAdmin = false)
+    public async Task AddUserAsync(UserCreationModel userModel, bool isAdmin = false)
         {
             if (isAdmin)
             {

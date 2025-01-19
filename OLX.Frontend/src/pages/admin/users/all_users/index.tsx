@@ -1,41 +1,46 @@
 import { PageHeader } from "../../../../components/page_header";
 import { UserOutlined } from '@ant-design/icons';
-import { useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
-import { Pagination, Table, TableColumnsType } from "antd";
+import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
+import { Modal, TableProps } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../../../models/user";
 import PageHeaderButton from "../../../../components/page_header_button";
 import { useEffect, useRef, useState } from "react";
-import { TableRowSelection } from "antd/es/table/interface";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import AdminMessage from "../../../../components/modals/admin_message";
-import FilterAltOffOutlinedIcon from '@mui/icons-material/FilterAltOffOutlined';
-import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
-import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined';
-import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useCreateAdminMessageMutation } from "../../../../redux/api/adminMessageApi";
 import { toast } from "react-toastify";
-import { userTableColumns } from "../constants";
 import IconButton from "@mui/material/IconButton/IconButton";
 import Tooltip from "@mui/material/Tooltip/Tooltip";
 import { getUserDescr } from "../../../../utilities/common_funct";
 import { useLockUnlockUsersMutation } from "../../../../redux/api/accountAuthApi";
 import AdminLock from "../../../../components/modals/admin_user_lock";
-import { IUserLockModel } from "../../../../models/account";
-
+import UserTable from "../../../../components/user_table/intedx";
+import {
+    SearchOff,
+    MessageOutlined,
+    CachedOutlined,
+    IndeterminateCheckBoxOutlined,
+    DeleteForever,
+    LockOutlined,
+    LockOpen
+} from "@mui/icons-material";
+import { useLocation } from "react-router-dom";
+import { useAppDispatch } from "../../../../redux";
+import { userAuthApi } from '../../../../redux/api/userAuthApi';
 
 
 const UsersPage: React.FC = () => {
-
+    const location = useLocation();
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+    const [headerTitle, setHeaderTitle] = useState<string>()
     const selectedUser = useRef<number | undefined>();
-
+    const [modal, contextHolder] = Modal.useModal();
     const [sendAdminMesssage] = useCreateAdminMessageMutation();
     const [isAdminMessageOpen, setAminMessageOpen] = useState<boolean>(false);
     const [isAdminLockOpen, setAminLockOpen] = useState<boolean>(false);
     const adminModalTitle = useRef<string>('')
     const [lockUsers] = useLockUnlockUsersMutation();
+    const dispatch = useAppDispatch();
     const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>({
         size: paginatorConfig.pagination.defaultPageSize,
         page: paginatorConfig.pagination.defaultCurrent,
@@ -48,40 +53,41 @@ const UsersPage: React.FC = () => {
         webSiteSearch: '',
         settlementRefSearch: '',
     })
-    const { data, isLoading, refetch } = useGetUserPageQuery(pageRequest);
+    const getUsers = useGetUserPageQuery(pageRequest);
+    const getAdmins = useGetAdminPageQuery(pageRequest);
+    const getLockedUsers = useGetLockedUserPageQuery(pageRequest);
+    const { data, isLoading, refetch } = location.pathname === '/admin'
+        ? getUsers
+        : location.pathname === '/admin/admins'
+            ? getAdmins
+            : getLockedUsers
 
-    const currentTaleColumns: TableColumnsType<IOlxUser> = [
-        {
-            key: 'actions',
-            ellipsis: true,
-            width: 135,
-            render: (_, user: IOlxUser) =>
-                <div className='flex'>
+
+
+    const actions = (_value: any, user: IOlxUser) =>
+        <div className='flex justify-around'>
+            {(location.pathname !== '/admin/admins') &&
+                <>
                     <Tooltip title="Написати повідомлення">
                         <IconButton onClick={() => sendMessage(user.id)} color="info" size="small">
-                            <MessageOutlinedIcon />
+                            <MessageOutlined />
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Блокувати">
-                        <IconButton onClick={() => lockUser(user.id)} color="warning" size="small">
-                            <LockOutlinedIcon />
+                    <Tooltip title={location.pathname !== '/admin/blocked' ? "Блокувати" : "Розблокувати"}>
+                        <IconButton onClick={() => location.pathname !== '/admin/blocked' ? lockUser(user.id) : unLockUser(user.id)} color="warning" size="small">
+                            {location.pathname !== '/admin/blocked' ? <LockOutlined /> : <LockOpen />}
                         </IconButton>
                     </Tooltip>
+                </>
+            }
+            <Tooltip title="Видалити">
+                <IconButton color="error" size="small">
+                    <DeleteForever />
+                </IconButton>
+            </Tooltip>
+        </div>
 
-                    <Tooltip title="Видалити">
-                        <IconButton color="error" size="small">
-                            <DeleteForeverIcon />
-                        </IconButton>
-                    </Tooltip>
-
-
-                </div>,
-            fixed: 'right',
-            align: 'center'
-        }
-    ]
-    const columns = [...userTableColumns, ...currentTaleColumns]
 
     const getUserName = (userId: number) => getUserDescr(data?.items.find(x => x.id === userId) || null)
 
@@ -94,6 +100,11 @@ const UsersPage: React.FC = () => {
     const lockUser = (userId: number) => {
         selectedUser.current = userId;
         setAminLockOpen(true)
+    }
+
+    const unLockUser = (userId: number) => {
+        selectedUser.current = userId;
+        onGroupeUnLockUsers();
     }
 
     const onLockUsers = async (data: any) => {
@@ -111,6 +122,7 @@ const UsersPage: React.FC = () => {
             setSelectedUsers([])
             selectedUser.current = undefined;
             refetch()
+            dispatch(userAuthApi.util.invalidateTags(['LockedUsers']));
             setAminLockOpen(false)
         }
     }
@@ -123,6 +135,34 @@ const UsersPage: React.FC = () => {
             adminModalTitle.current = "Блокування обраних користувачів"
         }
         setAminLockOpen(true)
+    }
+
+    const unlockUsers = async () => {
+        const result = await lockUsers({
+            userIds: selectedUser.current ? [selectedUser.current] : selectedUsers,
+            lock: false,
+        })
+        if (!result.error) {
+            toast(`Користувач${selectedUsers.length > 1 ? 'ів' : 'а'} розблоковано`, {
+                type: 'info',
+                style: { width: 'fit-content' }
+            })
+            setSelectedUsers([])
+            selectedUser.current = undefined;
+            refetch()
+            dispatch(userAuthApi.util.invalidateTags(['Users']));
+        }
+    }
+
+    const onGroupeUnLockUsers = async () => {
+        modal.confirm({
+            title: `Розблокування ${selectedUser || selectedUsers.length === 1 ? " користувача" : " користувачів"}`,
+            icon: <LockOpen />,
+            content: `Розблокувати обран${selectedUser || selectedUsers.length === 1 ? "ого користувача" : "их користувачів"}?`,
+            okText: 'Розблокувати',
+            cancelText: 'Відмінити',
+            onOk: unlockUsers
+        });
     }
 
     const sendGroupeMessage = async (data: any) => {
@@ -157,69 +197,65 @@ const UsersPage: React.FC = () => {
     const pageHeaderButtons = [
         <PageHeaderButton
             key='clear_filter'
-            onButtonClick={() => { }}
+            onButtonClick={() => {
+                setPageRequest((prev) => ({
+                    ...prev,
+                    emailSearch: '',
+                    phoneNumberSearch: '',
+                    firstNameSearch: '',
+                    lastNameSearch: '',
+                    webSiteSearch: '',
+                    settlementRefSearch: ''
+                }))
+            }}
             className="w-[35px] h-[35px] bg-red-900"
-            buttonIcon={<FilterAltOffOutlinedIcon className="text-lg" />}
+            buttonIcon={<SearchOff className="text-lg" />}
             tooltipMessage="Очистити фільтри"
             tooltipColor="gray"
-            disabled={false} />,
+            disabled={
+                pageRequest.emailSearch === '' &&
+                pageRequest.phoneNumberSearch === '' &&
+                pageRequest.firstNameSearch === '' &&
+                pageRequest.lastNameSearch === '' &&
+                pageRequest.webSiteSearch === '' &&
+                pageRequest.settlementRefSearch === ''} />,
         <PageHeaderButton
             key='clear_select'
             onButtonClick={() => setSelectedUsers([])}
             className="w-[35px] h-[35px] bg-red-700"
-            buttonIcon={<IndeterminateCheckBoxOutlinedIcon className="text-lg" />}
+            buttonIcon={<IndeterminateCheckBoxOutlined className="text-lg" />}
             tooltipMessage="Очистити вибрані"
             tooltipColor="gray"
             disabled={selectedUsers.length === 0} />,
         <PageHeaderButton
             key='block_users'
-            onButtonClick={onGroupeLockUsers}
+            onButtonClick={location.pathname !== '/admin/blocked' ? onGroupeLockUsers : onGroupeUnLockUsers}
             className="w-[35px] h-[35px] bg-yellow-700"
-            buttonIcon={<LockOutlinedIcon className="text-lg" />}
-            tooltipMessage="Блокувати акаунт"
+            buttonIcon={location.pathname !== '/admin/blocked' ? <LockOutlined className="text-lg" /> : <LockOpen className="text-lg" />}
+            tooltipMessage={location.pathname !== '/admin/blocked' ? "Блокувати акаунт" : "Розблокувати акаунт"}
             tooltipColor="gray"
-            disabled={selectedUsers.length === 0} />,
+            disabled={selectedUsers.length === 0 || location.pathname === '/admin/admins'} />,
         <PageHeaderButton
             key='send_message'
             onButtonClick={onGroupeMessageSend}
             className="w-[35px] h-[35px] bg-orange-500"
-            buttonIcon={<MessageOutlinedIcon className="text-lg" />}
+            buttonIcon={<MessageOutlined className="text-lg" />}
             tooltipMessage="Написати повідомлення"
-            tooltipColor="gray" />,
+            tooltipColor="gray"
+            disabled={location.pathname === '/admin/admins'} />,
         <PageHeaderButton
             key='reload'
             onButtonClick={refetch}
             className="w-[35px] h-[35px] bg-green-700"
-            buttonIcon={<CachedOutlinedIcon className="text-lg" />}
+            buttonIcon={<CachedOutlined className="text-lg" />}
             tooltipMessage="Перезавантажити"
             tooltipColor="gray" />,
-
     ]
 
     const onPaginationChange = (currentPage: number, pageSize: number) => {
         setPageRequest({ ...pageRequest, page: currentPage, size: pageSize })
     }
 
-    const rowSelection: TableRowSelection<IOlxUser> = {
-        selectedRowKeys: selectedUsers.map(x => x as React.Key),
-        onSelect: (record, selected, _selectedRows) => {
-            if (selected) {
-                setSelectedUsers((prev) => [...prev, record.id])
-            }
-            else {
-                setSelectedUsers(selectedUsers.filter(x => x !== record.id))
-            }
-        },
-        onSelectAll: (selected, _selectedRows, changeRows) => {
-            if (selected) {
-                const selected = changeRows?.map(x => x.id) || []
-                setSelectedUsers((prev) => [...prev, ...selected])
-            } else {
-                const selected = selectedUsers.filter(z => !changeRows.some(x => x.id === z))
-                setSelectedUsers(selected)
-            }
-        }
-    }
 
     useEffect(() => {
         (async () => {
@@ -227,48 +263,59 @@ const UsersPage: React.FC = () => {
         })()
     }, [pageRequest])
 
+    useEffect(() => {
+        location.pathname === '/admin'
+            ? setHeaderTitle('Всі користувачі')
+            : location.pathname === '/admin/admins'
+                ? setHeaderTitle('Адміністратори')
+                : setHeaderTitle('Заблоковані користувачі')
+    }, [location.pathname])
+
+    const onTableChange: TableProps<IOlxUser>['onChange'] = (pagination, filters, sorter, extra) => {
+        console.log(pagination, filters, sorter, extra)
+    }
+
+    const onSearch = (value: IOlxUserPageRequest) => {
+        setPageRequest(value);
+    }
+
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
-            <AdminMessage
-                isOpen={isAdminMessageOpen}
-                onConfirm={sendGroupeMessage}
-                onCancel={() => setAminMessageOpen(false)}
-                title={adminModalTitle.current} />
-            <AdminLock
-                isOpen={isAdminLockOpen}
-                onConfirm={onLockUsers}
-                onCancel={() => setAminLockOpen(false)}
-                title={adminModalTitle.current} />
+            {contextHolder}
+            {location.pathname !== '/admin/admins' &&
+                <>
+                    <AdminMessage
+                        isOpen={isAdminMessageOpen}
+                        onConfirm={sendGroupeMessage}
+                        onCancel={() => setAminMessageOpen(false)}
+                        title={adminModalTitle.current} />
+                    <AdminLock
+                        isOpen={isAdminLockOpen}
+                        onConfirm={onLockUsers}
+                        onCancel={() => setAminLockOpen(false)}
+                        title={adminModalTitle.current} />
+                </>
+            }
 
             <PageHeader
-                title="Всі окористувачі"
+                title={headerTitle}
                 icon={<UserOutlined className="text-2xl" />}
                 buttons={pageHeaderButtons} />
 
-            <Table<IOlxUser>
-                rowKey="id"
-                columns={columns}
-                dataSource={data?.items}
-                scroll={{ x: 1000 }}
-                loading={isLoading}
-                bordered
-                rowSelection={rowSelection}
-                pagination={false} />
-
-            {(data?.total && data?.total > 0) &&
-                <Pagination
-                    align="center"
-                    showSizeChanger
-                    showQuickJumper
-                    pageSizeOptions={paginatorConfig.pagination.pageSizeOptions}
-                    locale={paginatorConfig.pagination.locale}
-                    showTotal={paginatorConfig.pagination.showTotal}
-                    current={pageRequest.page}
-                    total={data.total}
-                    pageSize={pageRequest.size}
-                    onChange={onPaginationChange}
-                    className='mt-4' />
-            }
+            <UserTable
+                selectedUsers={selectedUsers}
+                pageResponse={data}
+                pageRequest={pageRequest}
+                actions={actions}
+                isLoading={isLoading}
+                onRowSelection={setSelectedUsers}
+                onTableChange={onTableChange}
+                page={pageRequest.page}
+                total={data?.total || 0}
+                size={pageRequest.size}
+                onPaginationChange={onPaginationChange}
+                onSearch={onSearch}
+                selected={location.pathname !== '/admin/admins'} />
         </div>
     );
 };

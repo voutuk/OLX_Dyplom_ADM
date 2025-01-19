@@ -10,6 +10,6 @@ namespace Olx.BLL.Interfaces
         Task<IEnumerable<OlxUserDto>> Get(bool isAdmin = false);
         Task<IEnumerable<OlxUserDto>> GetLocked();
         Task<OlxUserDto> Get(int id, bool isAdmin = false);
-        Task<PageResponse<OlxUserDto>> Get(UserPageRequest userPageRequest, bool isAdmin = false);
+        Task<PageResponse<OlxUserDto>> Get(UserPageRequest userPageRequest, bool isAdmin = false,bool isLocked = false);
     }
 }

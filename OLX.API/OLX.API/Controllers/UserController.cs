@@ -32,5 +32,8 @@ namespace OLX.API.Controllers
         [HttpPost("get/page")]
         public async Task<IActionResult> GetPage([FromForm] UserPageRequest pageRequest) => Ok(await userService.Get(pageRequest));
 
+        [HttpPost("get/locked/page")]
+        public async Task<IActionResult> GetLockedPage([FromForm] UserPageRequest pageRequest) => Ok(await userService.Get(pageRequest,isLocked:true));
+
     }
 }

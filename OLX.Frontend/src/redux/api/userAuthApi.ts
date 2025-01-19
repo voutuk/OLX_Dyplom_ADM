@@ -7,7 +7,7 @@ import { getFormData } from "../../utilities/common_funct";
 export const userAuthApi = createApi({
     reducerPath: 'userAuthApi',
     baseQuery: createBaseQueryWithAuth('User'),
-    tagTypes: ['Users', 'Admins'],
+    tagTypes: ['Users', 'Admins','LockedUsers'],
     endpoints: (builder) => ({
 
         getUsers: builder.query<IOlxUser[], void>({
@@ -29,7 +29,7 @@ export const userAuthApi = createApi({
                    // timeout: 10000,
                 }
             },
-            providesTags: ["Users"]
+            providesTags: ["LockedUsers"]
         }),
 
         getAdmins: builder.query<IOlxUser[], void>({
@@ -71,7 +71,7 @@ export const userAuthApi = createApi({
                     url: `get/admin/page`,
                     method: 'POST',
                   //  timeout: 10000,
-                    body: pageRequest
+                    body: getFormData(pageRequest)
                 }
             },
             providesTags: ["Admins"]
@@ -88,6 +88,18 @@ export const userAuthApi = createApi({
             },
             providesTags: ["Users"]
         }),
+
+        getLockedUserPage: builder.query<IOlxUserPageResponse<IOlxUser>,IOlxUserPageRequest>({
+            query: (pageRequest) => {
+                return {
+                    url: `get/locked/page`,
+                    method: 'POST',
+                   // timeout: 10000,
+                    body: getFormData(pageRequest)
+                }
+            },
+            providesTags: ["LockedUsers"]
+        }),
     }),
 })
 export const {
@@ -97,4 +109,5 @@ export const {
     useGetAdminsQuery,
     useGetLockedUsersQuery,
     useGetUserPageQuery,
-    useGetUsersQuery } = userAuthApi
+    useGetUsersQuery,
+    useGetLockedUserPageQuery } = userAuthApi
