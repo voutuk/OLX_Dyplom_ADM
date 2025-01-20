@@ -44,11 +44,12 @@ const AdminMessage: React.FC<AdminModalProps> = ({ isOpen, onConfirm, onCancel, 
             }}
             okText="Надіслати"
             cancelText='Відмінити'
+            
         >
             <Form
                 form={form}
                 layout="vertical"
-                name="modalForm"
+                name="messageModalForm"
                 initialValues={{
                     message: ''
                 }}

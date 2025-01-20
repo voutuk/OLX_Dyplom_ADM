@@ -98,6 +98,7 @@ const UsersPage: React.FC = () => {
 
     const lockUser = (userId: number) => {
         selectedUser.current = userId;
+        adminModalTitle.current = adminModalTitle.current = `Блокування користувача "${getUserName( selectedUser.current)}"`
         setAminLockOpen(true)
     }
 
@@ -127,8 +128,8 @@ const UsersPage: React.FC = () => {
     }
 
     const onGroupeLockUsers = async () => {
-        if (selectedUsers.length === 1) {
-            adminModalTitle.current = adminModalTitle.current = `Блокування користувача "${getUserName(selectedUsers[0])}"`
+        if ( selectedUsers.length === 1) {
+            adminModalTitle.current = adminModalTitle.current = `Блокування користувача "${getUserName( selectedUsers[0])}"`
         }
         else {
             adminModalTitle.current = "Блокування обраних користувачів"
@@ -155,9 +156,9 @@ const UsersPage: React.FC = () => {
 
     const onGroupeUnLockUsers = async () => {
         modal.confirm({
-            title: `Розблокування ${selectedUser || selectedUsers.length === 1 ? " користувача" : " користувачів"}`,
+            title: `Розблокування ${selectedUser.current || selectedUsers.length === 1 ? " користувача" : " користувачів"}`,
             icon: <LockOpen />,
-            content: `Розблокувати обран${selectedUser || selectedUsers.length === 1 ? "ого користувача" : "их користувачів"}?`,
+            content: `Розблокувати обран${selectedUser.current || selectedUsers.length === 1 ? "ого користувача" : "их користувачів"}?`,
             okText: 'Розблокувати',
             cancelText: 'Відмінити',
             onOk: unlockUsers

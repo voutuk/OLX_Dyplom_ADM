@@ -17,7 +17,6 @@ const AdminLock: React.FC<AdminModalProps> = ({ isOpen, onConfirm, onCancel, tit
                 setLoading(true)
                 const lockEndTime = form.getFieldValue('lockEndTime');
                 const lockEndDate = form.getFieldValue('lockEndDate');
-                console.log(lockEndDate, lockEndTime)
                 let lockDate: any
                 if (lockEndDate && lockEndTime) {
                     lockDate = dayjs(`${lockEndDate.format('YYYY-MM-DD')} ${lockEndTime.format('HH:mm')}`).toISOString();
@@ -65,7 +64,7 @@ const AdminLock: React.FC<AdminModalProps> = ({ isOpen, onConfirm, onCancel, tit
             <Form
                 form={form}
                 layout="vertical"
-                name="modalForm"
+                name="lockmodalForm"
                 initialValues={{
                     lockReason: ''
 
