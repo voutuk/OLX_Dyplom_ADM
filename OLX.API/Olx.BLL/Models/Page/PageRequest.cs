@@ -4,7 +4,7 @@
     {
         public int Size { get; init; }
         public int Page { get; init; }
-        public int SortIndex { get; init; }
+        public string? SortKey { get; init; } = string.Empty;
         public bool IsDescending { get; init; }
     }
 }

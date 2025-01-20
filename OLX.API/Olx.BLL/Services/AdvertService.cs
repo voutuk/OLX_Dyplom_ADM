@@ -127,7 +127,7 @@ namespace Olx.BLL.Services
                 .Include(x => x.Images);
             var paginationBuilder = new PaginationBuilder<Advert>(query);
             var filter = mapper.Map<AdvertFilter>(pageRequest);
-            var sortData = new AdvertSortData(pageRequest.IsDescending, pageRequest.SortIndex);
+            var sortData = new AdvertSortData(pageRequest.IsDescending, pageRequest.SortKey);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page, pageRequest.Size, filter, sortData);
             return new()
             {

@@ -26,12 +26,18 @@ export const SignalRProvider: React.FC<{ children: ReactNode | ReactNode[] }> = 
         }
     }
 
+    const closeSignalConnection = () => {
+        signalRConnection?.stop();
+        setSignalConnection(null)
+        signaConnectionRef.current = null;
+    }
+
     useEffect(() => {
         (async () => {
             if (token) {
                 const signaConnection = new HubConnectionBuilder()
                     .withUrl(`${APP_ENV.SERVER_HOST}/hub`, {
-                        accessTokenFactory: () => token || ""
+                        accessTokenFactory: () =>  token || ""
                     })
                     .withAutomaticReconnect()
                     .build();
@@ -53,9 +59,7 @@ export const SignalRProvider: React.FC<{ children: ReactNode | ReactNode[] }> = 
                 signaConnectionRef.current = signaConnection;
             }
             else {
-                signalRConnection?.stop();
-                setSignalConnection(null)
-                signaConnectionRef.current = null;
+                closeSignalConnection();
             }
         })()
 

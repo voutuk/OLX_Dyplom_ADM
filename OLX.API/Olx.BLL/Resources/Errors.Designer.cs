@@ -22,21 +22,21 @@ namespace Olx.BLL.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Errors {
+    internal class Errors {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public Errors() {
+        internal Errors() {
         }
         
         /// <summary>
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Olx.BLL.Resources.Errors", typeof(Errors).Assembly);
@@ -51,7 +51,7 @@ namespace Olx.BLL.Resources {
         ///   обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Action blocked.
         /// </summary>
-        public static string ActionBlocked {
+        internal static string ActionBlocked {
             get {
                 return ResourceManager.GetString("ActionBlocked", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Advert is blocked.
         /// </summary>
-        public static string AdvertIsBlocked {
+        internal static string AdvertIsBlocked {
             get {
                 return ResourceManager.GetString("AdvertIsBlocked", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Current password is not valid.
         /// </summary>
-        public static string CurrentPasswordIsNotValid {
+        internal static string CurrentPasswordIsNotValid {
             get {
                 return ResourceManager.GetString("CurrentPasswordIsNotValid", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Email already in use.
         /// </summary>
-        public static string EmailAlreadyExist {
+        internal static string EmailAlreadyExist {
             get {
                 return ResourceManager.GetString("EmailAlreadyExist", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Error authorized user.
         /// </summary>
-        public static string ErrorAthorizedUser {
+        internal static string ErrorAthorizedUser {
             get {
                 return ResourceManager.GetString("ErrorAthorizedUser", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Image sizes not initializing.
         /// </summary>
-        public static string ImageSizesInitError {
+        internal static string ImageSizesInitError {
             get {
                 return ResourceManager.GetString("ImageSizesInitError", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Error read image sizes.
         /// </summary>
-        public static string ImageSizesReadError {
+        internal static string ImageSizesReadError {
             get {
                 return ResourceManager.GetString("ImageSizesReadError", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на InvalidAdminMessageId.
         /// </summary>
-        public static string InvalidAdminMessageId {
+        internal static string InvalidAdminMessageId {
             get {
                 return ResourceManager.GetString("InvalidAdminMessageId", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid advert id.
         /// </summary>
-        public static string InvalidAdvertId {
+        internal static string InvalidAdvertId {
             get {
                 return ResourceManager.GetString("InvalidAdvertId", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid area ref.
         /// </summary>
-        public static string InvalidAreaRef {
+        internal static string InvalidAreaRef {
             get {
                 return ResourceManager.GetString("InvalidAreaRef", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid category id.
         /// </summary>
-        public static string InvalidCategoryId {
+        internal static string InvalidCategoryId {
             get {
                 return ResourceManager.GetString("InvalidCategoryId", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid chat id.
         /// </summary>
-        public static string InvalidChatId {
+        internal static string InvalidChatId {
             get {
                 return ResourceManager.GetString("InvalidChatId", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid chatt id.
         /// </summary>
-        public static string InvalidChattId {
+        internal static string InvalidChattId {
             get {
                 return ResourceManager.GetString("InvalidChattId", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Confirmation data error.
         /// </summary>
-        public static string InvalidConfirmationData {
+        internal static string InvalidConfirmationData {
             get {
                 return ResourceManager.GetString("InvalidConfirmationData", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на fdghdfghhfd.
         /// </summary>
-        public static string Invalidfghbsdfghdfg {
+        internal static string Invalidfghbsdfghdfg {
             get {
                 return ResourceManager.GetString("Invalidfghbsdfghdfg", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid filter creation model data.
         /// </summary>
-        public static string InvalidFilterCreationModelData {
+        internal static string InvalidFilterCreationModelData {
             get {
                 return ResourceManager.GetString("InvalidFilterCreationModelData", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid filter id.
         /// </summary>
-        public static string InvalidFilterId {
+        internal static string InvalidFilterId {
             get {
                 return ResourceManager.GetString("InvalidFilterId", resourceCulture);
             }
@@ -216,16 +216,25 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid filter value id.
         /// </summary>
-        public static string InvalidFilterValueId {
+        internal static string InvalidFilterValueId {
             get {
                 return ResourceManager.GetString("InvalidFilterValueId", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на User already has current locked status.
+        /// </summary>
+        internal static string InvalidLockedOperation {
+            get {
+                return ResourceManager.GetString("InvalidLockedOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Невірний логін або пароль.
         /// </summary>
-        public static string InvalidLoginData {
+        internal static string InvalidLoginData {
             get {
                 return ResourceManager.GetString("InvalidLoginData", resourceCulture);
             }
@@ -234,7 +243,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid region ref.
         /// </summary>
-        public static string InvalidRegionRef {
+        internal static string InvalidRegionRef {
             get {
                 return ResourceManager.GetString("InvalidRegionRef", resourceCulture);
             }
@@ -243,7 +252,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid reser password data.
         /// </summary>
-        public static string InvalidResetPasswordData {
+        internal static string InvalidResetPasswordData {
             get {
                 return ResourceManager.GetString("InvalidResetPasswordData", resourceCulture);
             }
@@ -252,7 +261,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid role name.
         /// </summary>
-        public static string InvalidRole {
+        internal static string InvalidRole {
             get {
                 return ResourceManager.GetString("InvalidRole", resourceCulture);
             }
@@ -261,7 +270,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid settlement id.
         /// </summary>
-        public static string InvalidSettlementId {
+        internal static string InvalidSettlementId {
             get {
                 return ResourceManager.GetString("InvalidSettlementId", resourceCulture);
             }
@@ -270,7 +279,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid settlement ref.
         /// </summary>
-        public static string InvalidSettlementRef {
+        internal static string InvalidSettlementRef {
             get {
                 return ResourceManager.GetString("InvalidSettlementRef", resourceCulture);
             }
@@ -279,7 +288,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid token.
         /// </summary>
-        public static string InvalidToken {
+        internal static string InvalidToken {
             get {
                 return ResourceManager.GetString("InvalidToken", resourceCulture);
             }
@@ -288,7 +297,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid user email.
         /// </summary>
-        public static string InvalidUserEmail {
+        internal static string InvalidUserEmail {
             get {
                 return ResourceManager.GetString("InvalidUserEmail", resourceCulture);
             }
@@ -297,7 +306,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid user id.
         /// </summary>
-        public static string InvalidUserId {
+        internal static string InvalidUserId {
             get {
                 return ResourceManager.GetString("InvalidUserId", resourceCulture);
             }
@@ -306,7 +315,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Error read JWT setting.
         /// </summary>
-        public static string JwtSettingsReadError {
+        internal static string JwtSettingsReadError {
             get {
                 return ResourceManager.GetString("JwtSettingsReadError", resourceCulture);
             }
@@ -315,7 +324,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на New post data update error.
         /// </summary>
-        public static string NewPostDataUpdateError {
+        internal static string NewPostDataUpdateError {
             get {
                 return ResourceManager.GetString("NewPostDataUpdateError", resourceCulture);
             }
@@ -324,7 +333,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на New post request error.
         /// </summary>
-        public static string NewPostRequestError {
+        internal static string NewPostRequestError {
             get {
                 return ResourceManager.GetString("NewPostRequestError", resourceCulture);
             }
@@ -333,7 +342,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на reCapthca validation error.
         /// </summary>
-        public static string ReCapthcaValidationError {
+        internal static string ReCapthcaValidationError {
             get {
                 return ResourceManager.GetString("ReCapthcaValidationError", resourceCulture);
             }
@@ -342,7 +351,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на User creation error.
         /// </summary>
-        public static string UserCreateError {
+        internal static string UserCreateError {
             get {
                 return ResourceManager.GetString("UserCreateError", resourceCulture);
             }
@@ -351,7 +360,7 @@ namespace Olx.BLL.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на User remove error.
         /// </summary>
-        public static string UserRemoveError {
+        internal static string UserRemoveError {
             get {
                 return ResourceManager.GetString("UserRemoveError", resourceCulture);
             }

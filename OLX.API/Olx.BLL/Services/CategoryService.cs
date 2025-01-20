@@ -126,7 +126,7 @@ namespace Olx.BLL.Services
             var query = categoryRepository.GetQuery().Include(x => x.Filters);
             var paginationBuilder = new PaginationBuilder<Category>(query);
             var filter = new CategoryFilter(pageRequest.SearchName, pageRequest.ParentId);
-            var sortData = new CategorySortData(pageRequest.IsDescending, pageRequest.SortIndex);
+            var sortData = new CategorySortData(pageRequest.IsDescending, pageRequest.SortKey);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page, pageRequest.Size, filter, sortData);
             return new()
             {

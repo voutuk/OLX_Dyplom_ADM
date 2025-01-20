@@ -5,16 +5,16 @@ using System.Linq.Expressions;
 
 namespace Olx.BLL.Pagination.SortData
 {
-    public class CategorySortData(bool descending,int sortIndex) : IPaginationSortData<Category>
+    public class CategorySortData(bool descending,string sortKey) : IPaginationSortData<Category>
     {
         public IQueryable<Category> Sort(IQueryable<Category> query)
         {
             Expression<Func<Category, object?>>? sortExpr =
-                sortIndex switch
+                sortKey switch
                 {
-                    1 => x => x.Id,
-                    2 => x => x.Name,
-                    3 => x => x.ParentId,
+                    "id" => x => x.Id,
+                    "name" => x => x.Name,
+                    "parentId" => x => x.ParentId,
                     _ => x => x.Id,
                 };
             return descending ? query.OrderByDescending(sortExpr) : query.OrderBy(sortExpr);

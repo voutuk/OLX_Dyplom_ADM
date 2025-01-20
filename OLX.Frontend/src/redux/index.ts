@@ -6,6 +6,7 @@ import { accountApi } from "./api/accountApi";
 import errorMiddleware from "./middlewares/errorMiddleware";
 import { setupListeners } from "@reduxjs/toolkit/query/react";
 import { userAuthApi } from "./api/userAuthApi";
+import { accountApiAuth } from "./api/accountAuthApi";
 import { adminMessageAuthApi } from "./api/adminMessageApi";
 
 
@@ -16,7 +17,7 @@ export const store = configureStore({
         [userAuthApi.reducerPath]: userAuthApi.reducer,
         [accountApi.reducerPath]: accountApi.reducer,
         [adminMessageAuthApi.reducerPath]: adminMessageAuthApi.reducer,
-        // [accountApiAuth.reducerPath]: accountApiAuth.reducer,
+        [accountApiAuth.reducerPath]: accountApiAuth.reducer,
         // [categoryApi.reducerPath]: categoryApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
@@ -24,6 +25,7 @@ export const store = configureStore({
             accountApi.middleware,
             userAuthApi.middleware,
             adminMessageAuthApi.middleware,
+            accountApiAuth.middleware,
             errorMiddleware)
 })
 setupListeners(store.dispatch);

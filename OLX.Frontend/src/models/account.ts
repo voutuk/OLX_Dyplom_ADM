@@ -1,4 +1,3 @@
-import { HubConnection } from "@microsoft/signalr"
 import { IAdminMesssage } from "./adminMesssage"
 
 export interface IUser {
@@ -59,5 +58,12 @@ export interface IResetPasswordModel {
     userId: string
     token: string
     password: string
+}
+
+export interface IUserLockModel{
+    userIds:number[]
+    lock:boolean
+    lockoutEndDate?:string
+    lockReason?:string
 }
 
