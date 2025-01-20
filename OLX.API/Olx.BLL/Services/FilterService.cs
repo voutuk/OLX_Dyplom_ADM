@@ -88,7 +88,7 @@ namespace Olx.BLL.Services
             var query = filterRepository.GetQuery().Include(x => x.Values);
             var paginationBuilder = new PaginationBuilder<Filter>(query);
             var filter = new FiltersFilter(pageRequest.SearchName);
-            var sortData =  new FilterSortData(pageRequest.IsDescending,pageRequest.SortIndex);
+            var sortData =  new FilterSortData(pageRequest.IsDescending,pageRequest.SortKey);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page,pageRequest.Size, filter, sortData);
             return new()
             {

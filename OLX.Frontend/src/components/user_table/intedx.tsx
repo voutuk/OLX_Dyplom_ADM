@@ -6,30 +6,7 @@ import UserAvatar from "../user_avatar";
 import { CheckOutlined, SearchOutlined } from "@mui/icons-material";
 import { getDateTime } from "../../utilities/common_funct";
 import { useEffect, useState } from "react";
-
-
-
-interface UserTableProps {
-    isLoading: boolean,
-    onTableChange: (
-        pagination: TablePaginationConfig,
-        filters: Record<string, FilterValue | null>,
-        sorter: SorterResult<IOlxUser> | SorterResult<IOlxUser>[],
-        extra: TableCurrentDataSource<IOlxUser>
-    ) => void;
-    page: number,
-    total: number,
-    size: number,
-    onPaginationChange: (currentPage: number, pageSize: number) => void,
-    onRowSelection: (userIds: number[]) => void,
-    onSearch: (value: IOlxUserPageRequest) => void,
-    actions: (_: any, user: IOlxUser) => JSX.Element,
-    pageRequest: IOlxUserPageRequest,
-    pageResponse: IOlxUserPageResponse<IOlxUser> | undefined,
-    selectedUsers: number[],
-    selected?: boolean
-
-}
+import { UserTableProps } from "./props";
 
 const UserTable: React.FC<UserTableProps> = ({ selected, isLoading, onRowSelection, selectedUsers, onTableChange, pageRequest, pageResponse, onPaginationChange, actions, onSearch }) => {
     const [search, setSearch] = useState<IOlxUserPageRequest>(pageRequest as IOlxUserPageRequest)
@@ -110,7 +87,6 @@ const UserTable: React.FC<UserTableProps> = ({ selected, isLoading, onRowSelecti
                         Очистити
                     </Button>
                 </div>
-
             </div>
         ),
         filterIcon: () => (

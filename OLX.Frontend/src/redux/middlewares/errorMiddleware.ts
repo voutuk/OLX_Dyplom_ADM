@@ -10,13 +10,13 @@ import { logOut } from '../slices/userSlice';
 
 const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
     if (isRejectedWithValue(action)) {
-        const error: IError = action.payload as IError;
+        const error: IError | any = action.payload as IError;
         switch (error.status) {
             case 423:
                 if (error.data?.Message) {
-                    const lockMessage  =  error.data?.UnlockTime 
-                    ?`до  ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`
-                    : "На невизначений термін"
+                    const lockMessage = error.data?.UnlockTime
+                        ? `до  ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`
+                        : "На невизначений термін"
 
                     toast(`${error.data?.Message} ${lockMessage}`, {
                         type: 'info',
@@ -44,8 +44,9 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                         })
                     });
                 }
+                
                 else {
-                    toast(error.data?.message || error.message || error.data?.Message, {
+                    toast(error.data?.message || error.message || error.data?.Message || error.data.title, {
                         type: 'info',
                         style: { width: 'fit-content' }
                     })

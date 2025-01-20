@@ -4,15 +4,15 @@ using System.Linq.Expressions;
 
 namespace Olx.BLL.Pagination.SortData
 {
-    public class FilterSortData(bool descending, int sortIndex) : IPaginationSortData<Filter>
+    public class FilterSortData(bool descending, string sortKey) : IPaginationSortData<Filter>
     {
         public IQueryable<Filter> Sort(IQueryable<Filter> query)
         {
             Expression<Func<Filter, object?>>? sortExpr =
-                sortIndex switch
+                sortKey switch
                 {
-                    1 => x => x.Id,
-                    2 => x => x.Name,
+                    "id" => x => x.Id,
+                    "name" => x => x.Name,
                     _ => x => x.Id,
                 };
             return descending ? query.OrderByDescending(sortExpr) : query.OrderBy(sortExpr);

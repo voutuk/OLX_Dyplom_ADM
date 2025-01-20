@@ -1,6 +1,5 @@
 import { PageHeader } from "../../../../components/page_header";
 import { UserOutlined } from '@ant-design/icons';
-import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
 import { Modal, TableProps } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../../../models/user";
 import PageHeaderButton from "../../../../components/page_header_button";
@@ -24,15 +23,13 @@ import {
     LockOutlined,
     LockOpen
 } from "@mui/icons-material";
-import { useLocation } from "react-router-dom";
 import { useAppDispatch } from "../../../../redux";
-import { userAuthApi } from '../../../../redux/api/userAuthApi';
+import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery, userAuthApi } from '../../../../redux/api/userAuthApi';
+import { Key } from "antd/es/table/interface";
 
 
 const UsersPage: React.FC = () => {
-    const location = useLocation();
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
-    const [headerTitle, setHeaderTitle] = useState<string>()
     const selectedUser = useRef<number | undefined>();
     const [modal, contextHolder] = Modal.useModal();
     const [sendAdminMesssage] = useCreateAdminMessageMutation();
@@ -44,7 +41,7 @@ const UsersPage: React.FC = () => {
     const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>({
         size: paginatorConfig.pagination.defaultPageSize,
         page: paginatorConfig.pagination.defaultCurrent,
-        sortIndex: 0,
+        sortKey: '',
         isDescending: false,
         emailSearch: '',
         phoneNumberSearch: '',
@@ -53,16 +50,16 @@ const UsersPage: React.FC = () => {
         webSiteSearch: '',
         settlementRefSearch: '',
     })
-    const getUsers = useGetUserPageQuery(pageRequest);
-    const getAdmins = useGetAdminPageQuery(pageRequest);
-    const getLockedUsers = useGetLockedUserPageQuery(pageRequest);
-    const { data, isLoading, refetch } = location.pathname === '/admin'
-        ? getUsers
-        : location.pathname === '/admin/admins'
-            ? getAdmins
-            : getLockedUsers
+    const getUsers = useGetUserPageQuery(pageRequest, { skip: location.pathname === '/admin/admins' || location.pathname === '/admin/blocked' });
+    const getAdmins = useGetAdminPageQuery(pageRequest, { skip: location.pathname === '/admin' });
+    const getLockedUsers = useGetLockedUserPageQuery(pageRequest, { skip: location.pathname === '/admin/admins' || location.pathname === '/admin' });
 
-
+    const { data, isLoading, refetch } =
+        location.pathname === '/admin'
+            ? getUsers
+            : location.pathname === '/admin/admins'
+                ? getAdmins
+                : getLockedUsers;
 
     const actions = (_value: any, user: IOlxUser) =>
         <div className='flex justify-around'>
@@ -81,11 +78,13 @@ const UsersPage: React.FC = () => {
                     </Tooltip>
                 </>
             }
-            <Tooltip title="Видалити">
-                <IconButton color="error" size="small">
-                    <DeleteForever />
-                </IconButton>
-            </Tooltip>
+            {(location.pathname !== '/admin/admins' || (data?.items.length && data?.items.length > 1)) &&
+                <Tooltip title="Видалити">
+                    <IconButton color="error" size="small">
+                        <DeleteForever />
+                    </IconButton>
+                </Tooltip>
+            }
         </div>
 
 
@@ -263,16 +262,22 @@ const UsersPage: React.FC = () => {
         })()
     }, [pageRequest])
 
-    useEffect(() => {
-        location.pathname === '/admin'
-            ? setHeaderTitle('Всі користувачі')
-            : location.pathname === '/admin/admins'
-                ? setHeaderTitle('Адміністратори')
-                : setHeaderTitle('Заблоковані користувачі')
-    }, [location.pathname])
+    
+    const onTableChange: TableProps<IOlxUser>['onChange'] = (_pagination, _filters, sorter, extra) => {
+        if (extra.action === 'sort') {
+            let descending: boolean;
+            let key: Key | undefined;
+            if (Array.isArray(sorter)) {
+                const firstSorter = sorter[0];
+                descending = firstSorter.order === 'descend';
+                key = firstSorter.columnKey;
+            } else {
+                descending = sorter.order === 'descend';
+                key = sorter.columnKey;
+            }
+            setPageRequest((prev) => ({ ...prev, isDescending: descending, sortKey: key?.toString() }))
 
-    const onTableChange: TableProps<IOlxUser>['onChange'] = (pagination, filters, sorter, extra) => {
-        console.log(pagination, filters, sorter, extra)
+        }
     }
 
     const onSearch = (value: IOlxUserPageRequest) => {
@@ -298,7 +303,11 @@ const UsersPage: React.FC = () => {
             }
 
             <PageHeader
-                title={headerTitle}
+                title={location.pathname === '/admin'
+                    ? 'Всі користувачі'
+                    : location.pathname === '/admin/admins'
+                        ? 'Адміністратори'
+                        : 'Заблоковані користувачі'}
                 icon={<UserOutlined className="text-2xl" />}
                 buttons={pageHeaderButtons} />
 

@@ -1,3 +1,5 @@
+import { Key } from "antd/es/table/interface"
+
 export interface IOlxUser {
     id: number
     email: string
@@ -21,7 +23,7 @@ export interface IOlxUser {
 export interface PageRequest {
     size: number
     page: number
-    sortIndex: number
+    sortKey: string | undefined
     isDescending: boolean
 }
 

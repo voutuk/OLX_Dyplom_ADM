@@ -64,7 +64,7 @@ namespace Olx.BLL.Services
                 .AsNoTracking());
             var paginationBuilder = new PaginationBuilder<OlxUserDto>(query);
             var userFilter = mapper.Map<OlxUserFilter>(userPageRequest);
-            var sortData = new OlxUserSortData(userPageRequest.IsDescending,userPageRequest.SortIndex);
+            var sortData = new OlxUserSortData(userPageRequest.IsDescending,userPageRequest.SortKey);
             var page = await paginationBuilder.GetPageAsync(userPageRequest.Page,userPageRequest.Size,userFilter,sortData);
             return new()
             {
