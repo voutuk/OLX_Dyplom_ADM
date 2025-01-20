@@ -1,4 +1,3 @@
-import { Key } from "antd/es/table/interface"
 
 export interface IOlxUser {
     id: number
