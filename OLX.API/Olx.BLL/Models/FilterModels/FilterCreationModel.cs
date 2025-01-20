@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using Olx.BLL.Entities.FilterEntities;
-
-namespace Olx.BLL.Models.FilterModels
+﻿namespace Olx.BLL.Models.FilterModels
 {
     public class FilterCreationModel
     {

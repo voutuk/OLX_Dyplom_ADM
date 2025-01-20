@@ -17,7 +17,7 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> GetAll([FromBody]IEnumerable<int> ids) => Ok(await filterService.GetDtoByIds(ids));
 
         [HttpPost("get/page")]
-        public async Task<IActionResult> GetPage([FromBody] FilterPageRequest  pageRequest) => Ok(await filterService.GetPageAsync(pageRequest));
+        public async Task<IActionResult> GetPage([FromForm] FilterPageRequest  pageRequest) => Ok(await filterService.GetPageAsync(pageRequest));
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("edit")]

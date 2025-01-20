@@ -78,7 +78,7 @@ const items: MenuItem[] = [
     {
         key: "admins_main",
         icon: <RobotOutlined style={{ fontSize: 20 }} />,
-        label: <span className='text-base font-medium'>Адміністрвтори</span>,
+        label: <span className='text-base font-medium'>Адміністратор</span>,
         children: [
             {
                 key: "/admin/admins",
