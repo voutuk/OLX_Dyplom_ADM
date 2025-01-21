@@ -3,19 +3,19 @@ import { PageHeader } from "../../../../components/page_header";
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { IFilter, IFilterPageRequest, IFilterValue } from "../../../../models/filter";
-import { Key, useEffect, useRef, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { useGetFilterPageQuery } from "../../../../redux/api/filterApi";
 import { ColumnType, TableProps } from "antd/es/table";
 import { IconButton } from "@mui/material";
 import { AddCircleOutline, CachedOutlined, DeleteForever, EditCalendar } from "@mui/icons-material";
 import PageHeaderButton from "../../../../components/page_header_button";
-import AdminFilterCreate from "../filter_create";
 import { useDeleteFilterMutation } from "../../../../redux/api/filterAuthApi";
 import { toast } from "react-toastify";
+import AdminFilterCreate from "../../../../components/drawers/filter_create";
 const AdminFilterTable: React.FC = () => {
 
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-    const selectedFilter = useRef<IFilter | undefined>();
+    const [selectedFilter,setSelectedFilter] = useState<IFilter | undefined>();
     const [delFilter] = useDeleteFilterMutation();
     const [nameSearch, setNameSearch] = useState<string>('')
     const [pageRequest, setPageRequest] = useState<IFilterPageRequest>({
@@ -25,7 +25,6 @@ const AdminFilterTable: React.FC = () => {
         isDescending: false,
         searchName: "",
     })
-
 
     const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
     const getColumnSearchProps = (): ColumnType<IFilter> => ({
@@ -95,6 +94,17 @@ const AdminFilterTable: React.FC = () => {
         }
     }
 
+    const editFilter = (filter: IFilter) => {
+       
+        setIsDrawerOpen(true)
+        setSelectedFilter(filter);
+    }
+
+    const onDrawerClose = () => {
+        
+        setIsDrawerOpen(false)
+        setSelectedFilter(undefined);
+    }
 
     const columns: TableColumnsType<IFilter> = [
         {
@@ -137,7 +147,7 @@ const AdminFilterTable: React.FC = () => {
             render: (_, filter: IFilter) =>
                 <div className='flex justify-around'>
                     <Tooltip title="Редагувати фільтр">
-                        <IconButton onClick={() => { }} color="success" size="small">
+                        <IconButton onClick={() => { editFilter(filter) }} color="success" size="small">
                             <EditCalendar />
                         </IconButton>
                     </Tooltip>
@@ -176,8 +186,8 @@ const AdminFilterTable: React.FC = () => {
         <div className="m-6 flex-grow  text-center overflow-hidden">
             <AdminFilterCreate
                 open={isDrawerOpen}
-                onClose={() => { setIsDrawerOpen(false) }}
-                filter={selectedFilter.current} />
+                onClose={onDrawerClose}
+                filter={selectedFilter} />
             <PageHeader
                 title="Фільтри"
                 icon={<FilterOutlined className="text-2xl" />}

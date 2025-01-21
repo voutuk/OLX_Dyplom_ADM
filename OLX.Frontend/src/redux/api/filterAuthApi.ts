@@ -1,7 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react"
 import { createBaseQueryWithAuth } from "./baseQuery"
-import { IFilterCreationModel } from "../../models/filter"
-import { getFormData } from "../../utilities/common_funct"
+import { IFilterCreationModel, IFilterEditModel } from "../../models/filter"
 import { filterApi } from "./filterApi"
 
 export const filterAuthApi = createApi({
@@ -17,7 +16,7 @@ export const filterAuthApi = createApi({
                     url: `create`,
                     method: 'PUT',
                     // timeout: 10000,
-                    body: getFormData(creationModel)
+                    body: creationModel
                 }
             },
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
@@ -29,6 +28,26 @@ export const filterAuthApi = createApi({
                 }
             },
         }),
+
+        updateFilter: builder.mutation<void, IFilterEditModel>({
+            query: (editModel) => {
+                return {
+                    url: `edit`,
+                    method: 'POST',
+                    // timeout: 10000,
+                    body: editModel
+                }
+            },
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(filterApi.util.invalidateTags(['Filters']))
+                } catch (error) {
+                    console.error('Login failed:', error);
+                }
+            },
+        }),
+
         deleteFilter: builder.mutation<void, number>({
             query: (filterId) => {
                 return {
@@ -53,5 +72,6 @@ export const filterAuthApi = createApi({
 
 export const {
     useCreateFilterMutation,
-    useDeleteFilterMutation
+    useDeleteFilterMutation,
+    useUpdateFilterMutation
 } = filterAuthApi

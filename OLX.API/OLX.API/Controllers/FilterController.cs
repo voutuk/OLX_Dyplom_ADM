@@ -17,15 +17,15 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> GetAll([FromBody]IEnumerable<int> ids) => Ok(await filterService.GetDtoByIds(ids));
 
         [HttpPost("get/page")]
-        public async Task<IActionResult> GetPage([FromForm] FilterPageRequest  pageRequest) => Ok(await filterService.GetPageAsync(pageRequest));
+        public async Task<IActionResult> GetPage([FromBody] FilterPageRequest  pageRequest) => Ok(await filterService.GetPageAsync(pageRequest));
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("edit")]
-        public async Task<IActionResult> Edit([FromForm] FilterEditModel filterEditModel) => Ok(await filterService.EditAsync(filterEditModel));
+        public async Task<IActionResult> Edit([FromBody] FilterEditModel filterEditModel) => Ok(await filterService.EditAsync(filterEditModel));
         
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("create")]
-        public async Task<IActionResult> Create([FromForm] FilterCreationModel filterCreationModel) => Ok(await filterService.CreateAsync(filterCreationModel));
+        public async Task<IActionResult> Create([FromBody] FilterCreationModel filterCreationModel) => Ok(await filterService.CreateAsync(filterCreationModel));
         
         [Authorize(Roles = Roles.Admin)]
         [HttpDelete("delete/{id:int}")]

@@ -21,7 +21,12 @@ export interface IFilterEditModel{
     id: number,
     name: string,
     newValues:string[],
-    oldValuesIds:number[]
+    oldValues:IEditFilterValues[]
+}
+
+export interface IEditFilterValues{
+    id: number,
+    value: string,
 }
 
 export interface IFilterPageRequest extends PageRequest {

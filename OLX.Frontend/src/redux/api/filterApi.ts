@@ -2,7 +2,6 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQuery } from "./baseQuery";
 import { PageResponse } from "../../models/user";
 import { IFilter, IFilterPageRequest } from "../../models/filter";
-import { getFormData } from "../../utilities/common_funct";
 
 
 export const filterApi = createApi({
@@ -17,7 +16,7 @@ export const filterApi = createApi({
                     url: `get/page`,
                     method: 'POST',
                     // timeout: 10000,
-                    body: getFormData(pageRequest)
+                    body: pageRequest
                 }
             },
             providesTags: ["Filters"]

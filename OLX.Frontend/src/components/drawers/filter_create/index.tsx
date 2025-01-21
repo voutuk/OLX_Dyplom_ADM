@@ -1,35 +1,45 @@
 import { Button, Drawer, Form, Input, Space } from "antd";
-import { IFilter } from "../../../../models/filter";
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import {  MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { toast } from "react-toastify";
-import { useCreateFilterMutation } from "../../../../redux/api/filterAuthApi";
-
-
-interface FilterCreateProps {
-    open: boolean,
-    onClose: () => void
-    filter?: IFilter
-}
+import { useCreateFilterMutation, useUpdateFilterMutation } from "../../../redux/api/filterAuthApi";
+import { FilterCreateProps } from "./props";
+import { IFilterValue } from "../../../models/filter";
+import { useEffect } from "react";
 
 const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter }) => {
     const [form] = Form.useForm();
     const [createFilter] = useCreateFilterMutation();
+    const [updateFilter] = useUpdateFilterMutation();
     const onFinish = async (data: any) => {
-        if (filter) {
-
+        const newValues = data.values.filter((x: any) => !x.id).map((x: any) => x.value)
+        const changetValues = data.values.filter((x: any) => x.id).map((x: IFilterValue) => ({ id: x.id, value: x.value }))
+        const result = filter
+            ? await updateFilter({ name: data.name, id: filter.id, oldValues: changetValues, newValues: newValues })
+            : await createFilter({ name: data.name, values: newValues });
+        if (!result.error) {
+            toast(`Фільтер успішно ${filter ? "оновлений" : "створений"}`, {
+                type: 'info'
+            })
+            onDrawerClose();
         }
-        else {
-            const result = await createFilter({ name: data.name, values: data.values })
-            if (!result.error) {
-                toast(`Фільтер успішно створений`, {
-                    type: 'info'
-                })
-                onDriwerClose();
+    };
+
+    useEffect(() => {
+        if (open) {
+            if (filter) {
+                form.setFields([
+                    { name: 'values', value: filter.values, },
+                    { name: 'name', value: filter.name }
+
+                ])
             }
         }
-        // onDriwerClose();
-    };
-    const onDriwerClose = () => {
+        else {
+            form.resetFields()
+        }
+    }, [open])
+
+    const onDrawerClose = () => {
         form.resetFields()
         onClose()
     }
@@ -42,7 +52,7 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
         <Drawer
             open={open}
             title={filter ? "Редагувати" : "Створити"}
-            onClose={onDriwerClose}
+            onClose={onDrawerClose}
             styles={{
                 body: {
                     paddingBottom: 80,
@@ -56,7 +66,7 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
             }}
             extra={
                 <Space>
-                    <Button size="small" onClick={onDriwerClose}>Відмінити</Button>
+                    <Button size="small" onClick={onDrawerClose}>Відмінити</Button>
                     <Button size="small" onClick={handleSubmit} type="primary">
                         Зберегти
                     </Button>
@@ -68,12 +78,8 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
                 name="filterForm"
                 onFinish={onFinish}
                 layout="vertical"
-                className="w-[96%] mx-auto"
-                initialValues={{
-                    values: filter?.values.map(x => x.value) || [],
-                    name: filter?.name || ''
-                }}
-            >
+                className="w-[96%] mx-auto">
+
                 <Form.Item
                     label="Назва фільтру"
                     validateTrigger={['onChange', 'onBlur']}
@@ -125,10 +131,12 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
                                     required={false}
                                     key={field.name}
                                     className="flex-1"
+
                                 >
                                     <div className="flex gap-2">
                                         <Form.Item
                                             {...field}
+                                            name={[field.name, 'value']}
                                             key={field.key}
                                             validateTrigger={['onChange', 'onBlur']}
                                             rules={[

@@ -23,8 +23,8 @@ import {
     LockOutlined,
     LockOpen
 } from "@mui/icons-material";
-import { useAppDispatch } from "../../../../redux";
-import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery, userAuthApi } from '../../../../redux/api/userAuthApi';
+
+import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery } from '../../../../redux/api/userAuthApi';
 import { Key } from "antd/es/table/interface";
 
 

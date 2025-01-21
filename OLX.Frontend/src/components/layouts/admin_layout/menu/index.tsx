@@ -1,5 +1,16 @@
 import { Menu } from "antd";
-import { FileDoneOutlined, FilterOutlined, LockOutlined, ProfileOutlined, RobotOutlined, SnippetsOutlined, SolutionOutlined, TeamOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
+import {
+    FileDoneOutlined,
+    FilterOutlined,
+    LockOutlined,
+    ProfileOutlined,
+    RobotOutlined,
+    SnippetsOutlined,
+    SolutionOutlined,
+    TeamOutlined,
+    UserAddOutlined,
+    UserOutlined
+} from '@ant-design/icons';
 import './style.scss'
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -115,10 +126,10 @@ export const AdminSideBarMenu: React.FC<MenuProps> = ({ collapsed }) => {
         if (!collapsed) {
             setTimeout(() => {
                 const openKey = getOpenMenuItem(location.pathname, items);
-                setMenuData(prev => ({ ...prev, openKeys: openKey }));
+                setMenuData(prev => ({ ...prev,selected:location.pathname, openKeys: openKey }));
             }, 400);
         }
-    }, [collapsed])
+    }, [collapsed, location.pathname])
 
     return (
         <Menu
