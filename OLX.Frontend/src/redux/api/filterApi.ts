@@ -11,23 +11,21 @@ export const filterApi = createApi({
     tagTypes: ['Filters'],
 
     endpoints: (builder) => ({
-    getFilterPage:builder.query<PageResponse<IFilter>,IFilterPageRequest>({
-                query: (pageRequest) => {
-                    return {
-                        url: `get/page`,
-                        method: 'POST',
-                       // timeout: 10000,
-                        body: getFormData(pageRequest)
-                    }
-                },
-                providesTags: ["Filters"]
-            }),
-       
+        getFilterPage: builder.query<PageResponse<IFilter>, IFilterPageRequest>({
+            query: (pageRequest) => {
+                return {
+                    url: `get/page`,
+                    method: 'POST',
+                    // timeout: 10000,
+                    body: getFormData(pageRequest)
+                }
+            },
+            providesTags: ["Filters"]
+        }),
+
     }),
-
-
 })
 
 export const {
-   useGetFilterPageQuery
-     } = filterApi
+    useGetFilterPageQuery,
+} = filterApi

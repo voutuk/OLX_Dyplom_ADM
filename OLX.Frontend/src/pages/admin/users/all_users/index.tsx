@@ -37,7 +37,6 @@ const UsersPage: React.FC = () => {
     const [isAdminLockOpen, setAminLockOpen] = useState<boolean>(false);
     const adminModalTitle = useRef<string>('')
     const [lockUsers] = useLockUnlockUsersMutation();
-    const dispatch = useAppDispatch();
     const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>({
         size: paginatorConfig.pagination.defaultPageSize,
         page: paginatorConfig.pagination.defaultCurrent,
@@ -122,7 +121,6 @@ const UsersPage: React.FC = () => {
             setSelectedUsers([])
             selectedUser.current = undefined;
             refetch()
-            dispatch(userAuthApi.util.invalidateTags(['LockedUsers']));
             setAminLockOpen(false)
         }
     }
@@ -150,7 +148,6 @@ const UsersPage: React.FC = () => {
             setSelectedUsers([])
             selectedUser.current = undefined;
             refetch()
-            dispatch(userAuthApi.util.invalidateTags(['Users']));
         }
     }
 

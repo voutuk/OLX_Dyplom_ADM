@@ -1,16 +1,22 @@
-import { Button, Input, Pagination, Table, TableColumnsType, Tooltip } from "antd";
+import { Button, Input, Pagination, Popconfirm, Table, TableColumnsType, Tooltip } from "antd";
 import { PageHeader } from "../../../../components/page_header";
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { IFilter, IFilterPageRequest, IFilterValue } from "../../../../models/filter";
-import { Key, useEffect, useState } from "react";
+import { Key, useEffect, useRef, useState } from "react";
 import { useGetFilterPageQuery } from "../../../../redux/api/filterApi";
 import { ColumnType, TableProps } from "antd/es/table";
 import { IconButton } from "@mui/material";
-import { AddCircleOutline, CachedOutlined, DeleteForever, EditCalendar, EditNote, LockOutlined, MessageOutlined } from "@mui/icons-material";
+import { AddCircleOutline, CachedOutlined, DeleteForever, EditCalendar } from "@mui/icons-material";
 import PageHeaderButton from "../../../../components/page_header_button";
+import AdminFilterCreate from "../filter_create";
+import { useDeleteFilterMutation } from "../../../../redux/api/filterAuthApi";
+import { toast } from "react-toastify";
 const AdminFilterTable: React.FC = () => {
 
+    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+    const selectedFilter = useRef<IFilter | undefined>();
+    const [delFilter] = useDeleteFilterMutation();
     const [nameSearch, setNameSearch] = useState<string>('')
     const [pageRequest, setPageRequest] = useState<IFilterPageRequest>({
         size: paginatorConfig.pagination.defaultPageSize,
@@ -80,6 +86,16 @@ const AdminFilterTable: React.FC = () => {
         }
     }
 
+    const deleteFilter = async (filterId: number) => {
+        const result = await delFilter(filterId);
+        if (!result.error) {
+            toast(`Фільтер успішно видалений`, {
+                type: 'info'
+            })
+        }
+    }
+
+
     const columns: TableColumnsType<IFilter> = [
         {
             title: 'ID',
@@ -117,25 +133,27 @@ const AdminFilterTable: React.FC = () => {
         },
         {
             key: 'actions',
-            width: 135,
-            render: () =>
+            width: 100,
+            render: (_, filter: IFilter) =>
                 <div className='flex justify-around'>
-                    <Tooltip title="Додати фільтр">
-                        <IconButton onClick={() => { }} color="success" size="small">
-                            <AddCircleOutline />
-                        </IconButton>
-                    </Tooltip>
-
                     <Tooltip title="Редагувати фільтр">
-                        <IconButton onClick={() => { }} color="warning" size="small">
+                        <IconButton onClick={() => { }} color="success" size="small">
                             <EditCalendar />
                         </IconButton>
                     </Tooltip>
 
                     <Tooltip title="Видалити фільтр">
-                        <IconButton color="error" size="small">
-                            <DeleteForever />
-                        </IconButton>
+                        <Popconfirm
+                            title="Відалення фільтра"
+                            description={`Ви впевненні що бажаєте видалити фільтр "${filter.name}"?`}
+                            onConfirm={() => deleteFilter(filter.id)}
+                            okText="Видалити"
+                            cancelText="Відмінити"
+                        >
+                            <IconButton color="error" size="small">
+                                <DeleteForever />
+                            </IconButton>
+                        </Popconfirm>
                     </Tooltip>
                 </div>,
             fixed: 'right',
@@ -156,16 +174,29 @@ const AdminFilterTable: React.FC = () => {
 
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
+            <AdminFilterCreate
+                open={isDrawerOpen}
+                onClose={() => { setIsDrawerOpen(false) }}
+                filter={selectedFilter.current} />
             <PageHeader
                 title="Фільтри"
                 icon={<FilterOutlined className="text-2xl" />}
-                buttons={[<PageHeaderButton
-                    key='reload'
-                    onButtonClick={refetch}
-                    className="w-[35px] h-[35px] bg-green-700"
-                    buttonIcon={<CachedOutlined className="text-lg" />}
-                    tooltipMessage="Перезавантажити"
-                    tooltipColor="gray" />]}
+                buttons={[
+                    <PageHeaderButton
+                        key='add'
+                        onButtonClick={() => setIsDrawerOpen(true)}
+                        className="w-[35px] h-[35px] bg-green-700"
+                        buttonIcon={<AddCircleOutline className="text-lg" />}
+                        tooltipMessage="Додати фільтр"
+                        tooltipColor="gray" />,
+                    <PageHeaderButton
+                        key='reload'
+                        onButtonClick={refetch}
+                        className="w-[35px] h-[35px] bg-sky-700"
+                        buttonIcon={<CachedOutlined className="text-lg" />}
+                        tooltipMessage="Перезавантажити"
+                        tooltipColor="gray" />
+                ]}
             />
             <Table<IFilter>
                 size="small"

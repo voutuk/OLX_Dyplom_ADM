@@ -9,6 +9,7 @@ import { userAuthApi } from "./api/userAuthApi";
 import { accountApiAuth } from "./api/accountAuthApi";
 import { adminMessageAuthApi } from "./api/adminMessageApi";
 import { filterApi } from "./api/filterApi";
+import { filterAuthApi } from "./api/filterAuthApi";
 
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
         app: appReducer,
         [userAuthApi.reducerPath]: userAuthApi.reducer,
         [filterApi.reducerPath]: filterApi.reducer,
+        [filterAuthApi.reducerPath]: filterAuthApi.reducer,
         [accountApi.reducerPath]: accountApi.reducer,
         [adminMessageAuthApi.reducerPath]: adminMessageAuthApi.reducer,
         [accountApiAuth.reducerPath]: accountApiAuth.reducer,
@@ -29,6 +31,7 @@ export const store = configureStore({
             adminMessageAuthApi.middleware,
             accountApiAuth.middleware,
             filterApi.middleware,
+            filterAuthApi.middleware,
             errorMiddleware)
 })
 setupListeners(store.dispatch);
