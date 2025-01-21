@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily: {
         montserrat: ['Montserrat', 'sans-serif'],
+        unbounded: ['Unbounded', 'sans-serif'],
       }
     },
   },

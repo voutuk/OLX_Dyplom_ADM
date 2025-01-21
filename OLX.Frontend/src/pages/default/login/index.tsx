@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { IError, IUserLockoutError } from '../../../models/errors';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
 import PrimaryButton from '../../../components/primary_button';
+import FormInput from '../../../components/form_input';
 
 const loginAction: string = 'login'
 
@@ -119,7 +120,9 @@ const LoginPage: React.FC = () => {
         >
           <Input.Password type='large' />
         </Form.Item>
-
+        
+        <FormInput label='Електронна пошта' name='email' placeholder='example@gmail.com' ruleType='email' typeMessage='Будь ласка, введіть електронну пошту' requiredMessage='Неправильно введена пошта'/>
+        <FormInput label='Пароль' name='password' placeholder='eXampLe_3' requiredMessage='Будь ласка, введіть пароль'/>
         <Form.Item
           name="remember"
           valuePropName="checked"
