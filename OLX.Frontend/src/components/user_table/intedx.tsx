@@ -1,7 +1,7 @@
 import { Button, Input, Pagination, Table, TableColumnsType } from "antd";
-import { IOlxUser, IOlxUserPageRequest, IOlxUserPageResponse } from "../../models/user";
+import { IOlxUser, IOlxUserPageRequest } from "../../models/user";
 import { paginatorConfig } from "../../utilities/pagintion_settings";
-import { ColumnType, FilterValue, SorterResult, TableCurrentDataSource, TablePaginationConfig, TableRowSelection } from "antd/es/table/interface";
+import { ColumnType, TableRowSelection } from "antd/es/table/interface";
 import UserAvatar from "../user_avatar";
 import { CheckOutlined, SearchOutlined } from "@mui/icons-material";
 import { getDateTime } from "../../utilities/common_funct";

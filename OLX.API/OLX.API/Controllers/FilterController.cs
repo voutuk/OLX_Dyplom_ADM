@@ -21,13 +21,13 @@ namespace OLX.API.Controllers
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("edit")]
-        public async Task<IActionResult> Edit([FromForm] FilterEditModel filterEditModel) => Ok(await filterService.EditAsync(filterEditModel));
+        public async Task<IActionResult> Edit([FromBody] FilterEditModel filterEditModel) => Ok(await filterService.EditAsync(filterEditModel));
         
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("create")]
-        public async Task<IActionResult> Create([FromForm] FilterCreationModel filterCreationModel) => Ok(await filterService.CreateAsync(filterCreationModel));
+        public async Task<IActionResult> Create([FromBody] FilterCreationModel filterCreationModel) => Ok(await filterService.CreateAsync(filterCreationModel));
         
-        [Authorize(Roles =Roles.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete("delete/{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {

@@ -1,6 +1,6 @@
 import { TablePaginationConfig } from "antd";
 import { FilterValue, SorterResult, TableCurrentDataSource } from "antd/es/table/interface";
-import { IOlxUser, IOlxUserPageRequest, IOlxUserPageResponse } from "../../../models/user";
+import { IOlxUser, IOlxUserPageRequest, PageResponse } from "../../../models/user";
 
 export interface UserTableProps {
     isLoading: boolean,
@@ -18,7 +18,7 @@ export interface UserTableProps {
     onSearch: (value: IOlxUserPageRequest) => void,
     actions: (_: any, user: IOlxUser) => JSX.Element,
     pageRequest: IOlxUserPageRequest,
-    pageResponse: IOlxUserPageResponse<IOlxUser> | undefined,
+    pageResponse: PageResponse<IOlxUser> | undefined,
     selectedUsers: number[],
     selected?: boolean
 

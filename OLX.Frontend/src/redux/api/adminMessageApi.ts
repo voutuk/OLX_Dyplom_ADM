@@ -18,6 +18,7 @@ export const adminMessageAuthApi = createApi({
                     // timeout: 10000,
                 }
             },
+            invalidatesTags:['Messeges']
         }),
 
         createUserMessage: builder.mutation<IAdminMesssage, IAdminMesssageCreationModel>({
@@ -29,6 +30,7 @@ export const adminMessageAuthApi = createApi({
                     // timeout: 10000,
                 }
             },
+            invalidatesTags:['Messeges']
         }),
 
         getAdminMessages: builder.query<IAdminMesssage[], void>({

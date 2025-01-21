@@ -1,8 +1,8 @@
 export const paginatorConfig = {
     pagination: {
-        defaultPageSize: 5,
+        defaultPageSize: 10,
         defaultCurrent: 1,
-        pageSizeOptions: [5, 10, 15, 20],
+        pageSizeOptions: [10, 20, 25, 30],
         showSizeChanger: true,
         locale: { items_per_page: " / на cторінці" },
         showTotal: (total:number, range:number[]) =>

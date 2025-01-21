@@ -32,7 +32,18 @@ export const getDateTime = (dateStr: string): string => {
 export const getFormData = (data: any): FormData => {
   const formData = new FormData();
   Object.keys(data).forEach(function (key) {
-    formData.append(key, data[key]);
+    if (Array.isArray(data[key])) {
+      if (typeof data[key][0] === 'object') {
+        formData.append(key, JSON.stringify(data[key]));
+      } else {
+        data[key].forEach((item: any) => formData.append(key, item));
+      }
+    } else if (typeof data[key] === 'object' && data[key] !== null) {
+      formData.append(key, JSON.stringify(data[key]));
+    } else {
+      formData.append(key, data[key]);
+    }
+
   });
   return formData;
 }

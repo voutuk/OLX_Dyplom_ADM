@@ -1,6 +1,6 @@
 
 import { createBaseQueryWithAuth } from "./baseQuery";
-import { IOlxUser, IOlxUserPageRequest, IOlxUserPageResponse } from "../../models/user";
+import { IOlxUser, IOlxUserPageRequest, PageResponse } from "../../models/user";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { getFormData } from "../../utilities/common_funct";
 
@@ -65,7 +65,7 @@ export const userAuthApi = createApi({
             providesTags: ["Admins"]
         }),
 
-        getAdminPage: builder.query<IOlxUserPageResponse<IOlxUser>,IOlxUserPageRequest>({
+        getAdminPage: builder.query<PageResponse<IOlxUser>,IOlxUserPageRequest>({
             query: (pageRequest) => {
                 return {
                     url: `get/admin/page`,
@@ -77,7 +77,7 @@ export const userAuthApi = createApi({
             providesTags: ["Admins"]
         }),
 
-        getUserPage: builder.query<IOlxUserPageResponse<IOlxUser>,IOlxUserPageRequest>({
+        getUserPage: builder.query<PageResponse<IOlxUser>,IOlxUserPageRequest>({
             query: (pageRequest) => {
                 return {
                     url: `get/page`,
@@ -89,7 +89,7 @@ export const userAuthApi = createApi({
             providesTags: ["Users"]
         }),
 
-        getLockedUserPage: builder.query<IOlxUserPageResponse<IOlxUser>,IOlxUserPageRequest>({
+        getLockedUserPage: builder.query<PageResponse<IOlxUser>,IOlxUserPageRequest>({
             query: (pageRequest) => {
                 return {
                     url: `get/locked/page`,

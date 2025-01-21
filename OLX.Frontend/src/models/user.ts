@@ -35,7 +35,7 @@ export interface IOlxUserPageRequest extends PageRequest {
     settlementRefSearch?: string
 }
 
-export interface IOlxUserPageResponse<T> {
+export interface PageResponse<T> {
    total:number
    items:T[]
 }

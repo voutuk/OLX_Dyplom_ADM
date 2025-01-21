@@ -19,6 +19,8 @@ namespace Olx.BLL.Pagination
                 query = sortData.Sort(query);
             }
 
+            int totalPages = (int)Math.Ceiling(total / (double)size);
+            page = page > totalPages ? totalPages > 0 ? totalPages : 1 : page;
             query = query.AsNoTracking().Skip((page - 1) * size).Take(size);
 
             return new()

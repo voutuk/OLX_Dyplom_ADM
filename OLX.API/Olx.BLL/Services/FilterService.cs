@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities;
 using Olx.BLL.Entities.FilterEntities;
@@ -68,14 +69,21 @@ namespace Olx.BLL.Services
                 ?? throw new HttpException(Errors.InvalidFilterId, HttpStatusCode.BadRequest);
             
             mapper.Map(filterModel,filter);
-            if (filterModel.OldValueIds?.Any() ?? false)
+            if (filterModel.OldValues.Length != 0)
             {
-                var values = filter.Values.Where(x => filterModel.OldValueIds.Contains(x.Id));
-                filter.Values = values.ToList();
+                filter.Values = filter.Values.Where(x => filterModel.OldValues.Any(z => z.Id == x.Id)).ToArray();
+                foreach (var value in filter.Values ) 
+                {
+                    var newValue = filterModel.OldValues.First(x => x.Id == value.Id).Value;
+                    if (newValue != value.Value) 
+                    {
+                        value.Value = newValue;
+                    }
+                }
             }
             else filter.Values.Clear();
 
-            if (filterModel.NewValues?.Any() ?? false)
+            if (filterModel.NewValues.Length != 0)
             {
                 filter.Values = [.. filter.Values, .. filterModel.NewValues.Select(x => new FilterValue() { Value = x })];
             }

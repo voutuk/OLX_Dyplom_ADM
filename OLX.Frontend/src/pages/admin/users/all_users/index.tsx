@@ -23,8 +23,8 @@ import {
     LockOutlined,
     LockOpen
 } from "@mui/icons-material";
-import { useAppDispatch } from "../../../../redux";
-import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery, userAuthApi } from '../../../../redux/api/userAuthApi';
+
+import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery } from '../../../../redux/api/userAuthApi';
 import { Key } from "antd/es/table/interface";
 
 
@@ -37,7 +37,6 @@ const UsersPage: React.FC = () => {
     const [isAdminLockOpen, setAminLockOpen] = useState<boolean>(false);
     const adminModalTitle = useRef<string>('')
     const [lockUsers] = useLockUnlockUsersMutation();
-    const dispatch = useAppDispatch();
     const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>({
         size: paginatorConfig.pagination.defaultPageSize,
         page: paginatorConfig.pagination.defaultCurrent,
@@ -122,7 +121,6 @@ const UsersPage: React.FC = () => {
             setSelectedUsers([])
             selectedUser.current = undefined;
             refetch()
-            dispatch(userAuthApi.util.invalidateTags(['LockedUsers']));
             setAminLockOpen(false)
         }
     }
@@ -150,7 +148,6 @@ const UsersPage: React.FC = () => {
             setSelectedUsers([])
             selectedUser.current = undefined;
             refetch()
-            dispatch(userAuthApi.util.invalidateTags(['Users']));
         }
     }
 
