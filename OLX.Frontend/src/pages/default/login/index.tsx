@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="flex h-screen w-screen">
       <div className="w-[40%] h-[100%]">
-         <img className="w-[100%] h-[100%]" src='src\assets\images\login_leftside.png'/>
+         <img className="w-[100%] h-[100%]" src='src\assets\images\login_leftSide.png'/>
       </div>
       <div id='#login' className="w-[60%] flex flex-col items-center justify-center text-center">
         <h2 className='w-[460px] text-[#3A211C] mb-[50px] font-unbounded text-[36px] font-normal'>З поверненням!</h2>
@@ -108,7 +108,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           <PrimaryButton title='Увійти' htmlType='submit' isLoading={isLoading}/>
-          <Divider style={{ color: '#9B7A5B', fontWeight: '400' }}>OR</Divider>
+          <Divider style={{ color: '#9B7A5B', fontWeight: '400' }}>або</Divider>
           <PrimaryButton title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading} />
 
 
