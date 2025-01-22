@@ -49,7 +49,7 @@ export const adminMessageAuthApi = createApi({
                         dispatch(setMessages(result.data))
                     }
                 } catch (error) {
-                    console.error('Load messages failed:', error);
+                    console.error('Load admin messages failed:', error);
                 }
             },
         }),
@@ -70,7 +70,7 @@ export const adminMessageAuthApi = createApi({
                         dispatch(setMessages(result.data))
                     }
                 } catch (error) {
-                    console.error('Load messages failed:', error);
+                    console.error('Load user messages failed:', error);
                 }
             },
         }),

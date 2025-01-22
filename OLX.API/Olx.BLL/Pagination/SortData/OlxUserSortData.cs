@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Olx.BLL.Pagination.SortData
 {
-    public class OlxUserSortData(bool descending, string sortKey) : IPaginationSortData<OlxUserDto>
+    public class OlxUserSortData(bool descending, string? sortKey) : IPaginationSortData<OlxUserDto>
     {
         public IQueryable<OlxUserDto> Sort(IQueryable<OlxUserDto> query)
         {

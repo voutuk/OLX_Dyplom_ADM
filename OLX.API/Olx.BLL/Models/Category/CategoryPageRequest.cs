@@ -6,6 +6,6 @@ namespace Olx.BLL.Models.Category
     public class CategoryPageRequest : PageRequest
     {
         public string? SearchName { get; init; }
-        public int ParentId { get; init; }
+        public string? ParentName { get; init; }
     }
 }

@@ -9,8 +9,6 @@ const ErrorPage = React.lazy(() => import('./pages/default/errors/error_page'));
 const ReCaptcha = React.lazy(() => import('./components/google_recaptca'));
 const AdminCreate = React.lazy(() => import('./pages/admin/admins/new_admin'));
 const AdminFilterTable = React.lazy(() => import('./pages/admin/filters/filter_table'));
-const AdminFilterEdit = React.lazy(() => import('./pages/admin/filters/filter_edit'));
-const AdminFilterCreate = React.lazy(() => import('./pages/admin/filters/filter_create'));
 const AdminCategoryEdit = React.lazy(() => import('./pages/admin/categories/category_edit'));
 const AdminCategoryCreate = React.lazy(() => import('./pages/admin/categories/category_create'));
 const AdminCategoryTable = React.lazy(() => import('./pages/admin/categories/category_table'));
@@ -35,21 +33,21 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
           <Route path="error" element={<ErrorPage />} />
 
-          <Route path="auth">
-            <Route index element={<ReCaptcha><LoginPage /></ReCaptcha>} />
-            <Route path="register" element={<ReCaptcha ><RegisterPage /></ReCaptcha>} />
-            <Route path="emailconfirm" element={<EmailConfirmationPage />} />
-            <Route path="password">
-              <Route index element={<ForgotPasswordPage />} />
-              <Route path="reset" element={<ResetPasswordPage />} />
-            </Route>
-          </Route>
-
           <Route element={<ProtectedRoutes requiredRole={"User"} />}>
             <Route path="user">
-            <Route path="userprofile" element={<EmailConfirmationPage />} />
+              <Route path="userprofile" element={<EmailConfirmationPage />} />
             </Route>
           </Route>
+        </Route>
+      </Route>
+
+      <Route path="/auth">
+        <Route index element={<ReCaptcha><LoginPage /></ReCaptcha>} />
+        <Route path="register" element={<ReCaptcha ><RegisterPage /></ReCaptcha>} />
+        <Route path="emailconfirm" element={<EmailConfirmationPage />} />
+        <Route path="password">
+          <Route index element={<ForgotPasswordPage />} />
+          <Route path="reset" element={<ResetPasswordPage />} />
         </Route>
       </Route>
 
@@ -74,8 +72,6 @@ function App() {
 
           <Route path="filters">
             <Route index element={<AdminFilterTable />} />
-            <Route path='new' element={<AdminFilterCreate />} />
-            <Route path='edit' element={<AdminFilterEdit />} />
           </Route>
 
           <Route path="admins">

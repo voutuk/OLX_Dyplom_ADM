@@ -21,7 +21,6 @@
         Filters = 1 << 2,
         Adverts = 1 << 3,
         NoTracking = 1 << 4,
-        Image = 1 << 5
     }
 
     [Flags]

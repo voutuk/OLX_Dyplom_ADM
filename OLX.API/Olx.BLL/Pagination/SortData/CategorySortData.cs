@@ -1,20 +1,21 @@
-﻿using Olx.BLL.Entities;
+﻿using Olx.BLL.DTOs.CategoryDtos;
+using Olx.BLL.Entities;
 using Olx.BLL.Pagination.Interfaces;
 using System.Linq.Expressions;
 
 
 namespace Olx.BLL.Pagination.SortData
 {
-    public class CategorySortData(bool descending,string sortKey) : IPaginationSortData<Category>
+    public class CategorySortData(bool descending,string? sortKey) : IPaginationSortData<CategoryDto>
     {
-        public IQueryable<Category> Sort(IQueryable<Category> query)
+        public IQueryable<CategoryDto> Sort(IQueryable<CategoryDto> query)
         {
-            Expression<Func<Category, object?>>? sortExpr =
+            Expression<Func<CategoryDto, object?>>? sortExpr =
                 sortKey switch
                 {
                     "id" => x => x.Id,
                     "name" => x => x.Name,
-                    "parentId" => x => x.ParentId,
+                    "parentName" => x => x.ParentName,
                     _ => x => x.Id,
                 };
             return descending ? query.OrderByDescending(sortExpr) : query.OrderBy(sortExpr);

@@ -10,6 +10,8 @@ import { accountApiAuth } from "./api/accountAuthApi";
 import { adminMessageAuthApi } from "./api/adminMessageApi";
 import { filterApi } from "./api/filterApi";
 import { filterAuthApi } from "./api/filterAuthApi";
+import { categoryApi } from "./api/categoryApi";
+import { categoryAuthApi } from "./api/categoryAuthApi";
 
 
 export const store = configureStore({
@@ -18,6 +20,8 @@ export const store = configureStore({
         app: appReducer,
         [userAuthApi.reducerPath]: userAuthApi.reducer,
         [filterApi.reducerPath]: filterApi.reducer,
+        [categoryApi.reducerPath]: categoryApi.reducer,
+        [categoryAuthApi.reducerPath]: categoryAuthApi.reducer,
         [filterAuthApi.reducerPath]: filterAuthApi.reducer,
         [accountApi.reducerPath]: accountApi.reducer,
         [adminMessageAuthApi.reducerPath]: adminMessageAuthApi.reducer,
@@ -30,6 +34,8 @@ export const store = configureStore({
             userAuthApi.middleware,
             adminMessageAuthApi.middleware,
             accountApiAuth.middleware,
+            categoryApi.middleware,
+            categoryAuthApi.middleware,
             filterApi.middleware,
             filterAuthApi.middleware,
             errorMiddleware)

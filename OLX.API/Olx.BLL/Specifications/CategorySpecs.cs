@@ -19,8 +19,8 @@ namespace Olx.BLL.Specifications
                             case CategoryOpt.Parent:  query.Include(x => x.Parent); break;
                             case CategoryOpt.NoTracking: query.AsNoTracking(); break;
                             case CategoryOpt.Childs:  query.Include(x => x.Childs); break;
-                            case CategoryOpt.Filters:  query.Include(x => x.Adverts); break;
-                            case CategoryOpt.Image:  query.Include(x => x.Image); break;
+                            case CategoryOpt.Filters:  query.Include(x => x.Filters); break;
+                            case CategoryOpt.Adverts: query.Include(x => x.Adverts); break;
                         };
                     }
                 }

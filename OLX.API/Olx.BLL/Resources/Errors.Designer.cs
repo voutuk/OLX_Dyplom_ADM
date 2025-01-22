@@ -241,6 +241,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid parent category id.
+        /// </summary>
+        internal static string InvalidParentCategoryId {
+            get {
+                return ResourceManager.GetString("InvalidParentCategoryId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid region ref.
         /// </summary>
         internal static string InvalidRegionRef {

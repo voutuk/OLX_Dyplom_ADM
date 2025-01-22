@@ -15,10 +15,8 @@ using Olx.BLL.Models.Category;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Olx.BLL.Exstensions;
-using AutoMapper.QueryableExtensions;
-using Olx.BLL.Mapper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace Olx.BLL.Services
 {
@@ -31,7 +29,9 @@ namespace Olx.BLL.Services
         UserManager<OlxUser> userManager,
         IHttpContextAccessor httpContext) : ICategoryService
     {
-        
+
+        public async Task<IEnumerable<CategoryDto>> Get() => mapper.Map<IEnumerable<CategoryDto>>(await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.NoTracking)));
+     
         public async Task<CategoryDto> CreateAsync(CategoryCreationModel creationModel)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
@@ -55,7 +55,7 @@ namespace Olx.BLL.Services
         public async Task RemoveAsync(int id)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
-            var category = await categoryRepository.GetItemBySpec(new CategorySpecs.GetById(id,CategoryOpt.Image));
+            var category = await categoryRepository.GetItemBySpec(new CategorySpecs.GetById(id));
             if (category is not null)
             {
                 categoryRepository.Delete(category);
@@ -72,9 +72,16 @@ namespace Olx.BLL.Services
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             validator.ValidateAndThrow(editModel);
-            var category = await categoryRepository.GetItemBySpec( new CategorySpecs.GetById(editModel.Id,CategoryOpt.Image))
+            var category = await categoryRepository.GetItemBySpec( new CategorySpecs.GetById(editModel.Id,CategoryOpt.Filters))
                 ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
             mapper.Map(editModel, category);
+            if (editModel.ParentId.HasValue)
+            {
+                var parentCategory = await categoryRepository.GetItemBySpec(new CategorySpecs.GetById(editModel.ParentId.Value))
+                    ?? throw new HttpException(Errors.InvalidParentCategoryId, HttpStatusCode.BadRequest);
+                category.Parent = parentCategory;
+            }
+            
             if (editModel.ImageFile is not null)
             {
                 if (category.Image is not null)
@@ -94,9 +101,9 @@ namespace Olx.BLL.Services
             return mapper.Map<CategoryDto>(category);
         }
 
-        public async Task<IEnumerable<CategoryDto>> GetAllTreeAsync()
+        public async Task<IEnumerable<CategoryDto>> GetAllTreeAsync(bool filters = true)
         {
-            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.NoTracking | CategoryOpt.Filters));
+            var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(filters ? CategoryOpt.NoTracking | CategoryOpt.Filters : CategoryOpt.NoTracking));
             return mapper.Map<IEnumerable<CategoryDto>>(BuildTree(null, categories));
         } 
                    
@@ -123,15 +130,15 @@ namespace Olx.BLL.Services
 
         public async Task<PageResponse<CategoryDto>> GetPageAsync(CategoryPageRequest pageRequest)
         {
-            var query = categoryRepository.GetQuery().Include(x => x.Filters);
-            var paginationBuilder = new PaginationBuilder<Category>(query);
-            var filter = new CategoryFilter(pageRequest.SearchName, pageRequest.ParentId);
+            var query = mapper.ProjectTo<CategoryDto>(categoryRepository.GetQuery().AsNoTracking());
+            var paginationBuilder = new PaginationBuilder<CategoryDto>(query);
+            var filter = new CategoryFilter(pageRequest.SearchName, pageRequest.ParentName);
             var sortData = new CategorySortData(pageRequest.IsDescending, pageRequest.SortKey);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page, pageRequest.Size, filter, sortData);
             return new()
             {
                 Total = page.Total,
-                Items = mapper.Map<IEnumerable<CategoryDto>>(page.Items)
+                Items = page.Items
             };
         }
     }

@@ -1,5 +1,7 @@
+import { TableProps } from "antd";
 import { IUser } from "../models/account"
 import { IOlxUser } from "../models/user";
+import { ICategory } from "../models/category";
 
 export const getUserDescr = (user: IUser | IOlxUser | null): string => {
 
@@ -33,12 +35,12 @@ export const getFormData = (data: any): FormData => {
   const formData = new FormData();
   Object.keys(data).forEach(function (key) {
     if (Array.isArray(data[key])) {
-      if (typeof data[key][0] === 'object') {
+      if (typeof data[key][0] === 'object' &&  !(data[key] instanceof File)) {
         formData.append(key, JSON.stringify(data[key]));
       } else {
         data[key].forEach((item: any) => formData.append(key, item));
       }
-    } else if (typeof data[key] === 'object' && data[key] !== null) {
+    } else if (typeof data[key] === 'object' &&  !(data[key] instanceof File)) {
       formData.append(key, JSON.stringify(data[key]));
     } else {
       formData.append(key, data[key]);
@@ -47,3 +49,12 @@ export const getFormData = (data: any): FormData => {
   });
   return formData;
 }
+
+export const mapCategoryToTreeData = (categories: ICategory[]): any[] => {
+  return categories.map((category) => ({
+    title: category.name, 
+    value: category.id,   
+    key: category.id, 
+    children: mapCategoryToTreeData(category.childs), // Рекурсивно додаємо дочірні вузли
+  }));
+};

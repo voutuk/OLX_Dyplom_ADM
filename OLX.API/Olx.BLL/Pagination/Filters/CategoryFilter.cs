@@ -1,22 +1,22 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
+using Olx.BLL.DTOs.CategoryDtos;
 using Olx.BLL.Entities;
 using Olx.BLL.Pagination.Interfaces;
 
 namespace Olx.BLL.Pagination.Filters
 {
-    public class CategoryFilter(string? searchName,int parentId) : IPaginationFilter<Category>
+    public class CategoryFilter(string? searchName,string? parentName) : IPaginationFilter<CategoryDto>
     {
-        public IQueryable<Category> FilterQuery(IQueryable<Category> query)
+        public IQueryable<CategoryDto> FilterQuery(IQueryable<CategoryDto> query)
         {
             if (!String.IsNullOrWhiteSpace(searchName))
             {
                 query = query.Where(x => x.Name.ToLower().Contains(searchName.ToLower()));
             }
 
-            if (parentId != 0)
+            if (!String.IsNullOrWhiteSpace(parentName))
             {
-                query = query.Where(x => x.ParentId == parentId);
+                query = query.Where(x => x.ParentName != null && x.ParentName.ToLower().Contains(parentName.ToLower()));
             }
 
             return query;

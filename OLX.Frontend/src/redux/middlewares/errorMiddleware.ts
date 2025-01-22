@@ -35,6 +35,7 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
             case 400:
             case 404:
             case 403:
+            case 405:    
                 if (error.data?.length && error.data?.length > 0) {
                     error.data?.forEach((element: any) => {
 
