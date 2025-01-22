@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="flex h-screen w-screen">
       <div className="w-[40%] h-[100%]">
-         <img className="w-[100%] h-[100%]" src='src\assets\images\login_leftSide.png'/>
+        <img className="w-[100%] h-[100%]" src='src\assets\images\login_leftSide.png' />
       </div>
       <div id='#login' className="w-[60%] flex flex-col items-center justify-center text-center">
         <h2 className='w-[460px] text-[#3A211C] mb-[50px] font-unbounded text-[36px] font-normal'>З поверненням!</h2>
@@ -91,8 +91,11 @@ const LoginPage: React.FC = () => {
           onFinish={onFinish}
           className='w-[460px]'
         >
-          <FormInput label='Електронна пошта' name='email' placeholder='example@gmail.com' ruleType='email' requiredMessage='Будь ласка, введіть електронну пошту' typeMessage='Неправильно введена пошта' />
-          <FormInput label='Пароль' name='password' placeholder='eXampLe_3' requiredMessage='Будь ласка, введіть пароль' />
+          <FormInput label='Електронна пошта' name='email' placeholder='example@gmail.com'
+            rules={[{ required: true, message: 'Будь ласка, введіть електронну пошту' },
+            { type: 'email', message: 'Неправильний формат електронної пошти' }]} />
+          <FormInput label='Пароль' name='password' placeholder='eXampLe_3'
+            rules={[{ required: true, message: 'Будь ласка, введіть пароль' }]} />
 
           <div className='flex justify-between'>
             <Form.Item
@@ -107,7 +110,7 @@ const LoginPage: React.FC = () => {
             </Button>
           </div>
 
-          <PrimaryButton title='Увійти' htmlType='submit' isLoading={isLoading}/>
+          <PrimaryButton title='Увійти' htmlType='submit' isLoading={isLoading} />
           <Divider style={{ color: '#9B7A5B', fontWeight: '400' }}>або</Divider>
           <PrimaryButton title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading} />
 

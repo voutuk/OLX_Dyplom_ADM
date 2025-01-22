@@ -2,27 +2,19 @@ import React from 'react'
 import { Input, Form } from 'antd';
 import { FormInputProps } from './props';
 
-const FormInput: React.FC<FormInputProps> = ({label, name, ruleType, typeMessage, requiredMessage, inputType="text", placeholder}) => {
-  const generatedRules = [];
-
-  if (requiredMessage) {
-    generatedRules.push({
-      required: true,
-      message: <span className='font-montserrat text-[#BB8A52] text-[14px] font-normal leading-5 underline'>{requiredMessage}</span>,
-    });
-  }
-
-  if (ruleType && typeMessage) {
-    generatedRules.push({
-      type: ruleType,
-      message: <span className='font-montserrat text-[#BB8A52] text-[14px] font-normal leading-5 underline'>{typeMessage}</span>,
-    });
-  }
+const FormInput: React.FC<FormInputProps> = ({label, name, rules = [], inputType="text", placeholder}) => {
   return (
     <Form.Item
         label={<label className='text-[#3A211C] font-unbounded text-base font-medium leading-5 '>{label}</label>}
         name={name}
-        rules={generatedRules}
+        rules={rules.map(rule => ({
+          ...rule,
+          message: (
+            <span className="font-montserrat text-[#BB8A52] text-[14px] font-normal leading-5 underline">
+              {rule.message}
+            </span>
+          ),
+        }))}
         required={false}
         className='text-left'
     >   

@@ -1,9 +1,7 @@
 export interface FormInputProps {
     label: string,
     name: string,
-    ruleType?: 'string' | 'email' | 'number' | 'date',
-    typeMessage?: string, 
-    requiredMessage?: string, 
+    rules?: any[],
     inputType?: string,
     placeholder: string
 }
