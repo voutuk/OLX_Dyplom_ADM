@@ -27,9 +27,9 @@ const FormInput: React.FC<FormInputProps> = ({label, name, ruleType, typeMessage
         className='text-left'
     >   
         {name=='password' ? 
-        <Input.Password type={inputType} placeholder={placeholder} className='rounded-[8px] p-[10px] border-[#9B7A5B] hover:border-[#9B7A5B] focus:border-[#9B7A5B] active:border-[#9B7A5B] w-[460px] h-[48px] text-[#9B7A5B] text-opacity-50 font-montserrat font-normal leading-6 text-base'/>
+        <Input.Password type={inputType} placeholder={placeholder} className='rounded-[8px] p-[10px]  w-[460px] h-[48px] text-[#9B7A5B] text-opacity-50 font-montserrat font-normal leading-6 text-base'/>
           :
-        <Input type={inputType} placeholder={placeholder} className='rounded-[8px] p-[10px] border-[#9B7A5B] hover:border-[#9B7A5B] focus:border-[#9B7A5B] invalid:border-[#9B7A5B] w-[460px] h-[48px] text-[#9B7A5B] text-opacity-50 font-montserrat font-normal leading-6 text-base'/>
+        <Input type={inputType} placeholder={placeholder} className='rounded-[8px] p-[10px]  w-[460px] h-[48px] text-[#9B7A5B] text-opacity-50 font-montserrat font-normal leading-6 text-base'/>
         }
     </Form.Item>
   )

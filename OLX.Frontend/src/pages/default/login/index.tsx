@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react'
-import { Button, Checkbox, Divider, Form, Input } from 'antd';
+import { Button, Checkbox, Divider, Form } from 'antd';
 import { ILoginLocalRequest } from '../../../models/account';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -10,6 +10,7 @@ import { IError, IUserLockoutError } from '../../../models/errors';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
 import PrimaryButton from '../../../components/primary_button';
 import FormInput from '../../../components/form_input';
+import Title from 'antd/es/typography/Title';
 
 const loginAction: string = 'login'
 
@@ -77,74 +78,53 @@ const LoginPage: React.FC = () => {
 
 
   return (
-    <div id='#login' className=' w-50 mx-auto my-4'>
-      <Divider className='fs-5 border-dark-subtle mb-5' orientation="left">Вхід</Divider>
-      <Form
-        layout='vertical'
-        style={{
-          maxWidth: 300,
-        }}
-        initialValues={{
-          remember: true
-        }}
-        onFinish={onFinish}
-        className='mx-auto text-center'
-      //autoComplete="off"
-      >
-        <Form.Item
-          label="Електронна пошта"
-          name="email"
-          rules={[
-            {
-              required: true,
-              message: "Будьласка введіть eлектронну пошту!",
-            },
-            {
-              type: 'email',
-              message: "Невірно введена пошта!",
-            },
-          ]}
+    <div className="flex h-[100%] w-[100%]">
+      <div className="w-[40%]">
+         <img  src='src\assets\images\login_leftside.png'/>
+      </div>
+      <div id='#login' className="w-[60%] flex flex-col items-center justify-center text-center">
+        <h2 className='w-[460px] text-[#3A211C] mb-[50px] font-unbounded text-[36px] font-normal'>З поверненням!</h2>
+        <Form
+          layout='vertical'
+          style={{
+            maxWidth: 300,
+          }}
+          initialValues={{
+            remember: true
+          }}
+          onFinish={onFinish}
+          className='w-[460px]'
         >
-          <Input type='large' />
-        </Form.Item>
+          <FormInput label='Електронна пошта' name='email' placeholder='example@gmail.com' ruleType='email' requiredMessage='Будь ласка, введіть електронну пошту' typeMessage='Неправильно введена пошта' />
+          <FormInput label='Пароль' name='password' placeholder='eXampLe_3' requiredMessage='Будь ласка, введіть пароль' />
 
-        <Form.Item
-          label="Пароль"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: 'Будьласка введіть пароль!',
-            },
-          ]}
-        >
-          <Input.Password type='large' />
-        </Form.Item>
-        
-        <FormInput label='Електронна пошта' name='email' placeholder='example@gmail.com' ruleType='email' typeMessage='Будь ласка, введіть електронну пошту' requiredMessage='Неправильно введена пошта'/>
-        <FormInput label='Пароль' name='password' placeholder='eXampLe_3' requiredMessage='Будь ласка, введіть пароль'/>
-        <Form.Item
-          name="remember"
-          valuePropName="checked"
-        >
-          <Checkbox onChange={(event) => { remeber.current = event.target.checked }}>Запам'ятати мене</Checkbox>
-        </Form.Item>
+          <div className='flex justify-between mb-[30px]'>
+            <Form.Item
+              name="remember"
+              valuePropName="checked"
+            >
+              <Checkbox onChange={(event) => { remeber.current = event.target.checked }}>запам'ятати мене</Checkbox>
+            </Form.Item>
 
-        
-        <PrimaryButton title='Увійти' htmlType='submit' isLoading={isLoading}/>
-        <PrimaryButton title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading}/>
+            <Button onClick={() => navigate('password')} className='text-[#3A211C] font-montserrat border-none underline forget-password' variant="link">
+              забули пароль?
+            </Button>
+          </div>
 
-        <Button onClick={() => navigate('password')} className='mt-3' color="primary" variant="link">
-          Забули пароль ?
-        </Button>
+          <PrimaryButton title='Увійти' htmlType='submit' isLoading={isLoading}/>
+          <Divider style={{ color: '#9B7A5B', fontWeight: '400' }}>OR</Divider>
+          <PrimaryButton title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading} />
 
-        {loginError?.status === 403 &&
-          <Button onClick={sendConfirmEmail} color="primary" variant="link">Надіслати лист для підтвердження</Button>
-        }
 
-      </Form>
+          {loginError?.status === 403 &&
+            <Button onClick={sendConfirmEmail} color="primary" variant="link">Надіслати лист для підтвердження</Button>
+          }
 
+        </Form>
+
+      </div>
     </div>
+
   )
 }
 export default LoginPage;
