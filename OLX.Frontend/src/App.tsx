@@ -30,20 +30,19 @@ function App() {
   return (
     <Routes>
       <Route element={<ProtectedRoutes requiredRole={["User", "UnAuth"]} />}>
+        <Route path="auth">
+          <Route index element={<ReCaptcha><LoginPage /></ReCaptcha>} />
+          <Route path="register" element={<ReCaptcha ><RegisterPage /></ReCaptcha>} />
+          <Route path="emailconfirm" element={<EmailConfirmationPage />} />
+          <Route path="password">
+            <Route index element={<ForgotPasswordPage />} />
+            <Route path="reset" element={<ResetPasswordPage />} />
+          </Route>
+        </Route>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<HomePage />} />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="error" element={<ErrorPage />} />
-
-          <Route path="auth">
-            <Route index element={<ReCaptcha><LoginPage /></ReCaptcha>} />
-            <Route path="register" element={<ReCaptcha ><RegisterPage /></ReCaptcha>} />
-            <Route path="emailconfirm" element={<EmailConfirmationPage />} />
-            <Route path="password">
-              <Route index element={<ForgotPasswordPage />} />
-              <Route path="reset" element={<ResetPasswordPage />} />
-            </Route>
-          </Route>
 
           <Route element={<ProtectedRoutes requiredRole={"User"} />}>
             <Route path="user">
