@@ -1,4 +1,3 @@
-import { TableProps } from "antd";
 import { IUser } from "../models/account"
 import { IOlxUser } from "../models/user";
 import { ICategory } from "../models/category";
@@ -35,12 +34,12 @@ export const getFormData = (data: any): FormData => {
   const formData = new FormData();
   Object.keys(data).forEach(function (key) {
     if (Array.isArray(data[key])) {
-      if (typeof data[key][0] === 'object' &&  !(data[key] instanceof File)) {
+      if (typeof data[key][0] === 'object' && !(data[key] instanceof File)) {
         formData.append(key, JSON.stringify(data[key]));
       } else {
         data[key].forEach((item: any) => formData.append(key, item));
       }
-    } else if (typeof data[key] === 'object' &&  !(data[key] instanceof File)) {
+    } else if (typeof data[key] === 'object' && !(data[key] instanceof File)) {
       formData.append(key, JSON.stringify(data[key]));
     } else {
       formData.append(key, data[key]);
@@ -52,9 +51,28 @@ export const getFormData = (data: any): FormData => {
 
 export const mapCategoryToTreeData = (categories: ICategory[]): any[] => {
   return categories.map((category) => ({
-    title: category.name, 
-    value: category.id,   
-    key: category.id, 
-    children: mapCategoryToTreeData(category.childs), // Рекурсивно додаємо дочірні вузли
+    title: category.name,
+    value: category.id,
+    key: category.id,
+    children: mapCategoryToTreeData(category.childs),
   }));
+};
+
+
+
+export const getCategoryFromTree = (categoryId: number, categoryTree: ICategory[]): ICategory | null => {
+  for (let index = 0; index < categoryTree.length; index++) {
+    if (categoryId === categoryTree[index].id) {
+      return categoryTree[index]
+    }
+    else if (categoryTree[index].childs.length > 0) {
+      const category = getCategoryFromTree(categoryId, categoryTree[index].childs)
+      if (category) {
+        return category;
+      }
+      continue;
+    }
+  }
+  return null
+
 };

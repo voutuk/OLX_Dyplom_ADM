@@ -9,6 +9,8 @@ import { mapCategoryToTreeData } from "../../../utilities/common_funct";
 import { RcFile, UploadFile } from "antd/es/upload/interface";
 import { useGetAllFilterQuery } from "../../../redux/api/filterApi";
 import { ICategoryCreationModel } from "../../../models/category";
+import { APP_ENV } from "../../../constants/env";
+import { IFilter } from "../../../models/filter";
 
 
 const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, category }) => {
@@ -21,14 +23,16 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const [file, setFile] = useState<UploadFile>();
+    const [parentCategoryFilters,setParentCategoryFilters] = useState<IFilter[]>([])
 
     const onFinish = async (data: any) => {
-        const requestData:ICategoryCreationModel = {
+        const requestData: ICategoryCreationModel = {
             name: data.name,
-             id: category?.id || 0, 
-             imageFile: file?.originFileObj, 
-             parentId: data.parentId || '', 
-             filterIds: data.filterIds
+            id: category?.id || 0,
+            currentImage: file ? category?.image : '',
+            imageFile: file?.originFileObj,
+            parentId: data.parentId || '',
+            filterIds: data.filterIds
         }
         const result = category
             ? await updateCategory(requestData)
@@ -44,6 +48,14 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
     useEffect(() => {
         if (open) {
             if (category) {
+                if (category.image) {
+                    setFile({
+                        uid: '-1',
+                        name: category.name,
+                        status: 'done',
+                        url: APP_ENV.IMAGES_800_URL + category.image,
+                    })
+                }
                 form.setFields([
                     { name: 'filterIds', value: category.filters, },
                     { name: 'name', value: category.name },
@@ -53,6 +65,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
         }
         else {
             form.resetFields()
+            setFile(undefined)
         }
     }, [open])
 
@@ -76,7 +89,11 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
     const handleChange = ({ fileList: newFileList }: { fileList: UploadFile[] }) => {
         setFile(newFileList[0]);
     };
-
+    const onParentCategoryChange = (categoryId:any) =>{
+         
+        setParentCategoryFilters(filters?.filter(x=>!x.categories.includes(categoryId)) || [])
+       
+    }
 
     return (
         <Drawer
@@ -113,7 +130,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                 <div className=" flex flex-col h-[120px] w-full mb-6  items-center">
                     <span className="self-start">Зображення</span>
                     <Upload
-                        listType="picture-circle"
+                        listType="picture-card"
                         accept="image/png, image/jpeg, image/webp"
                         fileList={file ? [file] : []}
                         maxCount={1}
@@ -161,6 +178,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                         treeData={mapCategoryToTreeData(categories || [])}
                         placeholder="Батьківська категорія"
+                        onChange={onParentCategoryChange}
                     />
                 </Form.Item>
 
@@ -174,13 +192,13 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                         maxTagCount='responsive'
                         mode="tags"
                         className="flex-1"
-                        placeholder="Фыльтри"
+                        placeholder="Фільтри"
                         showSearch
                         size="small"
                         filterOption={(input, option) =>
                             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                         }
-                        options={filters?.map(x => ({ value: x.id, label: x.name }))}
+                        options={parentCategoryFilters?.map(x => ({ value: x.id, label: x.name }))}
                     />
                 </Form.Item>
 

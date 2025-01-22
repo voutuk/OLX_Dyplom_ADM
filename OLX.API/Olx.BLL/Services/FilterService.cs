@@ -46,12 +46,12 @@ namespace Olx.BLL.Services
 
         public async Task<IEnumerable<FilterDto>> GetDtoByIds(IEnumerable<int> ids)
         {
-            var filters = await filterRepository.GetListBySpec(new FilterSpecs.GetByIds(ids, FilterOpt.Values|FilterOpt.NoTracking));
+            var filters = await filterRepository.GetListBySpec(new FilterSpecs.GetByIds(ids, FilterOpt.Values | FilterOpt.NoTracking));
             return mapper.Map<IEnumerable<FilterDto>>(filters);
         }
-            
+
         public async Task<IEnumerable<FilterDto>> GetAll() =>
-            mapper.Map<IEnumerable<FilterDto>>(await filterRepository.GetListBySpec(new FilterSpecs.GetAll(FilterOpt.Values|FilterOpt.NoTracking)));
+            mapper.Map<IEnumerable<FilterDto>>(await filterRepository.GetListBySpec(new FilterSpecs.GetAll(FilterOpt.Values | FilterOpt.NoTracking | FilterOpt.Categories)));
 
         public async Task RemoveAsync(int id)
         {

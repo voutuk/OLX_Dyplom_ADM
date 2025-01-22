@@ -81,16 +81,21 @@ namespace Olx.BLL.Services
                     ?? throw new HttpException(Errors.InvalidParentCategoryId, HttpStatusCode.BadRequest);
                 category.Parent = parentCategory;
             }
-            
-            if (editModel.ImageFile is not null)
+
+            if (String.IsNullOrWhiteSpace(editModel.CurrentImage) || editModel.ImageFile is not null)
             {
-                if (category.Image is not null)
+                if (!String.IsNullOrWhiteSpace(category.Image))
                 {
                     imageService.DeleteImageIfExists(category.Image);
                 }
-                category.Image = await imageService.SaveImageAsync(editModel.ImageFile);
+                category.Image = null;
             }
 
+            if (editModel.ImageFile is not null)
+            {
+                category.Image = await imageService.SaveImageAsync(editModel.ImageFile);
+            }
+            
             if (editModel.FilterIds?.Any() ?? false)
             {
                 var filters = await filterService.GetByIds(editModel.FilterIds);
