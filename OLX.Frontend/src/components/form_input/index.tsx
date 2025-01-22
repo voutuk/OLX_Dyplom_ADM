@@ -16,7 +16,7 @@ const FormInput: React.FC<FormInputProps> = ({label, name, rules = [], inputType
           ),
         }))}
         required={false}
-        className='text-left'
+        className='text-left mb-7'
     >   
         {name=='password' ? 
         <Input.Password type={inputType} placeholder={placeholder} className='rounded-[8px] p-[10px]  w-[460px] h-[48px] text-[#9B7A5B] text-opacity-50 font-montserrat font-normal leading-6 text-base'/>
