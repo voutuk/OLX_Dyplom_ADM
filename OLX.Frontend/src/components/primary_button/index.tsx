@@ -8,8 +8,13 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({ onButtonClick = () => { }
       loading={isLoading}
       onClick={onButtonClick}
       htmlType={htmlType}
-      style={{ backgroundColor: bgColor, color: fontColor, width: width, height: height, }}
-      className={`p-0 pl-[24px] pr-[24px] rounded-[8px] text-[20px] font-normal font-montserrat leading-[28px] border-none`}>
+      style={{
+        backgroundColor: bgColor,
+        color: fontColor,
+        width: width,
+        height: height,
+      }}
+      className={`rounded-[8px] text-[20px] font-normal font-montserrat leading-[28px] border-none`}>
       {title}
     </Button>
   )

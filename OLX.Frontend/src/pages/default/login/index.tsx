@@ -9,15 +9,16 @@ import { IError, IUserLockoutError } from '../../../models/errors';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
 import PrimaryButton from '../../../components/primary_button';
 import FormInput from '../../../components/form_input';
+import { Images } from '../../../constants/images';
 
 const loginAction: string = 'login'
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading: IsLoginLoading }] = useLoginMutation();
   const [googleLogin, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
-  const [sendConfEmail] = useSendConfirmEmailMutation();
-  const [loginError, setLoginError] = useState<IError | undefined>(undefined)
+  const [sendConfEmail, { isLoading: isConfirmEmailLoading }] = useSendConfirmEmailMutation();
+  const [emailConfirmationError, setEmailConfirmationError] = useState<boolean>(false)
   const { executeRecaptcha } = useGoogleReCaptcha();
   const loginEmail = useRef<string | undefined>('')
   const remeber = useRef<boolean>(true)
@@ -32,7 +33,9 @@ const LoginPage: React.FC = () => {
       }
       else {
         loginEmail.current = ((result.error as IError).data as IUserLockoutError)?.Email || undefined;
-        setLoginError(result.error as IError);
+        if ((result.error as IError).status === 403) {
+          setEmailConfirmationError(true);
+        }
       }
     }
   });
@@ -41,7 +44,7 @@ const LoginPage: React.FC = () => {
     if (loginEmail.current) {
       const result = await sendConfEmail(loginEmail.current);
       if (!result.error) {
-        setLoginError(undefined)
+        setEmailConfirmationError(false)
         toast("Лист підтвердження відправлено на вашу пошту", {
           type: "success"
         })
@@ -56,14 +59,16 @@ const LoginPage: React.FC = () => {
   }
 
   const onFinish = async (loginModel: ILoginLocalRequest) => {
-    setLoginError(undefined)
+    setEmailConfirmationError(false);
     if (executeRecaptcha) {
       loginModel.recapthcaToken = await executeRecaptcha(loginAction);
       loginModel.action = loginAction
       const result = await login(loginModel);
       if (result.error) {
         loginEmail.current = ((result.error as IError)?.data as IUserLockoutError)?.Email || undefined;
-        setLoginError(result.error as IError);
+        if ((result.error as IError).status === 403) {
+          setEmailConfirmationError(true);
+        }
       }
       else {
         toast("Ви успішно увійшли в свій акаунт", {
@@ -74,22 +79,18 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen w-screen">
+    <div className="flex h-screen w-screen  justify-between">
       <div className="w-[50%] h-[100%]">
-        <img className="w-[100%] h-[100%]" src='src\assets\images\login_leftSide.png' />
+        <img className="w-[100%] h-[100%]" src={Images.loginImage} />
       </div>
-      <div id='#login' className="w-[50%] flex flex-col items-center justify-center text-center">
-        <h2 className='w-[460px] text-[#3A211C] mb-[50px] font-unbounded text-[36px] font-normal'>З поверненням!</h2>
+      <div id='#login' className="mx-auto flex flex-col items-center justify-center text-center">
+        <h2 className='text-[#3A211C] mb-[50px] font-unbounded text-[36px] font-normal'>З поверненням!</h2>
         <Form
           layout='vertical'
-          style={{
-            maxWidth: 300,
-          }}
           initialValues={{
             remember: true
           }}
           onFinish={onFinish}
-          className='w-[460px]'
         >
           <FormInput
             label='Електронна пошта'
@@ -120,13 +121,13 @@ const LoginPage: React.FC = () => {
             </Button>
           </div>
 
-          <PrimaryButton title='Увійти' htmlType='submit' isLoading={isLoading} />
+          <PrimaryButton
+            title={!emailConfirmationError ? 'Увійти' : "Надіслати лист для підтвердження"}
+            htmlType={!emailConfirmationError ? 'submit' : 'button'}
+            onButtonClick={emailConfirmationError ? sendConfirmEmail : () => { }}
+            isLoading={!emailConfirmationError ? IsLoginLoading : isConfirmEmailLoading} />
           <Divider style={{ color: '#9B7A5B', fontWeight: '400' }}>або</Divider>
           <PrimaryButton title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading} />
-
-          {loginError?.status === 403 &&
-            <Button onClick={sendConfirmEmail} color="primary" variant="link">Надіслати лист для підтвердження</Button>
-          }
         </Form>
       </div>
     </div>
