@@ -12,10 +12,13 @@ namespace OLX.API.Controllers
     public class CategoryController(ICategoryService categoryService) : ControllerBase
     {
         [HttpGet("get")]
-        public async Task<IActionResult> GetAll() => Ok(await categoryService.GetAllTreeAsync());
+        public async Task<IActionResult> Get() => Ok(await categoryService.Get());
 
-        [HttpGet("get/{id:int}")]
-        public async Task<IActionResult> GetTree([FromRoute]int id) => Ok(await categoryService.GetTreeAsync(id));
+        [HttpGet("get/tree")]
+        public async Task<IActionResult> GetTree() => Ok(await categoryService.GetAllTreeAsync());
+
+        [HttpGet("get/tree/{id:int}")]
+        public async Task<IActionResult> GetTreeById([FromRoute]int id) => Ok(await categoryService.GetTreeAsync(id));
 
         [HttpPost("get/page")]
         public async Task<IActionResult> GetPage([FromBody] CategoryPageRequest pageRequest) => Ok(await categoryService.GetPageAsync(pageRequest));
@@ -33,6 +36,14 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             await categoryService.RemoveAsync(id);
+            return Ok();
+        }
+
+        [Authorize(Roles = Roles.Admin)]
+        [HttpDelete("delete/tree/{id:int}")]
+        public async Task<IActionResult> DeleteTree([FromRoute] int id)
+        {
+            await categoryService.RemoveTreeAsync(id);
             return Ok();
         }
     }

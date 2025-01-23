@@ -22,9 +22,21 @@ export const filterApi = createApi({
             providesTags: ["Filters"]
         }),
 
+        getAllFilter: builder.query<IFilter[], void>({
+            query: () => {
+                return {
+                    url: `get`,
+                    method: 'GET',
+                    // timeout: 10000,
+                }
+            },
+            providesTags: ["Filters"]
+        }),
+
     }),
 })
 
 export const {
     useGetFilterPageQuery,
+    useGetAllFilterQuery
 } = filterApi

@@ -1,11 +1,8 @@
 ﻿
 
-using AutoMapper;
-using Olx.BLL.Entities.FilterEntities;
 
 namespace Olx.BLL.DTOs.FilterDtos
 {
-    [AutoMap(typeof(Filter))]
     public class FilterDto
     {
         public int Id { get; set; }

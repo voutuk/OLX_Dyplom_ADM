@@ -1,5 +1,6 @@
 import { IUser } from "../models/account"
 import { IOlxUser } from "../models/user";
+import { ICategory } from "../models/category";
 
 export const getUserDescr = (user: IUser | IOlxUser | null): string => {
 
@@ -33,12 +34,12 @@ export const getFormData = (data: any): FormData => {
   const formData = new FormData();
   Object.keys(data).forEach(function (key) {
     if (Array.isArray(data[key])) {
-      if (typeof data[key][0] === 'object') {
+      if (typeof data[key][0] === 'object' && !(data[key] instanceof File)) {
         formData.append(key, JSON.stringify(data[key]));
       } else {
         data[key].forEach((item: any) => formData.append(key, item));
       }
-    } else if (typeof data[key] === 'object' && data[key] !== null) {
+    } else if (typeof data[key] === 'object' && !(data[key] instanceof File)) {
       formData.append(key, JSON.stringify(data[key]));
     } else {
       formData.append(key, data[key]);
@@ -47,3 +48,27 @@ export const getFormData = (data: any): FormData => {
   });
   return formData;
 }
+
+export const buildTree = (categories: ICategory[], parentId?: number, disabled?: number[]): any[] => {
+  return categories.filter(x => x.parentId == parentId)
+    .map(x => ({
+      title: x.name,
+      value: x.id,
+      key: x.id,
+      disabled: disabled?.includes(x.id),
+      children: buildTree(categories, x.id, disabled)
+    }))
+};
+
+export const getAllParentFilterIds = (categories: ICategory[], parentId?: number): number[] => {
+  let filtersIds: number[] = [];
+  while (parentId) {
+    const parentCategory = categories.find(x => x.id == parentId);
+    if (parentCategory) {
+      filtersIds = [...filtersIds, ...parentCategory.filters]
+    }
+    parentId = parentCategory?.parentId;
+  }
+  return filtersIds
+}
+

@@ -66,7 +66,7 @@ export const accountApi = createApi({
                         dispatch(setCredentials({ token: result.data.accessToken, refreshToken: result.data.refreshToken, remember: arg.remember }))
                     }
                 } catch (error) {
-                    console.error('Login failed:', error);
+                    console.error('Google login failed:', error);
                 }
             },
         }),

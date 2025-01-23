@@ -6,11 +6,13 @@ namespace Olx.BLL.Interfaces
 {
     public interface ICategoryService
     {
+        Task<IEnumerable<CategoryDto>> Get();
         Task<PageResponse<CategoryDto>> GetPageAsync(CategoryPageRequest pageRequest);
-        Task<IEnumerable<CategoryDto>> GetAllTreeAsync();
+        Task<IEnumerable<CategoryDto>> GetAllTreeAsync(bool filters = true);
         Task<CategoryDto> GetTreeAsync(int categoryId);
         Task<CategoryDto> CreateAsync(CategoryCreationModel creationModel);
         Task RemoveAsync(int id);
+        Task RemoveTreeAsync(int id);
         Task<CategoryDto> EditAsync(CategoryCreationModel editModel);
     }
 }

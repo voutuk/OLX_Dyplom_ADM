@@ -22,7 +22,7 @@ export const accountApiAuth = createApi({
                     await queryFulfilled;
                     dispatch(userAuthApi.util.invalidateTags(['Users']))
                 } catch (error) {
-                    console.error('Login failed:', error);
+                    console.error('Lock/Unlock user failed:', error);
                 }
             },
         }),

@@ -24,7 +24,7 @@ export const filterAuthApi = createApi({
                     await queryFulfilled;
                     dispatch(filterApi.util.invalidateTags(['Filters']))
                 } catch (error) {
-                    console.error('Login failed:', error);
+                    console.error('Create filter failed:', error);
                 }
             },
         }),
@@ -43,7 +43,7 @@ export const filterAuthApi = createApi({
                     await queryFulfilled;
                     dispatch(filterApi.util.invalidateTags(['Filters']))
                 } catch (error) {
-                    console.error('Login failed:', error);
+                    console.error('Update filter failed:', error);
                 }
             },
         }),
@@ -62,7 +62,7 @@ export const filterAuthApi = createApi({
                     await queryFulfilled;
                     dispatch(filterApi.util.invalidateTags(['Filters']))
                 } catch (error) {
-                    console.error('Login failed:', error);
+                    console.error('Delete filter failed:', error);
                 }
             },
         }),
