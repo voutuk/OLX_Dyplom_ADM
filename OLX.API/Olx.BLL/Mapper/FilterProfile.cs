@@ -11,8 +11,7 @@ namespace Olx.BLL.Mapper
         public FilterProfile()
         {
             CreateMap<FilterEditModel, Filter>();
-            CreateMap<Filter,FilterDto> ()
-                .ForMember(x => x.Categories, opt => opt.MapFrom(z => z.Categories.Select(y => y.Id)));
+            CreateMap<Filter,FilterDto> ();
             CreateMap<FilterCreationModel, Filter>()
                 .ForMember(x => x.Values, opt => opt.MapFrom(z => z.Values.Select(y => new FilterValue() { Value = y })));
             

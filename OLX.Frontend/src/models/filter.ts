@@ -3,8 +3,7 @@ import { PageRequest } from "./user"
 export interface IFilter {
     id: number,
     name: string,
-    values: IFilterValue[],
-    categories:number[]
+    values: IFilterValue[]
 }
 
 export interface IFilterValue {

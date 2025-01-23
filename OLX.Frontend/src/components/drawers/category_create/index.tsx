@@ -4,26 +4,28 @@ import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { CategoryCreateProps } from "./props";
 import { useCreateCategoryMutation, useEditCategoryMutation } from "../../../redux/api/categoryAuthApi";
-import { useGetAllCategoriesTreeQuery } from "../../../redux/api/categoryApi";
-import { mapCategoryToTreeData } from "../../../utilities/common_funct";
+import { useGetAllCategoriesQuery } from "../../../redux/api/categoryApi";
+import { buildTree, getAllParentFilterIds } from "../../../utilities/common_funct";
 import { RcFile, UploadFile } from "antd/es/upload/interface";
 import { useGetAllFilterQuery } from "../../../redux/api/filterApi";
-import { ICategoryCreationModel } from "../../../models/category";
+import { ICategory, ICategoryCreationModel } from "../../../models/category";
 import { APP_ENV } from "../../../constants/env";
 import { IFilter } from "../../../models/filter";
+
 
 
 const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, category }) => {
     const [form] = Form.useForm();
     const [createCategory] = useCreateCategoryMutation();
     const [updateCategory] = useEditCategoryMutation();
-    const { data: categories } = useGetAllCategoriesTreeQuery();
-    const { data: filters } = useGetAllFilterQuery();
+    const { data: categories } = useGetAllCategoriesQuery();
+    const { data: allFilters } = useGetAllFilterQuery();
+    const [categoryTree, setCategoryTree] = useState<ICategory[]>([])
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const [file, setFile] = useState<UploadFile>();
-    const [parentCategoryFilters,setParentCategoryFilters] = useState<IFilter[]>([])
+    const [excludedFilters, setExcludedFilters] = useState<number[]>([])
 
     const onFinish = async (data: any) => {
         const requestData: ICategoryCreationModel = {
@@ -61,11 +63,14 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                     { name: 'name', value: category.name },
                     { name: 'parentId', value: category.parentId }
                 ])
+                setCategoryTree(buildTree(categories || [], undefined, [category.id]))
+                setExcludedFilters(getAllParentFilterIds(categories || [], category.parentId));
             }
         }
         else {
             form.resetFields()
             setFile(undefined)
+            //  setCategoryTree([])
         }
     }, [open])
 
@@ -89,10 +94,8 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
     const handleChange = ({ fileList: newFileList }: { fileList: UploadFile[] }) => {
         setFile(newFileList[0]);
     };
-    const onParentCategoryChange = (categoryId:any) =>{
-         
-        setParentCategoryFilters(filters?.filter(x=>!x.categories.includes(categoryId)) || [])
-       
+    const onParentCategoryChange = (parentId: any) => {
+        setExcludedFilters(getAllParentFilterIds(categories || [], parentId));
     }
 
     return (
@@ -173,10 +176,11 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                 >
                     <TreeSelect
                         allowClear
+                        showSearch
                         size="small"
                         className="flex-1"
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={mapCategoryToTreeData(categories || [])}
+                        treeData={categoryTree}
                         placeholder="Батьківська категорія"
                         onChange={onParentCategoryChange}
                     />
@@ -198,11 +202,9 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                         filterOption={(input, option) =>
                             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                         }
-                        options={parentCategoryFilters?.map(x => ({ value: x.id, label: x.name }))}
+                        options={allFilters?.map(x => ({ value: x.id, label: x.name, disabled: excludedFilters.includes(x.id) }))}
                     />
                 </Form.Item>
-
-
             </Form>
             <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
                 <img alt="example" style={{ width: '100%' }} src={previewImage} />

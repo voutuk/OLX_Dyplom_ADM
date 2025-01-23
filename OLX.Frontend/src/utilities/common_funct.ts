@@ -49,30 +49,26 @@ export const getFormData = (data: any): FormData => {
   return formData;
 }
 
-export const mapCategoryToTreeData = (categories: ICategory[]): any[] => {
-  return categories.map((category) => ({
-    title: category.name,
-    value: category.id,
-    key: category.id,
-    children: mapCategoryToTreeData(category.childs),
-  }));
+export const buildTree = (categories: ICategory[], parentId?: number, disabled?: number[]): any[] => {
+  return categories.filter(x => x.parentId == parentId)
+    .map(x => ({
+      title: x.name,
+      value: x.id,
+      key: x.id,
+      disabled: disabled?.includes(x.id),
+      children: buildTree(categories, x.id, disabled)
+    }))
 };
 
-
-
-export const getCategoryFromTree = (categoryId: number, categoryTree: ICategory[]): ICategory | null => {
-  for (let index = 0; index < categoryTree.length; index++) {
-    if (categoryId === categoryTree[index].id) {
-      return categoryTree[index]
+export const getAllParentFilterIds = (categories: ICategory[], parentId?: number): number[] => {
+  let filtersIds: number[] = [];
+  while (parentId) {
+    const parentCategory = categories.find(x => x.id == parentId);
+    if (parentCategory) {
+      filtersIds = [...filtersIds, ...parentCategory.filters]
     }
-    else if (categoryTree[index].childs.length > 0) {
-      const category = getCategoryFromTree(categoryId, categoryTree[index].childs)
-      if (category) {
-        return category;
-      }
-      continue;
-    }
+    parentId = parentCategory?.parentId;
   }
-  return null
+  return filtersIds
+}
 
-};
