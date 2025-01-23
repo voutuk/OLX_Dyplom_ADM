@@ -37,12 +37,12 @@ function App() {
           </Route>
         </Route>
       </Route>
-
+      
       <Route path="/auth">
         <Route index element={<ReCaptcha><LoginPage /></ReCaptcha>} />
         <Route path="register" element={<ReCaptcha ><RegisterPage /></ReCaptcha>} />
         <Route path="emailconfirm" element={<EmailConfirmationPage />} />
-        <Route path="password">
+         <Route path="password">
           <Route index element={<ForgotPasswordPage />} />
           <Route path="reset" element={<ResetPasswordPage />} />
         </Route>
