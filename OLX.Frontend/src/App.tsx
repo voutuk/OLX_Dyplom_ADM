@@ -30,7 +30,6 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="error" element={<ErrorPage />} />
-
           <Route element={<ProtectedRoutes requiredRole={"User"} />}>
             <Route path="user">
               <Route path="userprofile" element={<EmailConfirmationPage />} />
