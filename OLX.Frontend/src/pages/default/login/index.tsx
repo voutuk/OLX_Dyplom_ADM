@@ -128,6 +128,11 @@ const LoginPage: React.FC = () => {
             isLoading={!emailConfirmationError ? IsLoginLoading : isConfirmEmailLoading} />
           <Divider style={{ color: '#9B7A5B', fontWeight: '400' }}>або</Divider>
           <PrimaryButton title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading} />
+
+          <div className='flex justify-center items-center mt-[25px]'>
+              <p className='text-[#9B7A5B] font-montserrat'>Немає акаунту?</p>
+              <Button onClick={() => navigate('register')} className='text-[#3A211C] font-montserrat border-none forget-password ml-[5px]' variant="link">Зареєструватись тут</Button>
+          </div>
         </Form>
       </div>
     </div>
