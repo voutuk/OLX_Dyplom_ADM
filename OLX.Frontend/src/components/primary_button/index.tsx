@@ -1,6 +1,7 @@
 import React from 'react'
 import { PrimaryButtonProps } from './props'
 import { Button } from 'antd'
+import './style.scss'
 
 const PrimaryButton: React.FC<PrimaryButtonProps> = ({ onButtonClick = () => { }, title, width = '460px', height = '44px', bgColor = '#FFBA00', fontColor = '#3A211C', isLoading, htmlType = "button" }) => {
   return (

@@ -103,7 +103,7 @@ const LoginPage: React.FC = () => {
           <FormInput
             label='Пароль'
             name='password'
-            placeholder='eXampLe_3'
+            placeholder='Пароль'
             rules={[
               { required: true, message: 'Будь ласка, введіть пароль' }
             ]} />

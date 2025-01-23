@@ -78,7 +78,8 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
                 name="filterForm"
                 onFinish={onFinish}
                 layout="vertical"
-                className="w-[96%] mx-auto">
+                style={{width:'100%'}}
+                className="mx-auto ">
 
                 <Form.Item
                     label="Назва фільтру"

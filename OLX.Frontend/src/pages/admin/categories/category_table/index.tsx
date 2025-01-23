@@ -231,11 +231,12 @@ const AdminCategoryTable: React.FC = () => {
 
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
-            <AdminCategoryCreate
-                open={isDrawerOpen}
-                onClose={onDrawerClose}
-                category={selectedCategory}
-            />
+            {isDrawerOpen &&
+                <AdminCategoryCreate
+                    open={isDrawerOpen}
+                    onClose={onDrawerClose}
+                    category={selectedCategory}
+                />}
             <PageHeader
                 title="Категорії"
                 icon={<ProfileOutlined className="text-2xl" />}

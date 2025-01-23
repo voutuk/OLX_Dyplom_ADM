@@ -192,7 +192,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                         allowClear
                         maxCount={20}
                         maxTagCount='responsive'
-                        mode="tags"
+                        mode="multiple"
                         className="flex-1"
                         placeholder="Фільтри"
                         showSearch

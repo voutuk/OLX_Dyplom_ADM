@@ -15,7 +15,7 @@ import AdminFilterCreate from "../../../../components/drawers/filter_create";
 const AdminFilterTable: React.FC = () => {
 
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-    const [selectedFilter,setSelectedFilter] = useState<IFilter | undefined>();
+    const [selectedFilter, setSelectedFilter] = useState<IFilter | undefined>();
     const [delFilter] = useDeleteFilterMutation();
     const [nameSearch, setNameSearch] = useState<string>('')
     const [pageRequest, setPageRequest] = useState<IFilterPageRequest>({
@@ -95,13 +95,13 @@ const AdminFilterTable: React.FC = () => {
     }
 
     const editFilter = (filter: IFilter) => {
-       
+
         setIsDrawerOpen(true)
         setSelectedFilter(filter);
     }
 
     const onDrawerClose = () => {
-        
+
         setIsDrawerOpen(false)
         setSelectedFilter(undefined);
     }
@@ -184,10 +184,12 @@ const AdminFilterTable: React.FC = () => {
 
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
-            <AdminFilterCreate
-                open={isDrawerOpen}
-                onClose={onDrawerClose}
-                filter={selectedFilter} />
+            {isDrawerOpen &&
+                <AdminFilterCreate
+                    open={isDrawerOpen}
+                    onClose={onDrawerClose}
+                    filter={selectedFilter} />}
+
             <PageHeader
                 title="Фільтри"
                 icon={<FilterOutlined className="text-2xl" />}
