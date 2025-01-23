@@ -64,11 +64,29 @@ export const categoryAuthApi = createApi({
                 }
             },
         }),
+        deleteCategoryTree: builder.mutation<void, number>({
+            query: (categoryId) => {
+                return {
+                    url: `delete/tree/${categoryId}`,
+                    method: 'DELETE'
+                    // timeout: 10000,
+                }
+            },
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(categoryApi.util.invalidateTags(['Categories']))
+                } catch (error) {
+                    console.error('Delete category failed:', error);
+                }
+            },
+        }),
     }),
 })
 
 export const {
     useCreateCategoryMutation,
     useEditCategoryMutation,
-    useDeleteCategoryMutation
+    useDeleteCategoryMutation,
+    useDeleteCategoryTreeMutation
 } = categoryAuthApi

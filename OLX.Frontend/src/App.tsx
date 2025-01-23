@@ -9,8 +9,6 @@ const ErrorPage = React.lazy(() => import('./pages/default/errors/error_page'));
 const ReCaptcha = React.lazy(() => import('./components/google_recaptca'));
 const AdminCreate = React.lazy(() => import('./pages/admin/admins/new_admin'));
 const AdminFilterTable = React.lazy(() => import('./pages/admin/filters/filter_table'));
-const AdminCategoryEdit = React.lazy(() => import('./pages/admin/categories/category_edit'));
-const AdminCategoryCreate = React.lazy(() => import('./pages/admin/categories/category_create'));
 const AdminCategoryTable = React.lazy(() => import('./pages/admin/categories/category_table'));
 const AdminApproveAdvertTable = React.lazy(() => import('./pages/admin/adverts/not_approved'));
 const AdminAdvertTable = React.lazy(() => import('./pages/admin/adverts/adverts_table'));
@@ -66,8 +64,6 @@ function App() {
 
           <Route path="categories">
             <Route index element={<AdminCategoryTable />} />
-            <Route path='new' element={<AdminCategoryCreate />} />
-            <Route path='edit' element={<AdminCategoryEdit />} />
           </Route>
 
           <Route path="filters">

@@ -12,6 +12,7 @@ namespace Olx.BLL.Interfaces
         Task<CategoryDto> GetTreeAsync(int categoryId);
         Task<CategoryDto> CreateAsync(CategoryCreationModel creationModel);
         Task RemoveAsync(int id);
+        Task RemoveTreeAsync(int id);
         Task<CategoryDto> EditAsync(CategoryCreationModel editModel);
     }
 }

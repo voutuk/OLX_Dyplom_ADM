@@ -38,5 +38,13 @@ namespace OLX.API.Controllers
             await categoryService.RemoveAsync(id);
             return Ok();
         }
+
+        [Authorize(Roles = Roles.Admin)]
+        [HttpDelete("delete/tree/{id:int}")]
+        public async Task<IActionResult> DeleteTree([FromRoute] int id)
+        {
+            await categoryService.RemoveTreeAsync(id);
+            return Ok();
+        }
     }
 }

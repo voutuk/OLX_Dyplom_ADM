@@ -66,7 +66,24 @@ namespace Olx.BLL.Services
                     imageService.DeleteImageIfExists(category.Image);
                 }
             }
-            else throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
+            else throw new HttpException(Errors.InvalidCategoryId, HttpStatusCode.BadRequest);
+        }
+
+        public async Task RemoveTreeAsync(int id)
+        {
+            await userManager.UpdateUserActivityAsync(httpContext);
+            var allCategories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll());
+            var category = allCategories.FirstOrDefault(x => x.Id == id) ??
+                throw new HttpException(Errors.InvalidCategoryId, HttpStatusCode.BadRequest);
+            List<Category> categoriesToDelete = [category];
+            categoriesToDelete.AddRange(GetAllChilds(category.Id,allCategories));
+            if (categoriesToDelete.Count > 0)
+            {
+                categoryRepository.DeleteRange(categoriesToDelete);
+                await categoryRepository.SaveAsync();
+                var images = categoriesToDelete.Where(x => !String.IsNullOrEmpty(x.Image)).Select(z => z.Image);
+                imageService.DeleteImagesIfExists(images);
+            }
         }
 
         public async Task<CategoryDto> EditAsync(CategoryCreationModel editModel)
@@ -134,6 +151,12 @@ namespace Olx.BLL.Services
                     c.Childs = BuildTree(c.Id, categories).ToList();
                     return c;
                 });
+        }
+
+        private IEnumerable<Category> GetAllChilds(int id, IEnumerable<Category> categories)
+        {
+            var children = categories.Where(c => c.ParentId == id);
+            return children.Concat( children.SelectMany(child => GetAllChilds(child.Id, categories)) );
         }
 
         public async Task<PageResponse<CategoryDto>> GetPageAsync(CategoryPageRequest pageRequest)

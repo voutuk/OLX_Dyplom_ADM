@@ -10,8 +10,6 @@ import { RcFile, UploadFile } from "antd/es/upload/interface";
 import { useGetAllFilterQuery } from "../../../redux/api/filterApi";
 import { ICategory, ICategoryCreationModel } from "../../../models/category";
 import { APP_ENV } from "../../../constants/env";
-import { IFilter } from "../../../models/filter";
-
 
 
 const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, category }) => {
@@ -70,7 +68,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
         else {
             form.resetFields()
             setFile(undefined)
-            //  setCategoryTree([])
+            setExcludedFilters([])
         }
     }, [open])
 

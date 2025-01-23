@@ -11,6 +11,9 @@ import { APP_ENV } from "../../../../constants/env";
 import PageHeaderButton from "../../../../components/page_header_button";
 import { ColumnType } from "antd/es/table";
 import AdminCategoryCreate from "../../../../components/drawers/category_create";
+import { useDeleteCategoryMutation, useDeleteCategoryTreeMutation } from "../../../../redux/api/categoryAuthApi";
+import { toast } from "react-toastify";
+
 const AdminCategoryTable: React.FC = () => {
 
     const [pageRequest, setPageRequest] = useState<ICategoryPageRequest>({
@@ -23,8 +26,10 @@ const AdminCategoryTable: React.FC = () => {
     })
     const [search, setSearch] = useState<ICategoryPageRequest>(pageRequest as ICategoryPageRequest)
     const { data, isLoading, refetch } = useGetCategoryPageQuery(pageRequest)
+    const [deleteCategoryTree] = useDeleteCategoryTreeMutation()
+    const [deleteCategory] = useDeleteCategoryMutation()
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-    const [selectedCategory,setSelectedCategory] = useState<ICategory | undefined>();
+    const [selectedCategory, setSelectedCategory] = useState<ICategory | undefined>();
 
 
     const getColumnSearchProps = (dataIndex: keyof ICategoryPageRequest): ColumnType<ICategory> => ({
@@ -70,7 +75,7 @@ const AdminCategoryTable: React.FC = () => {
         ),
     });
 
-    const editCategory = (category:ICategory)=>{
+    const editCategory = (category: ICategory) => {
         setSelectedCategory(category);
         setIsDrawerOpen(true)
     }
@@ -107,7 +112,7 @@ const AdminCategoryTable: React.FC = () => {
             fixed: 'left',
             ...getColumnSearchProps('searchName')
         },
-        
+
         {
             title: "Батьківська категорія",
             dataIndex: 'parentName',
@@ -158,11 +163,19 @@ const AdminCategoryTable: React.FC = () => {
 
                     <Tooltip title="Видалити категорію">
                         <Popconfirm
+                            placement="leftTop"
                             title="Відалення категорії"
-                            description={`Ви впевненні що бажаєте видалити категорію "${category.name}"?`}
-                            onConfirm={() => { }}
+                            okButtonProps={{ type: "default" }}
+                            description={
+                                <div className="flex flex-col text-center">
+                                    <span className="text-red-900 "> УВАГА!!! </span>
+                                    <span className="text-red-900 ">ПРИ ВИДАЛЕННІ КАТЕГОРІЇ ВИДАЛЯТЬСЯ ВСІ ОГОЛОШЕННЯ ЦІЄЇ КАТЕГОРІЇ !!!</span>
+                                    <span>{`Ви впевненні що бажаєте видалити категорію "${category.name}"?`}</span>
+                                </div>}
+                            onConfirm={() => { onDeleteCategory(category.id) }}
+                            onCancel={() => { onDeleteCategory(category.id, true) }}
                             okText="Видалити"
-                            cancelText="Відмінити"
+                            cancelText="Видалити дерево"
                         >
                             <IconButton color="error" size="small">
                                 <DeleteForever />
@@ -175,6 +188,16 @@ const AdminCategoryTable: React.FC = () => {
         }
 
     ];
+    const onDeleteCategory = async (categoryId: number, deleteTree: boolean = false) => {
+        const result = deleteTree
+            ? await deleteCategoryTree(categoryId)
+            : await deleteCategory(categoryId);
+        if (!result.error) {
+            toast(`Категорія успішно вмдалена`, {
+                type: 'info'
+            })
+        }
+    }
     const onTableChange: TableProps<ICategory>['onChange'] = (_pagination, _filters, sorter, extra) => {
         if (extra.action === 'sort') {
             let descending: boolean;
@@ -202,7 +225,6 @@ const AdminCategoryTable: React.FC = () => {
     }, [pageRequest])
 
     const onDrawerClose = () => {
-        
         setIsDrawerOpen(false)
         setSelectedCategory(undefined);
     }
@@ -210,9 +232,9 @@ const AdminCategoryTable: React.FC = () => {
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
             <AdminCategoryCreate
-                open={isDrawerOpen} 
-                onClose={onDrawerClose } 
-                category={selectedCategory}           
+                open={isDrawerOpen}
+                onClose={onDrawerClose}
+                category={selectedCategory}
             />
             <PageHeader
                 title="Категорії"
@@ -255,7 +277,7 @@ const AdminCategoryTable: React.FC = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={data?.items}
-                scroll={{ x: 'max-content'}}
+                scroll={{ x: 'max-content' }}
                 loading={isLoading}
                 bordered
                 pagination={false}
