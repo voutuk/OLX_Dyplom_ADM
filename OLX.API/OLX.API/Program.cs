@@ -21,16 +21,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
-//if (builder.Environment.IsDevelopment())
-//{
-//    builder.WebHost.ConfigureKestrel(options =>
-//    {
-//        options.Listen(IPAddress.Any, 5005, listenOptions =>
-//        {
-//            listenOptions.UseHttps(); // Використовуємо HTTPS тільки в розробці
-//        });
-//    });
-//}
 
 var app = builder.Build();
 app.UseCors("AllowOrigins");
@@ -42,9 +32,7 @@ app.UseCookiePolicy(new CookiePolicyOptions
 {
     MinimumSameSitePolicy = SameSiteMode.Strict,
     HttpOnly = HttpOnlyPolicy.Always,
-    // При включении HTTPS нужно вернуть CookieSecurePolicy.Always
     Secure = CookieSecurePolicy.Always,
-    
 });
 app.UseAuthentication();
 app.UseAuthorization();

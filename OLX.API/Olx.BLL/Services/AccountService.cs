@@ -61,7 +61,7 @@ namespace Olx.BLL.Services
             var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
             if (token is not null)
             {
-                if (token.ExpirationDate > DateTime.UtcNow)
+                if (token.ExpirationDate.ToUniversalTime() > DateTime.UtcNow)
                 {
                     return token;
                 }
@@ -221,6 +221,7 @@ namespace Olx.BLL.Services
 
         public async Task LogoutAsync(string refreshToken)
         {
+            Console.WriteLine("Refresh token: " + refreshToken);
             var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken))
                 ?? throw new HttpException(Errors.InvalidToken ,HttpStatusCode.BadRequest);
             await tokenRepository.DeleteAsync(token.Id);
