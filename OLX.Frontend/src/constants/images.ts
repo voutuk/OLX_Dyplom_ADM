@@ -3,11 +3,13 @@ import noImage from '../assets/images/noimage.jpg';
 import pattern from '../assets/images/pattern_h.png';
 import loginImage from '../assets/images/login_leftside.png';
 import logo from '../assets/logo.svg';
+import mainPage from '../assets/images/main_page.png'
 
 export const Images = {
     noImage,
     adminPanelImage,
     pattern,
     loginImage,
-    logo
+    logo,
+    mainPage
 }

@@ -48,18 +48,21 @@ export const Header: React.FC = () => {
     useEffect(() => { refetch() }, [user])
 
     return (
-        <div className='h-[11vh] bg-header sticky mx-[8vw] top-0 items-center flex-shrink-0 flex justify-between z-50'  >
-            <img alt="logo" className="h-[4vh]" src={Images.logo} />
+        <div className='h-[11vh] min-h-[60px] bg-header sticky px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50'  >
+            <div className="h-[40%]">
+                <img alt="logo" className="h-full w-full" src={Images.logo} />
+            </div>
+
             <SearchInput />
-            <div className='flex gap-10  items-center'>
+            <div className='flex gap-10  items-center text-[clamp(1rem, 2vh, 1.5rem)]'>
                 {user && <Badge count={data?.length} size='small'>
-                    <MessageOutlined className='text-[3vh] text-amber-950 cursor-pointer animate-wiggle' />
+                    <MessageOutlined className='text-adaptive-icons text-amber-950 cursor-pointer animate-wiggle' />
                 </Badge>}
 
-                <HeartOutlined className='text-[3vh] text-amber-950 cursor-pointer' />
+                <HeartOutlined className='text-adaptive-icons text-amber-950 cursor-pointer' />
 
                 {user && <Badge count={unreadMesssageCount} size='small' className={unreadMesssageCount > 0 ? "animate-pulse" : ''} >
-                    <BellOutlined className='text-[3vh] text-amber-950 cursor-pointer' />
+                    <BellOutlined className='text-adaptive-icons text-amber-950 cursor-pointer' />
                 </Badge>}
 
                 {user
@@ -70,7 +73,7 @@ export const Header: React.FC = () => {
                         </div>
                     </Dropdown>
                     :
-                    <UserOutlined onClick={() => navigator('auth')} className='text-[3vh] text-amber-950 cursor-pointer' />}
+                    <UserOutlined onClick={() => navigator('auth')} className='text-adaptive-icons text-amber-950 cursor-pointer' />}
 
             </div>
         </div>

@@ -3,5 +3,6 @@ export interface FormInputProps {
     name: string,
     rules?: any[],
     inputType?: string,
-    placeholder: string
+    placeholder: string,
+    className?:string
 }
