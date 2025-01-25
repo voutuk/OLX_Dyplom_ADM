@@ -1,4 +1,3 @@
-
 export interface IUserLockoutError {
     message: string | undefined
     Message: string | undefined
