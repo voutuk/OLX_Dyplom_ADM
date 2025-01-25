@@ -45,8 +45,8 @@ const AdminFilterTable: React.FC = () => {
 
     const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
     const getColumnSearchProps = (): ColumnType<IFilter> => ({
-        filterDropdown: () => (
-            <div className="p-3 flex flex-col items-end">
+        filterDropdown: ({close}) => (
+            <div style={{width:300}} className="p-3 flex flex-col items-end">
                 <Input
                     placeholder={`Пошук`}
                     value={nameSearch}
@@ -59,18 +59,22 @@ const AdminFilterTable: React.FC = () => {
 
                 <Button
                     onClick={() => {
-                        setNameSearch('')
-                        setSearchParams(getQueryString({ ...pageRequest, page: 1, searchName: '' }))
+                        if (searchParams.get("searchName")) {
+                            setNameSearch('')
+                            setSearchParams(getQueryString({ ...pageRequest, page: 1, searchName: '' }))
+                        }
+                        close();
                     }}
                     size="small"
                     style={{ width: 90 }}
+                    danger
                 >
                     Очистити
                 </Button>
             </div>
         ),
         filterIcon: () => (
-            <SearchOutlined style={{ width: 20, color: nameSearch !== '' ? '#1890ff' : undefined }} />
+            <SearchOutlined style={{ width: 20, color: nameSearch !== '' ? 'red' : undefined }} />
         ),
     });
 
