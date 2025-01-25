@@ -208,7 +208,7 @@
     <value>Invalid area ref</value>
   </data>
   <data name="EmailAlreadyExist" xml:space="preserve">
-    <value>Email already in use</value>
+    <value>Акаунт за цією поштою вже існує</value>
   </data>
   <data name="ReCapthcaValidationError" xml:space="preserve">
     <value>reCapthca validation error</value>

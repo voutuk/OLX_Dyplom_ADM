@@ -5,6 +5,8 @@ import DefaultLayout from './components/layouts/default_layout/index';
 import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
 
+
+const RegisterConfirmPage = React.lazy(() => import('./pages/default/register/register_confirm'));
 const ErrorPage = React.lazy(() => import('./pages/default/errors/error_page'));
 const ReCaptcha = React.lazy(() => import('./components/google_recaptca'));
 const AdminCreate = React.lazy(() => import('./pages/admin/admins/new_admin'));
@@ -41,6 +43,7 @@ function App() {
       <Route path="/auth">
         <Route index element={<ReCaptcha><LoginPage /></ReCaptcha>} />
         <Route path="register" element={<ReCaptcha ><RegisterPage /></ReCaptcha>} />
+        <Route path="register/confirm" element={<RegisterConfirmPage />} />
         <Route path="emailconfirm" element={<EmailConfirmationPage />} />
          <Route path="password">
           <Route index element={<ForgotPasswordPage />} />

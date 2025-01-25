@@ -83,7 +83,7 @@ const LoginPage: React.FC = () => {
       <div className="w-[50%] h-[100%]">
         <img className="w-[100%] h-[100%]" src={Images.loginImage} />
       </div>
-      <div id='#login' className="mx-auto flex flex-col items-center w-[25%] justify-center text-center">
+      <div id='#login' className="mx-auto flex flex-col items-center w-[24%] justify-center text-center">
         <h2 className='text-[#3A211C] mb-[6vh] font-unbounded text-adaptive-login-header-text font-normal'>З поверненням!</h2>
         <Form
           className='w-full'
@@ -116,10 +116,12 @@ const LoginPage: React.FC = () => {
               name="remember"
               valuePropName="checked"
             >
-              <Checkbox onChange={(event) => { remeber.current = event.target.checked }}>запам'ятати мене</Checkbox>
+              <Checkbox  onChange={(event) => { remeber.current = event.target.checked }}>
+                <span className='text-adaptive-input-form-error-text'>запам'ятати мене</span>
+                </Checkbox>
             </Form.Item>
 
-            <Button onClick={() => navigate('password')} className='text-[#3A211C] font-montserrat shadow-none border-none underline forget-password' variant="link">
+            <Button onClick={() => navigate('password')} className='text-[#3A211C] font-montserrat text-adaptive-input-form-error-text shadow-none border-none underline forget-password' variant="link">
               забули пароль?
             </Button>
           </div>
@@ -133,9 +135,9 @@ const LoginPage: React.FC = () => {
           <Divider  style={{ color: '#9B7A5B', fontSize:'clamp(14px, 1.8vh, 36px)', fontWeight: '400' }}>або</Divider>
           <PrimaryButton className='w-full h-[5vh]' title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading} />
 
-          <div className='flex justify-center items-center mt-[3vh]'>
+          <div className='flex justify-center text-adaptive-input-form-error-text items-center mt-[3vh]'>
             <p className='text-[#9B7A5B] font-montserrat'>Немає акаунту?</p>
-            <Button onClick={() => navigate('register')} className='text-[#3A211C] shadow-none font-montserrat border-none forget-password ml-[5px]' variant="link">Зареєструватись тут</Button>
+            <Button onClick={() => navigate('register')} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none forget-password ml-[5px]' variant="link">Зареєструватись тут</Button>
           </div>
         </Form>
       </div>
