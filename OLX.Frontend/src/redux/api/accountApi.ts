@@ -1,7 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from "./baseQuery"
-import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IResetPasswordModel } from "../../models/account"
+import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IRegisterRequest, IResetPasswordModel } from "../../models/account"
 import { logOut, setCredentials } from '../slices/userSlice';
+import { getFormData } from '../../utilities/common_funct';
 
 
 export const accountApi = createApi({
@@ -109,19 +110,15 @@ export const accountApi = createApi({
             },
         }),
 
-        // register: builder.mutation<ILoginResponse, IUserCreate>({
-        //     query: (data) => {
-        //         const formData = generateUserCreateFormData(data)
-        //         return {
-        //             url: 'SignUp',
-        //             method: 'POST',
-        //             body: formData,
-        //             headers: {
-        //                 'Content-Type': 'multipart/form-data'
-        //             }
-        //         }
-        //     },
-        // }),
+        register: builder.mutation<void, IRegisterRequest>({
+            query: (data) => {
+                return {
+                    url: 'register/user',
+                    method: 'PUT',
+                    body: getFormData(data),
+                }
+            },
+        }),
     }),
 
 
@@ -134,4 +131,5 @@ export const {
     useSendPasswordResetEmailMutation,
     useResetPasswordMutation,
     useGoogleLoginMutation,
-    useLogoutMutation } = accountApi
+    useLogoutMutation,
+    useRegisterMutation } = accountApi

@@ -19,6 +19,14 @@ export interface IUserState {
     messages: IAdminMesssage[]
 }
 
+export interface IRegisterRequest{
+    email:string
+    password:string
+    passwordConfirmation:string
+    action:string
+    recapthcaToken:string
+}
+
 export interface IUserAuth {
     isAdmin: boolean
     isUser: boolean
