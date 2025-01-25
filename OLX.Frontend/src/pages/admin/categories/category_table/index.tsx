@@ -56,11 +56,9 @@ const AdminCategoryTable: React.FC = () => {
                     </Button>
                     <Button
                         onClick={() => {
-                            if (search[dataIndex] !== '') {
-                                const newSearch = ({ ...search, [dataIndex]: '' })
-                                setSearch(newSearch)
-                                setPageRequest(newSearch)
-                            }
+                            const newSearch = ({ ...search, [dataIndex]: '' })
+                            setSearch(newSearch)
+                            setPageRequest(newSearch)
                         }}
                         size="small"
                         style={{ width: 90 }}

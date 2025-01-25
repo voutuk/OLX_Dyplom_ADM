@@ -16,7 +16,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
     const [form] = Form.useForm();
     const [createCategory] = useCreateCategoryMutation();
     const [updateCategory] = useEditCategoryMutation();
-    const { data: categories } = useGetAllCategoriesQuery();
+    const { data: categories, isLoading } = useGetAllCategoriesQuery();
     const { data: allFilters } = useGetAllFilterQuery();
     const [categoryTree, setCategoryTree] = useState<ICategory[]>([])
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
@@ -46,6 +46,11 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
     };
 
     useEffect(() => {
+        setCategoryTree(buildTree(categories || [], undefined, category ? [category.id] : []))
+        setExcludedFilters(getAllParentFilterIds(categories || [], category?.parentId));
+    }, [categories])
+
+    useEffect(() => {
         if (open) {
             if (category) {
                 if (category.image) {
@@ -61,8 +66,6 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                     { name: 'name', value: category.name },
                     { name: 'parentId', value: category.parentId }
                 ])
-                setCategoryTree(buildTree(categories || [], undefined, [category.id]))
-                setExcludedFilters(getAllParentFilterIds(categories || [], category.parentId));
             }
         }
         else {
@@ -175,6 +178,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                     <TreeSelect
                         allowClear
                         showSearch
+                        loading={isLoading}
                         size="small"
                         className="flex-1"
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}

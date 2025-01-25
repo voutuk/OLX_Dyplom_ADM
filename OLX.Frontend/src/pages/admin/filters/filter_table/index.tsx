@@ -29,39 +29,27 @@ const AdminFilterTable: React.FC = () => {
     const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
     const getColumnSearchProps = (): ColumnType<IFilter> => ({
         filterDropdown: () => (
-            <div style={{ padding: 8 }}>
+            <div className="p-3 flex flex-col items-end">
                 <Input
                     placeholder={`Пошук`}
                     value={nameSearch}
-                    onChange={(e) => setNameSearch(e.target.value)}
-                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                    onChange={(e) => {
+                        setNameSearch(e.target.value)
+                        setPageRequest((prev) => ({ ...prev, searchName: e.target.value }))
+                    }}
+                    style={{ marginBottom: 8 }}
                 />
-                <div className="flex gap-2">
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            if (nameSearch !== '') {
-                                setPageRequest((prev) => ({ ...prev, searchName: nameSearch }))
-                            }
-                        }}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Знайти
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            if (nameSearch !== '') {
-                                setNameSearch('')
-                                setPageRequest((prev) => ({ ...prev, searchName: '' }))
-                            }
-                        }}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Очистити
-                    </Button>
-                </div>
+
+                <Button
+                    onClick={() => {
+                        setNameSearch('')
+                        setPageRequest((prev) => ({ ...prev, searchName: '' }))
+                    }}
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Очистити
+                </Button>
             </div>
         ),
         filterIcon: () => (

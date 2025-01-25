@@ -75,11 +75,9 @@ const UserTable: React.FC<UserTableProps> = ({ selected, isLoading, onRowSelecti
                     </Button>
                     <Button
                         onClick={() => {
-                            if (search[dataIndex] !== '') {
                                 const newSearch = ({ ...search, [dataIndex]: '' })
                                 setSearch(newSearch)
                                 onSearch(newSearch)
-                            }
                         }}
                         size="small"
                         style={{ width: 90 }}
