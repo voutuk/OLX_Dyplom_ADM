@@ -88,7 +88,7 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Email already in use.
+        ///   Ищет локализованную строку, похожую на Акаунт за цією поштою вже існує.
         /// </summary>
         internal static string EmailAlreadyExist {
             get {

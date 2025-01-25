@@ -4,6 +4,7 @@ import pattern from '../assets/images/pattern_h.png';
 import loginImage from '../assets/images/login_leftside.png';
 import logo from '../assets/logo.svg';
 import mainPage from '../assets/images/main_page.png'
+import registerPage from '../assets/images/register_page.png'
 
 export const Images = {
     noImage,
@@ -11,5 +12,6 @@ export const Images = {
     pattern,
     loginImage,
     logo,
-    mainPage
+    mainPage,
+    registerPage
 }

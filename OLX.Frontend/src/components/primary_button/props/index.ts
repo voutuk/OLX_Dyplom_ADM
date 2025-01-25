@@ -7,4 +7,5 @@ export interface PrimaryButtonProps {
     brColor?:string,
     isLoading: boolean
     htmlType?:  "button" | "submit" | "reset"
+    disabled?:boolean
 }
