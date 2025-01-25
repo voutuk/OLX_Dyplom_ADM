@@ -20,10 +20,10 @@ export interface IOlxUser {
 }
 
 export interface PageRequest {
-    size: number
-    page: number
+    size: number | undefined
+    page: number | undefined
     sortKey: string | undefined
-    isDescending: boolean
+    isDescending: boolean | undefined
 }
 
 export interface IOlxUserPageRequest extends PageRequest {

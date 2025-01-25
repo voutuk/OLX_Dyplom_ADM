@@ -12,8 +12,12 @@ import PageHeaderButton from "../../../../components/page_header_button";
 import { useDeleteFilterMutation } from "../../../../redux/api/filterAuthApi";
 import { toast } from "react-toastify";
 import AdminFilterCreate from "../../../../components/drawers/filter_create";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { getQueryString } from "../../../../utilities/common_funct";
 const AdminFilterTable: React.FC = () => {
 
+    const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams('');
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
     const [selectedFilter, setSelectedFilter] = useState<IFilter | undefined>();
     const [delFilter] = useDeleteFilterMutation();
@@ -22,9 +26,22 @@ const AdminFilterTable: React.FC = () => {
         size: paginatorConfig.pagination.defaultPageSize,
         page: paginatorConfig.pagination.defaultCurrent,
         sortKey: '',
-        isDescending: false,
+        isDescending: undefined,
         searchName: "",
     })
+
+    useEffect(() => {
+        (async () => {
+            setPageRequest({
+                size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
+                page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
+                sortKey: searchParams.get("sortKey") || '',
+                isDescending: searchParams.get("isDescending") === "true" || undefined,
+                searchName: searchParams.get("searchName") || "",
+            })
+            await refetch()
+        })()
+    }, [location.search])
 
     const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
     const getColumnSearchProps = (): ColumnType<IFilter> => ({
@@ -35,7 +52,7 @@ const AdminFilterTable: React.FC = () => {
                     value={nameSearch}
                     onChange={(e) => {
                         setNameSearch(e.target.value)
-                        setPageRequest((prev) => ({ ...prev, searchName: e.target.value }))
+                        setSearchParams(getQueryString({ ...pageRequest, page: 1, searchName: e.target.value }))
                     }}
                     style={{ marginBottom: 8 }}
                 />
@@ -43,7 +60,7 @@ const AdminFilterTable: React.FC = () => {
                 <Button
                     onClick={() => {
                         setNameSearch('')
-                        setPageRequest((prev) => ({ ...prev, searchName: '' }))
+                        setSearchParams(getQueryString({ ...pageRequest, page: 1, searchName: '' }))
                     }}
                     size="small"
                     style={{ width: 90 }}
@@ -69,7 +86,7 @@ const AdminFilterTable: React.FC = () => {
                 descending = sorter.order === 'descend';
                 key = sorter.columnKey;
             }
-            setPageRequest((prev) => ({ ...prev, isDescending: descending, sortKey: key?.toString() }))
+            setSearchParams(getQueryString({ ...pageRequest, isDescending: descending ? descending : undefined, sortKey: key?.toString() }))
         }
     }
 
@@ -111,7 +128,7 @@ const AdminFilterTable: React.FC = () => {
             dataIndex: 'name',
             key: 'name',
             ellipsis: true,
-            width: 'auto',
+            width: 260,
             sorter: true,
             fixed: 'left',
             ...getColumnSearchProps()
@@ -127,7 +144,6 @@ const AdminFilterTable: React.FC = () => {
                 <div className=" text-xs text-gray-500">
                     {values.map(x => x.value).join(' | ')}
                 </div>
-
         },
         {
             key: 'actions',
@@ -157,18 +173,11 @@ const AdminFilterTable: React.FC = () => {
             fixed: 'right',
             align: 'center'
         }
-
     ];
 
     const onPaginationChange = (currentPage: number, pageSize: number) => {
-        setPageRequest({ ...pageRequest, page: currentPage, size: pageSize })
+        setSearchParams(getQueryString({ ...pageRequest, page: currentPage, size: pageSize }))
     }
-
-    useEffect(() => {
-        (async () => {
-            await refetch()
-        })()
-    }, [pageRequest])
 
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
