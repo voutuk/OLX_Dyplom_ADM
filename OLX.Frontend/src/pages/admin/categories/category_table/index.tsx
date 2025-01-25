@@ -1,6 +1,6 @@
 import { Avatar, Button, Input, Pagination, Popconfirm, Table, TableColumnsType, TableProps, Tooltip } from "antd";
 import { PageHeader } from "../../../../components/page_header";
-import { ProfileOutlined, SearchOutlined } from '@ant-design/icons';
+import { ClearOutlined, ProfileOutlined, SearchOutlined } from '@ant-design/icons';
 import { ICategory, ICategoryPageRequest } from "../../../../models/category";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { Key, useEffect, useState } from "react";
@@ -13,6 +13,8 @@ import { ColumnType } from "antd/es/table";
 import AdminCategoryCreate from "../../../../components/drawers/category_create";
 import { useDeleteCategoryMutation, useDeleteCategoryTreeMutation } from "../../../../redux/api/categoryAuthApi";
 import { toast } from "react-toastify";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { getQueryString } from "../../../../utilities/common_funct";
 
 const AdminCategoryTable: React.FC = () => {
 
@@ -24,6 +26,9 @@ const AdminCategoryTable: React.FC = () => {
         searchName: "",
         parentName: ""
     })
+
+    const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams('');
     const [search, setSearch] = useState<ICategoryPageRequest>(pageRequest as ICategoryPageRequest)
     const { data, isLoading, refetch } = useGetCategoryPageQuery(pageRequest)
     const [deleteCategoryTree] = useDeleteCategoryTreeMutation()
@@ -31,41 +36,48 @@ const AdminCategoryTable: React.FC = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
     const [selectedCategory, setSelectedCategory] = useState<ICategory | undefined>();
 
+    useEffect(() => {
+        (async () => {
+            setPageRequest({
+                size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
+                page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
+                sortKey: searchParams.get("sortKey") || '',
+                isDescending: searchParams.get("isDescending") === "true" || undefined,
+                searchName: searchParams.get("searchName") || "",
+                parentName: searchParams.get("parentName") || ""
+            })
+            await refetch()
+        })()
+    }, [location.search])
+
+    useEffect(() => {
+        setSearchParams(getQueryString({ ...search, page: paginatorConfig.pagination.defaultCurrent }))
+    }, [search])
 
     const getColumnSearchProps = (dataIndex: keyof ICategoryPageRequest): ColumnType<ICategory> => ({
-        filterDropdown: () => (
-            <div style={{ padding: 8 }}>
+        filterDropdown: ({ close }) => (
+            <div className="p-3 flex gap-2" style={{ width: 300, padding: 8 }}>
                 <Input
+                    size="small"
                     placeholder={`Пошук`}
                     value={search[dataIndex] as string}
-                    onChange={(e) => setSearch((prev) => ({ ...prev, [dataIndex]: e.target.value }))}
-                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                    onChange={(e) => {
+                        setSearch((prev) => ({ ...prev, [dataIndex]: e.target.value }))
+                    }}
                 />
-                <div className="flex gap-2">
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            if (search[dataIndex] !== '') {
-                                setPageRequest(search)
-                            }
-                        }}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Знайти
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            const newSearch = ({ ...search, [dataIndex]: '' })
-                            setSearch(newSearch)
-                            setPageRequest(newSearch)
-                        }}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Очистити
-                    </Button>
-                </div>
+
+                <Button
+                    onClick={() => {
+                        const newSearch = ({ ...search, [dataIndex]: '' })
+                        setSearch(newSearch)
+                        close();
+                    }}
+                    size="small"
+                    style={{paddingLeft:3,paddingRight:3}}
+                    danger
+                    icon={<ClearOutlined />}
+                />
+                   
             </div>
         ),
         filterIcon: () => (
@@ -184,7 +196,6 @@ const AdminCategoryTable: React.FC = () => {
             fixed: 'right',
             align: 'center'
         }
-
     ];
     const onDeleteCategory = async (categoryId: number, deleteTree: boolean = false) => {
         const result = deleteTree
@@ -208,19 +219,13 @@ const AdminCategoryTable: React.FC = () => {
                 descending = sorter.order === 'descend';
                 key = sorter.columnKey;
             }
-            setPageRequest((prev) => ({ ...prev, isDescending: descending, sortKey: key?.toString() }))
+            setSearchParams(getQueryString({ ...pageRequest, isDescending: descending ? descending : undefined, sortKey: key?.toString() }))
         }
     }
 
     const onPaginationChange = (currentPage: number, pageSize: number) => {
-        setPageRequest({ ...pageRequest, page: currentPage, size: pageSize })
+        setSearchParams(getQueryString({ ...pageRequest, page: currentPage, size: pageSize }))
     }
-
-    useEffect(() => {
-        (async () => {
-            await refetch()
-        })()
-    }, [pageRequest])
 
     const onDrawerClose = () => {
         setIsDrawerOpen(false)
@@ -241,13 +246,7 @@ const AdminCategoryTable: React.FC = () => {
                 buttons={[
                     <PageHeaderButton
                         key='clear_filter'
-                        onButtonClick={() => {
-                            setPageRequest((prev) => ({
-                                ...prev,
-                                searchName: "",
-                                parentName: ""
-                            }))
-                        }}
+                        onButtonClick={() => { setSearch({ ...search, parentName: '', searchName: '' }) }}
                         className="w-[35px] h-[35px] bg-red-900"
                         buttonIcon={<SearchOff className="text-lg" />}
                         tooltipMessage="Очистити фільтри"
@@ -298,7 +297,6 @@ const AdminCategoryTable: React.FC = () => {
                     className='mt-4' />
             }
         </div>)
-
 };
 
 export default AdminCategoryTable;

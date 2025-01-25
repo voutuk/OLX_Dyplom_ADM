@@ -1,6 +1,6 @@
 import { Button, Input, Pagination, Popconfirm, Table, TableColumnsType, Tooltip } from "antd";
 import { PageHeader } from "../../../../components/page_header";
-import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import { ClearOutlined, FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { IFilter, IFilterPageRequest, IFilterValue } from "../../../../models/filter";
 import { Key, useEffect, useState } from "react";
@@ -45,16 +45,16 @@ const AdminFilterTable: React.FC = () => {
 
     const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
     const getColumnSearchProps = (): ColumnType<IFilter> => ({
-        filterDropdown: ({close}) => (
-            <div style={{width:300}} className="p-3 flex flex-col items-end">
+        filterDropdown: ({ close }) => (
+            <div style={{ width: 300 }} className="p-3 flex gap-2">
                 <Input
+                    size="small"
                     placeholder={`Пошук`}
                     value={nameSearch}
                     onChange={(e) => {
                         setNameSearch(e.target.value)
                         setSearchParams(getQueryString({ ...pageRequest, page: 1, searchName: e.target.value }))
                     }}
-                    style={{ marginBottom: 8 }}
                 />
 
                 <Button
@@ -66,11 +66,10 @@ const AdminFilterTable: React.FC = () => {
                         close();
                     }}
                     size="small"
-                    style={{ width: 90 }}
+                    style={{paddingLeft:3,paddingRight:3}}
                     danger
-                >
-                    Очистити
-                </Button>
+                    icon={<ClearOutlined />}
+                />
             </div>
         ),
         filterIcon: () => (
