@@ -1,20 +1,18 @@
-import { Button, Input, Pagination, Table, TableColumnsType } from "antd";
+import { Button, Input, Pagination, Table, TableColumnsType, TableProps } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../models/user";
 import { paginatorConfig } from "../../utilities/pagintion_settings";
 import { ColumnType, TableRowSelection } from "antd/es/table/interface";
 import UserAvatar from "../user_avatar";
 import { CheckOutlined, SearchOutlined } from "@mui/icons-material";
-import { getDateTime } from "../../utilities/common_funct";
-import { useEffect, useState } from "react";
+import { getDateTime, getQueryString } from "../../utilities/common_funct";
+import { Key, useEffect, useState } from "react";
 import { UserTableProps } from "./props";
+import { ClearOutlined } from '@ant-design/icons';
+import { useSearchParams } from "react-router-dom";
 
-const UserTable: React.FC<UserTableProps> = ({ selected, isLoading, onRowSelection, selectedUsers, onTableChange, pageRequest, pageResponse, onPaginationChange, actions, onSearch }) => {
+const UserTable: React.FC<UserTableProps> = ({ selected, isLoading, onRowSelection, selectedUsers, pageRequest, pageResponse, actions }) => {
+    const [_, setSearchParams] = useSearchParams('');
     const [search, setSearch] = useState<IOlxUserPageRequest>(pageRequest as IOlxUserPageRequest)
-
-    useEffect(() => {
-        setSearch(pageRequest as IOlxUserPageRequest)
-    }, [pageRequest])
-
     const actionsColumn: TableColumnsType<IOlxUser> = [
         {
             key: 'actions',
@@ -25,6 +23,31 @@ const UserTable: React.FC<UserTableProps> = ({ selected, isLoading, onRowSelecti
             align: 'center'
         }
     ]
+
+    useEffect(()=>{
+        setSearch(pageRequest)
+    },[pageRequest])
+
+    const onPaginationChange = (currentPage: number, pageSize: number) => {
+        setSearchParams(getQueryString({ ...pageRequest, page: currentPage, size: pageSize }))
+    }
+
+    const tableChange: TableProps<IOlxUser>['onChange'] = (_pagination, _filters, sorter, extra) => {
+        if (extra.action === 'sort') {
+            let descending: boolean;
+            let key: Key | undefined;
+            if (Array.isArray(sorter)) {
+                const firstSorter = sorter[0];
+                descending = firstSorter.order === 'descend';
+                key = firstSorter.columnKey;
+            } else {
+                descending = sorter.order === 'descend';
+                key = sorter.columnKey;
+            }
+            setSearchParams(getQueryString({ ...pageRequest, isDescending: descending, sortKey: key?.toString() || '' }))
+        }
+    }
+
 
     const rowSelection: TableRowSelection<IOlxUser> = {
         selectedRowKeys: selectedUsers.map(x => x as React.Key),
@@ -52,39 +75,29 @@ const UserTable: React.FC<UserTableProps> = ({ selected, isLoading, onRowSelecti
     }
 
     const getColumnSearchProps = (dataIndex: keyof IOlxUserPageRequest): ColumnType<IOlxUser> => ({
-        filterDropdown: () => (
-            <div style={{ padding: 8 }}>
+        filterDropdown: ({ close }) => (
+            <div className="p-3 flex gap-2" style={{ width: 300, padding: 8 }}>
                 <Input
                     placeholder={`Пошук`}
                     value={search[dataIndex] as string}
-                    onChange={(e) => setSearch((prev) => ({ ...prev, [dataIndex]: e.target.value }))}
-                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                    onChange={(e) => {
+                        setSearch((prev) => ({ ...prev, [dataIndex]: e.target.value }))
+                        setSearchParams(getQueryString({ ...search, [dataIndex]: e.target.value }))
+                    }}
+                    size="small"
                 />
-                <div className="flex gap-2">
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            if (search[dataIndex] !== '') {
-                                onSearch(search)
-                            }
-                        }}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Знайти
-                    </Button>
-                    <Button
-                        onClick={() => {
-                                const newSearch = ({ ...search, [dataIndex]: '' })
-                                setSearch(newSearch)
-                                onSearch(newSearch)
-                        }}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Очистити
-                    </Button>
-                </div>
+                <Button
+                    onClick={() => {
+                        const newSearch = ({ ...search, [dataIndex]: '' })
+                        setSearch(newSearch)
+                        setSearchParams(getQueryString({ ...search, [dataIndex]: '' }))
+                        close()
+                    }}
+                    size="small"
+                    style={{ paddingLeft: 3, paddingRight: 3 }}
+                    danger
+                    icon={<ClearOutlined />}
+                />
             </div>
         ),
         filterIcon: () => (
@@ -232,9 +245,9 @@ const UserTable: React.FC<UserTableProps> = ({ selected, isLoading, onRowSelecti
                 rowSelection={selected ? rowSelection : undefined}
                 pagination={false}
                 showSorterTooltip={{ target: 'sorter-icon' }}
-                onChange={onTableChange} />
+                onChange={tableChange} />
 
-            {((pageResponse?.total || 0 ) > paginatorConfig.pagination.defaultPageSize) &&
+            {((pageResponse?.total || 0) > paginatorConfig.pagination.defaultPageSize) &&
                 <Pagination
                     align="center"
                     showSizeChanger

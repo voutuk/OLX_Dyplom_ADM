@@ -22,8 +22,8 @@ export interface IOlxUser {
 export interface PageRequest {
     size: number | undefined
     page: number | undefined
-    sortKey: string | undefined
-    isDescending: boolean | undefined
+    sortKey: string 
+    isDescending: boolean 
 }
 
 export interface IOlxUserPageRequest extends PageRequest {

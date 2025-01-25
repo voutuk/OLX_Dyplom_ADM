@@ -1,13 +1,13 @@
 import { Button, Input, Pagination, Popconfirm, Table, TableColumnsType, Tooltip } from "antd";
 import { PageHeader } from "../../../../components/page_header";
-import { ClearOutlined, FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import { ClearOutlined, FilterOutlined } from '@ant-design/icons';
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { IFilter, IFilterPageRequest, IFilterValue } from "../../../../models/filter";
 import { Key, useEffect, useState } from "react";
 import { useGetFilterPageQuery } from "../../../../redux/api/filterApi";
 import { ColumnType, TableProps } from "antd/es/table";
 import { IconButton } from "@mui/material";
-import { AddCircleOutline, CachedOutlined, DeleteForever, EditCalendar } from "@mui/icons-material";
+import { AddCircleOutline, CachedOutlined, DeleteForever, EditCalendar, SearchOutlined } from "@mui/icons-material";
 import PageHeaderButton from "../../../../components/page_header_button";
 import { useDeleteFilterMutation } from "../../../../redux/api/filterAuthApi";
 import { toast } from "react-toastify";
@@ -26,7 +26,7 @@ const AdminFilterTable: React.FC = () => {
         size: paginatorConfig.pagination.defaultPageSize,
         page: paginatorConfig.pagination.defaultCurrent,
         sortKey: '',
-        isDescending: undefined,
+        isDescending: false,
         searchName: "",
     })
 
@@ -36,7 +36,7 @@ const AdminFilterTable: React.FC = () => {
                 size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
                 page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
                 sortKey: searchParams.get("sortKey") || '',
-                isDescending: searchParams.get("isDescending") === "true" || undefined,
+                isDescending: searchParams.get("isDescending") === "true",
                 searchName: searchParams.get("searchName") || "",
             })
             await refetch()

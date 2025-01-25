@@ -20,7 +20,7 @@ export const accountApiAuth = createApi({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(userAuthApi.util.invalidateTags(['Users']))
+                    dispatch(userAuthApi.util.invalidateTags(['Users','LockedUsers']))
                 } catch (error) {
                     console.error('Lock/Unlock user failed:', error);
                 }

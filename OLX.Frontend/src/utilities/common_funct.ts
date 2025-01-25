@@ -75,9 +75,7 @@ export const getAllParentFilterIds = (categories: ICategory[], parentId?: number
 export const getQueryString = (filter: any): string => {
   var result = '';
   Object.keys(filter).forEach((key) => {
-    if (filter[key] !== undefined
-      && filter[key] !== null
-      && filter[key] !== ''
+    if ( filter[key] != false
       && filter[key]?.length !== 0) {
       var value = typeof (filter[key]) === "object"
         ? JSON.stringify(filter[key])

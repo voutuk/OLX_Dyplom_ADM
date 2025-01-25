@@ -1,6 +1,7 @@
 import { Avatar, Button, Input, Pagination, Popconfirm, Table, TableColumnsType, TableProps, Tooltip } from "antd";
 import { PageHeader } from "../../../../components/page_header";
-import { ClearOutlined, ProfileOutlined, SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined } from "@mui/icons-material";
+import { ClearOutlined, ProfileOutlined} from '@ant-design/icons';
 import { ICategory, ICategoryPageRequest } from "../../../../models/category";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { Key, useEffect, useState } from "react";
@@ -42,7 +43,7 @@ const AdminCategoryTable: React.FC = () => {
                 size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
                 page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
                 sortKey: searchParams.get("sortKey") || '',
-                isDescending: searchParams.get("isDescending") === "true" || undefined,
+                isDescending: searchParams.get("isDescending") === "true",
                 searchName: searchParams.get("searchName") || "",
                 parentName: searchParams.get("parentName") || ""
             })

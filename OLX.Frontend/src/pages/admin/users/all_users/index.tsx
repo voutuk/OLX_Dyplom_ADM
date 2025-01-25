@@ -1,6 +1,6 @@
 import { PageHeader } from "../../../../components/page_header";
 import { UserOutlined } from '@ant-design/icons';
-import { Modal, TableProps } from "antd";
+import { Modal } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../../../models/user";
 import PageHeaderButton from "../../../../components/page_header_button";
 import { useEffect, useRef, useState } from "react";
@@ -25,10 +25,12 @@ import {
 } from "@mui/icons-material";
 
 import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery } from '../../../../redux/api/userAuthApi';
-import { Key } from "antd/es/table/interface";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 
 const UsersPage: React.FC = () => {
+    const location = useLocation();
+    const [searchParams] = useSearchParams('');
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
     const selectedUser = useRef<number | undefined>();
     const [modal, contextHolder] = Modal.useModal();
@@ -52,13 +54,30 @@ const UsersPage: React.FC = () => {
     const getUsers = useGetUserPageQuery(pageRequest, { skip: location.pathname === '/admin/admins' || location.pathname === '/admin/blocked' });
     const getAdmins = useGetAdminPageQuery(pageRequest, { skip: location.pathname === '/admin' });
     const getLockedUsers = useGetLockedUserPageQuery(pageRequest, { skip: location.pathname === '/admin/admins' || location.pathname === '/admin' });
-
     const { data, isLoading, refetch } =
         location.pathname === '/admin'
             ? getUsers
             : location.pathname === '/admin/admins'
                 ? getAdmins
                 : getLockedUsers;
+
+    useEffect(() => {
+        (async () => {
+            setPageRequest({
+                size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
+                page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
+                sortKey: searchParams.get("sortKey") || '',
+                isDescending: searchParams.get("isDescending") === "true" ,
+                emailSearch: searchParams.get("emailSearch") || '',
+                phoneNumberSearch: searchParams.get("phoneNumberSearch") || '',
+                firstNameSearch: searchParams.get("firstNameSearch") || '',
+                lastNameSearch: searchParams.get("lastNameSearch") || '',
+                webSiteSearch: searchParams.get("webSiteSearch") || '',
+                settlementRefSearch: searchParams.get("settlementRefSearch") || '',
+            })
+            await refetch()
+        })()
+    }, [location.search])
 
     const actions = (_value: any, user: IOlxUser) =>
         <div className='flex justify-around'>
@@ -97,7 +116,7 @@ const UsersPage: React.FC = () => {
 
     const lockUser = (userId: number) => {
         selectedUser.current = userId;
-        adminModalTitle.current = adminModalTitle.current = `Блокування користувача "${getUserName( selectedUser.current)}"`
+        adminModalTitle.current = adminModalTitle.current = `Блокування користувача "${getUserName(selectedUser.current)}"`
         setAminLockOpen(true)
     }
 
@@ -120,14 +139,13 @@ const UsersPage: React.FC = () => {
             })
             setSelectedUsers([])
             selectedUser.current = undefined;
-            refetch()
             setAminLockOpen(false)
         }
     }
 
     const onGroupeLockUsers = async () => {
-        if ( selectedUsers.length === 1) {
-            adminModalTitle.current = adminModalTitle.current = `Блокування користувача "${getUserName( selectedUsers[0])}"`
+        if (selectedUsers.length === 1) {
+            adminModalTitle.current = adminModalTitle.current = `Блокування користувача "${getUserName(selectedUsers[0])}"`
         }
         else {
             adminModalTitle.current = "Блокування обраних користувачів"
@@ -147,7 +165,6 @@ const UsersPage: React.FC = () => {
             })
             setSelectedUsers([])
             selectedUser.current = undefined;
-            refetch()
         }
     }
 
@@ -249,39 +266,6 @@ const UsersPage: React.FC = () => {
             tooltipColor="gray" />,
     ]
 
-    const onPaginationChange = (currentPage: number, pageSize: number) => {
-        setPageRequest({ ...pageRequest, page: currentPage, size: pageSize })
-    }
-
-
-    useEffect(() => {
-        (async () => {
-            await refetch()
-        })()
-    }, [pageRequest])
-
-    
-    const onTableChange: TableProps<IOlxUser>['onChange'] = (_pagination, _filters, sorter, extra) => {
-        if (extra.action === 'sort') {
-            let descending: boolean;
-            let key: Key | undefined;
-            if (Array.isArray(sorter)) {
-                const firstSorter = sorter[0];
-                descending = firstSorter.order === 'descend';
-                key = firstSorter.columnKey;
-            } else {
-                descending = sorter.order === 'descend';
-                key = sorter.columnKey;
-            }
-            setPageRequest((prev) => ({ ...prev, isDescending: descending, sortKey: key?.toString() }))
-
-        }
-    }
-
-    const onSearch = (value: IOlxUserPageRequest) => {
-        setPageRequest(value);
-    }
-
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
             {contextHolder}
@@ -316,12 +300,9 @@ const UsersPage: React.FC = () => {
                 actions={actions}
                 isLoading={isLoading}
                 onRowSelection={setSelectedUsers}
-                onTableChange={onTableChange}
-                page={pageRequest.page}
+                page={pageRequest.page || paginatorConfig.pagination.defaultCurrent}
                 total={data?.total || 0}
-                size={pageRequest.size}
-                onPaginationChange={onPaginationChange}
-                onSearch={onSearch}
+                size={pageRequest.size || paginatorConfig.pagination.defaultPageSize}
                 selected={location.pathname !== '/admin/admins'} />
         </div>
     );
