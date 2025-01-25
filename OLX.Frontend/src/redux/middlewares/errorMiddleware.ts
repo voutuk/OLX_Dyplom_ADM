@@ -1,6 +1,6 @@
 import { isRejectedWithValue, Middleware, MiddlewareAPI } from '@reduxjs/toolkit';
 import { setError, setRedirect } from '../slices/appSlice';
-import { IError } from '../../models/Errors';
+import { IError } from '../../models/errors';
 import { toast } from 'react-toastify';
 import { RootState } from '..';
 import { logOut } from '../slices/userSlice';

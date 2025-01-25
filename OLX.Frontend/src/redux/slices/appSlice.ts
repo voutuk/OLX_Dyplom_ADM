@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "..";
-import { IError } from "../../models/Errors";
+import { IError } from "../../models/errors";
 
 
 export interface IAppState {
