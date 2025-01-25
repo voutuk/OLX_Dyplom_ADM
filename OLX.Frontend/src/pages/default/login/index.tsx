@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { toast } from 'react-toastify';
-import { IError, IUserLockoutError } from '../../../models/errors';
+import { IError, IUserLockoutError } from '../../../models/еrrors';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
 import PrimaryButton from '../../../components/primary_button';
 import FormInput from '../../../components/form_input';
