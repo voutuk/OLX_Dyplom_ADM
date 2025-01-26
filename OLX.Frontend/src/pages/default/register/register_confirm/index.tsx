@@ -15,14 +15,14 @@ const RegisterConfirmPage: React.FC = () => {
             <div className="mx-auto flex flex-col gap-[6vh]  w-[24%] justify-center text-center">
                 <h2 className='text-[#3A211C]  font-unbounded text-adaptive-text font-medium'>На вашу електронну пошту направлено лист для підтвердження</h2>
                 <PrimaryButton
-                    title='Продовжити'
+                    title='На головну'
                     onButtonClick={() => navigate('/')}
                     className='w-full h-[5vh]' isLoading={false}
                 />
-                <Button onClick={() => navigate('/auth')} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none  ml-[5px]' variant="link">
+                <Button onClick={() => navigate(-1)} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none  ml-[5px]' variant="link">
                     <div className='flex gap-2 items-center'>
                         <LeftOutlined className='text-black text-adaptive-input-form-error-text' />
-                        Hазад
+                        Назад
                     </div>
                 </Button>
             </div>
