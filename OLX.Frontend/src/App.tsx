@@ -6,6 +6,7 @@ import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
 
 
+const AuthLayout = React.lazy(() => import('./components/layouts/auth_layout'));
 const PasswordChangeConfirmPage = React.lazy(() => import('./pages/default/restore_password/email_sended'));
 const RegisterConfirmPage = React.lazy(() => import('./pages/default/register/register_confirm'));
 const ErrorPage = React.lazy(() => import('./pages/default/errors/error_page'));
@@ -29,7 +30,11 @@ function App() {
   return (
     <Routes>
       <Route element={<ProtectedRoutes requiredRole={["User", "UnAuth"]} />}>
-        <Route path="/" element={<DefaultLayout />}>
+        <Route path="/" element={
+          <Suspense fallback={<GlobalFallback />}>
+            <DefaultLayout />
+          </Suspense>
+        }>
           <Route index element={<HomePage />} />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="error" element={<ErrorPage />} />
@@ -40,13 +45,21 @@ function App() {
           </Route>
         </Route>
       </Route>
-      
-      <Route path="/auth">
+
+      <Route path="/auth" element={
+        <Suspense fallback={<GlobalFallback />}>
+          <AuthLayout />
+        </Suspense>
+      }>
         <Route index element={<ReCaptcha><LoginPage /></ReCaptcha>} />
-        <Route path="register" element={<ReCaptcha ><RegisterPage /></ReCaptcha>} />
-        <Route path="register/confirm" element={<RegisterConfirmPage />} />
-        <Route path="emailconfirm" element={<EmailConfirmationPage />} />
-         <Route path="password">
+
+        <Route path="register">
+          <Route index element={<ReCaptcha><RegisterPage /></ReCaptcha>} />
+          <Route path="confirm" element={<RegisterConfirmPage />} />
+          <Route path="emailconfirm" element={<EmailConfirmationPage />} />
+        </Route>
+
+        <Route path="password">
           <Route index element={<ForgotPasswordPage />} />
           <Route path="reset" element={<ResetPasswordPage />} />
           <Route path="passwordconfirm" element={<PasswordChangeConfirmPage />} />

@@ -28,11 +28,8 @@ const RegisterPage: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen w-screen  justify-between">
-      <div className="w-[50%] h-[100%]">
-        <img className="w-[100%] h-[100%] object-cover" src={Images.registerPage} />
-      </div>
-      <div id='#login' className="mx-auto flex flex-col items-center w-[24%] justify-center text-center">
+    
+      <div id='#login' className="mx-auto flex flex-col items-center w-[48%] justify-center text-center">
         <div className='text-center'>
           <img alt="logo" className="h-[6vh] min-h-[45px] w-full" src={Images.logo} />
           <h2 className='text-[#3A211C] mb-[6vh] font-montserrat text-adaptive-button-text font-normal'>Твій перший крок до нових можливостей!</h2>
@@ -123,7 +120,7 @@ const RegisterPage: React.FC = () => {
           <Button onClick={() => navigate('/auth')} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none  ml-[5px]' variant="link">Увійти тут</Button>
         </div>
       </div>
-    </div >
+    
   )
 }
 export default RegisterPage;

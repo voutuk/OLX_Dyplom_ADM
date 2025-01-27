@@ -4,7 +4,6 @@ import { useResetPasswordMutation } from "../../../../redux/api/accountApi";
 import FormInput from "../../../../components/form_input";
 import PrimaryButton from "../../../../components/primary_button";
 import { LeftOutlined } from '@ant-design/icons';
-import { Images } from "../../../../constants/images";
 import { useState } from "react";
 
 
@@ -30,12 +29,7 @@ const ResetPasswordPage: React.FC = () => {
     }
 
     return (
-
-        <div className="flex h-screen w-screen  justify-between">
-            <div className="w-[50%] h-[100%]">
-                <img className="w-[100%] h-[100%] object-cover" src={Images.loginImage} />
-            </div>
-            <div className="mx-auto my-auto w-[24%]  text-center">
+            <div className="mx-auto my-auto w-[50%]">
                 {!error && !changeOk
                     ? <div className="flex flex-col  gap-[6vh] items-center justify-center ">
                         <div className='text-center'>
@@ -114,8 +108,6 @@ const ResetPasswordPage: React.FC = () => {
                     </div>}
 
             </div>
-        </div >
-
     );
 };
 

@@ -9,7 +9,7 @@ import { IError, IUserLockoutError } from '../../../models/еrrors';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
 import PrimaryButton from '../../../components/primary_button';
 import FormInput from '../../../components/form_input';
-import { Images } from '../../../constants/images';
+import { BackButton } from '../../../components/back_button';
 
 const loginAction: string = 'login'
 
@@ -79,68 +79,68 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen w-screen  justify-between">
-      <div className="w-[50%] h-[100%]">
-        <img className="w-[100%] h-[100%]" src={Images.loginImage} />
-      </div>
-      <div id='#login' className="mx-auto flex flex-col items-center w-[24%] justify-center text-center">
-        <h2 className='text-[#3A211C] mb-[6vh] font-unbounded text-adaptive-login-header-text font-normal'>З поверненням!</h2>
-        <Form
-          className='w-full'
-          layout='vertical'
-          initialValues={{
-            remember: true
-          }}
-          onFinish={onFinish}
-        >
-          <FormInput
-            className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'
-            label='Електронна пошта'
-            name='email'
-            placeholder='example@gmail.com'
-            rules={[
-              { required: true, message: 'Будь ласка, введіть електронну пошту' },
-              { type: 'email', message: 'Невірний формат електронної пошти' }
-            ]} />
-          <FormInput
-            className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'
-            label='Пароль'
-            name='password'
-            placeholder='Пароль'
-            rules={[
-              { required: true, message: 'Будь ласка, введіть пароль' }
-            ]} />
+    <div id='#login' className=" mx-auto my-auto flex flex-col items-center w-[50%] ">
+      <h2 className='text-[#3A211C] mb-[6vh] font-unbounded text-adaptive-login-header-text font-normal'>З поверненням!</h2>
+      <Form
+        layout='vertical'
+        initialValues={{
+          remember: true
+        }}
+        onFinish={onFinish}
+        className='w-full'
+      >
+        <FormInput
+          className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'
+          label='Електронна пошта'
+          name='email'
+          placeholder='example@gmail.com'
+          rules={[
+            { required: true, message: 'Будь ласка, введіть електронну пошту' },
+            { type: 'email', message: 'Невірний формат електронної пошти' }
+          ]} />
+        <FormInput
+          className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'
+          label='Пароль'
+          name='password'
+          placeholder='Пароль'
+          rules={[
+            { required: true, message: 'Будь ласка, введіть пароль' }
+          ]} />
 
-          <div className='flex justify-between'>
-            <Form.Item
-              name="remember"
-              valuePropName="checked"
-            >
-              <Checkbox  onChange={(event) => { remeber.current = event.target.checked }}>
-                <span className='text-adaptive-input-form-error-text'>запам'ятати мене</span>
-                </Checkbox>
-            </Form.Item>
+        <div className='flex justify-between'>
+          <Form.Item
+            name="remember"
+            valuePropName="checked"
+          >
+            <Checkbox onChange={(event) => { remeber.current = event.target.checked }}>
+              <span className='text-adaptive-input-form-error-text'>запам'ятати мене</span>
+            </Checkbox>
+          </Form.Item>
 
-            <Button onClick={() => navigate('password')} className='text-[#3A211C] font-montserrat text-adaptive-input-form-error-text shadow-none border-none underline forget-password' variant="link">
-              забули пароль?
-            </Button>
-          </div>
+          <Button onClick={() => navigate('password')} className='text-[#3A211C] font-montserrat text-adaptive-input-form-error-text shadow-none border-none underline forget-password' variant="link">
+            забули пароль?
+          </Button>
+        </div>
 
-          <PrimaryButton
-            title={!emailConfirmationError ? 'Увійти' : "Надіслати лист для підтвердження"}
-            htmlType={!emailConfirmationError ? 'submit' : 'button'}
-            onButtonClick={emailConfirmationError ? sendConfirmEmail : () => { }}
-            isLoading={!emailConfirmationError ? IsLoginLoading : isConfirmEmailLoading}
-            className='w-full h-[5vh]' />
-          <Divider  style={{ color: '#9B7A5B', fontSize:'clamp(14px, 1.8vh, 36px)', fontWeight: '400' }}>або</Divider>
-          <PrimaryButton className='w-full h-[5vh]' title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading} />
+        <PrimaryButton
+          title={!emailConfirmationError ? 'Увійти' : "Надіслати лист для підтвердження"}
+          htmlType={!emailConfirmationError ? 'submit' : 'button'}
+          onButtonClick={emailConfirmationError ? sendConfirmEmail : () => { }}
+          isLoading={!emailConfirmationError ? IsLoginLoading : isConfirmEmailLoading}
+          className='w-full h-[5vh]' />
+        <Divider style={{ color: '#9B7A5B', fontSize: 'clamp(14px, 1.8vh, 36px)', fontWeight: '400' }}>або</Divider>
+        <PrimaryButton className='w-full h-[5vh]' title='Увійти з Google' onButtonClick={glLogin} isLoading={isGoogleLoading} />
 
-          <div className='flex justify-center text-adaptive-input-form-error-text items-center mt-[3vh]'>
-            <p className='text-[#9B7A5B] font-montserrat'>Немає акаунту?</p>
-            <Button onClick={() => navigate('register')} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none forget-password ml-[5px]' variant="link">Зареєструватись тут</Button>
-          </div>
-        </Form>
-      </div>
+        <div className='flex justify-center text-adaptive-input-form-error-text items-center mt-[3vh]'>
+          <p className='text-[#9B7A5B] font-montserrat'>Немає акаунту?</p>
+          <Button onClick={() => navigate('register')} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none forget-password ml-[5px]' variant="link">Зареєструватись тут</Button>
+        </div>
+      </Form>
+      <BackButton
+        title='На головну'
+        path='/'
+        className='mt-[3vh] self-start'
+      />
     </div>
   )
 }

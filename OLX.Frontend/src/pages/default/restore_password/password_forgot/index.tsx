@@ -1,10 +1,9 @@
-import { Button, Form } from "antd";
+import { Form } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSendPasswordResetEmailMutation } from "../../../../redux/api/accountApi";
 import PrimaryButton from "../../../../components/primary_button";
-import { Images } from "../../../../constants/images";
 import FormInput from "../../../../components/form_input";
-import { LeftOutlined } from '@ant-design/icons';
+import { BackButton } from "../../../../components/back_button";
 
 const ForgotPasswordPage: React.FC = () => {
   const [passFogot, { isLoading }] = useSendPasswordResetEmailMutation()
@@ -18,11 +17,8 @@ const ForgotPasswordPage: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen w-screen  justify-between">
-      <div className="w-[50%] h-[100%]">
-        <img className="w-[100%] h-[100%] object-cover" src={Images.loginImage} />
-      </div>
-      <div className="mx-auto my-auto w-[24%] text-center">
+    
+      <div className="mx-auto my-auto w-[50%]">
         <div className="flex flex-col gap-2 mb-[8vh] text-center">
           <span className="font-unbounded text-adaptive-login-header-text ">Забули пароль?</span>
           <span className="font-montserrat text-adaptive-text">Не хвилюйтесь, ми надішлемо електронний лист з підтвердженням скидання паролю</span>
@@ -50,14 +46,8 @@ const ForgotPasswordPage: React.FC = () => {
             title='Скинути пароль'
             isLoading={isLoading} />
         </Form>
-        <Button onClick={() => navigate(-1)} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none  ml-[5px]' variant="link">
-          <div className='flex gap-2 items-center'>
-            <LeftOutlined className='text-black text-adaptive-input-form-error-text' />
-            Назад
-          </div>
-        </Button>
+        <BackButton title="Назад"/>
       </div>
-    </div >
   );
 };
 
