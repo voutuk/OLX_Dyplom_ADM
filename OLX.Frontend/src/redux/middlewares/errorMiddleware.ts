@@ -18,7 +18,6 @@ const showToast = (message: string, type?: TypeOptions, style?: React.CSSPropert
         })
     }
 }
-
 const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
     if (isRejectedWithValue(action)) {
         const error: IError | any = action.payload as IError;
@@ -28,10 +27,7 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                     const lockMessage = error.data?.UnlockTime
                         ? `до  ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`
                         : "На невизначений термін"
-
-                        showToast(`${error.data?.Message} ${lockMessage}`, 
-                        'info',
-                        { width: 'fit-content' })
+                    showToast(`${error.data?.Message} ${lockMessage}`, 'info', { width: 'fit-content' })
                 }
                 break;
             case 401:
@@ -45,19 +41,19 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
             case 400:
             case 404:
             case 403:
-            case 405:    
+            case 405:
                 if (error.data?.length && error.data?.length > 0) {
                     error.data?.forEach((element: any) => {
                         showToast(`Error: "${element.ErrorMessage}"  Property: "${element.PropertyName}" Value: "${element.AttemptedValue}"`, 
-                             'error',
+                            'error',
                             {width: 'fit-content' })
                     });
                 }
-                
+
                 else {
-                    showToast(error.data?.message || error.message || error.data?.Message || error.data.title, 
+                    showToast(error.data?.message || error.message || error.data?.Message || error.data.title,
                          'info',
-                        { width: 'fit-content' })
+                         { width: 'fit-content' })
                 }
                 break;
 

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button, Spin } from "antd";
+import { Spin } from "antd";
 import { useConfirmEmailMutation } from "../../../redux/api/accountApi";
+import PrimaryButton from "../../../components/primary_button";
+import { Images } from "../../../constants/images";
 
 const EmailConfirmationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const [emailConfirm, { isLoading }] = useConfirmEmailMutation();
+  const [emailConfirm] = useConfirmEmailMutation();
   const navigate = useNavigate()
   const [confirmOk, setConfirmOk] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
@@ -26,13 +28,27 @@ const EmailConfirmationPage: React.FC = () => {
   }, [searchParams])
 
   return (
-
-    <div className="flex flex-1 flex-col h-full justify-center gap-3 items-center">
-      <Spin size="small" spinning={isLoading} />
-      <h3>{!confirmOk ? 'Підтвердження електронної пошти ....' : 'Електронну пошту успішно підтверджено !!!'}</h3>
-      <h4 className='text-red-600' hidden={!error}>Сталася помилка підтвердження електронної пошти</h4>
-      <Button className='w-1/6 mt-4' hidden={!confirmOk && !error} onClick={() => navigate('/auth')}>{confirmOk ? "Увійти" : "На головну"}</Button>
-    </div>
+    <div className="flex h-screen w-screen  justify-between">
+      <div className="w-[50%] h-[100%]">
+        <img className="w-[100%] h-[100%] object-cover" src={Images.registerPage} />
+      </div>
+      <div className="mx-auto my-auto w-[24%] text-center">
+        {!confirmOk && !error
+          ? <Spin size="large" spinning={true} />
+          :
+          <div className="mx-auto flex flex-col gap-[6vh]">
+            <div className="flex flex-col gap-2 text-center">
+              <span className="font-unbounded text-adaptive-login-header-text font-medium ">{confirmOk ? 'Ура!' : 'Щось не так :('}</span>
+              <span className="font-montserrat text-adaptive-button-text">{confirmOk ? 'Реєстрація пройшла успішно :)' : 'Спробуйте, будьласка, ще раз'}</span>
+            </div>
+            <PrimaryButton
+              title={confirmOk ? 'Увійти' : 'На головну'}
+              onButtonClick={() => navigate(confirmOk ? '/auth' : '/')}
+              className='w-full h-[5vh]' isLoading={false}
+            />
+          </div>}
+      </div>
+    </div >
   );
 };
 

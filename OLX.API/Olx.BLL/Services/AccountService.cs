@@ -237,8 +237,8 @@ namespace Olx.BLL.Services
                 var result = await userManager.ConfirmEmailAsync(user, confirmationModel.Token);
                 if (result.Succeeded)
                 {
-                    var mail = EmailTemplates.GetEmailConfirmedTemplate(configuration["FrontendLoginUrl"]!);
-                    await emailService.SendAsync(user.Email, "Електронна пошта підтверджена", mail, true);
+                    //var mail = EmailTemplates.GetEmailConfirmedTemplate(configuration["FrontendLoginUrl"]!);
+                    //await emailService.SendAsync(user.Email, "Електронна пошта підтверджена", mail, true);
                     return;
                 }
             }
