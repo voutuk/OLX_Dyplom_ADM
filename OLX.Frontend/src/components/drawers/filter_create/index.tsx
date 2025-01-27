@@ -3,7 +3,7 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { toast } from "react-toastify";
 import { useCreateFilterMutation, useUpdateFilterMutation } from "../../../redux/api/filterAuthApi";
 import { FilterCreateProps } from "./props";
-import { IFilter, IFilterValue } from "../../../models/filter";
+import { IFilterValue } from "../../../models/filter";
 import { useEffect } from "react";
 
 const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter }) => {
