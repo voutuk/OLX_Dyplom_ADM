@@ -1,7 +1,7 @@
 import { isRejectedWithValue, Middleware, MiddlewareAPI } from '@reduxjs/toolkit';
 import { setError, setRedirect } from '../slices/appSlice';
 import { IError } from '../../models/еrrors';
-import { toast } from 'react-toastify';
+import { toast, TypeOptions } from 'react-toastify';
 import { RootState } from '..';
 import { logOut } from '../slices/userSlice';
 
@@ -29,10 +29,9 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                         ? `до  ${new Date(error.data.UnlockTime).toLocaleDateString()} ${new Date(error.data.UnlockTime).toLocaleTimeString()}`
                         : "На невизначений термін"
 
-                    toast(`${error.data?.Message} ${lockMessage}`, {
-                        type: 'info',
-                        style: { width: 'fit-content' }
-                    })
+                        showToast(`${error.data?.Message} ${lockMessage}`, 
+                        'info',
+                        { width: 'fit-content' })
                 }
                 break;
             case 401:
@@ -49,19 +48,16 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
             case 405:    
                 if (error.data?.length && error.data?.length > 0) {
                     error.data?.forEach((element: any) => {
-
-                        toast(`Error: "${element.ErrorMessage}"  Property: "${element.PropertyName}" Value: "${element.AttemptedValue}"`, {
-                            type: 'error',
-                            style: { width: 'fit-content' }
-                        })
+                        showToast(`Error: "${element.ErrorMessage}"  Property: "${element.PropertyName}" Value: "${element.AttemptedValue}"`, 
+                             'error',
+                            {width: 'fit-content' })
                     });
                 }
                 
                 else {
-                    toast(error.data?.message || error.message || error.data?.Message || error.data.title, {
-                        type: 'info',
-                        style: { width: 'fit-content' }
-                    })
+                    showToast(error.data?.message || error.message || error.data?.Message || error.data.title, 
+                         'info',
+                        { width: 'fit-content' })
                 }
                 break;
 
