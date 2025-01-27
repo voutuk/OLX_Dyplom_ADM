@@ -60,6 +60,7 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> RefreshTokens([FromBody] RefreshRequest? refreshRequest)
         {
             string token;
+            Console.WriteLine("Refresh token: " + refreshRequest?.RefreshToken);
             //if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var httpToken))
             //{
             //    token = httpToken;

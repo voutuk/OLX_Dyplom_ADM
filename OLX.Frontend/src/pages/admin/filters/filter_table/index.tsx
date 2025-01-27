@@ -29,7 +29,7 @@ const AdminFilterTable: React.FC = () => {
         isDescending: false,
         searchName: "",
     })
-
+    const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
     useEffect(() => {
         (async () => {
             setPageRequest({
@@ -43,7 +43,7 @@ const AdminFilterTable: React.FC = () => {
         })()
     }, [location.search])
 
-    const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
+    
     const getColumnSearchProps = (): ColumnType<IFilter> => ({
         filterDropdown: ({ close }) => (
             <div style={{ width: 300 }} className="p-3 flex gap-2">
