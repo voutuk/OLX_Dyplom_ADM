@@ -7,7 +7,8 @@ import { logOut } from '../slices/userSlice';
 
 
 const toastBlockedRoutes: string[] = [
-    '/auth/emailconfirm'
+    '/auth/emailconfirm',
+    '/auth/password'
 ]
 const showToast = (message: string, type?: TypeOptions, style?: React.CSSProperties) => {
     if (!toastBlockedRoutes.includes(window.location.pathname)) {
@@ -17,8 +18,6 @@ const showToast = (message: string, type?: TypeOptions, style?: React.CSSPropert
         })
     }
 }
-
-
 const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
     if (isRejectedWithValue(action)) {
         const error: IError | any = action.payload as IError;
@@ -46,8 +45,8 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                 if (error.data?.length && error.data?.length > 0) {
                     error.data?.forEach((element: any) => {
                         showToast(`Error: "${element.ErrorMessage}"  Property: "${element.PropertyName}" Value: "${element.AttemptedValue}"`, 
-                             'error',
-                            { width: 'fit-content' })
+                            'error',
+                            {width: 'fit-content' })
                     });
                 }
 
