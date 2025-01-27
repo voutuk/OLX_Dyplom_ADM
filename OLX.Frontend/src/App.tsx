@@ -6,6 +6,7 @@ import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
 
 
+const PasswordChangeConfirmPage = React.lazy(() => import('./pages/default/restore_password/email_sended'));
 const RegisterConfirmPage = React.lazy(() => import('./pages/default/register/register_confirm'));
 const ErrorPage = React.lazy(() => import('./pages/default/errors/error_page'));
 const ReCaptcha = React.lazy(() => import('./components/google_recaptca'));
@@ -48,6 +49,7 @@ function App() {
          <Route path="password">
           <Route index element={<ForgotPasswordPage />} />
           <Route path="reset" element={<ResetPasswordPage />} />
+          <Route path="passwordconfirm" element={<PasswordChangeConfirmPage />} />
         </Route>
       </Route>
 

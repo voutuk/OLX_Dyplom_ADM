@@ -1,6 +1,5 @@
 import { Button, Form } from "antd";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { useSendPasswordResetEmailMutation } from "../../../../redux/api/accountApi";
 import PrimaryButton from "../../../../components/primary_button";
 import { Images } from "../../../../constants/images";
@@ -14,10 +13,7 @@ const ForgotPasswordPage: React.FC = () => {
   const sendPassResetEmail = async (formResult: { email: string }) => {
     const result = await passFogot(formResult.email);
     if (!result.error) {
-      toast("Лист відновлененя паролю відправлено на вашу пошту", {
-        type: "success"
-      })
-      
+      navigate('passwordconfirm')
     }
   }
 
