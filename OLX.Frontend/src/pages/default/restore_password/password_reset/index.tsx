@@ -103,7 +103,7 @@ const ResetPasswordPage: React.FC = () => {
                     : <div className="mx-auto flex flex-col gap-[6vh]">
                         <div className="flex flex-col gap-2 text-center">
                             <span className="font-unbounded text-adaptive-login-header-text font-medium ">{changeOk ? 'Ура!' : 'Щось не так :('}</span>
-                            <span className="font-montserrat text-adaptive-button-text">{changeOk ? 'Пароль успішно змінений :)' : 'Спробуйте, будьласка, ще раз'}</span>
+                            <span className="font-montserrat text-adaptive-button-text">{changeOk ? 'Скидання паролю пройшло успішно :)' : 'Спробуйте, будьласка, ще раз'}</span>
                         </div>
                         <PrimaryButton
                             title={changeOk ? 'Увійти' : 'На головну'}
