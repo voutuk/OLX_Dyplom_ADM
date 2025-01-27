@@ -6,7 +6,18 @@ import { RootState } from '..';
 import { logOut } from '../slices/userSlice';
 
 
-
+const toastBlockedRoutes: string[] = [
+    '/auth/emailconfirm',
+    '/auth/password'
+]
+const showToast = (message: string, type?: TypeOptions, style?: React.CSSProperties) => {
+    if (!toastBlockedRoutes.includes(window.location.pathname)) {
+        toast(message, {
+            type: type,
+            style: style
+        })
+    }
+}
 
 const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
     if (isRejectedWithValue(action)) {
