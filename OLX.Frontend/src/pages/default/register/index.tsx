@@ -53,7 +53,7 @@ const RegisterPage: React.FC = () => {
             placeholder='example@gmail.com'
             rules={[
               { required: true, message: 'Будь ласка, введіть електронну пошту' },
-              { type: 'email', message: 'Неправильний формат електронної пошти' }
+              { type: 'email', message: 'Невірний формат електронної пошти' }
             ]} />
           <FormInput
             className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'

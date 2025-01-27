@@ -36,17 +36,17 @@ const ForgotPasswordPage: React.FC = () => {
           onFinish={sendPassResetEmail}
         >
           <FormInput
-            className='h-[5vh] min-h-[35px] mb-[2vh] text-adaptive-input-form-text text-[#9B7A5B]'
+            className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'
             label='Електронна пошта'
             name='email'
             placeholder='example@gmail.com'
             rules={[
               { required: true, message: 'Будь ласка, введіть електронну пошту' },
-              { type: 'email', message: 'Неправильний формат електронної пошти' }
+              { type: 'email', message: 'Невірний формат електронної пошти' }
             ]} />
           <PrimaryButton
             htmlType='submit'
-            className='w-full h-[5vh] mb-[8vh]'
+            className='w-full h-[5vh] mt-[2vh] mb-[8vh]'
             title='Скинути пароль'
             isLoading={isLoading} />
         </Form>

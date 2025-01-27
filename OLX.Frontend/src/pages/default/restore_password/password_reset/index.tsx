@@ -50,7 +50,6 @@ const ResetPasswordPage: React.FC = () => {
                             }}
                             onFinish={onFinish}
                         >
-
                             <FormInput
                                 className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'
                                 label='Пароль'
@@ -93,7 +92,6 @@ const ResetPasswordPage: React.FC = () => {
                                 isLoading={isLoading}
                                 className='w-full h-[5vh]'
                             />
-
                         </Form>
                         <Button onClick={() => navigate('/')} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none  ml-[5px]' variant="link">
                             <div className='flex gap-2 items-center'>
