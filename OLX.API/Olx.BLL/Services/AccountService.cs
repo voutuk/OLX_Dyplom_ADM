@@ -235,14 +235,11 @@ namespace Olx.BLL.Services
             if (user != null)
             {
                 var result = await userManager.ConfirmEmailAsync(user, confirmationModel.Token);
-                if (result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    //var mail = EmailTemplates.GetEmailConfirmedTemplate(configuration["FrontendLoginUrl"]!);
-                    //await emailService.SendAsync(user.Email, "Електронна пошта підтверджена", mail, true);
-                    return;
+                    throw new HttpException(Errors.InvalidConfirmationData, HttpStatusCode.BadRequest);
                 }
             }
-            throw new HttpException(Errors.InvalidConfirmationData, HttpStatusCode.BadRequest);
         }
 
         public async Task FogotPasswordAsync(string email) 

@@ -27,7 +27,7 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> Login([FromBody] AuthRequest model )
         {
             var authResponse = await accountService.LoginAsync(model);
-            SetHttpOnlyCookies(authResponse.RefreshToken);
+          //  SetHttpOnlyCookies(authResponse.RefreshToken);
             return Ok(authResponse);
         }
 
@@ -35,20 +35,21 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> GoogleLogin([FromQuery] string googleAccessToken)
         {
             var authResponse = await accountService.GoogleLoginAsync(googleAccessToken);
-            SetHttpOnlyCookies(authResponse.RefreshToken);
+           // SetHttpOnlyCookies(authResponse.RefreshToken);
             return Ok(authResponse);
         }
 
         [HttpPost("user/logout")]
         public async Task<IActionResult> LogOut([FromBody] LogoutModel? logoutModel)
         {
-            Console.WriteLine("Refresh token: " + logoutModel?.RefreshToken);
-            if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var token))
-            {
-                Response.Cookies.Delete(_refreshTokenCookiesName);
-                await accountService.LogoutAsync(token);
-            }
-            else if (logoutModel is not null && logoutModel.RefreshToken is not null)
+            //Console.WriteLine("Refresh token: " + logoutModel?.RefreshToken);
+            //if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var token))
+            //{
+            //    Response.Cookies.Delete(_refreshTokenCookiesName);
+            //    await accountService.LogoutAsync(token);
+            //}
+            //else 
+            if (logoutModel is not null && logoutModel.RefreshToken is not null)
             {
                 await accountService.LogoutAsync(logoutModel.RefreshToken);
             }
@@ -59,17 +60,18 @@ namespace OLX.API.Controllers
         public async Task<IActionResult> RefreshTokens([FromBody] RefreshRequest? refreshRequest)
         {
             string token;
-            if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var httpToken))
-            {
-                token = httpToken;
-            }
-            else if (refreshRequest is not null && refreshRequest.RefreshToken is not null)
+            //if (Request.Cookies.TryGetValue(_refreshTokenCookiesName, out var httpToken))
+            //{
+            //    token = httpToken;
+            //}
+            //else
+            if (refreshRequest is not null && refreshRequest.RefreshToken is not null)
             {
                 token = refreshRequest.RefreshToken;
             }
             else return Unauthorized();
             var authResponse = await accountService.RefreshTokensAsync(token);
-            SetHttpOnlyCookies(authResponse.RefreshToken);
+            //SetHttpOnlyCookies(authResponse.RefreshToken);
             return Ok(authResponse);
         }
 
@@ -164,19 +166,19 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
-        private void SetHttpOnlyCookies(string token)
-        {
-            var days = double.Parse(configuration["JwtOptions:RefreshTokenLifeTimeInDays"]!);
-            Response.Cookies.Append(_refreshTokenCookiesName, token, new CookieOptions
-            {
-                IsEssential = true,
-                //  HttpOnly = true,
-                //Domain = "localhost",
-             //   SameSite = SameSiteMode.Strict,
-             //   Secure = true,
-                Path = "api/Account/user",
-                Expires = DateTime.UtcNow.AddDays(days)
-            });
-        }
+        //private void SetHttpOnlyCookies(string token)
+        //{
+        //    var days = double.Parse(configuration["JwtOptions:RefreshTokenLifeTimeInDays"]!);
+        //    Response.Cookies.Append(_refreshTokenCookiesName, token, new CookieOptions
+        //    {
+        //        IsEssential = true,
+        //        //  HttpOnly = true,
+        //        //Domain = "localhost",
+        //     //   SameSite = SameSiteMode.Strict,
+        //     //   Secure = true,
+        //        Path = "api/Account/user",
+        //        Expires = DateTime.UtcNow.AddDays(days)
+        //    });
+        //}
     }
 }
