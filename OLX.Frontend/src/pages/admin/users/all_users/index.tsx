@@ -3,7 +3,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Modal } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../../../models/user";
 import PageHeaderButton from "../../../../components/buttons/page_header_button";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import AdminMessage from "../../../../components/modals/admin_message";
 import { useCreateAdminMessageMutation } from "../../../../redux/api/adminMessageApi";
@@ -26,27 +26,18 @@ import {
 import { useSearchParams } from "react-router-dom";
 import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
 
-const queryHook =(pageRequest:IOlxUserPageRequest) => {
-    if (location.pathname === '/admin') {
-        return useGetUserPageQuery(pageRequest);
-    } else if (location.pathname === '/admin/admins') {
-        return useGetAdminPageQuery(pageRequest);
-    }
-    return useGetLockedUserPageQuery(pageRequest);
-};
-
-const updatedPageRequest = (searchParams:URLSearchParams) => ({
-       size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
-        page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
-        sortKey: searchParams.get("sortKey") || '',
-        isDescending: searchParams.get("isDescending") === "true",
-        emailSearch: searchParams.get("emailSearch") || '',
-        phoneNumberSearch: searchParams.get("phoneNumberSearch") || '',
-        firstNameSearch: searchParams.get("firstNameSearch") || '',
-        lastNameSearch: searchParams.get("lastNameSearch") || '',
-        webSiteSearch: searchParams.get("webSiteSearch") || '',
-        settlementRefSearch: searchParams.get("settlementRefSearch") || '',
-    });
+const updatedPageRequest = (searchParams: URLSearchParams) => ({
+    size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
+    page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
+    sortKey: searchParams.get("sortKey") || '',
+    isDescending: searchParams.get("isDescending") === "true",
+    emailSearch: searchParams.get("emailSearch") || '',
+    phoneNumberSearch: searchParams.get("phoneNumberSearch") || '',
+    firstNameSearch: searchParams.get("firstNameSearch") || '',
+    lastNameSearch: searchParams.get("lastNameSearch") || '',
+    webSiteSearch: searchParams.get("webSiteSearch") || '',
+    settlementRefSearch: searchParams.get("settlementRefSearch") || '',
+});
 
 
 const UsersPage: React.FC = () => {
@@ -60,12 +51,22 @@ const UsersPage: React.FC = () => {
     const adminModalTitle = useRef<string>('')
     const [lockUsers] = useLockUnlockUsersMutation();
     const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>(updatedPageRequest(searchParams));
-    const { data, isLoading, refetch } = queryHook(pageRequest);
+
+    const getLoader = useCallback(() => {
+        return location.pathname === '/admin'
+            ? useGetUserPageQuery(pageRequest)
+            : location.pathname === '/admin/admins'
+                ? useGetAdminPageQuery(pageRequest)
+                : useGetLockedUserPageQuery(pageRequest)
+    }, [location.pathname])
+
+    const { data, isLoading, refetch } = getLoader()
+
     useEffect(() => {
         setPageRequest(updatedPageRequest(searchParams));
     }, [location.search]);
-    
-    const actions = (_value: any, user: IOlxUser) =>
+
+    const actions = useCallback((_value: any, user: IOlxUser) =>
         <div className='flex justify-around'>
             {(location.pathname !== '/admin/admins') &&
                 <>
@@ -89,7 +90,7 @@ const UsersPage: React.FC = () => {
                     </IconButton>
                 </Tooltip>
             }
-        </div>
+        </div>, [location.pathname])
 
 
     const getUserName = (userId: number) => getUserDescr(data?.items.find(x => x.id === userId) || null)
