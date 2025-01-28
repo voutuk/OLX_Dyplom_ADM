@@ -17,7 +17,6 @@ export const createBaseQuery = (endpoint: string) =>
 export const createBaseQueryWithAuth = (endpoint: string) => {
 
     return async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: any) => {
-
         const state = api.getState() as RootState;
         const user = state.user.user;
         if (user) {
@@ -37,10 +36,9 @@ export const createBaseQueryWithAuth = (endpoint: string) => {
                     const refreshToken = (response.data as IAuthResponse).refreshToken;
                     const remember = state.user.auth.remember
                     api.dispatch(setCredentials({ token: token, refreshToken: refreshToken, remember: remember }))
-                    console.log('Tokens refreshed:'+refreshToken)
+                    console.log('Tokens refreshed')
                 }
                 else {
-                    console.log('Error nokens refresh'+ response)
                     return response
                 }
             }

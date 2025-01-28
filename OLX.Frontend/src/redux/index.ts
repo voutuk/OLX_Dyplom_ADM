@@ -26,7 +26,6 @@ export const store = configureStore({
         [accountApi.reducerPath]: accountApi.reducer,
         [adminMessageAuthApi.reducerPath]: adminMessageAuthApi.reducer,
         [accountApiAuth.reducerPath]: accountApiAuth.reducer,
-        // [categoryApi.reducerPath]: categoryApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(

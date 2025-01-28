@@ -2,7 +2,7 @@ import { PageHeader } from "../../../../components/page_header";
 import { UserOutlined } from '@ant-design/icons';
 import { Modal } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../../../models/user";
-import PageHeaderButton from "../../../../components/page_header_button";
+import PageHeaderButton from "../../../../components/buttons/page_header_button";
 import { useEffect, useRef, useState } from "react";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import AdminMessage from "../../../../components/modals/admin_message";

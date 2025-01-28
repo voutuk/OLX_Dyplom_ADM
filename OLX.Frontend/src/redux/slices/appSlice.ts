@@ -12,6 +12,7 @@ const initialState: IAppState = {
     error: null,
     redirect: null
 };
+
 const appSlice = createSlice({
     name: 'app',
     initialState,

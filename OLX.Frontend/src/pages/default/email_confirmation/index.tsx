@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Spin } from "antd";
 import { useConfirmEmailMutation } from "../../../redux/api/accountApi";
-import PrimaryButton from "../../../components/primary_button";
+import PrimaryButton from "../../../components/buttons/primary_button";
 
 const EmailConfirmationPage: React.FC = () => {
   const [searchParams] = useSearchParams();

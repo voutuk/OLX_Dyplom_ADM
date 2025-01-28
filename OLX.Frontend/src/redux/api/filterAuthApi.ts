@@ -6,8 +6,6 @@ import { filterApi } from "./filterApi"
 export const filterAuthApi = createApi({
     reducerPath: 'filterAuthApi',
     baseQuery: createBaseQueryWithAuth('Filter'),
-
-
     endpoints: (builder) => ({
 
         createFilter: builder.mutation<void, IFilterCreationModel>({
@@ -66,7 +64,6 @@ export const filterAuthApi = createApi({
                 }
             },
         }),
-
     }),
 })
 

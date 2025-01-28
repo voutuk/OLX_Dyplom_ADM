@@ -3,7 +3,6 @@ import { IOlxUser } from "../models/user";
 import { ICategory } from "../models/category";
 
 export const getUserDescr = (user: IUser | IOlxUser | null): string => {
-
   return user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.email || ''
 }
 
@@ -75,7 +74,7 @@ export const getAllParentFilterIds = (categories: ICategory[], parentId?: number
 export const getQueryString = (filter: any): string => {
   var result = '';
   Object.keys(filter).forEach((key) => {
-    if ( filter[key] != false
+    if (filter[key] != false
       && filter[key]?.length !== 0) {
       var value = typeof (filter[key]) === "object"
         ? JSON.stringify(filter[key])
@@ -85,5 +84,5 @@ export const getQueryString = (filter: any): string => {
     }
   });
   return result;
-} 
+}
 

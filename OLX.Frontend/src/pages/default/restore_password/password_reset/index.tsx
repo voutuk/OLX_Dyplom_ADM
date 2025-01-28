@@ -1,10 +1,10 @@
 import { Button, Form } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useResetPasswordMutation } from "../../../../redux/api/accountApi";
-import FormInput from "../../../../components/form_input";
-import PrimaryButton from "../../../../components/primary_button";
 import { LeftOutlined } from '@ant-design/icons';
 import { useState } from "react";
+import FormInput from "../../../../components/inputs/form_input";
+import PrimaryButton from "../../../../components/buttons/primary_button";
 
 
 

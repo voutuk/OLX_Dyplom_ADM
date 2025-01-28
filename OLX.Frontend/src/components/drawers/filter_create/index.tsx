@@ -10,6 +10,7 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
     const [form] = Form.useForm();
     const [createFilter] = useCreateFilterMutation();
     const [updateFilter] = useUpdateFilterMutation();
+    
     const onFinish = async (data: any) => {
         const newValues = data.values.filter((x: any) => !x.id).map((x: any) => x.value)
         const changetValues = data.values.filter((x: any) => x.id).map((x: IFilterValue) => ({ id: x.id, value: x.value }))

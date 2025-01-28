@@ -12,7 +12,7 @@ import {
     UserOutlined
 } from '@ant-design/icons';
 import './style.scss'
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { MenuData, MenuItem } from "./models";
 import { MenuProps } from "./props";
@@ -107,7 +107,6 @@ const items: MenuItem[] = [
 
 export const AdminSideBarMenu: React.FC<MenuProps> = ({ collapsed }) => {
     const navigate = useNavigate();
-    const location = useLocation();
     const [menuData, setMenuData] = useState<MenuData>(({
         selected: location.pathname,
         openKeys: getOpenMenuItem(location.pathname, items)

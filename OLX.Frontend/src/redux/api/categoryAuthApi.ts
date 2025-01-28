@@ -7,8 +7,6 @@ import { getFormData } from "../../utilities/common_funct";
 export const categoryAuthApi = createApi({
     reducerPath: 'categoryAuthApi',
     baseQuery: createBaseQueryWithAuth('Category'),
-
-
     endpoints: (builder) => ({
         createCategory: builder.mutation<void, ICategoryCreationModel>({
             query: (creationModel) => {

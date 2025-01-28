@@ -10,6 +10,7 @@ const toastBlockedRoutes: string[] = [
     '/auth/emailconfirm',
     '/auth/password/reset'
 ]
+
 const showToast = (message: string, type?: TypeOptions, style?: React.CSSProperties) => {
     if (!toastBlockedRoutes.includes(window.location.pathname)) {
         toast(message, {
@@ -18,6 +19,7 @@ const showToast = (message: string, type?: TypeOptions, style?: React.CSSPropert
         })
     }
 }
+
 const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
     if (isRejectedWithValue(action)) {
         const error: IError | any = action.payload as IError;

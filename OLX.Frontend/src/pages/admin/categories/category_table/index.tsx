@@ -1,7 +1,7 @@
 import { Avatar, Button, Input, Pagination, Popconfirm, Table, TableColumnsType, TableProps, Tooltip } from "antd";
 import { PageHeader } from "../../../../components/page_header";
 import { SearchOutlined } from "@mui/icons-material";
-import { ClearOutlined, ProfileOutlined} from '@ant-design/icons';
+import { ClearOutlined, ProfileOutlined } from '@ant-design/icons';
 import { ICategory, ICategoryPageRequest } from "../../../../models/category";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { Key, useEffect, useState } from "react";
@@ -9,15 +9,16 @@ import { useGetCategoryPageQuery } from "../../../../redux/api/categoryApi";
 import { IconButton } from "@mui/material";
 import { AddCircleOutline, CachedOutlined, DeleteForever, EditCalendar, SearchOff } from "@mui/icons-material";
 import { APP_ENV } from "../../../../constants/env";
-import PageHeaderButton from "../../../../components/page_header_button";
+import PageHeaderButton from "../../../../components/buttons/page_header_button";
 import { ColumnType } from "antd/es/table";
 import AdminCategoryCreate from "../../../../components/drawers/category_create";
 import { useDeleteCategoryMutation, useDeleteCategoryTreeMutation } from "../../../../redux/api/categoryAuthApi";
 import { toast } from "react-toastify";
 import { useSearchParams } from "react-router-dom";
 import { getQueryString } from "../../../../utilities/common_funct";
+import { DrawerDataModel } from "./models";
 
-const getPageRequest = (searchParams:URLSearchParams)=>({
+const getPageRequest = (searchParams: URLSearchParams) => ({
     size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
     page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
     sortKey: searchParams.get("sortKey") || '',
@@ -26,7 +27,6 @@ const getPageRequest = (searchParams:URLSearchParams)=>({
     parentName: searchParams.get("parentName") || ""
 })
 
-
 const AdminCategoryTable: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams('');
     const [pageRequest, setPageRequest] = useState<ICategoryPageRequest>(getPageRequest(searchParams))
@@ -34,8 +34,11 @@ const AdminCategoryTable: React.FC = () => {
     const { data, isLoading, refetch } = useGetCategoryPageQuery(pageRequest)
     const [deleteCategoryTree] = useDeleteCategoryTreeMutation()
     const [deleteCategory] = useDeleteCategoryMutation()
-    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-    const [selectedCategory, setSelectedCategory] = useState<ICategory | undefined>();
+    const [drawerData, setDrawerData] = useState<DrawerDataModel>({
+        isDrawerOpen: false,
+        selectedCategory: undefined
+    })
+
     useEffect(() => {
         (async () => {
             setPageRequest(getPageRequest(searchParams))
@@ -65,11 +68,11 @@ const AdminCategoryTable: React.FC = () => {
                         close();
                     }}
                     size="small"
-                    style={{paddingLeft:3,paddingRight:3}}
+                    style={{ paddingLeft: 3, paddingRight: 3 }}
                     danger
                     icon={<ClearOutlined />}
                 />
-                   
+
             </div>
         ),
         filterIcon: () => (
@@ -78,8 +81,10 @@ const AdminCategoryTable: React.FC = () => {
     });
 
     const editCategory = (category: ICategory) => {
-        setSelectedCategory(category);
-        setIsDrawerOpen(true)
+        setDrawerData({
+            selectedCategory: category,
+            isDrawerOpen: true
+        })
     }
     const columns: TableColumnsType<ICategory> = [
         {
@@ -220,17 +225,19 @@ const AdminCategoryTable: React.FC = () => {
     }
 
     const onDrawerClose = () => {
-        setIsDrawerOpen(false)
-        setSelectedCategory(undefined);
+        setDrawerData({
+            selectedCategory: undefined,
+            isDrawerOpen: false
+        })
     }
 
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
-            {isDrawerOpen &&
+            {drawerData.isDrawerOpen &&
                 <AdminCategoryCreate
-                    open={isDrawerOpen}
+                    open={drawerData.isDrawerOpen}
                     onClose={onDrawerClose}
-                    category={selectedCategory}
+                    category={drawerData.selectedCategory}
                 />}
             <PageHeader
                 title="Категорії"
@@ -248,7 +255,7 @@ const AdminCategoryTable: React.FC = () => {
                             pageRequest.parentName === ''} />,
                     <PageHeaderButton
                         key='add'
-                        onButtonClick={() => setIsDrawerOpen(true)}
+                        onButtonClick={() => setDrawerData({ ...drawerData, isDrawerOpen: true })}
                         className="w-[35px] h-[35px] bg-green-700"
                         buttonIcon={<AddCircleOutline className="text-lg" />}
                         tooltipMessage="Додати категорію"
