@@ -27,20 +27,20 @@ export const createBaseQueryWithAuth = (endpoint: string) => {
                     {
                         url: `${APP_ENV.API_URL}/Account/user/refresh`,
                         method: 'POST',
-                        credentials: 'include',
                         body: { refreshToken: state.user.refreshToken }
                     },
                     api,
                     extraOptions
                 );
-                if (response.data && (response.data as IAuthResponse).accessToken) {
+                if (!response.error && response.data && (response.data as IAuthResponse).accessToken) {
                     token = (response.data as IAuthResponse).accessToken;
                     const refreshToken = (response.data as IAuthResponse).refreshToken;
                     const remember = state.user.auth.remember
                     api.dispatch(setCredentials({ token: token, refreshToken: refreshToken, remember: remember }))
-                    console.log('Tokens refreshed')
+                    console.log('Tokens refreshed:'+refreshToken)
                 }
-                else if (response.error) {
+                else {
+                    console.log('Error nokens refresh'+ response)
                     return response
                 }
             }

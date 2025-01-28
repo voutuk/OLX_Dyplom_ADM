@@ -212,6 +212,7 @@ namespace Olx.BLL.Services
 
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
         {
+            Console.WriteLine("refresh: " + refreshToken);
             var token = await CheckRefreshTokenAsync(refreshToken);
             var user = userManager.Users.AsNoTracking().FirstOrDefault(x => x.Id == token.OlxUserId)
                   ?? throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
@@ -221,11 +222,12 @@ namespace Olx.BLL.Services
 
         public async Task LogoutAsync(string refreshToken)
         {
-            Console.WriteLine("Refresh token: " + refreshToken);
-            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken))
-                ?? throw new HttpException(Errors.InvalidToken ,HttpStatusCode.BadRequest);
-            await tokenRepository.DeleteAsync(token.Id);
-            await tokenRepository.SaveAsync();
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
+            if (token is not null) 
+            {
+                await tokenRepository.DeleteAsync(token.Id);
+                await tokenRepository.SaveAsync();
+            }    
         }
 
         public async Task EmailConfirmAsync(EmailConfirmationModel confirmationModel)

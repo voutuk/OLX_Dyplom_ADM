@@ -3,7 +3,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities;
 using Olx.BLL.Entities.FilterEntities;

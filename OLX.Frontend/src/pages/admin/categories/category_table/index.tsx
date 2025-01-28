@@ -14,40 +14,31 @@ import { ColumnType } from "antd/es/table";
 import AdminCategoryCreate from "../../../../components/drawers/category_create";
 import { useDeleteCategoryMutation, useDeleteCategoryTreeMutation } from "../../../../redux/api/categoryAuthApi";
 import { toast } from "react-toastify";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { getQueryString } from "../../../../utilities/common_funct";
 
+const getPageRequest = (searchParams:URLSearchParams)=>({
+    size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
+    page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
+    sortKey: searchParams.get("sortKey") || '',
+    isDescending: searchParams.get("isDescending") === "true",
+    searchName: searchParams.get("searchName") || "",
+    parentName: searchParams.get("parentName") || ""
+})
+
+
 const AdminCategoryTable: React.FC = () => {
-
-    const [pageRequest, setPageRequest] = useState<ICategoryPageRequest>({
-        size: paginatorConfig.pagination.defaultPageSize,
-        page: paginatorConfig.pagination.defaultCurrent,
-        sortKey: '',
-        isDescending: false,
-        searchName: "",
-        parentName: ""
-    })
-
-    const location = useLocation();
     const [searchParams, setSearchParams] = useSearchParams('');
+    const [pageRequest, setPageRequest] = useState<ICategoryPageRequest>(getPageRequest(searchParams))
     const [search, setSearch] = useState<ICategoryPageRequest>(pageRequest as ICategoryPageRequest)
     const { data, isLoading, refetch } = useGetCategoryPageQuery(pageRequest)
     const [deleteCategoryTree] = useDeleteCategoryTreeMutation()
     const [deleteCategory] = useDeleteCategoryMutation()
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
     const [selectedCategory, setSelectedCategory] = useState<ICategory | undefined>();
-
     useEffect(() => {
         (async () => {
-            setPageRequest({
-                size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
-                page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
-                sortKey: searchParams.get("sortKey") || '',
-                isDescending: searchParams.get("isDescending") === "true",
-                searchName: searchParams.get("searchName") || "",
-                parentName: searchParams.get("parentName") || ""
-            })
-            await refetch()
+            setPageRequest(getPageRequest(searchParams))
         })()
     }, [location.search])
 

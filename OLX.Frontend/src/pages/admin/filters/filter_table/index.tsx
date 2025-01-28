@@ -12,34 +12,29 @@ import PageHeaderButton from "../../../../components/page_header_button";
 import { useDeleteFilterMutation } from "../../../../redux/api/filterAuthApi";
 import { toast } from "react-toastify";
 import AdminFilterCreate from "../../../../components/drawers/filter_create";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { getQueryString } from "../../../../utilities/common_funct";
+
+const getPageRequest = (searchParams:URLSearchParams)=>({
+    size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
+    page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
+    sortKey: searchParams.get("sortKey") || '',
+    isDescending: searchParams.get("isDescending") === "true",
+    searchName: searchParams.get("searchName") || "",
+})
+
 const AdminFilterTable: React.FC = () => {
 
-    const location = useLocation();
     const [searchParams, setSearchParams] = useSearchParams('');
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
     const [selectedFilter, setSelectedFilter] = useState<IFilter | undefined>();
     const [delFilter] = useDeleteFilterMutation();
     const [nameSearch, setNameSearch] = useState<string>('')
-    const [pageRequest, setPageRequest] = useState<IFilterPageRequest>({
-        size: paginatorConfig.pagination.defaultPageSize,
-        page: paginatorConfig.pagination.defaultCurrent,
-        sortKey: '',
-        isDescending: false,
-        searchName: "",
-    })
+    const [pageRequest, setPageRequest] = useState<IFilterPageRequest>(getPageRequest(searchParams))
     const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
     useEffect(() => {
         (async () => {
-            setPageRequest({
-                size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
-                page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
-                sortKey: searchParams.get("sortKey") || '',
-                isDescending: searchParams.get("isDescending") === "true",
-                searchName: searchParams.get("searchName") || "",
-            })
-            await refetch()
+            setPageRequest(getPageRequest(searchParams))
         })()
     }, [location.search])
 

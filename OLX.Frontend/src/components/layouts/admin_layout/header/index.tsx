@@ -42,8 +42,8 @@ export const AdminHeader: React.FC = () => {
             label: 'Вийти',
             key: '3',
             onClick: async () => {
-                await signalRConnection?.connection?.invoke("Disconnect");
-                await logout(refreshToken || '').unwrap();
+                try{ await signalRConnection?.connection?.invoke("Disconnect");}
+                finally{ await logout(refreshToken || '').unwrap();}
             }
         },
     ];
