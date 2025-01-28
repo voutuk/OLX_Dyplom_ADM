@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import PrimaryButton from '../../../../components/primary_button';
-import { BackButton } from '../../../../components/back_button';
+import PrimaryButton from '../../../../components/buttons/primary_button';
+import { BackButton } from '../../../../components/buttons/back_button';
 
 const RegisterConfirmPage: React.FC = () => {
     const navigate = useNavigate();

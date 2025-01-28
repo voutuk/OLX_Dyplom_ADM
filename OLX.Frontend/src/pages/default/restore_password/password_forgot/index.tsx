@@ -1,9 +1,9 @@
 import { Form } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSendPasswordResetEmailMutation } from "../../../../redux/api/accountApi";
-import PrimaryButton from "../../../../components/primary_button";
-import FormInput from "../../../../components/form_input";
-import { BackButton } from "../../../../components/back_button";
+import { BackButton } from "../../../../components/buttons/back_button";
+import FormInput from "../../../../components/inputs/form_input";
+import PrimaryButton from "../../../../components/buttons/primary_button";
 
 const ForgotPasswordPage: React.FC = () => {
   const [passFogot, { isLoading }] = useSendPasswordResetEmailMutation()

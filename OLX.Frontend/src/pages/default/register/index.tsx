@@ -4,9 +4,9 @@ import { IRegisterRequest } from '../../../models/account';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useRegisterMutation } from '../../../redux/api/accountApi';
-import PrimaryButton from '../../../components/primary_button';
-import FormInput from '../../../components/form_input';
 import { Images } from '../../../constants/images';
+import FormInput from '../../../components/inputs/form_input';
+import PrimaryButton from '../../../components/buttons/primary_button';
 
 const action: string = 'register'
 

@@ -212,7 +212,6 @@ namespace Olx.BLL.Services
 
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
         {
-            Console.WriteLine("refresh: " + refreshToken);
             var token = await CheckRefreshTokenAsync(refreshToken);
             var user = userManager.Users.AsNoTracking().FirstOrDefault(x => x.Id == token.OlxUserId)
                   ?? throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
