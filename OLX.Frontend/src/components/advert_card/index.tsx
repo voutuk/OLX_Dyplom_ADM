@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settlement }) => {
     const navigate = useNavigate();
-    
+
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('uk-UA').format(price);
     };
@@ -13,7 +13,7 @@ const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settle
             <svg onClick={() => {}} className="w-[50px] h-[50px] absolute right-[0px] top-[6px] cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M17 3H7C5.9 3 5 3.9 5 5V21L12 18L19 21V5C19 3.9 18.1 3 17 3ZM17 18L12 15.82L7 18V5H17V18Z" fill="white" />
             </svg>
-            <img className="self-stretch w-[388px] h-[400px]" src={image} />
+            <img className="self-stretch w-[100%] h-[400px]" src={image} />
             <div className="p-2.5 mb-[16px] mt-[16px] cursor-pointer" onClick={() => {navigate(`/adverts/${id}`)}}>
                 <h4 className="font-unbounded text-[#3a211c] text-2xl font-medium mb-[10px] hover:underline truncate">{title}</h4>
                 <p className="text-[#3a211c] text-xl font-medium font-montserrat">{formatPrice(price)} грн</p>
