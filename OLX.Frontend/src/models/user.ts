@@ -27,6 +27,8 @@ export interface PageRequest {
 }
 
 export interface IOlxUserPageRequest extends PageRequest {
+    isAdmin:boolean
+    isLocked:boolean
     emailSearch?: string
     phoneNumberSearch?: string
     firstNameSearch?: string

@@ -1,5 +1,6 @@
 import { Menu } from "antd";
 import {
+    DatabaseOutlined,
     FileDoneOutlined,
     FilterOutlined,
     LockOutlined,
@@ -51,12 +52,22 @@ const items: MenuItem[] = [
             {
                 key: "/admin/adverts",
                 icon: <SnippetsOutlined style={{ fontSize: 16 }} />,
-                label: <span className='text-sm font-medium'>Всі</span>,
+                label: <span className='text-sm font-medium'>Діючі</span>,
             },
             {
                 key: "/admin/adverts/approve",
                 icon: <FileDoneOutlined style={{ fontSize: 16 }} />,
                 label: <span className='text-sm font-medium'>Не підтверджені</span>,
+            },
+            {
+                key: "/admin/adverts/locked",
+                icon: <LockOutlined style={{ fontSize: 16 }} />,
+                label: <span className='text-sm font-medium'>Заблоковані</span>,
+            },
+            {
+                key: "/admin/adverts/archive",
+                icon: <DatabaseOutlined style={{ fontSize: 16 }} />,
+                label: <span className='text-sm font-medium'>Архів</span>,
             },
         ]
 

@@ -65,18 +65,7 @@ export const userAuthApi = createApi({
             providesTags: ["Admins"]
         }),
 
-        getAdminPage: builder.query<PageResponse<IOlxUser>,IOlxUserPageRequest>({
-            query: (pageRequest) => {
-                return {
-                    url: `get/admin/page`,
-                    method: 'POST',
-                  //  timeout: 10000,
-                    body: getFormData(pageRequest)
-                }
-            },
-            providesTags: ["Admins"]
-        }),
-
+       
         getUserPage: builder.query<PageResponse<IOlxUser>,IOlxUserPageRequest>({
             query: (pageRequest) => {
                 return {
@@ -88,26 +77,12 @@ export const userAuthApi = createApi({
             },
             providesTags: ["Users"]
         }),
-
-        getLockedUserPage: builder.query<PageResponse<IOlxUser>,IOlxUserPageRequest>({
-            query: (pageRequest) => {
-                return {
-                    url: `get/locked/page`,
-                    method: 'POST',
-                   // timeout: 10000,
-                    body: getFormData(pageRequest)
-                }
-            },
-            providesTags: ["LockedUsers"]
-        }),
     }),
 })
 export const {
     useGetUserQuery,
-    useGetAdminPageQuery,
     useGetAdminQuery,
     useGetAdminsQuery,
     useGetLockedUsersQuery,
     useGetUserPageQuery,
-    useGetUsersQuery,
-    useGetLockedUserPageQuery } = userAuthApi
+    useGetUsersQuery } = userAuthApi

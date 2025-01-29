@@ -56,11 +56,11 @@ namespace Olx.BLL.Services
         }
         
 
-        public async Task<PageResponse<OlxUserDto>> Get(UserPageRequest userPageRequest, bool isAdmin = false, bool isLocked = false)
+        public async Task<PageResponse<OlxUserDto>> Get(UserPageRequest userPageRequest)
         {
             var adminsIds = await _getAdminsIds();
             var query = mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery()
-                .Where(x => adminsIds.Any(z => z == x.Id == isAdmin) && ((x.LockoutEnd != null && x.LockoutEnd > DateTime.Now) == isLocked))
+                .Where(x => adminsIds.Any(z => z == x.Id == userPageRequest.IsAdmin) && ((x.LockoutEnd != null && x.LockoutEnd > DateTime.Now) == userPageRequest.IsLocked))
                 .AsNoTracking());
             var paginationBuilder = new PaginationBuilder<OlxUserDto>(query);
             var userFilter = mapper.Map<OlxUserFilter>(userPageRequest);

@@ -3,7 +3,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Modal } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../../../models/user";
 import PageHeaderButton from "../../../../components/buttons/page_header_button";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import AdminMessage from "../../../../components/modals/admin_message";
 import { useCreateAdminMessageMutation } from "../../../../redux/api/adminMessageApi";
@@ -24,9 +24,11 @@ import {
     LockOpen
 } from "@mui/icons-material";
 import { useSearchParams } from "react-router-dom";
-import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
+import { useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
 
 const updatedPageRequest = (searchParams: URLSearchParams) => ({
+    isAdmin: location.pathname === '/admin/admins',
+    isLocked:location.pathname === '/admin/blocked',
     size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
     page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
     sortKey: searchParams.get("sortKey") || '',
@@ -51,20 +53,11 @@ const UsersPage: React.FC = () => {
     const adminModalTitle = useRef<string>('')
     const [lockUsers] = useLockUnlockUsersMutation();
     const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>(updatedPageRequest(searchParams));
-
-    const getLoader = useCallback(() => {
-        return location.pathname === '/admin'
-            ? useGetUserPageQuery(pageRequest)
-            : location.pathname === '/admin/admins'
-                ? useGetAdminPageQuery(pageRequest)
-                : useGetLockedUserPageQuery(pageRequest)
-    }, [location.pathname])
-
-    const { data, isLoading, refetch } = getLoader()
-
+    const { data, isLoading, refetch } = useGetUserPageQuery(pageRequest)
+    
     useEffect(() => {
         setPageRequest(updatedPageRequest(searchParams));
-    }, [location.search]);
+    }, [location.search,location.pathname]);
 
     const actions = useCallback((_value: any, user: IOlxUser) =>
         <div className='flex justify-around'>
