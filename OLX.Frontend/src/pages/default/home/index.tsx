@@ -6,8 +6,10 @@ import './style.scss'
 
 
 const HomePage: React.FC = () => {
-  const {data: adverts} = useGetAllAdvertsQuery();
+  const {data: adverts, isLoading: isAdvertsLoading} = useGetAllAdvertsQuery();
   
+  if (isAdvertsLoading) return <p>Loading...</p>;
+
   return (
     <div className="flex-1 flex flex-col justify-center">
       <HomePageImageBlock />
