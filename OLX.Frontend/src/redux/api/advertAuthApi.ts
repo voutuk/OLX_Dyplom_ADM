@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQueryWithAuth } from "./baseQuery";
 import { IAdvert, IAdvertCreationModel } from "../../models/advert";
+import { advertApi } from "./advertApi";
 
 export const advertAuthApi = createApi({
     reducerPath: "advertAuthApi",
@@ -14,7 +15,14 @@ export const advertAuthApi = createApi({
                 method: "PUT",
                 body: creationModel,
             }),
-            invalidatesTags: ["Adverts"],
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(advertApi.util.invalidateTags(["Adverts"]))
+                } catch (error) {
+                    console.error('Create advert failed:', error);
+                }
+            },
         }),
 
         updateAdvert: builder.mutation<void, IAdvertCreationModel>({
@@ -23,7 +31,14 @@ export const advertAuthApi = createApi({
                 method: "POST",
                 body: creationModel,
             }),
-            invalidatesTags: ["Adverts"],
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(advertApi.util.invalidateTags(["Adverts"]))
+                } catch (error) {
+                    console.error('Update advert failed:', error);
+                }
+            },
         }),
 
         deleteAdvert: builder.mutation<void, number>({
@@ -31,7 +46,14 @@ export const advertAuthApi = createApi({
                 url: `delete/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["Adverts"],
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(advertApi.util.invalidateTags(["Adverts"]))
+                } catch (error) {
+                    console.error('Delete advert failed:', error);
+                }
+            },
         }),
 
         blockAdvert: builder.mutation<void, { advertId: number; status: boolean }>({
@@ -40,7 +62,14 @@ export const advertAuthApi = createApi({
                 method: "POST",
                 params: { advertId, status },
             }),
-            invalidatesTags: ["Adverts"],
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(advertApi.util.invalidateTags(["Adverts"]))
+                } catch (error) {
+                    console.error('Block advert failed:', error);
+                }
+            },
         }),
 
         approveAdvert: builder.mutation<void, number>({
@@ -48,7 +77,14 @@ export const advertAuthApi = createApi({
                 url: `approve/${advertId}`,
                 method: "POST",
             }),
-            invalidatesTags: ["Adverts"],
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(advertApi.util.invalidateTags(["Adverts"]))
+                } catch (error) {
+                    console.error('Approve advert failed:', error);
+                }
+            },
         }),
 
         getUserAdverts: builder.query<IAdvert[], void>({
