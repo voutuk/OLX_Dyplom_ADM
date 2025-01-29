@@ -8,42 +8,42 @@ import { useGetFilterPageQuery } from "../../../../redux/api/filterApi";
 import { ColumnType, TableProps } from "antd/es/table";
 import { IconButton } from "@mui/material";
 import { AddCircleOutline, CachedOutlined, DeleteForever, EditCalendar, SearchOutlined } from "@mui/icons-material";
-import PageHeaderButton from "../../../../components/page_header_button";
+import PageHeaderButton from "../../../../components/buttons/page_header_button";
 import { useDeleteFilterMutation } from "../../../../redux/api/filterAuthApi";
 import { toast } from "react-toastify";
 import AdminFilterCreate from "../../../../components/drawers/filter_create";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { getQueryString } from "../../../../utilities/common_funct";
+import { FilterDrawerDataModel } from "./models";
+
+const getPageRequest = (searchParams: URLSearchParams) => ({
+    size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
+    page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
+    sortKey: searchParams.get("sortKey") || '',
+    isDescending: searchParams.get("isDescending") === "true",
+    searchName: searchParams.get("searchName") || "",
+})
+
 const AdminFilterTable: React.FC = () => {
 
-    const location = useLocation();
     const [searchParams, setSearchParams] = useSearchParams('');
-    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-    const [selectedFilter, setSelectedFilter] = useState<IFilter | undefined>();
+    // const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+    // const [selectedFilter, setSelectedFilter] = useState<IFilter | undefined>();
+    const [drawerData, setDrawerData] = useState<FilterDrawerDataModel>({
+        isDrawerOpen: false,
+        selectedFilter: undefined
+    })
     const [delFilter] = useDeleteFilterMutation();
     const [nameSearch, setNameSearch] = useState<string>('')
-    const [pageRequest, setPageRequest] = useState<IFilterPageRequest>({
-        size: paginatorConfig.pagination.defaultPageSize,
-        page: paginatorConfig.pagination.defaultCurrent,
-        sortKey: '',
-        isDescending: false,
-        searchName: "",
-    })
-
+    const [pageRequest, setPageRequest] = useState<IFilterPageRequest>(getPageRequest(searchParams))
+    const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
     useEffect(() => {
         (async () => {
-            setPageRequest({
-                size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
-                page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
-                sortKey: searchParams.get("sortKey") || '',
-                isDescending: searchParams.get("isDescending") === "true",
-                searchName: searchParams.get("searchName") || "",
-            })
-            await refetch()
+            setPageRequest(getPageRequest(searchParams))
         })()
     }, [location.search])
 
-    const { data, isLoading, refetch } = useGetFilterPageQuery(pageRequest)
+
     const getColumnSearchProps = (): ColumnType<IFilter> => ({
         filterDropdown: ({ close }) => (
             <div style={{ width: 300 }} className="p-3 flex gap-2">
@@ -66,7 +66,7 @@ const AdminFilterTable: React.FC = () => {
                         close();
                     }}
                     size="small"
-                    style={{paddingLeft:3,paddingRight:3}}
+                    style={{ paddingLeft: 3, paddingRight: 3 }}
                     danger
                     icon={<ClearOutlined />}
                 />
@@ -103,15 +103,17 @@ const AdminFilterTable: React.FC = () => {
     }
 
     const editFilter = (filter: IFilter) => {
-
-        setIsDrawerOpen(true)
-        setSelectedFilter(filter);
+        setDrawerData({
+            isDrawerOpen: true,
+            selectedFilter: filter
+        })
     }
 
     const onDrawerClose = () => {
-
-        setIsDrawerOpen(false)
-        setSelectedFilter(undefined);
+        setDrawerData({
+            isDrawerOpen: false,
+            selectedFilter: undefined
+        })
     }
 
     const columns: TableColumnsType<IFilter> = [
@@ -184,11 +186,11 @@ const AdminFilterTable: React.FC = () => {
 
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
-            {isDrawerOpen &&
+            {drawerData.isDrawerOpen &&
                 <AdminFilterCreate
-                    open={isDrawerOpen}
+                    open={drawerData.isDrawerOpen}
                     onClose={onDrawerClose}
-                    filter={selectedFilter} />}
+                    filter={drawerData.selectedFilter} />}
 
             <PageHeader
                 title="Фільтри"
@@ -196,7 +198,7 @@ const AdminFilterTable: React.FC = () => {
                 buttons={[
                     <PageHeaderButton
                         key='add'
-                        onButtonClick={() => setIsDrawerOpen(true)}
+                        onButtonClick={() => setDrawerData({ ...drawerData, isDrawerOpen: true })}
                         className="w-[35px] h-[35px] bg-green-700"
                         buttonIcon={<AddCircleOutline className="text-lg" />}
                         tooltipMessage="Додати фільтр"

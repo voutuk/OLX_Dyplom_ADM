@@ -38,7 +38,6 @@ export const accountApi = createApi({
                 return {
                     url: 'user/logout',
                     method: 'POST',
-                    credentials: "include",
                     body: { refreshToken: token },
                     timeout: 10000
                 }
@@ -120,8 +119,6 @@ export const accountApi = createApi({
             },
         }),
     }),
-
-
 })
 
 export const {

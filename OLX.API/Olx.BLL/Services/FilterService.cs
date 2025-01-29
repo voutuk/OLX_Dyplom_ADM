@@ -3,7 +3,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities;
 using Olx.BLL.Entities.FilterEntities;
@@ -65,14 +64,14 @@ namespace Olx.BLL.Services
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             filterEditModelValidator.ValidateAndThrow(filterModel);
-            var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id,FilterOpt.Values))
+            var filter = await filterRepository.GetItemBySpec(new FilterSpecs.GetById(filterModel.Id, FilterOpt.Values))
                 ?? throw new HttpException(Errors.InvalidFilterId, HttpStatusCode.BadRequest);
             
             mapper.Map(filterModel,filter);
             if (filterModel.OldValues.Length != 0)
             {
-                filter.Values = filter.Values.Where(x => filterModel.OldValues.Any(z => z.Id == x.Id)).ToArray();
-                foreach (var value in filter.Values ) 
+                var filters = filter.Values.Where(x => filterModel.OldValues.Any(z => z.Id == x.Id)).ToList();
+                foreach (var value in filters) 
                 {
                     var newValue = filterModel.OldValues.First(x => x.Id == value.Id).Value;
                     if (newValue != value.Value) 
@@ -80,6 +79,7 @@ namespace Olx.BLL.Services
                         value.Value = newValue;
                     }
                 }
+                filter.Values = filters;
             }
             else filter.Values.Clear();
 

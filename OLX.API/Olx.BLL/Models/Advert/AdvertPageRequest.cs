@@ -13,6 +13,7 @@ namespace Olx.BLL.Models.Advert
         public bool IsContractPrice { get; init; } = false;
         public bool Approved { get; init; } = false;
         public bool Blocked { get; init; } = false;
+        public bool Archived { get; init; } = false;
         public IEnumerable<int>? CategoryIds { get; init; }
         public IEnumerable<int>? Filters { get; init; }
     }

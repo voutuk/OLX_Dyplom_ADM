@@ -10,7 +10,6 @@ const RedirectHendler: React.FC = () => {
     const { isAuth, location } = useSelector(getAuth)
     const navigate = useNavigate()
     const dispatcher = useDispatch();
-
     const isInit = useRef<boolean>(true)
     useEffect(() => {
         !isInit.current ? navigate(location) : isInit.current = false;
@@ -18,8 +17,8 @@ const RedirectHendler: React.FC = () => {
 
     useEffect(() => {
         if (redirect) {
-            navigate(redirect)
             dispatcher(clearError())
+            navigate(redirect)
         }
     }, [redirect])
     return null

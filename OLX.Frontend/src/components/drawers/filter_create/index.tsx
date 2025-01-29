@@ -1,5 +1,5 @@
 import { Button, Drawer, Form, Input, Space } from "antd";
-import {  MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { toast } from "react-toastify";
 import { useCreateFilterMutation, useUpdateFilterMutation } from "../../../redux/api/filterAuthApi";
 import { FilterCreateProps } from "./props";
@@ -10,6 +10,7 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
     const [form] = Form.useForm();
     const [createFilter] = useCreateFilterMutation();
     const [updateFilter] = useUpdateFilterMutation();
+    
     const onFinish = async (data: any) => {
         const newValues = data.values.filter((x: any) => !x.id).map((x: any) => x.value)
         const changetValues = data.values.filter((x: any) => x.id).map((x: IFilterValue) => ({ id: x.id, value: x.value }))
@@ -78,7 +79,7 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
                 name="filterForm"
                 onFinish={onFinish}
                 layout="vertical"
-                style={{width:'100%'}}
+                style={{ width: '100%' }}
                 className="mx-auto ">
 
                 <Form.Item
@@ -119,12 +120,14 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
                                     className="w-full"
                                     size="small"
                                     type="dashed"
-                                    onClick={() => add('', 0)}
+                                    onClick={() => {
+                                        add('', 0);
+                                    }}
                                     icon={<PlusOutlined />}
                                 >
                                     Нове значення
                                 </Button>
-                                <Form.ErrorList errors={errors} />
+                               <Form.ErrorList errors={errors} />
                             </Form.Item>
                             {fields.map((field) => (
 
@@ -146,9 +149,9 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
                                                     message: "Будьласка введіть значення фільтру або видаліть",
                                                 },
                                                 ({ getFieldValue }) => ({
-                                                    validator() {
-                                                        const values = getFieldValue('values') as string[]
-                                                        const duplExist = values.some((item) => values.lastIndexOf(item) !== values.indexOf(item))
+                                                    async validator(_, value) {
+                                                        const values = (getFieldValue('values') as IFilterValue[]).map(x => x.value)
+                                                        const duplExist = values.lastIndexOf(value) !== values.indexOf(value)
                                                         if (duplExist) {
                                                             return Promise.reject(new Error('Таке значення вже існує'));
                                                         }
@@ -158,12 +161,19 @@ const AdminFilterCreate: React.FC<FilterCreateProps> = ({ open, onClose, filter 
                                             ]}
                                             noStyle
                                         >
-                                            <Input className="flex-1" size="small" placeholder="Значення фільтру" />
+                                            <Input
+                                                className="flex-1"
+                                                size="small"
+                                                placeholder="Значення фільтру"
+                                                onChange={() => form?.validateFields()}
+                                            />
                                         </Form.Item>
-                                        {fields.length > 0 ? (
+                                        {fields.length > 1 ? (
                                             <MinusCircleOutlined
                                                 className="text-lg text-red-700 "
-                                                onClick={() => remove(field.name)}
+                                                onClick={() => {
+                                                    remove(field.name);
+                                                }}
                                             />
                                         ) : null}
                                     </div>

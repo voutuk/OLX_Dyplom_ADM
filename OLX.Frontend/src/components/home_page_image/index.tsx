@@ -1,5 +1,5 @@
+import PrimaryButton from '../buttons/primary_button';
 import './style.scss'
-import PrimaryButton from '../primary_button';
 const HomePageImageBlock: React.FC = () => {
     return (
     <div className="main-page-image h-[100vh] flex flex-col pl-40 justify-center">

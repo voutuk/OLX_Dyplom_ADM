@@ -86,7 +86,7 @@ namespace Olx.BLL.Services
 
         public async Task<IEnumerable<AdvertDto>> GetAllAsync()
         {
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetAll(AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues));
+            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetAll(AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues ));
             return adverts.Any() ? mapper.Map<IEnumerable<AdvertDto>>(adverts) : [];
         }
 
@@ -108,7 +108,7 @@ namespace Olx.BLL.Services
 
         public async Task<AdvertDto> GetByIdAsync(int id)
         {
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues | AdvertOpt.User))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             return mapper.Map<AdvertDto>(advert);
         }
@@ -124,7 +124,8 @@ namespace Olx.BLL.Services
         {
             var query = advertRepository.GetQuery()
                 .Include(x => x.FilterValues)
-                .Include(x => x.Images);
+                .Include(x => x.Images)
+                .Include(x=>x.User);
             var paginationBuilder = new PaginationBuilder<Advert>(query);
             var filter = mapper.Map<AdvertFilter>(pageRequest);
             var sortData = new AdvertSortData(pageRequest.IsDescending, pageRequest.SortKey);

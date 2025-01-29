@@ -8,8 +8,10 @@ import { useGetAllCategoriesQuery } from "../../../redux/api/categoryApi";
 import { buildTree, getAllParentFilterIds } from "../../../utilities/common_funct";
 import { RcFile, UploadFile } from "antd/es/upload/interface";
 import { useGetAllFilterQuery } from "../../../redux/api/filterApi";
-import { ICategory, ICategoryCreationModel } from "../../../models/category";
+import { ICategoryCreationModel } from "../../../models/category";
 import { APP_ENV } from "../../../constants/env";
+import { CategoryFilterDataModel, CategoryPreviewModel } from "./models";
+
 
 
 const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, category }) => {
@@ -18,12 +20,16 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
     const [updateCategory] = useEditCategoryMutation();
     const { data: categories, isLoading } = useGetAllCategoriesQuery();
     const { data: allFilters } = useGetAllFilterQuery();
-    const [categoryTree, setCategoryTree] = useState<ICategory[]>([])
-    const [previewOpen, setPreviewOpen] = useState<boolean>(false);
-    const [previewImage, setPreviewImage] = useState('');
-    const [previewTitle, setPreviewTitle] = useState('');
+    const [categoryFilterData, setCategoryFilterData] = useState<CategoryFilterDataModel>({
+        excludedFilters: [],
+        categoryTree: []
+    })
+    const [preview, setPreview] = useState<CategoryPreviewModel>({
+        previewOpen: false,
+        previewImage: '',
+        previewTitle: ''
+    })
     const [file, setFile] = useState<UploadFile>();
-    const [excludedFilters, setExcludedFilters] = useState<number[]>([])
 
     const onFinish = async (data: any) => {
         const requestData: ICategoryCreationModel = {
@@ -46,8 +52,10 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
     };
 
     useEffect(() => {
-        setCategoryTree(buildTree(categories || [], undefined, category ? [category.id] : []))
-        setExcludedFilters(getAllParentFilterIds(categories || [], category?.parentId));
+        setCategoryFilterData({
+            categoryTree: buildTree(categories || [], undefined, category ? [category.id] : []),
+            excludedFilters: getAllParentFilterIds(categories || [], category?.parentId)
+        })
     }, [categories])
 
     useEffect(() => {
@@ -71,7 +79,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
         else {
             form.resetFields()
             setFile(undefined)
-            setExcludedFilters([])
+            setCategoryFilterData({ ...categoryFilterData, excludedFilters: [] })
         }
     }, [open])
 
@@ -88,15 +96,19 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
         if (!file.url && !file.preview) {
             file.preview = URL.createObjectURL(file.originFileObj as RcFile);
         }
-        setPreviewImage(file.url || (file.preview as string));
-        setPreviewOpen(true);
-        setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
+        setPreview(({
+            previewImage: file.url || (file.preview as string),
+            previewTitle: file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1),
+            previewOpen: true
+        }))
     }
+
     const handleChange = ({ fileList: newFileList }: { fileList: UploadFile[] }) => {
         setFile(newFileList[0]);
     };
+
     const onParentCategoryChange = (parentId: any) => {
-        setExcludedFilters(getAllParentFilterIds(categories || [], parentId));
+        setCategoryFilterData({ ...categoryFilterData, excludedFilters: getAllParentFilterIds(categories || [], parentId) })
     }
 
     return (
@@ -182,7 +194,7 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                         size="small"
                         className="flex-1"
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={categoryTree}
+                        treeData={categoryFilterData.categoryTree}
                         placeholder="Батьківська категорія"
                         onChange={onParentCategoryChange}
                     />
@@ -204,12 +216,19 @@ const AdminCategoryCreate: React.FC<CategoryCreateProps> = ({ open, onClose, cat
                         filterOption={(input, option) =>
                             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                         }
-                        options={allFilters?.map(x => ({ value: x.id, label: x.name, disabled: excludedFilters.includes(x.id) }))}
+                        options={allFilters?.map(x => ({
+                             value: x.id, 
+                             label: x.name, 
+                             disabled: categoryFilterData.excludedFilters.includes(x.id) }))}
                     />
                 </Form.Item>
             </Form>
-            <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
-                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+            <Modal
+                open={preview?.previewOpen}
+                title={preview?.previewTitle}
+                footer={null}
+                onCancel={() => setPreview({ ...preview, previewOpen: false })}>
+                <img alt="example" style={{ width: '100%' }} src={preview?.previewImage} />
             </Modal>
         </Drawer>)
 };

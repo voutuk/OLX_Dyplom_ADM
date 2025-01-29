@@ -6,11 +6,11 @@ using AutoMapper;
 
 namespace Olx.BLL.DTOs
 {
-    [AutoMap(typeof(Advert))]
     public class AdvertDto
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        public OlxUserShortDto User { get; set; }
         public string PhoneNumber { get; set; } = string.Empty;
         public string ContactEmail { get; set; } = string.Empty;
         public string ContactPersone { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ namespace Olx.BLL.DTOs
         public bool IsContractPrice { get; set; }
         public decimal Price { get; set; }
         public int CategoryId { get; set; }
-        public string SettlementRef { get; set; }
+        public string SettlementRef { get; set; } = string.Empty;
         public ICollection<FilterValueDto> FilterValues { get; set; } = new HashSet<FilterValueDto>();
         public ICollection<AdvertImageDto> Images { get; set; } = new HashSet<AdvertImageDto>();
     }

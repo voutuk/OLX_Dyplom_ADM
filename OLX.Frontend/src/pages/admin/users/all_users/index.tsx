@@ -2,8 +2,8 @@ import { PageHeader } from "../../../../components/page_header";
 import { UserOutlined } from '@ant-design/icons';
 import { Modal } from "antd";
 import { IOlxUser, IOlxUserPageRequest } from "../../../../models/user";
-import PageHeaderButton from "../../../../components/page_header_button";
-import { useEffect, useRef, useState } from "react";
+import PageHeaderButton from "../../../../components/buttons/page_header_button";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import AdminMessage from "../../../../components/modals/admin_message";
 import { useCreateAdminMessageMutation } from "../../../../redux/api/adminMessageApi";
@@ -23,13 +23,26 @@ import {
     LockOutlined,
     LockOpen
 } from "@mui/icons-material";
+import { useSearchParams } from "react-router-dom";
+import { useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
 
-import { useGetAdminPageQuery, useGetLockedUserPageQuery, useGetUserPageQuery } from '../../../../redux/api/userAuthApi';
-import { useLocation, useSearchParams } from "react-router-dom";
+const updatedPageRequest = (searchParams: URLSearchParams) => ({
+    isAdmin: location.pathname === '/admin/admins',
+    isLocked:location.pathname === '/admin/blocked',
+    size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
+    page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
+    sortKey: searchParams.get("sortKey") || '',
+    isDescending: searchParams.get("isDescending") === "true",
+    emailSearch: searchParams.get("emailSearch") || '',
+    phoneNumberSearch: searchParams.get("phoneNumberSearch") || '',
+    firstNameSearch: searchParams.get("firstNameSearch") || '',
+    lastNameSearch: searchParams.get("lastNameSearch") || '',
+    webSiteSearch: searchParams.get("webSiteSearch") || '',
+    settlementRefSearch: searchParams.get("settlementRefSearch") || '',
+});
 
 
 const UsersPage: React.FC = () => {
-    const location = useLocation();
     const [searchParams] = useSearchParams('');
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
     const selectedUser = useRef<number | undefined>();
@@ -39,47 +52,14 @@ const UsersPage: React.FC = () => {
     const [isAdminLockOpen, setAminLockOpen] = useState<boolean>(false);
     const adminModalTitle = useRef<string>('')
     const [lockUsers] = useLockUnlockUsersMutation();
-    const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>({
-        size: paginatorConfig.pagination.defaultPageSize,
-        page: paginatorConfig.pagination.defaultCurrent,
-        sortKey: '',
-        isDescending: false,
-        emailSearch: '',
-        phoneNumberSearch: '',
-        firstNameSearch: '',
-        lastNameSearch: '',
-        webSiteSearch: '',
-        settlementRefSearch: '',
-    })
-    const getUsers = useGetUserPageQuery(pageRequest, { skip: location.pathname === '/admin/admins' || location.pathname === '/admin/blocked' });
-    const getAdmins = useGetAdminPageQuery(pageRequest, { skip: location.pathname === '/admin' });
-    const getLockedUsers = useGetLockedUserPageQuery(pageRequest, { skip: location.pathname === '/admin/admins' || location.pathname === '/admin' });
-    const { data, isLoading, refetch } =
-        location.pathname === '/admin'
-            ? getUsers
-            : location.pathname === '/admin/admins'
-                ? getAdmins
-                : getLockedUsers;
-
+    const [pageRequest, setPageRequest] = useState<IOlxUserPageRequest>(updatedPageRequest(searchParams));
+    const { data, isLoading, refetch } = useGetUserPageQuery(pageRequest)
+    
     useEffect(() => {
-        (async () => {
-            setPageRequest({
-                size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
-                page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
-                sortKey: searchParams.get("sortKey") || '',
-                isDescending: searchParams.get("isDescending") === "true" ,
-                emailSearch: searchParams.get("emailSearch") || '',
-                phoneNumberSearch: searchParams.get("phoneNumberSearch") || '',
-                firstNameSearch: searchParams.get("firstNameSearch") || '',
-                lastNameSearch: searchParams.get("lastNameSearch") || '',
-                webSiteSearch: searchParams.get("webSiteSearch") || '',
-                settlementRefSearch: searchParams.get("settlementRefSearch") || '',
-            })
-            await refetch()
-        })()
-    }, [location.search])
+        setPageRequest(updatedPageRequest(searchParams));
+    }, [location.search,location.pathname]);
 
-    const actions = (_value: any, user: IOlxUser) =>
+    const actions = useCallback((_value: any, user: IOlxUser) =>
         <div className='flex justify-around'>
             {(location.pathname !== '/admin/admins') &&
                 <>
@@ -103,7 +83,7 @@ const UsersPage: React.FC = () => {
                     </IconButton>
                 </Tooltip>
             }
-        </div>
+        </div>, [location.pathname])
 
 
     const getUserName = (userId: number) => getUserDescr(data?.items.find(x => x.id === userId) || null)

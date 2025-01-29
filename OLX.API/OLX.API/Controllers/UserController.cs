@@ -26,14 +26,7 @@ namespace OLX.API.Controllers
         [HttpGet("get/admin/{id:int}")]
         public async Task<IActionResult> GetAdmin([FromRoute] int id) => Ok(await userService.Get(id,true));
 
-        [HttpPost("get/admin/page")]
-        public async Task<IActionResult> GetAdminsPage([FromForm] UserPageRequest pageRequest) => Ok(await userService.Get(pageRequest, true));
-
         [HttpPost("get/page")]
         public async Task<IActionResult> GetPage([FromForm] UserPageRequest pageRequest) => Ok(await userService.Get(pageRequest));
-
-        [HttpPost("get/locked/page")]
-        public async Task<IActionResult> GetLockedPage([FromForm] UserPageRequest pageRequest) => Ok(await userService.Get(pageRequest,isLocked:true));
-
     }
 }

@@ -7,9 +7,9 @@ import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { toast } from 'react-toastify';
 import { IError, IUserLockoutError } from '../../../models/еrrors';
 import { useGoogleLoginMutation, useLoginMutation, useSendConfirmEmailMutation } from '../../../redux/api/accountApi';
-import PrimaryButton from '../../../components/primary_button';
-import FormInput from '../../../components/form_input';
-import { BackButton } from '../../../components/back_button';
+import { BackButton } from '../../../components/buttons/back_button';
+import FormInput from '../../../components/inputs/form_input';
+import PrimaryButton from '../../../components/buttons/primary_button';
 
 const loginAction: string = 'login'
 
