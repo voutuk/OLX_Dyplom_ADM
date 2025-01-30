@@ -3,7 +3,7 @@ import { createBaseQuery } from "./baseQuery"
 import { IAuthResponse, IEmailConfirmationModel, IGoogleLoginRequest, ILoginLocalRequest, ILoginRequest, IRegisterRequest, IResetPasswordModel } from "../../models/account"
 import { logOut, setCredentials } from '../slices/userSlice';
 import { getFormData } from '../../utilities/common_funct';
-
+import { accountApiAuth } from './accountAuthApi';
 
 export const accountApi = createApi({
     reducerPath: 'accountApi',
@@ -26,6 +26,7 @@ export const accountApi = createApi({
                     const result = await queryFulfilled;
                     if (result.data && result.data.accessToken) {
                         dispatch(setCredentials({ token: result.data.accessToken, refreshToken: result.data.refreshToken, remember: arg.remember }))
+                        dispatch(accountApiAuth.util.invalidateTags(["Favorites"]));
                     }
                 } catch (error) {
                     console.error('Login failed:', error);
@@ -46,6 +47,7 @@ export const accountApi = createApi({
                 try {
                     await queryFulfilled;
                     dispatch(logOut());
+                    dispatch(accountApiAuth.util.invalidateTags(["Favorites"]));
                 } catch (error) {
                     console.error('Logout failed:', error);
                 }
@@ -64,6 +66,7 @@ export const accountApi = createApi({
                     const result = await queryFulfilled;
                     if (result.data && result.data.accessToken) {
                         dispatch(setCredentials({ token: result.data.accessToken, refreshToken: result.data.refreshToken, remember: arg.remember }))
+                        dispatch(accountApiAuth.util.invalidateTags(["Favorites"]));
                     }
                 } catch (error) {
                     console.error('Google login failed:', error);

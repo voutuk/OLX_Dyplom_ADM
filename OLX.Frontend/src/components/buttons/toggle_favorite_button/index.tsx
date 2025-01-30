@@ -7,13 +7,12 @@ import { getUser } from "../../../redux/slices/userSlice";
 const ToggleFavoriteButton: React.FC<ToggleFavoriteButtonProps> = ({ className, advertId, isAdvertPage = false }) => {
     const [addToFavorites] = useAddToFavoritesMutation();
     const [removeFromFavorites] = useRemoveFromFavoritesMutation();
-    const { data: favorites, refetch } = useGetFavoritesQuery();
+    const { data: favorites } = useGetFavoritesQuery();
     const [isFavorite, setIsFavorite] = useState(false);
     const user = useSelector(getUser);
 
     useEffect(() => {
         if (user != null) {
-            refetch();
             setIsFavorite(favorites?.some(fav => fav.id === advertId) || false);
         } else {
             const localFavorites = JSON.parse(localStorage.getItem("favorites") || "[]");

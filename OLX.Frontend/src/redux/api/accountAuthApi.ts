@@ -7,7 +7,7 @@ import { IAdvert } from '../../models/advert';
 export const accountApiAuth = createApi({
     reducerPath: 'accountApiAuth',
     baseQuery: createBaseQueryWithAuth('Account'),
-    tagTypes: ['Account'],
+    tagTypes: ['Account', "Favorites"],
 
     endpoints: (builder) => ({
         lockUnlockUsers: builder.mutation<void, IUserLockModel>({
@@ -30,7 +30,7 @@ export const accountApiAuth = createApi({
 
         getFavorites: builder.query<IAdvert[], void>({
             query: () => "favorites",
-            providesTags: ["Account"],
+            providesTags: ["Favorites"],
         }),
 
         addToFavorites: builder.mutation<void, number>({
@@ -38,7 +38,7 @@ export const accountApiAuth = createApi({
                 url: `favorites/add/${advertId}`,
                 method: "POST",
             }),
-            invalidatesTags: ["Account"],
+            invalidatesTags: ["Favorites"],
         }),
 
         removeFromFavorites: builder.mutation<void, number>({
@@ -46,7 +46,7 @@ export const accountApiAuth = createApi({
                 url: `favorites/remove/${advertId}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["Account"],
+            invalidatesTags: ["Favorites"],
         }),
     }),
 })
