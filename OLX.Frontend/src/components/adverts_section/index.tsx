@@ -13,7 +13,7 @@ const AdvertsSection: React.FC<AdvertsSectionProps> = ({ title, adverts, isLoadi
           </div>
           :
           adverts?.map(advert => (
-            <AdvertCard key={advert.id} id={advert.id} title={advert.title} image={APP_ENV.IMAGES_400_URL + advert.images[0].name} price={advert.price} settlement={advert.settlementRef} />
+            <AdvertCard key={advert.id} id={advert.id} title={advert.title} image={APP_ENV.IMAGES_400_URL + advert.images[0].name} price={advert.price} settlement={advert.settlementName} />
           ))}
       </div>
     </div>

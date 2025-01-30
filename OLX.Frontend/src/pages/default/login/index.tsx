@@ -107,7 +107,7 @@ const LoginPage: React.FC = () => {
           className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'
           label='Пароль'
           name='password'
-          placeholder='Пароль'
+          placeholder='exAmple_3'
           rules={[
             { required: true, message: 'Будь ласка, введіть пароль' }
           ]} />

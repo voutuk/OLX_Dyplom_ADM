@@ -20,7 +20,7 @@ namespace Olx.BLL.DTOs
         public bool IsContractPrice { get; set; }
         public decimal Price { get; set; }
         public int CategoryId { get; set; }
-        public string SettlementRef { get; set; } = string.Empty;
+        public string SettlementName { get; set; } = string.Empty;
         public ICollection<FilterValueDto> FilterValues { get; set; } = new HashSet<FilterValueDto>();
         public ICollection<AdvertImageDto> Images { get; set; } = new HashSet<AdvertImageDto>();
     }

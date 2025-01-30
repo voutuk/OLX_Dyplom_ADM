@@ -13,7 +13,7 @@ export interface IAdvert{
     isContractPrice: boolean,
     price: number,
     categoryId: number,
-    settlementRef: string,
+    settlementName: string,
     filterValues: IFilterValue[],
     images: IAdvertImage[]
 }
@@ -25,6 +25,7 @@ export interface IAdvertPageRequest extends PageRequest{
     isContractPrice: boolean,
     approved: boolean,
     blocked: boolean,
+    archived: boolean,
     categoryIds?: number[],
     filters?: number[]
 }
