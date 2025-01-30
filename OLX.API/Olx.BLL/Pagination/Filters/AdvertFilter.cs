@@ -1,5 +1,4 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
 using Olx.BLL.Entities;
 using Olx.BLL.Pagination.Interfaces;
 

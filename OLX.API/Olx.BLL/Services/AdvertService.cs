@@ -115,7 +115,7 @@ namespace Olx.BLL.Services
 
         public async Task<IEnumerable<AdvertImageDto>> GetImagesAsync(int id)
         {
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images ))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             return mapper.Map<IEnumerable<AdvertImageDto>>(advert.Images);
         }
@@ -125,7 +125,7 @@ namespace Olx.BLL.Services
             var query = advertRepository.GetQuery()
                 .Include(x => x.FilterValues)
                 .Include(x => x.Images)
-                .Include(x=>x.User);
+                .Include(x => x.User);
             var paginationBuilder = new PaginationBuilder<Advert>(query);
             var filter = mapper.Map<AdvertFilter>(pageRequest);
             var sortData = new AdvertSortData(pageRequest.IsDescending, pageRequest.SortKey);
