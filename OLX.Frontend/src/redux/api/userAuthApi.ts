@@ -7,7 +7,7 @@ import { getFormData } from "../../utilities/common_funct";
 export const userAuthApi = createApi({
     reducerPath: 'userAuthApi',
     baseQuery: createBaseQueryWithAuth('User'),
-    tagTypes: ['Users', 'Admins','LockedUsers'],
+    tagTypes: ['Users', 'Admins', 'LockedUsers'],
     endpoints: (builder) => ({
 
         getUsers: builder.query<IOlxUser[], void>({
@@ -15,7 +15,6 @@ export const userAuthApi = createApi({
                 return {
                     url: 'get',
                     method: 'GET',
-                   // timeout: 10000,
                 }
             },
             providesTags: ["Users"]
@@ -26,7 +25,6 @@ export const userAuthApi = createApi({
                 return {
                     url: 'get/locked',
                     method: 'GET',
-                   // timeout: 10000,
                 }
             },
             providesTags: ["LockedUsers"]
@@ -37,7 +35,6 @@ export const userAuthApi = createApi({
                 return {
                     url: 'get/admin',
                     method: 'GET',
-                   // timeout: 10000,
                 }
             },
             providesTags: ["Admins"]
@@ -48,7 +45,6 @@ export const userAuthApi = createApi({
                 return {
                     url: `get/${id}`,
                     method: 'GET',
-                   // timeout: 10000,
                 }
             },
             providesTags: ["Users"]
@@ -59,24 +55,51 @@ export const userAuthApi = createApi({
                 return {
                     url: `get/admin/${id}`,
                     method: 'GET',
-                   // timeout: 10000,
                 }
             },
             providesTags: ["Admins"]
         }),
 
-       
-        getUserPage: builder.query<PageResponse<IOlxUser>,IOlxUserPageRequest>({
+
+        getUserPage: builder.query<PageResponse<IOlxUser>, IOlxUserPageRequest>({
             query: (pageRequest) => {
                 return {
                     url: `get/page`,
                     method: 'POST',
-                   // timeout: 10000,
                     body: getFormData(pageRequest)
                 }
             },
-            providesTags: ["Users"]
-        }),
+            providesTags: (result, _error, pageRequest) => {
+                if (!result) {
+                    if (pageRequest.isAdmin) {
+                        return ["Admins"];
+                    }
+                    if (pageRequest.isLocked) {
+                        return ["LockedUsers"];
+                    }
+                    return ["Users"]
+                }
+                else {
+                    if (pageRequest.isAdmin) {
+                        return [
+                            "Admins",
+                            { type: "Admins", id: pageRequest.page },
+                        ];;
+                    }
+                    if (pageRequest.isLocked) {
+                        return [
+                            "LockedUsers",
+                            { type: "LockedUsers", id: pageRequest.page },
+                        ];
+                    }
+                    return [
+                        "Users",
+                        { type: "Users", id: pageRequest.page },
+                    ];
+                }
+
+            },
+        })
     }),
 })
 export const {
