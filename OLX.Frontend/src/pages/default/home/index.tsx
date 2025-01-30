@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
       <HomePageImageBlock />
       <div className='flex flex-col items-center px-[50px] py-[50px] gap-[50px]'>
         <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
-        <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' disabled={isEnd} isLoading={false} className='w-[420px] h-[60px] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
+        <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' disabled={isEnd} isLoading={false} className='w-[23vw] h-[6.4vh] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
       </div>
     </div>
   );
