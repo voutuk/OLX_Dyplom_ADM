@@ -1,4 +1,5 @@
 export interface ToggleFavoriteButtonProps {
     className?: string,
-    advertId: number
+    advertId: number,
+    isAdvertPage? : boolean,
 }
