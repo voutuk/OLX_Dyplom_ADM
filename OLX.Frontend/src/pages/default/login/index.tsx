@@ -79,7 +79,12 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div id='#login' className=" mx-auto my-auto flex flex-col items-center w-[50%] ">
+    <div id='#login' className="mx-auto my-auto flex flex-col items-center w-[50%] ">
+      <BackButton
+        title='На головну'
+        path='/'
+        className='mb-[50px] p-0 ml-[0px] self-start back-button'
+      />
       <h2 className='text-[#3A211C] mb-[6vh] font-unbounded text-adaptive-login-header-text font-normal'>З поверненням!</h2>
       <Form
         layout='vertical'
@@ -96,13 +101,13 @@ const LoginPage: React.FC = () => {
           placeholder='example@gmail.com'
           rules={[
             { required: true, message: 'Будь ласка, введіть електронну пошту' },
-            { type: 'email', message: 'Невірний формат електронної пошти' }
+            { type: 'email', message: 'Неправильний формат електронної пошти' }
           ]} />
         <FormInput
           className='h-[5vh] min-h-[35px] text-adaptive-input-form-text text-[#9B7A5B]'
           label='Пароль'
           name='password'
-          placeholder='Пароль'
+          placeholder='exAmple_3'
           rules={[
             { required: true, message: 'Будь ласка, введіть пароль' }
           ]} />
@@ -136,11 +141,7 @@ const LoginPage: React.FC = () => {
           <Button onClick={() => navigate('register')} className='text-[#3A211C] text-adaptive-input-form-error-text shadow-none font-montserrat border-none forget-password ml-[5px]' variant="link">Зареєструватись тут</Button>
         </div>
       </Form>
-      <BackButton
-        title='На головну'
-        path='/'
-        className='mt-[3vh] self-start'
-      />
+      
     </div>
   )
 }

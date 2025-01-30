@@ -11,7 +11,8 @@ namespace Olx.BLL.Mapper
         public AdvertProfile()
         {
             CreateMap<AdvertCreationModel,Advert>();
-            CreateMap<Advert, AdvertDto>();
+            CreateMap<Advert, AdvertDto>()
+                .ForMember(x => x.SettlementName, opt => opt.MapFrom(x => x.Settlement.Description));
         }
     }
 }
