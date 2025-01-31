@@ -20,7 +20,7 @@ export const filterAuthApi = createApi({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(filterApi.util.invalidateTags(['Filters']))
+                    dispatch(filterApi.util.invalidateTags(['Filters','FilterPage']))
                 } catch (error) {
                     console.error('Create filter failed:', error);
                 }
@@ -39,7 +39,7 @@ export const filterAuthApi = createApi({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(filterApi.util.invalidateTags(['Filters']))
+                    dispatch(filterApi.util.invalidateTags(['Filters','FilterPage']))
                 } catch (error) {
                     console.error('Update filter failed:', error);
                 }
@@ -58,7 +58,7 @@ export const filterAuthApi = createApi({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(filterApi.util.invalidateTags(['Filters']))
+                    dispatch(filterApi.util.invalidateTags(['Filters','FilterPage']))
                 } catch (error) {
                     console.error('Delete filter failed:', error);
                 }

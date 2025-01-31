@@ -6,7 +6,7 @@ import { PageResponse } from "../../models/user"
 export const categoryApi = createApi({
     reducerPath: 'categoryApi',
     baseQuery: createBaseQuery('Category'),
-    tagTypes: ['Categories'],
+    tagTypes: ['Categories','CategoriesPage'],
 
     endpoints: (builder) => ({
         getCategoryPage: builder.query<PageResponse<ICategory>, ICategoryPageRequest>({
@@ -18,7 +18,7 @@ export const categoryApi = createApi({
                     body: pageRequest
                 }
             },
-            providesTags: ["Categories"]
+            providesTags: ["CategoriesPage"]
         }),
 
         getAllCategories: builder.query<ICategory[], void>({

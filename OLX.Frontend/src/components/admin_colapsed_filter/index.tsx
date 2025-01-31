@@ -2,7 +2,7 @@ import { Collapse, Form, Select, Spin, TreeSelect } from "antd";
 import { useCallback, useState } from "react";
 import { useGetAllFilterQuery } from "../../redux/api/filterApi";
 import { useGetAllCategoriesQuery } from "../../redux/api/categoryApi";
-import { buildTree, getAllParentFilterIds } from "../../utilities/common_funct";
+import { buildTree, clamp, getAllParentFilterIds } from "../../utilities/common_funct";
 import { AdminAdvertFiltersProps } from "./props";
 import { FilterData } from "./models";
 import { ClearOutlined } from '@ant-design/icons'
@@ -22,7 +22,9 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
         setCategoryId(category)
         const categoryFilters = getAllParentFilterIds(categories || [], category)
         const curentFilters = filters?.filter(x => categoryFilters.includes(x.id)) || []
-        const filterWidth = curentFilters.length < columns ? 100 / curentFilters.length - 0.8 : 100 / columns - 0.8
+        let filterWidth = curentFilters.length < columns
+            ? clamp(100 / curentFilters.length - 0.8, 10, 25)
+            : clamp(100 / columns - 0.8, 10, 25)
         setFilteredFilters({ filters: curentFilters, filterWidth: filterWidth })
         form.resetFields()
         onFiltersChange({ filters: [], categoryId: category })
@@ -62,8 +64,8 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                                         showSearch
                                         loading={isCategoriesLoading}
                                         className="mb-3"
-                                        style={{ width: '50%' }}
-                                        dropdownStyle={{ maxWidth: 600, overflow: 'auto' }}
+                                        style={{ width: '50%', maxWidth: 400 }}
+                                        dropdownStyle={{ maxWidth: 400, overflow: 'auto' }}
                                         treeData={getCategoryTree()}
                                         placeholder="Категорія"
                                         onChange={onCategoryChange}

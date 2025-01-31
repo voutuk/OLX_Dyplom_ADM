@@ -4,7 +4,7 @@ import PageHeaderButton from "../../../../components/buttons/page_header_button"
 import { CachedOutlined } from "@mui/icons-material";
 import AdminAdvertCollapsedFilters from "../../../../components/admin_colapsed_filter";
 import { AdminFilterResultModel } from "../../../../components/admin_colapsed_filter/models";
-import { Table } from "antd";
+//import { Table } from "antd";
 const AdminAdvertTable: React.FC = () => {
     const onFiltersChange = (filterValues: AdminFilterResultModel) => {
         console.log(filterValues)

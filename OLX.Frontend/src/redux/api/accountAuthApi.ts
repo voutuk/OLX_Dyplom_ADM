@@ -29,7 +29,10 @@ export const accountApiAuth = createApi({
         }),
 
         getFavorites: builder.query<IAdvert[], void>({
-            query: () => "favorites",
+            query: () => ({
+                url: "favorites",
+                method: 'GET'
+            }),
             providesTags: ["Favorites"],
         }),
 
@@ -51,7 +54,7 @@ export const accountApiAuth = createApi({
     }),
 })
 
-export const { 
+export const {
     useLockUnlockUsersMutation,
     useGetFavoritesQuery,
     useAddToFavoritesMutation,

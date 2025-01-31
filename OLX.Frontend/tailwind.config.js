@@ -17,7 +17,6 @@ export default {
         'adaptive-card-price-text': 'clamp(14px, 2.1vh, 36px)',
         'adaptive-footer-text': 'clamp(14px, 2.1vh, 36px)',
         'adaptive-input-form-error-text': 'clamp(11px, 1.5vh, 36px)',
-
       },
       fontFamily: {
         montserrat: ['Montserrat', 'sans-serif'],

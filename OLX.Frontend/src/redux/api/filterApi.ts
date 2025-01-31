@@ -7,7 +7,7 @@ import { IFilter, IFilterPageRequest } from "../../models/filter";
 export const filterApi = createApi({
     reducerPath: 'filterApi',
     baseQuery: createBaseQuery('Filter'),
-    tagTypes: ['Filters'],
+    tagTypes: ['Filters','FilterPage'],
 
     endpoints: (builder) => ({
         getFilterPage: builder.query<PageResponse<IFilter>, IFilterPageRequest>({
@@ -15,11 +15,10 @@ export const filterApi = createApi({
                 return {
                     url: `get/page`,
                     method: 'POST',
-                    // timeout: 10000,
                     body: pageRequest
                 }
             },
-            providesTags: ["Filters"]
+            providesTags: ["FilterPage"]
         }),
 
         getAllFilter: builder.query<IFilter[], void>({
@@ -27,7 +26,6 @@ export const filterApi = createApi({
                 return {
                     url: `get`,
                     method: 'GET',
-                    // timeout: 10000,
                 }
             },
             providesTags: ["Filters"]

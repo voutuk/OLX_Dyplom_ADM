@@ -60,7 +60,6 @@ export const userAuthApi = createApi({
             providesTags: ["Admins"]
         }),
 
-
         getUserPage: builder.query<PageResponse<IOlxUser>, IOlxUserPageRequest>({
             query: (pageRequest) => {
                 return {

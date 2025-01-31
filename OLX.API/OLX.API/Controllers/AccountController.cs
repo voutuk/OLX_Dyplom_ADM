@@ -13,7 +13,7 @@ namespace OLX.API.Controllers
     [Route("api/[controller]")]
     public class AccountController(IAccountService accountService, IConfiguration configuration) : ControllerBase
     {
-        private readonly string _refreshTokenCookiesName = configuration["RefreshTokenCookiesName"]!;
+       // private readonly string _refreshTokenCookiesName = configuration["RefreshTokenCookiesName"]!;
 
         [Authorize(Roles = Roles.User)]
         [HttpGet("favorites")]

@@ -6,7 +6,7 @@ import { PageResponse } from "../../models/user";
 export const advertApi = createApi({
   reducerPath: "advertApi",
   baseQuery: createBaseQuery("Advert"),
-  tagTypes: ["Adverts"],
+  tagTypes: ["Adverts","AdvertImages"],
 
   endpoints: (builder) => ({
     getAllAdverts: builder.query<IAdvert[], void>({
@@ -48,7 +48,7 @@ export const advertApi = createApi({
         url: `get/images/${id}`,
         method: "GET",
       }),
-      providesTags: ["Adverts"],
+      providesTags: ["AdvertImages"],
     }),
   }),
 });
