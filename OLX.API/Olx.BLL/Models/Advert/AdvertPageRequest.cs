@@ -10,6 +10,10 @@ namespace Olx.BLL.Models.Advert
         public decimal PriceFrom { get; init; }
         public decimal PriceTo { get; init; }
         public string? Search { get; init; }
+        public string? CategorySearch { get; init; }
+        public string? PhoneSearch { get; init; }
+        public string? EmailSearch { get; init; }
+        public string? SettlementSearch { get; init; }
         public bool IsContractPrice { get; init; } = false;
         public bool Approved { get; init; } = false;
         public bool Blocked { get; init; } = false;
