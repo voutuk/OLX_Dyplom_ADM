@@ -1,42 +1,74 @@
 import { Collapse, Form, Select, Spin, TreeSelect } from "antd";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetAllFilterQuery } from "../../redux/api/filterApi";
 import { useGetAllCategoriesQuery } from "../../redux/api/categoryApi";
-import { buildTree, clamp, getAllParentFilterIds } from "../../utilities/common_funct";
+import { buildTree, clamp, getAllParentFilterIds, getLastChildrenCategoriesIds } from "../../utilities/common_funct";
 import { AdminAdvertFiltersProps } from "./props";
 import { FilterData } from "./models";
 import { ClearOutlined } from '@ant-design/icons'
+import { useSearchParams } from "react-router-dom";
+import { IFilter } from "../../models/filter";
 
 
 const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFiltersChange, columns = 4 }) => {
+    const [searchParams] = useSearchParams('');
     const [form] = Form.useForm();
     const { data: filters, isLoading } = useGetAllFilterQuery();
     const { data: categories, isLoading: isCategoriesLoading } = useGetAllCategoriesQuery()
-    const [categoryId, setCategoryId] = useState<number | undefined>();
-    const [filteredFilters, setFilteredFilters] = useState<FilterData>({
+    const categoryId = useRef<number | undefined>();
+    const [categoryFilters, setCategoryFilters] = useState<FilterData>({
         filters: [],
-        filterWidth: 0
+        filterWidth: 0,
+        isFilterClear: true,
+        filtersValues: []
     });
 
     const onCategoryChange = (category: number | undefined) => {
-        setCategoryId(category)
-        const categoryFilters = getAllParentFilterIds(categories || [], category)
+        categoryId.current = category
+        updateCategoryFilters(category)
+        form.resetFields()
+        onFiltersChange({ filters: [], categoryIds: getChildCategories() })
+    }
+
+    const updateCategoryFilters = (categoryId: number | undefined, filterValues?: number[]) => {
+        const categoryFilters = getAllParentFilterIds(categories || [], categoryId)
         const curentFilters = filters?.filter(x => categoryFilters.includes(x.id)) || []
         let filterWidth = curentFilters.length < columns
             ? clamp(100 / curentFilters.length - 0.8, 10, 25)
             : clamp(100 / columns - 0.8, 10, 25)
-        setFilteredFilters({ filters: curentFilters, filterWidth: filterWidth })
-        form.resetFields()
-        onFiltersChange({ filters: [], categoryId: category })
+        setCategoryFilters({ filters: curentFilters, filterWidth: filterWidth, isFilterClear: !categoryId, filtersValues: filterValues || [] })
     }
 
     const confirm = (data: any) => {
-        const result = Object.values(data).filter(x => x !== undefined && (x instanceof Array && x.length > 0)).flat() as number[];
-        onFiltersChange({ filters: result, categoryId: categoryId })
+        const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)).flat() as number[];
+        onFiltersChange({ filters: result, categoryIds: getChildCategories() })
     }
 
     const getCategoryTree = useCallback(() => buildTree(categories || []), [categories])
+    const getChildCategories = useCallback(() => categoryId.current
+        ? [categoryId.current, ...getLastChildrenCategoriesIds(categories || [], categoryId.current)]
+        : [],
+        [categories, categoryId.current])
 
+
+    useEffect(() => {
+        const categoriesIds = searchParams.get("categoryIds")
+            ? (JSON.parse(searchParams.get("categoryIds") || '') as number[])
+            : []
+        if (categoriesIds.length > 0) {
+            categoryId.current = categoriesIds[0]
+            const filterValues = searchParams.get("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : []
+            updateCategoryFilters(categoriesIds[0], filterValues)
+        }
+    }, [])
+
+    const initFilter = (filter: IFilter): number[] => {
+        if (categoryFilters.filtersValues.length > 0) {
+            const filterValues = filter.values.map(x => x.id);
+            return categoryFilters.filtersValues.filter(item => filterValues.some(x => x == item));
+        }
+        return [];
+    }
     return (
         <Collapse
             size='small'
@@ -45,7 +77,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                 {
                     key: '1',
                     label: 'Фільтри',
-                    extra: <ClearOutlined hidden={categoryId === undefined} className="text-red-700" onClick={(event) => {
+                    extra: <ClearOutlined hidden={categoryFilters.isFilterClear} className="text-red-700" onClick={(event) => {
                         onCategoryChange(undefined)
                         event.stopPropagation();
                     }} />,
@@ -59,7 +91,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                                 : <div className="flex flex-col items-start" >
                                     <span>Категорія</span>
                                     <TreeSelect
-                                        value={categoryId}
+                                        value={categoryId.current}
                                         allowClear
                                         showSearch
                                         loading={isCategoriesLoading}
@@ -70,18 +102,19 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                                         placeholder="Категорія"
                                         onChange={onCategoryChange}
                                     />
-                                    {filteredFilters.filters.length > 0 &&
+                                    {categoryFilters.filters.length > 0 &&
                                         <>
                                             <span>Фільтри</span>
                                             <div className=" flex flex-wrap gap-[.5vw] w-full border rounded-xl p-3">
-                                                {filteredFilters.filters.map(filter =>
+                                                {categoryFilters.filters.map(filter =>
                                                     <Form.Item
                                                         noStyle
                                                         key={filter.id}
                                                         name={filter.id}
+                                                        initialValue={initFilter(filter)}
                                                     >
                                                         <Select
-                                                            style={{ width: `${filteredFilters.filterWidth}%` }}
+                                                            style={{ width: `${categoryFilters.filterWidth}%` }}
                                                             allowClear
                                                             mode={filter.values.length > 2 ? 'tags' : undefined}
                                                             maxTagCount='responsive'

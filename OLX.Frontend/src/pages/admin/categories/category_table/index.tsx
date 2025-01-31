@@ -40,9 +40,7 @@ const AdminCategoryTable: React.FC = () => {
     })
 
     useEffect(() => {
-        (async () => {
-            setPageRequest(getPageRequest(searchParams))
-        })()
+         setPageRequest(getPageRequest(searchParams))
     }, [location.search])
 
     useEffect(() => {

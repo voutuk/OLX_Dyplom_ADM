@@ -1,6 +1,6 @@
 import { IUser } from "../models/account"
 import { IOlxUser } from "../models/user";
-import { ICategory } from "../models/category";
+import { ICategory, ICategoryTreeElementModel } from "../models/category";
 
 export const getUserDescr = (user: IUser | IOlxUser | null): string => {
   return user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.email || ''
@@ -48,7 +48,7 @@ export const getFormData = (data: any): FormData => {
   return formData;
 }
 
-export const buildTree = (categories: ICategory[], parentId?: number, disabled?: number[]): any[] => {
+export const buildTree = (categories: ICategory[], parentId?: number, disabled?: number[]): ICategoryTreeElementModel[] => {
   return categories.filter(x => x.parentId == parentId)
     .map(x => ({
       title: x.name,
@@ -64,18 +64,30 @@ export const getAllParentFilterIds = (categories: ICategory[], parentId?: number
   while (parentId) {
     const parentCategory = categories.find(x => x.id == parentId);
     if (parentCategory) {
-      filtersIds = [...filtersIds, ...parentCategory.filters]
+      filtersIds.push(...parentCategory.filters)
     }
     parentId = parentCategory?.parentId;
   }
   return filtersIds
 }
 
+export const getLastChildrenCategoriesIds = (categories: ICategory[], categoryId?: number): number[] => {
+  const categoriesIds: number[] = [];
+  const childCategories = categories.filter(x => x.parentId === categoryId);
+  if (childCategories.length > 0) {
+      childCategories.forEach(child => {
+          categoriesIds.push(...getLastChildrenCategoriesIds(categories, child.id));
+      });
+  } else if (categoryId !== undefined) {
+      categoriesIds.push(categoryId);
+  }
+  return categoriesIds;
+};
+
 export const getQueryString = (filter: any): string => {
   var result = '';
   Object.keys(filter).forEach((key) => {
-    if (filter[key] != false
-      && filter[key]?.length !== 0) {
+    if (filter[key] && filter[key]?.length !== 0) {
       var value = typeof (filter[key]) === "object"
         ? JSON.stringify(filter[key])
         : filter[key];
@@ -86,4 +98,4 @@ export const getQueryString = (filter: any): string => {
   return result;
 }
 
-export const clamp = (value:number,min:number,max:number) => Math.max(min, Math.min(value, max))
+export const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max))

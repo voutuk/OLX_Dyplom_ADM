@@ -185,6 +185,7 @@ namespace OLX.API.Extensions
                                     CategoryId = x.CategoryId,
                                     FilterValues = filterValues,
                                     Images = images,
+                                    Approved = true,
                                     Settlement = await settlementRepo.GetByIDAsync(x.SettlementRef) ??
                                       throw new NullReferenceException("settlement not found")
                                 };

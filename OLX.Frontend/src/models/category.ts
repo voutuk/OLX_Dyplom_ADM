@@ -24,3 +24,11 @@ export interface ICategoryCreationModel {
     filterIds?: number[]
     currentImage?: string
 }
+
+export interface ICategoryTreeElementModel {
+    title: string,
+    value: number,
+    key: number,
+    disabled: boolean | undefined,
+    children: ICategoryTreeElementModel[]
+}
