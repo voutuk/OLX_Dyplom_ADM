@@ -1,4 +1,4 @@
-import { ICategory } from "../../../../models/category"
+import { ICategoryTreeElementModel } from "../../../../models/category"
 
 export interface CategoryPreviewModel {
     previewOpen: boolean
@@ -7,6 +7,5 @@ export interface CategoryPreviewModel {
 }
 export interface CategoryFilterDataModel {
     excludedFilters: number[]
-    categoryTree: ICategory[]
-
+    categoryTree: ICategoryTreeElementModel[]
 }

@@ -256,7 +256,6 @@ const AdminAdvertTable: React.FC = () => {
                     <Pagination
                         align="center"
                         showSizeChanger
-                        showQuickJumper
                         pageSizeOptions={paginatorConfig.pagination.pageSizeOptions}
                         locale={paginatorConfig.pagination.locale}
                         showTotal={paginatorConfig.pagination.showTotal}
