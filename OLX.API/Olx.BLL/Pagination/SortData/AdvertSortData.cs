@@ -19,6 +19,7 @@ namespace Olx.BLL.Pagination.SortData
                     "phoneNumber" => x => x.PhoneNumber,
                     "contactEmail" => x => x.ContactEmail,
                     "settlementName" => x => x.Settlement.Description,
+                    "title" => x => x.Title,
                     _ => x => x.Id,
                 };
             return descending ? query.OrderByDescending(sortExpr) : query.OrderBy(sortExpr);

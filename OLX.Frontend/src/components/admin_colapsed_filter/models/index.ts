@@ -3,12 +3,14 @@ import { IFilter } from "../../../models/filter"
 export interface AdminFilterResultModel {
     filters: number[]
     categoryIds: number[]
+    priceFrom: number | null | undefined
+    priceTo: number | null | undefined
 }
 
 
 export interface FilterData {
     filters: IFilter[]
-    filtersValues:number[]
+    filtersValues: number[]
     filterWidth: number
-    isFilterClear:boolean
+    isFilterClear: boolean
 }

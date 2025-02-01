@@ -1,13 +1,10 @@
+import { formatPrice } from "../../utilities/common_funct";
 import ToggleFavoriteButton from "../buttons/toggle_favorite_button";
 import { AdvertCardProps } from "./props"
 import { useNavigate } from "react-router-dom";
 
 const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settlement }) => {
     const navigate = useNavigate();
-
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('uk-UA').format(price);
-    };
 
     return (
         <div className="w-[20.5vw]  rounded-bl-lg rounded-br-lg border border-[#9b7a5b]/20 p-0 relative">

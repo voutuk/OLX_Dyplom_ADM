@@ -9,7 +9,7 @@ import { IAdvert, IAdvertPageRequest } from "../../../../models/advert";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { APP_ENV } from "../../../../constants/env";
 import { useGetAllCategoriesQuery } from "../../../../redux/api/categoryApi";
-import { getDateTime, getQueryString } from "../../../../utilities/common_funct";
+import { formatPrice, getDateTime, getQueryString } from "../../../../utilities/common_funct";
 import { useSearchParams } from "react-router-dom";
 import { Key, useEffect, useState } from "react";
 import { useGetAdvertPageQuery } from "../../../../redux/api/advertApi";
@@ -18,7 +18,7 @@ import { ColumnType, TableProps } from "antd/es/table";
 
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertPageRequest => ({
     priceFrom: Number(searchParams.get("priceFrom")),
-    priceTo: Number(searchParams.get(" priceTo")),
+    priceTo: Number(searchParams.get("priceTo")),
     approved: true,
     blocked: false,
     archived: false,
@@ -134,6 +134,16 @@ const AdminAdvertTable: React.FC = () => {
             ...getColumnSearchProps('categorySearch')
         },
         {
+            title: "Ціна",
+            dataIndex: 'price',
+            key: 'price',
+            ellipsis: true,
+            width: 150,
+            render: (price: number) => formatPrice(price) + ' грн.',
+            sorter: true,
+            //...getColumnSearchProps('categorySearch')
+        },
+        {
             title: "Телефон",
             dataIndex: 'phoneNumber',
             key: 'phoneNumber',
@@ -206,7 +216,9 @@ const AdminAdvertTable: React.FC = () => {
         setSearchParams(getQueryString({
             ...pageRequest,
             categoryIds: filterValues.categoryIds,
-            filters: filterValues.filters
+            filters: filterValues.filters,
+            priceTo:filterValues.priceTo,
+            priceFrom:filterValues.priceFrom
         }))
     }
     const onPaginationChange = (currentPage: number, pageSize: number) => {

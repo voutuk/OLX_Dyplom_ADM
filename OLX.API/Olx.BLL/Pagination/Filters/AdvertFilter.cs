@@ -35,7 +35,7 @@ namespace Olx.BLL.Pagination.Filters
                 query = query.Where(x => x.Price >= PriceFrom);
             }
 
-            if (PriceTo > 0 && PriceTo <= PriceFrom)
+            if (PriceTo > PriceFrom)
             {
                 query = query.Where(x => x.Price <= PriceTo);
             }

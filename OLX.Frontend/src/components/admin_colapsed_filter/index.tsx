@@ -1,4 +1,4 @@
-import { Collapse, Form, Select, Spin, TreeSelect } from "antd";
+import { Collapse, Form, InputNumber, Select, Spin, TreeSelect } from "antd";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetAllFilterQuery } from "../../redux/api/filterApi";
 import { useGetAllCategoriesQuery } from "../../redux/api/categoryApi";
@@ -16,7 +16,9 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
     const { data: filters, isLoading } = useGetAllFilterQuery();
     const { data: categories, isLoading: isCategoriesLoading } = useGetAllCategoriesQuery()
     const categoryId = useRef<number | undefined>();
-    const [categoryFilters, setCategoryFilters] = useState<FilterData>({
+    const priceFrom = useRef<number |  null>();
+    const priceTo = useRef<number | null>();
+    const [categoryFiltersData, setCategoryFiltersData] = useState<FilterData>({
         filters: [],
         filterWidth: 0,
         isFilterClear: true,
@@ -27,7 +29,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
         categoryId.current = category
         updateCategoryFilters(category)
         form.resetFields()
-        onFiltersChange({ filters: [], categoryIds: getChildCategories() })
+        onFiltersChange({ filters: [], categoryIds: getChildCategories(), priceFrom: priceFrom.current, priceTo: priceTo.current })
     }
 
     const updateCategoryFilters = (categoryId: number | undefined, filterValues?: number[]) => {
@@ -36,12 +38,13 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
         let filterWidth = curentFilters.length < columns
             ? clamp(100 / curentFilters.length - 0.8, 10, 25)
             : clamp(100 / columns - 0.8, 10, 25)
-        setCategoryFilters({ filters: curentFilters, filterWidth: filterWidth, isFilterClear: !categoryId, filtersValues: filterValues || [] })
+        setCategoryFiltersData({ filters: curentFilters, filterWidth: filterWidth, isFilterClear: !categoryId, filtersValues: filterValues || [] })
     }
 
     const confirm = (data: any) => {
         const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)).flat() as number[];
-        onFiltersChange({ filters: result, categoryIds: getChildCategories() })
+        categoryFiltersData.filtersValues = result
+        onFiltersChange({ filters: result, categoryIds: getChildCategories(), priceFrom: priceFrom.current, priceTo: priceTo.current })
     }
 
     const getCategoryTree = useCallback(() => buildTree(categories || []), [categories])
@@ -60,15 +63,29 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
             const filterValues = searchParams.get("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : []
             updateCategoryFilters(categoriesIds[0], filterValues)
         }
+        priceFrom.current = Number(searchParams.get("priceFrom"))
+        priceTo.current = Number(searchParams.get("priceTo"))
     }, [])
 
     const initFilter = (filter: IFilter): number[] => {
-        if (categoryFilters.filtersValues.length > 0) {
+        if (categoryFiltersData.filtersValues.length > 0) {
             const filterValues = filter.values.map(x => x.id);
-            return categoryFilters.filtersValues.filter(item => filterValues.some(x => x == item));
+            return categoryFiltersData.filtersValues.filter(item => filterValues.some(x => x == item));
         }
         return [];
     }
+
+    const onPriceChange = (priceFilter: number | null, isFrom: boolean) => {
+        isFrom ? priceFrom.current = priceFilter : priceTo.current = priceFilter;
+        onFiltersChange({ filters: categoryFiltersData.filtersValues, categoryIds: getChildCategories(), priceFrom: priceFrom.current, priceTo: priceTo.current })
+    }
+
+    const clearFilters = ()=>{
+        priceFrom.current = 0
+        priceTo.current = 0
+        onCategoryChange(undefined)
+    }
+
     return (
         <Collapse
             size='small'
@@ -77,8 +94,8 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                 {
                     key: '1',
                     label: 'Фільтри',
-                    extra: <ClearOutlined hidden={categoryFilters.isFilterClear} className="text-red-700" onClick={(event) => {
-                        onCategoryChange(undefined)
+                    extra: <ClearOutlined hidden={categoryFiltersData.isFilterClear} className="text-red-700" onClick={(event) => {
+                        clearFilters()
                         event.stopPropagation();
                     }} />,
                     children:
@@ -88,25 +105,52 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                         >
                             {(isLoading || isCategoriesLoading)
                                 ? <Spin size="small" />
-                                : <div className="flex flex-col items-start" >
-                                    <span>Категорія</span>
-                                    <TreeSelect
-                                        value={categoryId.current}
-                                        allowClear
-                                        showSearch
-                                        loading={isCategoriesLoading}
-                                        className="mb-3"
-                                        style={{ width: '50%', maxWidth: 400 }}
-                                        dropdownStyle={{ maxWidth: 400, overflow: 'auto' }}
-                                        treeData={getCategoryTree()}
-                                        placeholder="Категорія"
-                                        onChange={onCategoryChange}
-                                    />
-                                    {categoryFilters.filters.length > 0 &&
+                                :
+                                <div className="flex flex-col items-start" >
+                                    <div className="flex  gap-9 w-full">
+                                        <div className="flex flex-col items-start w-[30%]" >
+                                            <span>Категорія</span>
+                                            <TreeSelect
+                                                value={categoryId.current}
+                                                allowClear
+                                                showSearch
+                                                loading={isCategoriesLoading}
+                                                className="mb-3"
+                                                style={{ width: '100%', minWidth: 250 }}
+                                                dropdownStyle={{ maxWidth: 400, overflow: 'auto' }}
+                                                treeData={getCategoryTree()}
+                                                placeholder="Категорія"
+                                                onChange={onCategoryChange}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col items-start w-[30%]">
+                                            <span>Ціна:</span>
+                                            <div className="flex items-start gap-3">
+                                                <InputNumber
+                                                    addonBefore='Від'
+                                                    value={priceFrom.current}
+                                                    min={0}
+                                                    placeholder="Від"
+                                                    onChange={(value) => { onPriceChange(value, true) }}
+                                                />
+                                                <InputNumber
+                                                    addonBefore='До'
+                                                    value={priceTo.current}
+                                                    min={0}
+                                                    placeholder="До"
+                                                    onChange={(value) => { onPriceChange(value, false) }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                    {categoryFiltersData.filters.length > 0 &&
                                         <>
                                             <span>Фільтри</span>
                                             <div className=" flex flex-wrap gap-[.5vw] w-full border rounded-xl p-3">
-                                                {categoryFilters.filters.map(filter =>
+                                                {categoryFiltersData.filters.map(filter =>
                                                     <Form.Item
                                                         noStyle
                                                         key={filter.id}
@@ -114,7 +158,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                                                         initialValue={initFilter(filter)}
                                                     >
                                                         <Select
-                                                            style={{ width: `${categoryFilters.filterWidth}%` }}
+                                                            style={{ width: `${categoryFiltersData.filterWidth}%` }}
                                                             allowClear
                                                             mode={filter.values.length > 2 ? 'tags' : undefined}
                                                             maxTagCount='responsive'
