@@ -46,7 +46,7 @@ const ForgotPasswordPage: React.FC = () => {
             title='Скинути пароль'
             isLoading={isLoading} />
         </Form>
-        <BackButton title="Назад"/>
+        <BackButton  className='text-adaptive-input-form-error-text' title="Назад"/>
       </div>
   );
 };
