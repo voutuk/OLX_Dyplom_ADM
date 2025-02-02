@@ -26,10 +26,10 @@ export interface IAdvertPageRequest extends PageRequest{
     phoneSearch?:string,
     emailSearch?:string,
     settlementSearch?:string,
-    isContractPrice: boolean,
-    approved: boolean,
-    blocked: boolean,
-    archived: boolean,
+    isContractPrice?: boolean,
+    approved?: boolean,
+    blocked?: boolean,
+    archived?: boolean,
     categoryIds?: number[],
     filters?: number[]
 }

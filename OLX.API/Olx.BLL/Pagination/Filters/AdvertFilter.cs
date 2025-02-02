@@ -9,9 +9,9 @@ namespace Olx.BLL.Pagination.Filters
         public decimal PriceFrom { get; init; }
         public decimal PriceTo { get; init; }
         public string? Search { get; init; }
-        public bool IsContractPrice { get; init; }
-        public bool Approved { get; init; }
-        public bool Blocked { get; init; }
+        public bool? IsContractPrice { get; init; }
+        public bool? Approved { get; init; }
+        public bool? Blocked { get; init; }
         public string? CategorySearch { get; init; }
         public string? PhoneSearch { get; init; }
         public string? EmailSearch { get; init; }
@@ -35,7 +35,7 @@ namespace Olx.BLL.Pagination.Filters
                 query = query.Where(x => x.Price >= PriceFrom);
             }
 
-            if (PriceTo > 0 && PriceTo <= PriceFrom)
+            if (PriceTo > PriceFrom)
             {
                 query = query.Where(x => x.Price <= PriceTo);
             }
@@ -59,17 +59,17 @@ namespace Olx.BLL.Pagination.Filters
             {
                 query = query.Where(x => x.Settlement.Description.ToLower().Contains(SettlementSearch.ToLower()));
             }
-            if (IsContractPrice)
+            if (IsContractPrice.HasValue)
             {
-                query = query.Where(x => x.IsContractPrice);
+                query = query.Where(x => x.IsContractPrice == IsContractPrice);
             }
-            if (Approved)
+            if (Approved.HasValue)
             {
-                query = query.Where(x => x.Approved );
+                query = query.Where(x => x.Approved == Approved);
             }
-            if (Blocked)
+            if (Blocked.HasValue)
             {
-                query = query.Where(x => x.Blocked);
+                query = query.Where(x => x.Blocked == Blocked);
             }
 
             return query;

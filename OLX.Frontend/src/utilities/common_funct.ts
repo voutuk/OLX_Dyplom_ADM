@@ -99,3 +99,7 @@ export const getQueryString = (filter: any): string => {
 }
 
 export const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max))
+
+export const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('uk-UA').format(price);
+};
