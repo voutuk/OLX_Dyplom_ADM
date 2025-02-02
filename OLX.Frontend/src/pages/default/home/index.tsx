@@ -18,9 +18,9 @@ const HomePage: React.FC = () => {
     priceFrom: 0,
     priceTo: 99999999999,
     isContractPrice: false,
-    approved: false,
-    blocked: false,
-    archived: false
+    approved: true,
+    blocked: undefined,
+    archived: undefined
   });
 
   const [adverts, setAdverts] = useState<IAdvert[]>([]);

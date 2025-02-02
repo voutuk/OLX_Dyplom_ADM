@@ -1,7 +1,7 @@
 import { PageHeader } from "../../../../components/page_header";
 import { ClearOutlined, ProfileOutlined } from '@ant-design/icons';
 import PageHeaderButton from "../../../../components/buttons/page_header_button";
-import { CachedOutlined, DeleteForever, EditCalendar, SearchOutlined } from "@mui/icons-material";
+import { CachedOutlined, CheckOutlined, DeleteForever, LockOutlined, SearchOff, SearchOutlined } from "@mui/icons-material";
 import AdminAdvertCollapsedFilters from "../../../../components/admin_colapsed_filter";
 import { AdminFilterResultModel } from "../../../../components/admin_colapsed_filter/models";
 import { Pagination, Popconfirm, Table, TableColumnsType, Tooltip, Image, Input, Button } from "antd";
@@ -15,20 +15,21 @@ import { Key, useEffect, useState } from "react";
 import { useGetAdvertPageQuery } from "../../../../redux/api/advertApi";
 import { IconButton } from "@mui/material";
 import { ColumnType, TableProps } from "antd/es/table";
+import { useApproveAdvertMutation, useBlockAdvertMutation, useDeleteAdvertMutation } from "../../../../redux/api/advertAuthApi";
+import { toast } from "react-toastify";
 
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertPageRequest => ({
     priceFrom: Number(searchParams.get("priceFrom")),
     priceTo: Number(searchParams.get("priceTo")),
-    approved: true,
+    approved: location.pathname === '/admin/adverts',
     blocked: false,
-    archived: false,
     size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
     page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
     sortKey: searchParams.get("sortKey") || '',
     isDescending: searchParams.get("isDescending") === "true",
-    categoryIds: searchParams.get("categoryIds") ? (JSON.parse(searchParams.get("categoryIds") || '') as number[]).slice(1) : [],
-    filters: searchParams.get("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : [],
-    isContractPrice: searchParams.get("isContractPrice") === "true",
+    categoryIds: searchParams.has("categoryIds") ? (JSON.parse(searchParams.get("categoryIds") || '') as number[]) : [],
+    filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : [],
+    isContractPrice: searchParams.get("isContractPrice") === "true" || undefined,
     search: searchParams.get("search") || '',
     categorySearch: searchParams.get("categorySearch") || '',
     phoneSearch: searchParams.get("phoneSearch") || '',
@@ -41,10 +42,13 @@ const AdminAdvertTable: React.FC = () => {
     const { data: categories } = useGetAllCategoriesQuery()
     const [searchParams, setSearchParams] = useSearchParams('');
     const [pageRequest, setPageRequest] = useState<IAdvertPageRequest>(updatedPageRequest(searchParams));
+    const [approveAdvert] = useApproveAdvertMutation();
+    const [deleteAdvert] = useDeleteAdvertMutation();
+    const [lockAdvert] = useBlockAdvertMutation();
     const { data: adverts, isLoading, refetch } = useGetAdvertPageQuery(pageRequest);
     useEffect(() => {
         setPageRequest(updatedPageRequest(searchParams))
-    }, [location.search])
+    }, [location.search, location.pathname])
 
     const getColumnSearchProps = (dataIndex: keyof IAdvertPageRequest): ColumnType<IAdvert> => ({
         filterDropdown: ({ close }) => (
@@ -73,6 +77,7 @@ const AdminAdvertTable: React.FC = () => {
             <SearchOutlined style={{ width: 20, color: pageRequest[dataIndex] !== '' ? '#1890ff' : undefined }} />
         ),
     });
+
     const onTableChange: TableProps<IAdvert>['onChange'] = (_pagination, _filters, sorter, extra) => {
         if (extra.action === 'sort') {
             let descending: boolean;
@@ -141,7 +146,6 @@ const AdminAdvertTable: React.FC = () => {
             width: 150,
             render: (price: number) => formatPrice(price) + ' грн.',
             sorter: true,
-            //...getColumnSearchProps('categorySearch')
         },
         {
             title: "Телефон",
@@ -188,17 +192,41 @@ const AdminAdvertTable: React.FC = () => {
             width: 100,
             render: (_, advert: IAdvert) =>
                 <div className='flex justify-around'>
-                    <Tooltip title="Редагувати фільтр">
-                        <IconButton onClick={() => { }} color="success" size="small">
-                            <EditCalendar />
-                        </IconButton>
-                    </Tooltip>
+                    {location.pathname === '/admin/adverts'
+                        ? <Tooltip title="Блокувати оголошення">
+                            <Popconfirm
+                                title="Блокування оголошення"
+                                description={`Ви впевненні що бажаєте заблокувати оголошення "${advert.title}"?`}
+                                onConfirm={() => { advertLock(advert) }}
+                                okText="Заблокувати"
+                                cancelText="Відмінити"
+                            >
+                                <IconButton color="success" size="small">
+                                    <LockOutlined />
+                                </IconButton>
+                            </Popconfirm>
 
-                    <Tooltip title="Видалити фільтр">
+                        </Tooltip>
+                        : <Tooltip title="Підтвердити оголошення">
+                            <Popconfirm
+                                title="Підтвердження оголошення"
+                                description={`Ви впевненні що бажаєте підтвердити оголошення "${advert.title}"?`}
+                                onConfirm={() => { approve(advert) }}
+                                okText="Підтвердити"
+                                cancelText="Відмінити"
+                            >
+                                <IconButton color="success" size="small">
+                                    <CheckOutlined />
+                                </IconButton>
+                            </Popconfirm>
+
+                        </Tooltip>}
+
+                    <Tooltip title="Видалити оголошення">
                         <Popconfirm
-                            title="Відалення фільтра"
-                            description={`Ви впевненні що бажаєте видалити фільтр "${advert.title}"?`}
-                            onConfirm={() => { }}
+                            title="Видалення оголошення"
+                            description={`Ви впевненні що бажаєте видалити оголошення "${advert.title}"?`}
+                            onConfirm={() => { advertDelete(advert) }}
                             okText="Видалити"
                             cancelText="Відмінити"
                         >
@@ -212,22 +240,47 @@ const AdminAdvertTable: React.FC = () => {
             align: 'center'
         }
     ];
+
+    const approve = async (advert: IAdvert) => {
+        const result = await approveAdvert(advert.id);
+        if (!result.error) {
+            toast(`Оголошення ${advert.title} успішно підтверджено`, { type: 'info' })
+        }
+    }
+
+    const advertDelete = async (advert: IAdvert) => {
+        const result = await deleteAdvert(advert.id);
+        if (!result.error) {
+            toast(`Оголошення ${advert.title} успішно видалено`, { type: 'info' })
+        }
+    }
+
+    const advertLock = async (advert: IAdvert) => {
+        const result = await lockAdvert({ advertId: advert.id, status: true });
+        if (!result.error) {
+            toast(`Оголошення ${advert.title} успішно заблоковано`, { type: 'info' })
+        }
+    }
+
+
     const onFiltersChange = (filterValues: AdminFilterResultModel) => {
         setSearchParams(getQueryString({
             ...pageRequest,
             categoryIds: filterValues.categoryIds,
             filters: filterValues.filters,
-            priceTo:filterValues.priceTo,
-            priceFrom:filterValues.priceFrom
+            priceTo: filterValues.priceTo,
+            priceFrom: filterValues.priceFrom
         }))
     }
+
     const onPaginationChange = (currentPage: number, pageSize: number) => {
         setSearchParams(getQueryString({ ...pageRequest, page: currentPage, size: pageSize }))
     }
+
     return (
         <div className="m-6 flex-grow  text-center overflow-hidden">
             <PageHeader
-                title="Діючі оголошення"
+                title={`${location.pathname === '/admin/adverts' ? "Діючі" : "Непідтверджені"} оголошення`}
                 icon={<ProfileOutlined className="text-2xl" />}
                 buttons={[
                     // <PageHeaderButton
@@ -238,6 +291,28 @@ const AdminAdvertTable: React.FC = () => {
                     //     tooltipMessage="Фільтри"
                     //     tooltipColor="gray" />,
                     <PageHeaderButton
+                        key='clear_filter'
+                        onButtonClick={() => {
+                            setPageRequest((prev) => ({
+                                ...prev,
+                                emailSearch: '',
+                                phoneSearch: '',
+                                categorySearch: '',
+                                search: '',
+                                settlementSearch: ''
+                            }))
+                        }}
+                        className="w-[35px] h-[35px] bg-red-900"
+                        buttonIcon={<SearchOff className="text-lg" />}
+                        tooltipMessage="Очистити фільтри"
+                        tooltipColor="gray"
+                        disabled={
+                            pageRequest.emailSearch === '' &&
+                            pageRequest.phoneSearch === '' &&
+                            pageRequest.categorySearch === '' &&
+                            pageRequest.search === '' &&
+                            pageRequest.settlementSearch === ''} />,
+                    <PageHeaderButton
                         key='reload'
                         onButtonClick={() => { refetch() }}
                         className="w-[35px] h-[35px] bg-sky-700"
@@ -247,8 +322,9 @@ const AdminAdvertTable: React.FC = () => {
                 ]}
             />
             <div className="bg-white p-5 flex flex-col gap-3">
-                <AdminAdvertCollapsedFilters
-                    onFiltersChange={onFiltersChange} />
+                {location.pathname === "/admin/adverts"
+                    && <AdminAdvertCollapsedFilters onFiltersChange={onFiltersChange} />}
+
 
                 <Table<IAdvert>
                     size="small"
@@ -261,7 +337,7 @@ const AdminAdvertTable: React.FC = () => {
                     // rowSelection={selected ? rowSelection : undefined}
                     pagination={false}
                     showSorterTooltip={{ target: 'sorter-icon' }}
-                    onChange={onTableChange} 
+                    onChange={onTableChange}
                 />
 
                 {((adverts?.total || 0) > paginatorConfig.pagination.defaultPageSize) &&

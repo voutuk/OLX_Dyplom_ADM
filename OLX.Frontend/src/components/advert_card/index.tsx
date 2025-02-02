@@ -10,7 +10,7 @@ const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settle
         <div className="w-[20.5vw]  rounded-bl-lg rounded-br-lg border border-[#9b7a5b]/20 p-0 relative">
             <ToggleFavoriteButton advertId={id} className="absolute right-[0px] top-[.5vh]"/>
             <img className=" object-cover w-[100%] aspect-[12/13]" src={image} />
-            <div className="p-2.5 mb-[16px] mt-[16px] cursor-pointer" onClick={() => {navigate(`/adverts/${id}`)}}>
+            <div className="p-2.5 mb-[16px] mt-[16px] cursor-pointer" onClick={() => {navigate(`advert/${id}`)}}>
                 <h4 className="font-unbounded text-[#3a211c] text-adaptive-button-text font-medium mb-[10px] hover:underline truncate">{title}</h4>
                 <p className="text-[#3a211c] text-adaptive-card-price-text font-medium font-montserrat">{formatPrice(price)} грн</p>
             </div>

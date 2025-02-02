@@ -6,7 +6,7 @@ import { PageResponse } from "../../models/user";
 export const advertApi = createApi({
   reducerPath: "advertApi",
   baseQuery: createBaseQuery("Advert"),
-  tagTypes: ["Adverts","AdvertImages"],
+  tagTypes: ["Adverts", "AdvertImages", "NotApproved", "Locked","Advert"],
 
   endpoints: (builder) => ({
     getAllAdverts: builder.query<IAdvert[], void>({
@@ -22,7 +22,7 @@ export const advertApi = createApi({
         url: `get/${id}`,
         method: "GET",
       }),
-      providesTags: ["Adverts"],
+      providesTags: ["Advert"],
     }),
 
     getAdvertPage: builder.query<PageResponse<IAdvert>, IAdvertPageRequest>({
@@ -31,7 +31,36 @@ export const advertApi = createApi({
         method: "POST",
         body: pageRequest,
       }),
-      providesTags: ["Adverts"],
+      providesTags: (result, _error, pageRequest) => {
+        if (!result) {
+          if (pageRequest.blocked) {
+            return ["Locked"];
+          }
+          if (pageRequest.approved) {
+            return ["Adverts"];
+          }
+          return ["NotApproved"];
+        }
+        else {
+          if (pageRequest.blocked) {
+            return [
+              "Locked",
+              { type: "Locked", id: pageRequest.page },
+            ];;
+          }
+          if (pageRequest.approved) {
+            return [
+              "Adverts",
+              { type: "Adverts", id: pageRequest.page },
+            ];
+          }
+          return [
+            "NotApproved",
+            { type: "NotApproved", id: pageRequest.page },
+          ];
+        }
+
+      },
     }),
 
     getAdvertsByRange: builder.query<IAdvert[], number[]>({

@@ -5,7 +5,7 @@ import DefaultLayout from './components/layouts/default_layout/index';
 import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
 
-
+const AdvertPage = React.lazy(() => import('./pages/default/advert_page'));
 const AuthLayout = React.lazy(() => import('./components/layouts/auth_layout'));
 const PasswordChangeConfirmPage = React.lazy(() => import('./pages/default/restore_password/email_sended'));
 const RegisterConfirmPage = React.lazy(() => import('./pages/default/register/register_confirm'));
@@ -14,7 +14,6 @@ const ReCaptcha = React.lazy(() => import('./components/google_recaptca'));
 const AdminCreate = React.lazy(() => import('./pages/admin/admins/new_admin'));
 const AdminFilterTable = React.lazy(() => import('./pages/admin/filters/filter_table'));
 const AdminCategoryTable = React.lazy(() => import('./pages/admin/categories/category_table'));
-const AdminApproveAdvertTable = React.lazy(() => import('./pages/admin/adverts/not_approved'));
 const AdminAdvertTable = React.lazy(() => import('./pages/admin/adverts/adverts_table'));
 const ForgotPasswordPage = React.lazy(() => import('./pages/default/restore_password/password_forgot'));
 const ResetPasswordPage = React.lazy(() => import('./pages/default/restore_password/password_reset'));
@@ -38,6 +37,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="error" element={<ErrorPage />} />
+          <Route path="advert/:id" element={<AdvertPage />} />
           <Route element={<ProtectedRoutes requiredRole={"User"} />}>
             <Route path="user">
               <Route path="userprofile" element={<EmailConfirmationPage />} />
@@ -76,7 +76,7 @@ function App() {
 
           <Route path="adverts">
             <Route index element={<AdminAdvertTable />} />
-            <Route path='approve' element={<AdminApproveAdvertTable />} />
+            <Route path='approve' element={<AdminAdvertTable />} />
           </Route>
 
           <Route path="categories">

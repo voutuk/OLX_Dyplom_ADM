@@ -55,12 +55,12 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
 
 
     useEffect(() => {
-        const categoriesIds = searchParams.get("categoryIds")
+        const categoriesIds = searchParams.has("categoryIds")
             ? (JSON.parse(searchParams.get("categoryIds") || '') as number[])
             : []
         if (categoriesIds.length > 0) {
             categoryId.current = categoriesIds[0]
-            const filterValues = searchParams.get("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : []
+            const filterValues = searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : []
             updateCategoryFilters(categoriesIds[0], filterValues)
         }
         priceFrom.current = Number(searchParams.get("priceFrom"))
