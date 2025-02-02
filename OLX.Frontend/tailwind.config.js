@@ -14,6 +14,7 @@ export default {
         'adaptive-button-main-page-text': 'clamp(50px, 10vh, 100px)',
         'adaptive-button-text': 'clamp(14px, 2.5vh, 36px)',
         'adaptive-1_9_text': 'clamp(14px, 1.9vh, 36px)',
+        'adaptive-1_8_text': 'clamp(14px, 1.8vh, 36px)',
         'adaptive-input-form-text': 'clamp(14px, 1.7vh, 36px)',
         'adaptive-card-price-text': 'clamp(14px, 2.1vh, 36px)',
         'adaptive-footer-text': 'clamp(14px, 2.1vh, 36px)',

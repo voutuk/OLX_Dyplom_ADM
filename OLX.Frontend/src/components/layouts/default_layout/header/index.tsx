@@ -8,7 +8,7 @@ import UserAvatar from "../../../user_avatar";
 import { useLogoutMutation } from "../../../../redux/api/accountApi";
 import { useAppSelector } from "../../../../redux";
 import { useGetUserMessagesQuery } from "../../../../redux/api/adminMessageApi";
-import { useEffect } from "react";
+import { useEffect} from "react";
 import { useSignalR } from "../../../hendlers/signalR/signalRContext";
 import SearchInput from "../../../inputs/search_input";
 
@@ -20,6 +20,7 @@ export const Header: React.FC = () => {
     const unreadMesssageCount = useAppSelector(getUnreadedCount)
     const { data, refetch } = useGetUserMessagesQuery();
     const refreshToken = useAppSelector(getRefreshToken)
+   
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
@@ -48,9 +49,9 @@ export const Header: React.FC = () => {
     useEffect(() => { refetch() }, [user])
 
     return (
-        <div className='h-[10vh] min-h-[60px] sticky px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50'  >
+        <div className={`h-[10vh] min-h-[60px] sticky px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50 `}  >
             <div className="h-[38%] cursor-pointer">
-                <img alt="logo" onClick={()=>navigator('/')} className="h-full w-full" src={Images.logo} />
+                <img alt="logo" onClick={() => navigator('/')} className="h-full w-full" src={Images.logo} />
             </div>
 
             <SearchInput />
