@@ -5,7 +5,7 @@ export const Footer: React.FC = () => {
         <div>
             <Divider className="p-0 m-0" />
             <div className='mx-[8vw] my-[6vh]  flex  justify-between flex-shrink-0' >
-                <div className="flex flex-col h-[27vh] min-h-[100px] flex-wrap font-montserrat font-normal text-adaptive-footer-text gap-2 text-[#9B7A5B]">
+                <div className="flex flex-col h-[24vh] min-h-[100px] flex-wrap font-montserrat font-normal text-adaptive-footer-text gap-[1vh] text-[#9B7A5B]">
                     <span className="mr-[6vw]">Допомога</span>
                     <span className="mr-[6vw]">Зворотній зв'язок</span>
                     <span className="mr-[6vw]">Платні послуги</span>

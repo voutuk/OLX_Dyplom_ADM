@@ -32,3 +32,8 @@ export interface ICategoryTreeElementModel {
     disabled: boolean | undefined,
     children: ICategoryTreeElementModel[]
 }
+
+export interface ICategoryShort{
+    id:number
+    name:string | undefined
+}

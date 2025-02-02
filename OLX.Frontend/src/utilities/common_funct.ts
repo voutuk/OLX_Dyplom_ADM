@@ -1,6 +1,7 @@
 import { IUser } from "../models/account"
 import { IOlxUser } from "../models/user";
-import { ICategory, ICategoryTreeElementModel } from "../models/category";
+import { ICategory, ICategoryShort, ICategoryTreeElementModel } from "../models/category";
+import { Pattern } from "@mui/icons-material";
 
 export const getUserDescr = (user: IUser | IOlxUser | null): string => {
   return user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.email || ''
@@ -75,13 +76,23 @@ export const getLastChildrenCategoriesIds = (categories: ICategory[], categoryId
   const categoriesIds: number[] = [];
   const childCategories = categories.filter(x => x.parentId === categoryId);
   if (childCategories.length > 0) {
-      childCategories.forEach(child => {
-          categoriesIds.push(...getLastChildrenCategoriesIds(categories, child.id));
-      });
+    childCategories.forEach(child => {
+      categoriesIds.push(...getLastChildrenCategoriesIds(categories, child.id));
+    });
   } else if (categoryId !== undefined) {
-      categoriesIds.push(categoryId);
+    categoriesIds.push(categoryId);
   }
   return categoriesIds;
+};
+
+export const getAllParents = (categories: ICategory[], parentId?: number): ICategoryShort[] => {
+  const parentIds: ICategoryShort[] = [];
+  if (parentId) {
+    const parent = categories.find(x => x.id === parentId)
+    parentIds.push({ id: parentId, name: parent?.name })
+    parentIds.push(...getAllParents(categories, parent?.parentId))
+  }
+  return parentIds;
 };
 
 export const getQueryString = (filter: any): string => {
