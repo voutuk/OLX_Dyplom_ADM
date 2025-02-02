@@ -13,7 +13,7 @@ const PasswordChangeConfirmPage: React.FC = () => {
                 onButtonClick={() => navigate('/')}
                 className='w-full h-[5vh]' isLoading={false}
             />
-            <BackButton title='Назад'/>
+            <BackButton className='text-adaptive-input-form-error-text' title='Назад'/>
         </div>
     )
 }

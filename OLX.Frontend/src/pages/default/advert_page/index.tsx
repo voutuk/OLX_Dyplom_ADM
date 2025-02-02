@@ -1,9 +1,33 @@
+import { useParams } from "react-router-dom";
+import { useGetAdvertByIdQuery } from "../../../redux/api/advertApi";
+import ImagesViewer from "../../../components/images_viewer";
+import { BackButton } from "../../../components/buttons/back_button";
 
 const AdvertPage: React.FC = () => {
-    return (
-        <div className="bg-white p-5">
+    const { id } = useParams();
+    const { data: advert, isLoading } = useGetAdvertByIdQuery(Number(id))
+     
 
-            <span className="text-black">Advert</span>
+    return (
+        <div className="w-full mx-[8vw] gap-[8vh] items-start flex mt-[6vh] flex-col">
+            <BackButton
+             title="Назад"
+             className="text-adaptive-1_9_text text-black font-medium "/>
+            <div className="flex gap-5 w-full">
+                {!isLoading &&
+                    <ImagesViewer
+                        className="h-[90vh] w-[55%] gap-4"
+                        advertImages={advert?.images || []}
+                    />
+                }
+
+
+
+                <div>
+
+                </div>
+            </div>
+
         </div>
     )
 };
