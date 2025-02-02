@@ -23,6 +23,7 @@ const ScrolledContainer: React.FC<ScrolledContainerProps> = ({ children, classNa
 
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
+        e.preventDefault()
     };
     return (
         <>

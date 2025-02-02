@@ -29,7 +29,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
                                 <img key={index}
                                     className={`${image === imagesData.currentImage ? 'border-2 border-red-600' : ''}  aspect-[16/19] flex-shrink-0 object-cover`}
                                     src={APP_ENV.IMAGES_200_URL + image}
-                                    onClick={() => { setImagesData({ ...imagesData, currentImage: image }) }} />
+                                    onMouseDown={() => { setImagesData({ ...imagesData, currentImage: image }) }} />
 
                             ))}
                         </div>
