@@ -12,7 +12,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
     })
     useEffect(() => {
         if(advertImages.length>0){
-            const images = advertImages.slice().sort((a, b) => a.position - b.position).map(x => x.name) || [];
+            const images = advertImages.slice().sort((a, b) => a.priority - b.priority).map(x => x.name) || [];
             setImagesData({ images: images, currentImage: images[0] })
         }
     }, [advertImages])

@@ -10,7 +10,7 @@
     "Price": 15000,
     "CategoryId": 89,
     "FilterValueIds": [ 2, 62, 34, 109 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0df75a9e-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -24,7 +24,7 @@
     "Price": 35000,
     "CategoryId": 142,
     "FilterValueIds": [ 1, 21, 63, 57, 59, 108 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -38,7 +38,7 @@
     "Price": 22000,
     "CategoryId": 38,
     "FilterValueIds": [ 2, 64, 59, 15, 118 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -52,7 +52,7 @@
     "Price": 8000,
     "CategoryId": 36,
     "FilterValueIds": [ 1, 109 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -66,7 +66,7 @@
     "Price": 16000,
     "CategoryId": 89,
     "FilterValueIds": [ 2, 62, 34, 110 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -80,7 +80,7 @@
     "Price": 45000,
     "CategoryId": 136,
     "FilterValueIds": [ 1, 311, 105, 138 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -94,7 +94,7 @@
     "Price": 12000,
     "CategoryId": 97,
     "FilterValueIds": [ 1, 108 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -108,7 +108,7 @@
     "Price": 15000,
     "CategoryId": 41,
     "FilterValueIds": [ 2, 106 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -122,7 +122,7 @@
     "Price": 25000,
     "CategoryId": 103,
     "FilterValueIds": [ 2 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -136,7 +136,7 @@
     "Price": 28000,
     "CategoryId": 41,
     "FilterValueIds": [ 1, 105 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   },
   {
@@ -150,7 +150,7 @@
     "Price": 18000,
     "CategoryId": 38,
     "FilterValueIds": [ 1, 311, 62 ],
-    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
+    "ImagePaths": [ "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600", "https://picsum.photos/800/600" ],
     "SettlementRef": "0e0a81db-4b3a-11e4-ab6d-005056801329"
   }
 ]

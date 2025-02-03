@@ -111,7 +111,7 @@ const AdminAdvertTable: React.FC = () => {
                 <div className="flex  items-center">
                     <Image.PreviewGroup
                         items={advert.images.map(x => APP_ENV.IMAGES_1200_URL + x.name)}>
-                        <Image className="self-center" width={60} src={APP_ENV.IMAGES_100_URL + advert.images.find(x => x.position === 0)?.name} />
+                        <Image className="self-center" width={60} src={APP_ENV.IMAGES_100_URL + advert.images.find(x => x.priority === 0)?.name} />
                     </Image.PreviewGroup>
                 </div>,
             width: 80,

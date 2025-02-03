@@ -54,5 +54,5 @@ export interface IAdvertImage{
     id: number,
     name: string,
     advertId: number,
-    position: number
+    priority: number
 }
