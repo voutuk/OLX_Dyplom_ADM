@@ -1,17 +1,8 @@
 import { Col, Row } from "antd"
 import { useGetAllFilterQuery } from "../../redux/api/filterApi"
 import { useCallback } from "react"
-import { IFilterValue } from "../../models/filter"
-
-interface AdvertParemeter {
-    name: string
-    value: string
-}
-
-interface AdvertParametersProps {
-    advertValues: IFilterValue[]
-    className?:string
-}
+import { AdvertParametersProps } from "./props"
+import { AdvertParemeter } from "./models"
 
 const AdvertParameters: React.FC<AdvertParametersProps> = ({ advertValues,className }) => {
     const { data: filters, isLoading: isFilterLoading } = useGetAllFilterQuery()
