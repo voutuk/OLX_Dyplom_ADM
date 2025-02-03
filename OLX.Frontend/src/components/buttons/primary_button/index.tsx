@@ -3,7 +3,7 @@ import { PrimaryButtonProps } from './props'
 import { Button } from 'antd'
 import './style.scss'
 
-const PrimaryButton: React.FC<PrimaryButtonProps> = ({ disabled, onButtonClick = () => { }, className = '', title, brColor = '#FFBA00', bgColor = '#FFBA00', fontColor = '#3A211C', isLoading, htmlType = "button" }) => {
+const PrimaryButton: React.FC<PrimaryButtonProps> = ({ disabled,fontSize, onButtonClick = () => { }, className = '', title, brColor = '#FFBA00', bgColor = '#FFBA00', fontColor = '#3A211C', isLoading, htmlType = "button" }) => {
   return (
     <div className="primary-button" >
       <Button
@@ -12,6 +12,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({ disabled, onButtonClick =
         htmlType={htmlType}
         disabled={disabled}
         style={{
+          fontSize:fontSize,
           backgroundColor: bgColor,
           color: fontColor,
           borderColor: brColor

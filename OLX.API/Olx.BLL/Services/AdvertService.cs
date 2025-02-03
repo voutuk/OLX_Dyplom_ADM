@@ -108,7 +108,7 @@ namespace Olx.BLL.Services
 
         public async Task<AdvertDto> GetByIdAsync(int id)
         {
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues | AdvertOpt.User | AdvertOpt.Settlement))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues | AdvertOpt.UserSettlement | AdvertOpt.Settlement))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             return mapper.Map<AdvertDto>(advert);
         }
