@@ -1,9 +1,9 @@
 import AdvertInfo from "../advert_info";
 import AdvertParameters from "../advert_paramerets";
 import ImagesViewer from "../images_viewer";
-import { IAdvertVieverProps } from "./props";
+import { IAdvertViewerProps } from "./props";
 
-const AdvertViever: React.FC<IAdvertVieverProps> = ({ advert }) => {
+const AdvertViewer: React.FC<IAdvertViewerProps> = ({ advert }) => {
     return (
         <div className=" gap-[8vh] items-start flex  flex-col">
             <div className="flex gap-[3vw] w-full">
@@ -20,4 +20,4 @@ const AdvertViever: React.FC<IAdvertVieverProps> = ({ advert }) => {
     )
 }
 
-export default AdvertViever
+export default AdvertViewer

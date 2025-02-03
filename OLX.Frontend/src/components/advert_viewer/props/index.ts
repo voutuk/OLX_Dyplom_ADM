@@ -1,6 +1,6 @@
 import { IAdvert } from "../../../models/advert";
 
-export interface IAdvertVieverProps {
+export interface IAdvertViewerProps {
     buttons?:boolean,
     advert: IAdvert | undefined | null
 }
