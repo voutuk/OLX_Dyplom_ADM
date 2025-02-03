@@ -26,7 +26,7 @@ const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId }) =
                 className="text-adaptive-1_9_text text-black font-medium " />
             {!isLoading &&
                 <Breadcrumb
-                    separator={<span className="text-adaptive-1_8_text text-['#3A211C']">/</span>}
+                    separator={<span className="text-adaptive-1_8_text font-montserrat text-['#3A211C']">/</span>}
                     items={items}
                      />}
         </div>)
