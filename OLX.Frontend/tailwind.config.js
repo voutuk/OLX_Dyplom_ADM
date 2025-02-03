@@ -18,6 +18,7 @@ export default {
         'adaptive-input-form-text': 'clamp(14px, 1.7vh, 36px)',
         'adaptive-card-price-text': 'clamp(14px, 2.1vh, 36px)',
         'adaptive-footer-text': 'clamp(14px, 2.1vh, 36px)',
+        'adaptive-advert-page-price-text': 'clamp(14px, 2.3vh, 36px)',
         'adaptive-input-form-error-text': 'clamp(11px, 1.5vh, 36px)',
       },
       fontFamily: {

@@ -1,9 +1,9 @@
 import { IUser } from "../models/account"
-import { IOlxUser } from "../models/user";
+import { IOlxUser, IShortOlxUser } from "../models/user";
 import { ICategory, ICategoryShort, ICategoryTreeElementModel } from "../models/category";
 
 
-export const getUserDescr = (user: IUser | IOlxUser | null): string => {
+export const getUserDescr = (user: IUser | IOlxUser | IShortOlxUser | null | undefined): string => {
   return user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.email || ''
 }
 
@@ -114,3 +114,25 @@ export const clamp = (value: number, min: number, max: number) => Math.max(min, 
 export const formatPrice = (price: number) => {
   return new Intl.NumberFormat('uk-UA').format(price);
 };
+
+export const formattedDate = (date: Date) => date.toLocaleDateString('uk-UA', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+}).replace(/(\d+) (\w+) (\d+)/, '$1 $2 $3 р.');
+
+export const getFormatDateTime = (date: Date): string => {
+  const today: Date = new Date();
+  const yesterday: Date = new Date(today.getDate() - 1)
+
+  if (today.getDate() === date.getDate()) {
+    return `согодні в ${date.toLocaleTimeString().slice(0, -3)}`
+  }
+  if (yesterday.getDate() === date.getDate()) {
+    return `вчора в ${date.toLocaleTimeString().slice(0, -3)}`
+  }
+  if (date.getFullYear() < today.getFullYear()) {
+    return formattedDate(date)
+  }
+  return formattedDate(date).slice(0,-5)
+}
