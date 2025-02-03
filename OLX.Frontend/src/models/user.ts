@@ -19,6 +19,19 @@ export interface IOlxUser {
     favoriteAdverts: number[];
 }
 
+export interface IShortOlxUser{
+    id: number
+    email: string
+    phoneNumber?: string | undefined
+    firstName?: string | undefined
+    lastName?: string | undefined
+    photo?: string | undefined
+    createdDate: Date
+    lastActivity: Date
+    webSite?: string | undefined
+    settlementDescrption?: string | undefined
+}
+
 export interface PageRequest {
     size: number | undefined
     page: number | undefined

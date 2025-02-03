@@ -10,7 +10,7 @@ namespace Olx.BLL.DTOs
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public OlxUserShortDto User { get; set; }
+        public OlxUserShortDto? User { get; set; }
         public string PhoneNumber { get; set; } = string.Empty;
         public string ContactEmail { get; set; } = string.Empty;
         public string ContactPersone { get; set; } = string.Empty;

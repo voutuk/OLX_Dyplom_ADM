@@ -1,9 +1,10 @@
 import { IFilterValue } from "./filter";
-import { PageRequest } from "./user";
+import { IShortOlxUser, PageRequest } from "./user";
 
 export interface IAdvert{
     id: number,
     userId: number,
+    user:IShortOlxUser | undefined,
     phoneNumber: string,
     contactEmail: string,
     contactPersone: string,

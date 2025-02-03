@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Olx.BLL.DTOs
 {
     public class OlxUserShortDto
@@ -15,6 +10,7 @@ namespace Olx.BLL.DTOs
         public string? LastName { get; set; }
         public string? Photo { get; set; }
         public DateTime LastActivity { get; set; }
+        public DateTime CreatedDate { get; set; }
         public string? WebSite { get; set; }
         public string? SettlementDescrption { get; set; }
     }
