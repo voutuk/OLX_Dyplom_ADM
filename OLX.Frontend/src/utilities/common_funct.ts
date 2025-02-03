@@ -1,7 +1,7 @@
 import { IUser } from "../models/account"
 import { IOlxUser } from "../models/user";
 import { ICategory, ICategoryShort, ICategoryTreeElementModel } from "../models/category";
-import { Pattern } from "@mui/icons-material";
+
 
 export const getUserDescr = (user: IUser | IOlxUser | null): string => {
   return user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.email || ''
