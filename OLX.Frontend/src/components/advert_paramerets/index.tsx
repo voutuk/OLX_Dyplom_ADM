@@ -4,7 +4,7 @@ import { useCallback } from "react"
 import { AdvertParametersProps } from "./props"
 import { AdvertParemeter } from "./models"
 
-const AdvertParameters: React.FC<AdvertParametersProps> = ({ advertValues,className }) => {
+const AdvertParameters: React.FC<AdvertParametersProps> = ({ advertValues, className }) => {
     const { data: filters, isLoading: isFilterLoading } = useGetAllFilterQuery()
     const getParameters = useCallback((): AdvertParemeter[] => {
         return advertValues.map(x => ({
@@ -17,8 +17,8 @@ const AdvertParameters: React.FC<AdvertParametersProps> = ({ advertValues,classN
             {!isFilterLoading &&
                 <Row className={className} gutter={[16, 16]} >
                     {
-                        getParameters().map(x =>
-                            <Col span={8}>
+                        getParameters().map((x, index) =>
+                            <Col key={index} span={8}>
                                 <div className="flex gap-3">
                                     <span className="text-adaptive-footer-text font-montserrat text-black font-medium">{x.name}:</span>
                                     <span className="text-adaptive-footer-text font-montserrat text-black ">{x.value}</span>

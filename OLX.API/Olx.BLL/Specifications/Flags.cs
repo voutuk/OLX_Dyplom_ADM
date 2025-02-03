@@ -10,7 +10,9 @@
         Category = 1 << 4,
         FavoritedByUsers = 1 << 5,
         Chats = 1 << 6,
-        Settlement = 1 << 7
+        Settlement = 1 << 7,
+        UserSettlement = 1 << 8
+
     }
 
     [Flags]
