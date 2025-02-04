@@ -8,7 +8,7 @@ import { CategoryNavigationProps } from "./props"
 import './style.scss'
 
 
-const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId }) => {
+const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId,backRoute}) => {
     const { data: categories, isLoading } = useGetAllCategoriesQuery()
     const [items,setItems] = useState<any>([])
     
@@ -23,7 +23,8 @@ const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId }) =
         <div className="flex gap-20 items-center">
             <BackButton
                 title="Назад"
-                className="text-adaptive-1_9_text text-black font-medium " />
+                className="text-adaptive-1_9_text text-black font-medium "
+                path={backRoute} />
             {!isLoading &&
                 <Breadcrumb
                     separator={<span className="text-adaptive-1_8_text font-montserrat text-['#3A211C']">/</span>}

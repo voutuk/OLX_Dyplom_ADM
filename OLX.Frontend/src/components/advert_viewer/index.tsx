@@ -8,7 +8,7 @@ const AdvertViewer: React.FC<IAdvertViewerProps> = ({ advert,buttons = true }) =
         <div className=" gap-[8vh] items-start flex  flex-col">
             <div className="flex gap-[3vw] w-full">
                 <ImagesViewer
-                    className="w-[55%] gap-4"
+                    className="w-[54%] gap-4"
                     advertImages={advert?.images || []}
                     
                 />

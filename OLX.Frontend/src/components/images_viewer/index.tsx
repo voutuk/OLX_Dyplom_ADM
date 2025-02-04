@@ -22,7 +22,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
                 <div className={`${className} flex gap-4`}>
                     <ScrolledContainer
                         scrollDir="vertical"
-                        className="aspect-[100/550] h-[100%] w-[18%]"
+                        className="aspect-[100/590] h-[100%] w-[17%]"
                     >
                         <div className="flex flex-col gap-[3.5vh]">
                             {imagesData.images.map((image, index) => (

@@ -18,9 +18,7 @@ const AdminAdvertPreview: React.FC = () => {
                 <div className="m-10">
                     <AdvertViewer buttons={false} advert={advert} />
                 </div>
-
             }
-
         </div>
     )
 }
