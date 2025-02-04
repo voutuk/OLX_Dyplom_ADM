@@ -13,7 +13,7 @@ const AdvertPage: React.FC = () => {
             <div className="mx-[8vw] gap-[8vh] items-start flex  flex-col">
                 <CategoryNavigation categoryId={advert?.categoryId} />
                 {!isLoading &&
-                    <AdvertViewer advert={advert}/>
+                    <AdvertViewer advert={advert} />
                 }
             </div>
             <Divider className="p-0 m-0" />
