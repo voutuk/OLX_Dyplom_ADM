@@ -15,7 +15,7 @@ const AdvertViewer: React.FC<IAdvertViewerProps> = ({ advert,buttons = true }) =
                 <AdvertInfo buttons = {buttons} advert={advert} />
             </div>
             <AdvertParameters
-                className="w-[80.6%] self-center"
+                className="w-[80%] self-center"
                 advertValues={advert?.filterValues || []} />
         </div>
     )

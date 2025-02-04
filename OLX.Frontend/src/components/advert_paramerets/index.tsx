@@ -1,4 +1,3 @@
-import { Col, Row } from "antd"
 import { useGetAllFilterQuery } from "../../redux/api/filterApi"
 import { useCallback } from "react"
 import { AdvertParametersProps } from "./props"
@@ -15,18 +14,16 @@ const AdvertParameters: React.FC<AdvertParametersProps> = ({ advertValues, class
     return (
         <>
             {!isFilterLoading &&
-                <Row className={className} gutter={[16, 16]} >
+                <div className={`flex gap-x-[2vw] gap-y-[1vh] flex-wrap  ${className}`}  >
                     {
                         getParameters().map((x, index) =>
-                            <Col key={index} span={8}>
-                                <div className="flex gap-3">
-                                    <span className="text-adaptive-footer-text font-montserrat text-black font-medium">{x.name}:</span>
-                                    <span className="text-adaptive-footer-text font-montserrat text-black ">{x.value}</span>
-                                </div>
-                            </Col>
+                            <div key={index} className="flex gap-3">
+                                <span className="text-adaptive-footer-text font-montserrat text-black font-medium">{x.name}:</span>
+                                <span className="text-adaptive-footer-text font-montserrat text-black ">{x.value}</span>
+                            </div>
                         )
                     }
-                </Row>
+                </div>
             }
         </>
     )
