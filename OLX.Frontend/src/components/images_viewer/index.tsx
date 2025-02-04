@@ -26,7 +26,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
                     >
                         <div className="flex flex-col gap-[3.5vh]">
                             {imagesData.images.map((image, index) => (
-                                <img key={index}
+                                <img loading="lazy" key={index}
                                     className={`${image === imagesData.currentImage ? 'border-2 border-red-600' : ''}  aspect-[16/19] flex-shrink-0 object-cover`}
                                     src={APP_ENV.IMAGES_200_URL + image}
                                     onMouseDown={() => { setImagesData({ ...imagesData, currentImage: image }) }} />
@@ -34,10 +34,10 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
                             ))}
                         </div>
                     </ScrolledContainer>
-                    <div className="flex-1 h-[100%]">
+                    <div className="flex-1 w-full h-[100%]">
                         <Image.PreviewGroup
                             items={imagesData.images.map(x => APP_ENV.IMAGES_1200_URL + x)}>
-                            <Image className="self-center object-cover" height={"100%"}   src={APP_ENV.IMAGES_1200_URL + imagesData.currentImage} />
+                            <Image loading='lazy' className="self-center object-cover" height={"100%"}   src={APP_ENV.IMAGES_1200_URL + imagesData.currentImage} />
                         </Image.PreviewGroup>
                     </div>
                 </div>
