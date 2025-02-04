@@ -53,7 +53,7 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                 }
 
                 else {
-                    showToast(error.data?.message || error.message || error.data?.Message || error.data.title,
+                    showToast(error.data?.message || error.message || error.data?.Message || error.data?.title,
                          'info',
                          { width: 'fit-content' })
                 }

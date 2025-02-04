@@ -27,7 +27,7 @@ const ScrolledContainer: React.FC<ScrolledContainerProps> = ({ children, classNa
     };
     return (
         <>
-            <div ref={scrollRef} onMouseDown={handleMouseDown} className={`${className} overflow-hidden  whitespace-nowrap  active:cursor-grabbing`}>
+            <div ref={scrollRef} onMouseDown={handleMouseDown} className={`overflow-hidden  whitespace-nowrap  active:cursor-grabbing ${className} `}>
                 {children}
             </div>
         </>)

@@ -1,7 +1,7 @@
 import { PageHeader } from "../../../../components/page_header";
 import { ClearOutlined, ProfileOutlined } from '@ant-design/icons';
 import PageHeaderButton from "../../../../components/buttons/page_header_button";
-import { CachedOutlined, CheckOutlined, DeleteForever, LockOutlined, SearchOff, SearchOutlined } from "@mui/icons-material";
+import { CachedOutlined, CheckOutlined, DeleteForever, Info, LockOutlined, SearchOff, SearchOutlined } from "@mui/icons-material";
 import AdminAdvertCollapsedFilters from "../../../../components/admin_colapsed_filter";
 import { AdminFilterResultModel } from "../../../../components/admin_colapsed_filter/models";
 import { Pagination, Popconfirm, Table, TableColumnsType, Tooltip, Image, Input, Button } from "antd";
@@ -10,7 +10,7 @@ import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { APP_ENV } from "../../../../constants/env";
 import { useGetAllCategoriesQuery } from "../../../../redux/api/categoryApi";
 import { formatPrice, getDateTime, getQueryString } from "../../../../utilities/common_funct";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Key, useEffect, useState } from "react";
 import { useGetAdvertPageQuery } from "../../../../redux/api/advertApi";
 import { IconButton } from "@mui/material";
@@ -39,6 +39,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertPageRequest =
 
 
 const AdminAdvertTable: React.FC = () => {
+    const navigate = useNavigate()
     const { data: categories } = useGetAllCategoriesQuery()
     const [searchParams, setSearchParams] = useSearchParams('');
     const [pageRequest, setPageRequest] = useState<IAdvertPageRequest>(updatedPageRequest(searchParams));
@@ -192,6 +193,11 @@ const AdminAdvertTable: React.FC = () => {
             width: 100,
             render: (_, advert: IAdvert) =>
                 <div className='flex justify-around'>
+                    <Tooltip title="Показати">
+                        <IconButton onClick={()=>{navigate(`preview/${advert.id}`)}} color="success" size="small">
+                            <Info />
+                        </IconButton>
+                    </Tooltip>
                     {location.pathname === '/admin/adverts'
                         ? <Tooltip title="Блокувати оголошення">
                             <Popconfirm
@@ -205,7 +211,6 @@ const AdminAdvertTable: React.FC = () => {
                                     <LockOutlined />
                                 </IconButton>
                             </Popconfirm>
-
                         </Tooltip>
                         : <Tooltip title="Підтвердити оголошення">
                             <Popconfirm
@@ -283,14 +288,7 @@ const AdminAdvertTable: React.FC = () => {
                 title={`${location.pathname === '/admin/adverts' ? "Діючі" : "Непідтверджені"} оголошення`}
                 icon={<ProfileOutlined className="text-2xl" />}
                 buttons={[
-                    // <PageHeaderButton
-                    //     key='filters'
-                    //     onButtonClick={() => setIsFiltersOpen( true )}
-                    //     className="w-[35px] h-[35px] bg-green-700"
-                    //     buttonIcon={<FilterOutlined  className="text-lg" />}
-                    //     tooltipMessage="Фільтри"
-                    //     tooltipColor="gray" />,
-                    <PageHeaderButton
+                     <PageHeaderButton
                         key='clear_filter'
                         onButtonClick={() => {
                             setPageRequest((prev) => ({

@@ -5,6 +5,7 @@ import DefaultLayout from './components/layouts/default_layout/index';
 import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
 
+const AdminAdvertPreview = React.lazy(() => import('./pages/admin/adverts/advert_preview'));
 const AdvertPage = React.lazy(() => import('./pages/default/advert_page'));
 const AuthLayout = React.lazy(() => import('./components/layouts/auth_layout'));
 const PasswordChangeConfirmPage = React.lazy(() => import('./pages/default/restore_password/email_sended'));
@@ -77,6 +78,7 @@ function App() {
           <Route path="adverts">
             <Route index element={<AdminAdvertTable />} />
             <Route path='approve' element={<AdminAdvertTable />} />
+            <Route path='preview/:id' element={<AdminAdvertPreview/>}/>
           </Route>
 
           <Route path="categories">

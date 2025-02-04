@@ -22,7 +22,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
                 <div className={`${className} flex gap-4`}>
                     <ScrolledContainer
                         scrollDir="vertical"
-                        className="h-[100%] w-[18%]"
+                        className="aspect-[100/550] h-[100%] w-[18%]"
                     >
                         <div className="flex flex-col gap-[3.5vh]">
                             {imagesData.images.map((image, index) => (
@@ -34,10 +34,10 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
                             ))}
                         </div>
                     </ScrolledContainer>
-                    <div className="flex-1 bg-slate-400">
+                    <div className="flex-1 h-[100%]">
                         <Image.PreviewGroup
                             items={imagesData.images.map(x => APP_ENV.IMAGES_1200_URL + x)}>
-                            <Image className="self-center object-cover" height={'100%'} src={APP_ENV.IMAGES_1200_URL + imagesData.currentImage} />
+                            <Image className="self-center object-cover" height={"100%"}   src={APP_ENV.IMAGES_1200_URL + imagesData.currentImage} />
                         </Image.PreviewGroup>
                     </div>
                 </div>
