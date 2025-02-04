@@ -123,16 +123,18 @@ export const formattedDate = (date: Date) => date.toLocaleDateString('uk-UA', {
 
 export const getFormatDateTime = (date: Date): string => {
   const today: Date = new Date();
-  const yesterday: Date = new Date(today.getDate() - 1)
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const time = date.toLocaleTimeString().slice(0, -3);
 
-  if (today.getDate() === date.getDate()) {
-    return `согодні в ${date.toLocaleTimeString().slice(0, -3)}`
+  if (today.toDateString() === date.toDateString()) {
+    return `согодні в ${time}`
   }
-  if (yesterday.getDate() === date.getDate()) {
-    return `вчора в ${date.toLocaleTimeString().slice(0, -3)}`
+  if (yesterday.toDateString() === date.toDateString()) {
+    return `вчора в ${time}`
   }
   if (date.getFullYear() < today.getFullYear()) {
     return formattedDate(date)
   }
-  return formattedDate(date).slice(0,-5)
+  return `${formattedDate(date).slice(0,-7)} в ${time}`
 }
