@@ -12,7 +12,7 @@ const AdvertPage: React.FC = () => {
       
       
     return (
-        <div className="w-[100vw] gap-[8vh] flex flex-col my-[6vh]">
+        <div className="w-[100%] gap-[8vh] flex flex-col my-[6vh]">
             <div className="mx-[8vw] gap-[8vh] items-start flex  flex-col">
                 <CategoryNavigation  categoryId={advert?.categoryId} />
                 {!isLoading &&
@@ -20,7 +20,7 @@ const AdvertPage: React.FC = () => {
                 }
             </div>
             <Divider className="p-0 m-0" />
-            <div className=" mx-[7.5vw] gap-[8vh] items-start flex flex-col">
+            <div className=" mx-[7vw] gap-[8vh] items-start flex flex-col">
                 <SimilarAdverts advert={advert} />
 
             </div>
