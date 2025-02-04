@@ -11,18 +11,8 @@ const AdminAdvertPreview: React.FC = () => {
     return (
         <div className="m-6 flex-grow  overflow-hidden">
             <PageHeader
-                title={`Oголошення`}
-                icon={<Preview className="text-2xl" />}
-            // buttons={[
-            //     // <PageHeaderButton
-            //     //     key='filters'
-            //     //     onButtonClick={() => setIsFiltersOpen( true )}
-            //     //     className="w-[35px] h-[35px] bg-green-700"
-            //     //     buttonIcon={<FilterOutlined  className="text-lg" />}
-            //     //     tooltipMessage="Фільтри"
-            //     //     tooltipColor="gray" />,
-            // ]}
-            />
+                title={`Oголошення  "${advert?.title}"`}
+                icon={<Preview className="text-2xl" />}/>
             <BackButton className="my-5 text-adaptive-text" title="Назад" />
             {!isLoading &&
                 <div className="m-10">
