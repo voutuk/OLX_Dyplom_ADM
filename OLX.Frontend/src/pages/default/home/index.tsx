@@ -17,11 +17,9 @@ const HomePage: React.FC = () => {
     sortKey: "date",
     isDescending: true,
     priceFrom: 0,
-    priceTo: 99999999999,
-    isContractPrice: false,
+    priceTo: 0,
     approved: true,
-    blocked: undefined,
-    archived: undefined
+    blocked: false,
   });
 
   const [adverts, setAdverts] = useState<IAdvert[]>([]);
