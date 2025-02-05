@@ -39,7 +39,6 @@ const AdvertPage: React.FC = () => {
                 <ViewedAdverts advert={advert} />
             </div>
         </div>
-
     )
 };
 
