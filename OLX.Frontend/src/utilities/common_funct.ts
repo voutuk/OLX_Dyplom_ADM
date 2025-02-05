@@ -142,11 +142,10 @@ export const getFormatDateTime = (date: Date): string => {
 }
 
 export const getAdvertPageRequest = (pageData: IAdvertSearchPageData, categories: ICategory[]): IAdvertPageRequest => {
-
+  const { categoryId, ...rest } = pageData;
    const result  = {
-    ...pageData as IAdvertPageRequest, 
+    ...rest ,
     categoryIds: getLastChildrenCategoriesIds(categories, pageData.categoryId) 
   }
-  console.log(result)
    return result;
 }

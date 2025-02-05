@@ -41,6 +41,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
 
 const AdminAdvertTable: React.FC = () => {
     const navigate = useNavigate()
+    const location  = useLocation()
     const { data: categories } = useGetAllCategoriesQuery()
     const [searchParams, setSearchParams] = useSearchParams('');
     const [pageRequest, setPageRequest] = useState<IAdvertSearchPageData>(updatedPageRequest(searchParams));
@@ -50,8 +51,8 @@ const AdminAdvertTable: React.FC = () => {
     const { data: adverts, isLoading, refetch } = useGetAdvertPageQuery(getAdvertPageRequest(pageRequest, categories || []));
     useEffect(() => {
         setPageRequest(updatedPageRequest(searchParams))
-    }, [location.pathname])
-   
+    }, [location])
+    console.log('update')
     const getColumnSearchProps = (dataIndex: keyof IAdvertSearchPageData): ColumnType<IAdvert> => ({
         filterDropdown: ({ close }) => (
             <div className="p-3 flex gap-2" style={{ width: 300, padding: 8 }}>
@@ -292,14 +293,14 @@ const AdminAdvertTable: React.FC = () => {
                     <PageHeaderButton
                         key='clear_filter'
                         onButtonClick={() => {
-                            setPageRequest((prev) => ({
-                                ...prev,
+                            setSearchParams(getQueryString( ({
+                                ...pageRequest,
                                 emailSearch: '',
                                 phoneSearch: '',
                                 categorySearch: '',
                                 search: '',
                                 settlementSearch: ''
-                            }))
+                            })))
                         }}
                         className="w-[35px] h-[35px] bg-red-900"
                         buttonIcon={<SearchOff className="text-lg" />}

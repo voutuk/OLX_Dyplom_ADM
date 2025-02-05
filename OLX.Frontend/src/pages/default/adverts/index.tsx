@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { IAdvertSearchPageData } from "../../../models/advert";
 import { useSearchParams } from "react-router-dom";
 import CategoryNavigation from "../../../components/category_navigation";
@@ -29,7 +29,7 @@ const AdvertsPage: React.FC = () => {
     useEffect(() => {
         pageRequest.current = updatedPageRequest(searchParams)
         advertRefetch()
-    }, [location.pathname])
+    }, [searchParams])
     console.log(adverts)
     return (
         <div className="w-[100%] gap-[8vh] flex flex-col my-[6vh]">
