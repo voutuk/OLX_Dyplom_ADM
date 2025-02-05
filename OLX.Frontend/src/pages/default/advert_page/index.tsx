@@ -7,6 +7,7 @@ import SimilarAdverts from "../../../components/similar_adverts";
 import { IAdvert } from "../../../models/advert";
 import { useEffect } from "react";
 import ViewedAdverts from "../../../components/viewed_adverts";
+import { APP_ENV } from "../../../constants/env";
 
 
 const AdvertPage: React.FC = () => {
@@ -15,14 +16,12 @@ const AdvertPage: React.FC = () => {
 
     useEffect(() => {
         if (advert) {
-            const viewedAdverts = sessionStorage.getItem("viewedAdverts")
-                ? JSON.parse(sessionStorage.getItem("viewedAdverts") as string) : [];
-
-            const updatedAdverts = [
-                advert,
-                ...viewedAdverts.filter((item: IAdvert) => item.id !== advert.id),
-            ];
-            sessionStorage.setItem("viewedAdverts", JSON.stringify(updatedAdverts));
+            const viewedAdverts: IAdvert[] = sessionStorage.getItem(APP_ENV.VIEWED_KEY)
+                ? JSON.parse(sessionStorage.getItem(APP_ENV.VIEWED_KEY) as string) : [];
+            if (!viewedAdverts.some(x => x.id === advert.id)) {
+                viewedAdverts.push(advert)
+                sessionStorage.setItem(APP_ENV.VIEWED_KEY, JSON.stringify(viewedAdverts));
+            }
         }
     }, [advert]);
 

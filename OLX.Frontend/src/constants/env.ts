@@ -12,6 +12,7 @@ const REFRESH_KEY: string = import.meta.env.VITE_APP_REFRESH_KEY;
 const APP_MODE: string = import.meta.env.VITE_APP_APP_MODE;
 const GOOGLE_CLIENT_ID: string = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 const RECAPTCHA_SITE_KEY: string = import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY;
+const VIEWED_KEY: string = import.meta.env.VITE_APP_VIEWED_KEY
 
 export const APP_ENV = {
     API_URL,
@@ -27,5 +28,6 @@ export const APP_ENV = {
     APP_MODE,
     GOOGLE_CLIENT_ID,
     RECAPTCHA_SITE_KEY,
-    REFRESH_KEY
+    REFRESH_KEY,
+    VIEWED_KEY
 };

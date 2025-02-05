@@ -1,3 +1,4 @@
+import { APP_ENV } from '../../constants/env';
 import { IAdvert } from '../../models/advert';
 import ScrolledAdvertsSection from '../scrolled_adverts_section';
 
@@ -7,8 +8,7 @@ interface ViewedAdvertsProps {
 }
 
 const ViewedAdverts : React.FC<ViewedAdvertsProps> = ({advert, className}) => {
-    const adverts : IAdvert[] = sessionStorage.getItem('viewedAdverts') ? JSON.parse(sessionStorage.getItem('viewedAdverts') as string) : null;
-
+    const adverts : IAdvert[] = sessionStorage.getItem(APP_ENV.VIEWED_KEY) ? JSON.parse(sessionStorage.getItem(APP_ENV.VIEWED_KEY) as string) : null;
     return (
         <>
             {adverts && adverts.length > 0 && 
