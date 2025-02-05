@@ -4,17 +4,32 @@ import CategoryNavigation from "../../../components/category_navigation";
 import { Divider } from "antd";
 import AdvertViewer from "../../../components/advert_viewer";
 import SimilarAdverts from "../../../components/similar_adverts";
+import { IAdvert } from "../../../models/advert";
+import { useEffect } from "react";
+import ViewedAdverts from "../../../components/viewed_adverts";
 
 
 const AdvertPage: React.FC = () => {
     const { id } = useParams();
     const { data: advert, isLoading } = useGetAdvertByIdQuery(Number(id))
-      
-      
+
+    useEffect(() => {
+        if (advert) {
+            const viewedAdverts = sessionStorage.getItem("viewedAdverts")
+                ? JSON.parse(sessionStorage.getItem("viewedAdverts") as string) : [];
+
+            const updatedAdverts = [
+                advert,
+                ...viewedAdverts.filter((item: IAdvert) => item.id !== advert.id),
+            ];
+            sessionStorage.setItem("viewedAdverts", JSON.stringify(updatedAdverts));
+        }
+    }, [advert]);
+
     return (
         <div className="w-[100%] gap-[8vh] flex flex-col my-[6vh]">
             <div className="mx-[8vw] gap-[8vh] items-start flex  flex-col">
-                <CategoryNavigation  categoryId={advert?.categoryId} />
+                <CategoryNavigation categoryId={advert?.categoryId} />
                 {!isLoading &&
                     <AdvertViewer advert={advert} />
                 }
@@ -22,7 +37,7 @@ const AdvertPage: React.FC = () => {
             <Divider className="p-0 m-0" />
             <div className=" mx-[7vw] gap-[8vh] items-start flex flex-col">
                 <SimilarAdverts advert={advert} />
-
+                <ViewedAdverts advert={advert} />
             </div>
         </div>
 
