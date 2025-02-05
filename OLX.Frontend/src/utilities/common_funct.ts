@@ -1,6 +1,7 @@
 import { IUser } from "../models/account"
 import { IOlxUser, IShortOlxUser } from "../models/user";
 import { ICategory, ICategoryShort, ICategoryTreeElementModel } from "../models/category";
+import { IAdvertPageRequest, IAdvertSearchPageData } from "../models/advert";
 
 
 export const getUserDescr = (user: IUser | IOlxUser | IShortOlxUser | null | undefined): string => {
@@ -138,4 +139,14 @@ export const getFormatDateTime = (date: Date): string => {
     return formattedDate(date)
   }
   return `${formattedDate(date).slice(0, -7)} в ${time}`
+}
+
+export const getAdvertPageRequest = (pageData: IAdvertSearchPageData, categories: ICategory[]): IAdvertPageRequest => {
+
+   const result  = {
+    ...pageData as IAdvertPageRequest, 
+    categoryIds: getLastChildrenCategoriesIds(categories, pageData.categoryId) 
+  }
+  console.log(result)
+   return result;
 }

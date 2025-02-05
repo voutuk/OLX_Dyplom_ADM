@@ -10,7 +10,7 @@ import './style.scss'
 
 const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId, backRoute }) => {
     const { data: categories, isLoading } = useGetAllCategoriesQuery()
-    const [items, setItems] = useState<any>([])
+    const [items, setItems] = useState<any[]>([])
 
     useEffect(() => {
         const tree = getAllParents(categories || [], categoryId).reverse()
@@ -21,13 +21,14 @@ const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId, bac
         }))
         setItems([{ title: <Link style={{ color: '#3A211C' }} className=" breadcrumb-link" to="/">Головна</Link> }, ...newItems])
     }, [categories, categoryId])
+
     return (
         <div className="flex gap-20 items-center">
             <BackButton
                 title="Назад"
                 className="text-adaptive-1_9_text text-black font-medium "
                 path={backRoute} />
-            {!isLoading &&
+            {!isLoading && items.length > 1 &&
                 <Breadcrumb
                     separator={<span className="text-adaptive-1_8_text font-montserrat text-['#3A211C']">/</span>}
                     items={items}
