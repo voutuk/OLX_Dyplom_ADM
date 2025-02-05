@@ -11,8 +11,9 @@ import { useGetUserMessagesQuery } from "../../../../redux/api/adminMessageApi";
 import { useEffect} from "react";
 import { useSignalR } from "../../../hendlers/signalR/signalRContext";
 import SearchInput from "../../../inputs/search_input";
+import { HeaderProps } from "./props";
 
-export const Header: React.FC = () => {
+export const Header: React.FC<HeaderProps> = ({className}) => {
     const signalRConnection = useSignalR();
     const [logout] = useLogoutMutation();
     const navigator = useNavigate();
@@ -49,7 +50,7 @@ export const Header: React.FC = () => {
     useEffect(() => { refetch() }, [user])
 
     return (
-        <div className={`h-[10vh] min-h-[60px]  px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50 `}  >
+        <div className={`h-[10vh] min-h-[60px] sticky  px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50 ${className}`}  >
             <div className="h-[38%] cursor-pointer">
                 <img alt="logo" onClick={() => navigator('/')} className="h-full w-full" src={Images.logo} />
             </div>
