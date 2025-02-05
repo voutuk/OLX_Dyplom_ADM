@@ -1,8 +1,18 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrolledContainerProps } from "./props";
+import { useLocation } from "react-router-dom";
 
 const ScrolledContainer: React.FC<ScrolledContainerProps> = ({ children, className, scrollDir = 'horisontal' }) => {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const location = useLocation()
+    
+    useEffect(() => {
+        if (!scrollRef.current || !location.pathname.includes('/advert/')) return;
+        scrollRef.current.scrollLeft = 0 ;
+        scrollRef.current.scrollTop = 0;
+    }, [location])
+
+
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!scrollRef.current) return;
         const isHorisontal = scrollDir === 'horisontal'
@@ -12,7 +22,7 @@ const ScrolledContainer: React.FC<ScrolledContainerProps> = ({ children, classNa
         const handleMouseMove = (event: MouseEvent) => {
             if (!scrollRef.current) return;
             const walk = isHorisontal ? event.pageX - start : event.pageY - start;
-            const scrollStep =  scroll - walk;
+            const scrollStep = scroll - walk;
             isHorisontal ? scrollRef.current.scrollLeft = scrollStep : scrollRef.current.scrollTop = scrollStep;
         };
 
