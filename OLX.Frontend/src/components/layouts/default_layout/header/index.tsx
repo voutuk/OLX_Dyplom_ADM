@@ -50,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
     useEffect(() => { refetch() }, [user])
 
     return (
-        <div className={`h-[10vh] min-h-[60px] sticky  px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50 ${className}`}  >
+        <div className={`h-[10vh] min-h-[60px] sticky px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50 ${className}`}  >
             <div className="h-[38%] cursor-pointer">
                 <img alt="logo" onClick={() => navigator('/')} className="h-full w-full" src={Images.logo} />
             </div>
