@@ -8,17 +8,19 @@ import { CategoryNavigationProps } from "./props"
 import './style.scss'
 
 
-const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId,backRoute}) => {
+const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId, backRoute }) => {
     const { data: categories, isLoading } = useGetAllCategoriesQuery()
-    const [items,setItems] = useState<any>([])
-    
-    useEffect(()=>{
-        const tree  = getAllParents(categories || [] ,categoryId)
-        const newItems = tree.reverse().map(x=>({
-            title:<Link style={{color:'#3A211C'}} className=" breadcrumb-link" to={`/adverts?categoryId=${x.id}`}>{x.name}</Link>,
+    const [items, setItems] = useState<any>([])
+
+    useEffect(() => {
+        const tree = getAllParents(categories || [], categoryId).reverse()
+        const newItems = tree.map(x => ({
+            title: <Link style={{ color: '#3A211C' }}
+                className=" breadcrumb-link"
+                to={`/adverts?categoryId=${x.id}`}>{x.name}</Link>,
         }))
-        setItems([{ title: <Link style={{color:'#3A211C'}} className=" breadcrumb-link" to="/">Головна</Link> },...newItems])
-    },[categories,categoryId])
+        setItems([{ title: <Link style={{ color: '#3A211C' }} className=" breadcrumb-link" to="/">Головна</Link> }, ...newItems])
+    }, [categories, categoryId])
     return (
         <div className="flex gap-20 items-center">
             <BackButton
@@ -29,7 +31,7 @@ const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId,back
                 <Breadcrumb
                     separator={<span className="text-adaptive-1_8_text font-montserrat text-['#3A211C']">/</span>}
                     items={items}
-                     />}
+                />}
         </div>)
 }
 

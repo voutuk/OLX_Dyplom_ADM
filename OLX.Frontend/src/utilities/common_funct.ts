@@ -95,6 +95,7 @@ export const getAllParents = (categories: ICategory[], parentId?: number): ICate
   return parentIds;
 };
 
+
 export const getQueryString = (filter: any): string => {
   var result = '';
   Object.keys(filter).forEach((key) => {
@@ -136,5 +137,5 @@ export const getFormatDateTime = (date: Date): string => {
   if (date.getFullYear() < today.getFullYear()) {
     return formattedDate(date)
   }
-  return `${formattedDate(date).slice(0,-7)} в ${time}`
+  return `${formattedDate(date).slice(0, -7)} в ${time}`
 }
