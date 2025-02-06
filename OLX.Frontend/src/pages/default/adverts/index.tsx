@@ -39,7 +39,7 @@ const AdvertsPage: React.FC = () => {
         <div className="w-[100%] gap-[8vh]  flex flex-col my-[6vh]">
             <div className="mx-[8vw] gap-[8vh] h-full items-start flex  flex-col">
                 <CategoryNavigation categoryId={Number(searchParams.get("categoryId"))} />
-
+                {/* Заголовок */}
                 <div className="w-[100%] h-full flex gap-[1vw] " >
                     <div className="w-[17%] flex flex-col gap-[3vh] advert-collapse">
                         <Collapsed
