@@ -5,6 +5,8 @@ import CategoryNavigation from "../../../components/category_navigation";
 import { useGetAllCategoriesQuery } from "../../../redux/api/categoryApi";
 import { useGetAdvertPageQuery } from "../../../redux/api/advertApi";
 import { getAdvertPageRequest } from "../../../utilities/common_funct";
+import Collapsed from "../../../components/advert_collapse";
+
 
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
     priceFrom: Number(searchParams.get("priceFrom")),
@@ -30,17 +32,53 @@ const AdvertsPage: React.FC = () => {
         pageRequest.current = updatedPageRequest(searchParams)
         advertRefetch()
     }, [searchParams])
-   
+
+
+
     return (
-        <div className="w-[100%] gap-[8vh] flex flex-col my-[6vh]">
-            <div className="mx-[8vw] gap-[8vh] items-start flex  flex-col">
+        <div className="w-[100%] gap-[8vh]  flex flex-col my-[6vh]">
+            <div className="mx-[8vw] gap-[8vh] h-full items-start flex  flex-col">
                 <CategoryNavigation categoryId={Number(searchParams.get("categoryId"))} />
-                <div className="self-center">
-                    {!isAdvertLoading && adverts?.items.map(x => <h2 key={x.id}>{x.title}</h2>)}
+
+                <div className="w-[100%] h-full flex gap-[1vw] " >
+                    <div className="w-[17%] flex flex-col gap-[3vh] advert-collapse">
+                        <Collapsed
+                            title="Категорія"
+                            className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
+                            <div className="h-[120px] bg-slate-300 flex items-center  justify-center">Категорія</div>
+                        </Collapsed>
+
+                        <Collapsed
+                            title="Фільтри"
+                            className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
+                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Фільтри</div>
+                        </Collapsed>
+
+                        <Collapsed
+                            title="Сортування"
+                            className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
+                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Сортування</div>
+                        </Collapsed>
+                    </div>
+
+                    <div className="flex-1 flex flex-col items-center gap-[8vh]">
+                        {// BONUS :)
+                        /* <AdvertsSection
+                            isLoading={isAdvertLoading}
+                            adverts={adverts?.items} />
+                        <PrimaryButton
+                            onButtonClick={() => { }}
+                            title='Завантажити ще'
+                            disabled={false}
+                            isLoading={false}
+                            className='w-[19vw] h-[4.5vh] '
+                            bgColor='#9B7A5B'
+                            fontColor='white'
+                            brColor='#9B7A5B' /> */}
+                    </div>
+
                 </div>
-
             </div>
-
         </div>
     )
 }

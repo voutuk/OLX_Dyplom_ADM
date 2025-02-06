@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     if (data?.items) {
       if (data.total == adverts.length) {
-        setisEnd(true); 
+        setisEnd(true);
       } else {
         setAdverts((prev) => [...prev, ...data.items]);
       }
@@ -40,9 +40,11 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex-1 flex flex-col justify-center">
       <HomePageImageBlock />
-      <div className='flex flex-col items-center  py-[50px] gap-[50px]'>
+      <div className='flex flex-col items-center mx-auto py-[50px] gap-[50px]'>
         <CategoriesSection />
-        <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
+        <div className='mx-[7vw]'>
+          <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
+        </div>
         <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' disabled={isEnd} isLoading={false} className='w-[23vw] h-[6.4vh] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
       </div>
     </div>
