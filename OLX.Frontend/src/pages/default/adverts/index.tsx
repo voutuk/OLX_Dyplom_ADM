@@ -70,7 +70,7 @@ const AdvertsPage: React.FC = () => {
                             onButtonClick={() => { }}
                             title='Завантажити ще'
                             disabled={false}
-                            isLoading={false}
+                            isLoading={isAdvertLoading}
                             className='w-[19vw] h-[4.5vh] '
                             bgColor='#9B7A5B'
                             fontColor='white'

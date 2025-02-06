@@ -45,7 +45,7 @@ const HomePage: React.FC = () => {
         <div className='mx-[7vw]'>
           <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
         </div>
-        <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' disabled={isEnd} isLoading={false} className='w-[23vw] h-[6.4vh] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
+        <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' disabled={isEnd} isLoading={isLoading} className='w-[23vw] h-[6.4vh] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
       </div>
     </div>
   );
