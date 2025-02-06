@@ -1,13 +1,15 @@
-import { Key, useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { IAdvertSearchPageData } from "../../../models/advert";
 import { useSearchParams } from "react-router-dom";
 import CategoryNavigation from "../../../components/category_navigation";
 import { useGetAllCategoriesQuery } from "../../../redux/api/categoryApi";
 import { useGetAdvertPageQuery } from "../../../redux/api/advertApi";
-import { buildTree, getAdvertPageRequest, getQueryString } from "../../../utilities/common_funct";
+import { getAdvertPageRequest, getQueryString } from "../../../utilities/common_funct";
 import Collapsed from "../../../components/advert_collapse";
-import { Tree } from "antd";
 import CategoryTree from "../../../components/category_tree";
+import CategoryFilters from "../../../components/category_filters";
+import AdvertsSection from "../../../components/adverts_section";
+import PrimaryButton from "../../../components/buttons/primary_button";
 
 
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
@@ -29,8 +31,7 @@ const AdvertsPage: React.FC = () => {
     const { data: categories } = useGetAllCategoriesQuery();
     const [searchParams, setSearchParams] = useSearchParams('');
     const pageRequest = useRef<IAdvertSearchPageData>(updatedPageRequest(searchParams));
-    const { data: adverts, isLoading: isAdvertLoading, refetch: advertRefetch } = useGetAdvertPageQuery(getAdvertPageRequest(pageRequest.current, categories || []))
-    const buildCategoryTree = useCallback(() => buildTree(categories || []), [categories, pageRequest.current.categoryId])
+    const { data: adverts, isLoading: isAdvertsLoading, refetch: advertRefetch } = useGetAdvertPageQuery(getAdvertPageRequest(pageRequest.current, categories || []))
     useEffect(() => {
         pageRequest.current = updatedPageRequest(searchParams)
         advertRefetch()
@@ -48,14 +49,14 @@ const AdvertsPage: React.FC = () => {
                             title="Категорія"
                             className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
 
-                            <div className="overflow-x-auto  rounded-md  bg-slate-50">
+                            <div className="overflow-x-auto">
                                 <CategoryTree
                                     categories={categories}
-                                    className="font-montserrat text-nowrap text-adaptive-input-form-text bg-slate-50"
+                                    className="font-montserrat text-nowrap text-adaptive-input-form-text"
                                     categoryId={pageRequest.current.categoryId}
                                     onSelect={(id) => {
                                         if (id) {
-                                            setSearchParams(getQueryString({ ...pageRequest.current, categoryId: id }))
+                                            setSearchParams(getQueryString(({ ...pageRequest.current, categoryId: id })))
                                         }
                                     }}
                                 />
@@ -65,7 +66,10 @@ const AdvertsPage: React.FC = () => {
                         <Collapsed
                             title="Фільтр"
                             className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
-                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Фільтр</div>
+                            <CategoryFilters
+                                categoryId={pageRequest.current.categoryId}
+                                onChange={(result) => setSearchParams(getQueryString(({ ...pageRequest.current, filters: result })))}
+                            />
                         </Collapsed>
 
                         <Collapsed
@@ -76,19 +80,21 @@ const AdvertsPage: React.FC = () => {
                     </div>
 
                     <div className="flex-1 flex flex-col items-center gap-[8vh]">
-                        {// BONUS :)
-                        /* <AdvertsSection
-                            isLoading={isAdvertLoading}
+                        <AdvertsSection
+                            isLoading={isAdvertsLoading}
                             adverts={adverts?.items} />
-                        <PrimaryButton
-                            onButtonClick={() => { }}
-                            title='Завантажити ще'
-                            disabled={false}
-                            isLoading={isAdvertLoading}
-                            className='w-[19vw] h-[4.5vh] '
-                            bgColor='#9B7A5B'
-                            fontColor='white'
-                            brColor='#9B7A5B' /> */}
+                        {adverts && adverts.items.length > 0 &&
+                            <PrimaryButton
+                                onButtonClick={() => { }}
+                                title='Завантажити ще'
+                                disabled={false}
+                                isLoading={isAdvertsLoading}
+                                className='w-[19vw] h-[4.5vh] '
+                                bgColor='#9B7A5B'
+                                fontColor='white'
+                                brColor='#9B7A5B' />
+                        }
+
                     </div>
 
                 </div>

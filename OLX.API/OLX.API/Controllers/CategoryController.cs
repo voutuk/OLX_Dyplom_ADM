@@ -14,6 +14,9 @@ namespace OLX.API.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> Get() => Ok(await categoryService.Get());
 
+        [HttpGet("get/{id:int}")]
+        public async Task<IActionResult> GetById([FromRoute] int id) => Ok(await categoryService.GetById(id));
+
         [HttpGet("get/tree")]
         public async Task<IActionResult> GetTree() => Ok(await categoryService.GetAllTreeAsync());
 

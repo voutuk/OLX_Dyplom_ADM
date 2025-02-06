@@ -14,7 +14,6 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({ categoryId, categories, onS
     const [expandedCategories, setExpandedCategories] = useState<Key[]>([])
     const buildCategoryTree = useCallback(() => buildTree(categories || []), [categories])
     useEffect(() => {
-        console.log(categoryId)
         if (categoryId) {
             setExpandedCategories(getAllParentsIds(categories || [], categoryId) as Key[]);
         }
