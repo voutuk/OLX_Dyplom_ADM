@@ -1,11 +1,13 @@
-import { useEffect, useRef } from "react";
+import { Key, useCallback, useEffect, useRef, useState } from "react";
 import { IAdvertSearchPageData } from "../../../models/advert";
 import { useSearchParams } from "react-router-dom";
 import CategoryNavigation from "../../../components/category_navigation";
 import { useGetAllCategoriesQuery } from "../../../redux/api/categoryApi";
 import { useGetAdvertPageQuery } from "../../../redux/api/advertApi";
-import { getAdvertPageRequest } from "../../../utilities/common_funct";
+import { buildTree, getAdvertPageRequest, getQueryString } from "../../../utilities/common_funct";
 import Collapsed from "../../../components/advert_collapse";
+import { Tree } from "antd";
+import CategoryTree from "../../../components/category_tree";
 
 
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
@@ -28,11 +30,11 @@ const AdvertsPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams('');
     const pageRequest = useRef<IAdvertSearchPageData>(updatedPageRequest(searchParams));
     const { data: adverts, isLoading: isAdvertLoading, refetch: advertRefetch } = useGetAdvertPageQuery(getAdvertPageRequest(pageRequest.current, categories || []))
+    const buildCategoryTree = useCallback(() => buildTree(categories || []), [categories, pageRequest.current.categoryId])
     useEffect(() => {
         pageRequest.current = updatedPageRequest(searchParams)
         advertRefetch()
     }, [searchParams])
-
 
 
     return (
@@ -45,7 +47,19 @@ const AdvertsPage: React.FC = () => {
                         <Collapsed
                             title="Категорія"
                             className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
-                            <div className="h-[120px] bg-slate-300 flex items-center  justify-center">Категорія</div>
+
+                            <div className="overflow-x-auto  rounded-md  bg-slate-50">
+                                <CategoryTree
+                                    categories={categories}
+                                    className="font-montserrat text-nowrap text-adaptive-input-form-text bg-slate-50"
+                                    categoryId={pageRequest.current.categoryId}
+                                    onSelect={(id) => {
+                                        if (id) {
+                                            setSearchParams(getQueryString({ ...pageRequest.current, categoryId: id }))
+                                        }
+                                    }}
+                                />
+                            </div>
                         </Collapsed>
 
                         <Collapsed
