@@ -4,12 +4,13 @@ import './style.scss'
 import { CollpaseProps } from "./pros"
 
 
-const Collapsed: React.FC<CollpaseProps> = ({ title, className, children }) => {
+const Collapsed: React.FC<CollpaseProps> = ({ title, className, children, onOpen }) => {
     return (
         <div className="collapsed">
             <Collapse
+                onChange={onOpen}
                 className={className}
-                expandIconPosition='right'
+                expandIconPosition='end'
                 ghost
                 expandIcon={({ isActive }) => (
                     <ExpandMore
