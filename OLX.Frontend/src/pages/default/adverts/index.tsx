@@ -30,7 +30,7 @@ const AdvertsPage: React.FC = () => {
         pageRequest.current = updatedPageRequest(searchParams)
         advertRefetch()
     }, [searchParams])
-    console.log(adverts)
+   
     return (
         <div className="w-[100%] gap-[8vh] flex flex-col my-[6vh]">
             <div className="mx-[8vw] gap-[8vh] items-start flex  flex-col">
