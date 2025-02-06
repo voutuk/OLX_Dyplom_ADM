@@ -5,12 +5,12 @@ import { CachedOutlined, CheckOutlined, DeleteForever, Info, LockOutlined, Searc
 import AdminAdvertCollapsedFilters from "../../../../components/admin_colapsed_filter";
 import { AdminFilterResultModel } from "../../../../components/admin_colapsed_filter/models";
 import { Pagination, Popconfirm, Table, TableColumnsType, Tooltip, Image, Input, Button } from "antd";
-import { IAdvert, IAdvertPageRequest } from "../../../../models/advert";
+import { IAdvert, IAdvertSearchPageData } from "../../../../models/advert";
 import { paginatorConfig } from "../../../../utilities/pagintion_settings";
 import { APP_ENV } from "../../../../constants/env";
 import { useGetAllCategoriesQuery } from "../../../../redux/api/categoryApi";
-import { formatPrice, getDateTime, getQueryString } from "../../../../utilities/common_funct";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { formatPrice, getAdvertPageRequest, getDateTime, getQueryString } from "../../../../utilities/common_funct";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Key, useEffect, useState } from "react";
 import { useGetAdvertPageQuery } from "../../../../redux/api/advertApi";
 import { IconButton } from "@mui/material";
@@ -18,7 +18,8 @@ import { ColumnType, TableProps } from "antd/es/table";
 import { useApproveAdvertMutation, useBlockAdvertMutation, useDeleteAdvertMutation } from "../../../../redux/api/advertAuthApi";
 import { toast } from "react-toastify";
 
-const updatedPageRequest = (searchParams: URLSearchParams): IAdvertPageRequest => ({
+
+const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
     priceFrom: Number(searchParams.get("priceFrom")),
     priceTo: Number(searchParams.get("priceTo")),
     approved: location.pathname === '/admin/adverts',
@@ -27,7 +28,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertPageRequest =
     page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
     sortKey: searchParams.get("sortKey") || '',
     isDescending: searchParams.get("isDescending") === "true",
-    categoryIds: searchParams.has("categoryIds") ? (JSON.parse(searchParams.get("categoryIds") || '') as number[]) : [],
+    categoryId: searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : undefined,
     filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : [],
     isContractPrice: searchParams.get("isContractPrice") === "true" || undefined,
     search: searchParams.get("search") || '',
@@ -40,18 +41,19 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertPageRequest =
 
 const AdminAdvertTable: React.FC = () => {
     const navigate = useNavigate()
+    const location  = useLocation()
     const { data: categories } = useGetAllCategoriesQuery()
     const [searchParams, setSearchParams] = useSearchParams('');
-    const [pageRequest, setPageRequest] = useState<IAdvertPageRequest>(updatedPageRequest(searchParams));
+    const [pageRequest, setPageRequest] = useState<IAdvertSearchPageData>(updatedPageRequest(searchParams));
     const [approveAdvert] = useApproveAdvertMutation();
     const [deleteAdvert] = useDeleteAdvertMutation();
     const [lockAdvert] = useBlockAdvertMutation();
-    const { data: adverts, isLoading, refetch } = useGetAdvertPageQuery(pageRequest);
+    const { data: adverts, isLoading, refetch } = useGetAdvertPageQuery(getAdvertPageRequest(pageRequest, categories || []));
     useEffect(() => {
         setPageRequest(updatedPageRequest(searchParams))
-    }, [location.search, location.pathname])
-
-    const getColumnSearchProps = (dataIndex: keyof IAdvertPageRequest): ColumnType<IAdvert> => ({
+    }, [location])
+    console.log('update')
+    const getColumnSearchProps = (dataIndex: keyof IAdvertSearchPageData): ColumnType<IAdvert> => ({
         filterDropdown: ({ close }) => (
             <div className="p-3 flex gap-2" style={{ width: 300, padding: 8 }}>
                 <Input
@@ -194,7 +196,7 @@ const AdminAdvertTable: React.FC = () => {
             render: (_, advert: IAdvert) =>
                 <div className='flex justify-around'>
                     <Tooltip title="Показати">
-                        <IconButton onClick={()=>{navigate(`preview/${advert.id}`)}} color="success" size="small">
+                        <IconButton onClick={() => { navigate(`preview/${advert.id}`) }} color="success" size="small">
                             <Info />
                         </IconButton>
                     </Tooltip>
@@ -271,7 +273,7 @@ const AdminAdvertTable: React.FC = () => {
     const onFiltersChange = (filterValues: AdminFilterResultModel) => {
         setSearchParams(getQueryString({
             ...pageRequest,
-            categoryIds: filterValues.categoryIds,
+            categoryId: filterValues.categoryId,
             filters: filterValues.filters,
             priceTo: filterValues.priceTo,
             priceFrom: filterValues.priceFrom
@@ -288,17 +290,17 @@ const AdminAdvertTable: React.FC = () => {
                 title={`${location.pathname === '/admin/adverts' ? "Діючі" : "Непідтверджені"} оголошення`}
                 icon={<ProfileOutlined className="text-2xl" />}
                 buttons={[
-                     <PageHeaderButton
+                    <PageHeaderButton
                         key='clear_filter'
                         onButtonClick={() => {
-                            setPageRequest((prev) => ({
-                                ...prev,
+                            setSearchParams(getQueryString( ({
+                                ...pageRequest,
                                 emailSearch: '',
                                 phoneSearch: '',
                                 categorySearch: '',
                                 search: '',
                                 settlementSearch: ''
-                            }))
+                            })))
                         }}
                         className="w-[35px] h-[35px] bg-red-900"
                         buttonIcon={<SearchOff className="text-lg" />}

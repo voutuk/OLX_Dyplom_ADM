@@ -5,8 +5,10 @@ import DefaultLayout from './components/layouts/default_layout/index';
 import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
 
+
+const AdvertsPage = React.lazy(() => import( './pages/default/adverts'));
 const AdminAdvertPreview = React.lazy(() => import('./pages/admin/adverts/advert_preview'));
-const AdvertPage = React.lazy(() => import('./pages/default/advert_page'));
+const AdvertPage = React.lazy(() => import('./pages/default/advert'));
 const AuthLayout = React.lazy(() => import('./components/layouts/auth_layout'));
 const PasswordChangeConfirmPage = React.lazy(() => import('./pages/default/restore_password/email_sended'));
 const RegisterConfirmPage = React.lazy(() => import('./pages/default/register/register_confirm'));
@@ -39,6 +41,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
           <Route path="error" element={<ErrorPage />} />
           <Route path="advert/:id" element={<AdvertPage />} />
+          <Route path="adverts" element={<AdvertsPage />} />
           <Route element={<ProtectedRoutes requiredRole={"User"} />}>
             <Route path="user">
               <Route path="userprofile" element={<EmailConfirmationPage />} />

@@ -2,7 +2,7 @@ import { Collapse, Form, InputNumber, Select, Spin, TreeSelect } from "antd";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetAllFilterQuery } from "../../redux/api/filterApi";
 import { useGetAllCategoriesQuery } from "../../redux/api/categoryApi";
-import { buildTree, clamp, getAllParentFilterIds, getLastChildrenCategoriesIds } from "../../utilities/common_funct";
+import { buildTree, clamp, getAllParentFilterIds } from "../../utilities/common_funct";
 import { AdminAdvertFiltersProps } from "./props";
 import { FilterData } from "./models";
 import { ClearOutlined } from '@ant-design/icons'
@@ -29,7 +29,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
         categoryId.current = category
         updateCategoryFilters(category)
         form.resetFields()
-        onFiltersChange({ filters: [], categoryIds: getChildCategories(), priceFrom: priceFrom.current, priceTo: priceTo.current })
+        onFiltersChange({ filters: [], categoryId: category || 0, priceFrom: priceFrom.current, priceTo: priceTo.current })
     }
 
     const updateCategoryFilters = (categoryId: number | undefined, filterValues?: number[]) => {
@@ -44,24 +44,17 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
     const confirm = (data: any) => {
         const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)).flat() as number[];
         categoryFiltersData.filtersValues = result
-        onFiltersChange({ filters: result, categoryIds: getChildCategories(), priceFrom: priceFrom.current, priceTo: priceTo.current })
+        onFiltersChange({ filters: result, categoryId: categoryId.current || 0, priceFrom: priceFrom.current, priceTo: priceTo.current })
     }
 
     const getCategoryTree = useCallback(() => buildTree(categories || []), [categories])
-    const getChildCategories = useCallback(() => categoryId.current
-        ? [categoryId.current, ...getLastChildrenCategoriesIds(categories || [], categoryId.current)]
-        : [],
-        [categories, categoryId.current])
-
-
+   
     useEffect(() => {
-        const categoriesIds = searchParams.has("categoryIds")
-            ? (JSON.parse(searchParams.get("categoryIds") || '') as number[])
-            : []
-        if (categoriesIds.length > 0) {
-            categoryId.current = categoriesIds[0]
+        const categoryParamsId = searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : 0
+        if (categoryParamsId !== 0) {
+            categoryId.current = categoryParamsId
             const filterValues = searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : []
-            updateCategoryFilters(categoriesIds[0], filterValues)
+            updateCategoryFilters(categoryParamsId, filterValues)
         }
         priceFrom.current = Number(searchParams.get("priceFrom"))
         priceTo.current = Number(searchParams.get("priceTo"))
@@ -77,7 +70,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
 
     const onPriceChange = (priceFilter: number | null, isFrom: boolean) => {
         isFrom ? priceFrom.current = priceFilter : priceTo.current = priceFilter;
-        onFiltersChange({ filters: categoryFiltersData.filtersValues, categoryIds: getChildCategories(), priceFrom: priceFrom.current, priceTo: priceTo.current })
+        onFiltersChange({ filters: categoryFiltersData.filtersValues, categoryId:categoryId.current || 0, priceFrom: priceFrom.current, priceTo: priceTo.current })
     }
 
     const clearFilters = ()=>{

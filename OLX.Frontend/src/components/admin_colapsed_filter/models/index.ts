@@ -2,7 +2,7 @@ import { IFilter } from "../../../models/filter"
 
 export interface AdminFilterResultModel {
     filters: number[]
-    categoryIds: number[]
+    categoryId: number
     priceFrom: number | null | undefined
     priceTo: number | null | undefined
 }

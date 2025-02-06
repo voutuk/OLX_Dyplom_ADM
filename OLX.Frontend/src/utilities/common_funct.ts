@@ -1,6 +1,7 @@
 import { IUser } from "../models/account"
 import { IOlxUser, IShortOlxUser } from "../models/user";
 import { ICategory, ICategoryShort, ICategoryTreeElementModel } from "../models/category";
+import { IAdvertPageRequest, IAdvertSearchPageData } from "../models/advert";
 
 
 export const getUserDescr = (user: IUser | IOlxUser | IShortOlxUser | null | undefined): string => {
@@ -95,6 +96,7 @@ export const getAllParents = (categories: ICategory[], parentId?: number): ICate
   return parentIds;
 };
 
+
 export const getQueryString = (filter: any): string => {
   var result = '';
   Object.keys(filter).forEach((key) => {
@@ -136,5 +138,14 @@ export const getFormatDateTime = (date: Date): string => {
   if (date.getFullYear() < today.getFullYear()) {
     return formattedDate(date)
   }
-  return `${formattedDate(date).slice(0,-7)} в ${time}`
+  return `${formattedDate(date).slice(0, -7)} в ${time}`
+}
+
+export const getAdvertPageRequest = (pageData: IAdvertSearchPageData, categories: ICategory[]): IAdvertPageRequest => {
+  const { categoryId, ...rest } = pageData;
+   const result  = {
+    ...rest ,
+    categoryIds: getLastChildrenCategoriesIds(categories, pageData.categoryId) 
+  }
+   return result;
 }

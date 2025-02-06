@@ -19,7 +19,15 @@ export interface IAdvert{
     images: IAdvertImage[]
 }
 
-export interface IAdvertPageRequest extends PageRequest{
+export interface IAdvertPageRequest extends IAdvertPageData{
+       categoryIds?: number[]
+}
+
+export interface IAdvertSearchPageData extends IAdvertPageData{
+    categoryId?: number
+}
+
+export interface IAdvertPageData extends PageRequest{
     priceFrom: number,
     priceTo: number,
     search?: string,
@@ -31,7 +39,6 @@ export interface IAdvertPageRequest extends PageRequest{
     approved?: boolean,
     blocked?: boolean,
     archived?: boolean,
-    categoryIds?: number[],
     filters?: number[]
 }
 
