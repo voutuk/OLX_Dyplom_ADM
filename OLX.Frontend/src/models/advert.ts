@@ -39,7 +39,7 @@ export interface IAdvertPageData extends PageRequest{
     approved?: boolean,
     blocked?: boolean,
     archived?: boolean,
-    filters?: number[]
+    filters?: number[][]
 }
 
 export interface IAdvertCreationModel {

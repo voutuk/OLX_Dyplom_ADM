@@ -1,19 +1,16 @@
 import { useCallback } from "react"
 import { useGetAllFilterQuery } from "../../redux/api/filterApi"
 import { CategoryFiltersProps } from "./props"
-
 import Filter from "../filter"
-import { useGetCategoryByIdQuery } from "../../redux/api/categoryApi"
 import { Button, Form } from "antd"
 
 
-const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryId, onChange }) => {
+const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, onChange }) => {
     const [form] = Form.useForm()
     const { data: filters } = useGetAllFilterQuery()
-    const { data: category } = useGetCategoryByIdQuery(categoryId || 0)
-    const getCategoryFilters = useCallback(() => filters?.filter(x => category?.filters.includes(x.id)), [category])
+    const getCategoryFilters = useCallback(() => filters?.filter(x => categoryFiltersIds?.includes(x.id)) || [], [categoryFiltersIds])
     const onFinish = (data: any) => {
-        const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)).flat() as number[];
+        const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)) as number[][];
         if (onChange) {
             onChange(result)
         }
@@ -44,15 +41,16 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryId, onChange 
                     onChange={() => form.submit()}
                     onReset={onReset} />
             )}
-            <Button
-                size="small"
-                className=" self-start  text-[red]"
-                type='text'
-                onClick={() => onReset(undefined)} >
-                Очистити всі
-            </Button>
+            {getCategoryFilters()?.length > 0 &&
+                <Button
+                    size="small"
+                    className=" self-start  text-[red]"
+                    type='text'
+                    onClick={() => onReset(undefined)} >
+                    Очистити всі
+                </Button>
+            }
         </Form>
-
     )
 }
 

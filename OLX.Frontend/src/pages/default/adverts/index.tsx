@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import CategoryNavigation from "../../../components/category_navigation";
 import { useGetAllCategoriesQuery } from "../../../redux/api/categoryApi";
 import { useGetAdvertPageQuery } from "../../../redux/api/advertApi";
-import { getAdvertPageRequest, getQueryString } from "../../../utilities/common_funct";
+import { getAdvertPageRequest, getAllParentFilterIds, getQueryString } from "../../../utilities/common_funct";
 import Collapsed from "../../../components/advert_collapse";
 import CategoryTree from "../../../components/category_tree";
 import CategoryFilters from "../../../components/category_filters";
@@ -22,7 +22,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     sortKey: searchParams.get("sortKey") || '',
     isDescending: searchParams.get("isDescending") === "true",
     categoryId: searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : undefined,
-    filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : [],
+    filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : [],
     isContractPrice: searchParams.get("isContractPrice") === "true" || undefined,
     search: searchParams.get("search") || undefined,
 });
@@ -34,6 +34,7 @@ const AdvertsPage: React.FC = () => {
     const { data: adverts, isLoading: isAdvertsLoading, refetch: advertRefetch } = useGetAdvertPageQuery(getAdvertPageRequest(pageRequest.current, categories || []))
     useEffect(() => {
         pageRequest.current = updatedPageRequest(searchParams)
+        console.log(updatedPageRequest(searchParams))
         advertRefetch()
     }, [searchParams])
 
@@ -67,7 +68,7 @@ const AdvertsPage: React.FC = () => {
                             title="Фільтр"
                             className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
                             <CategoryFilters
-                                categoryId={pageRequest.current.categoryId}
+                                categoryFiltersIds={getAllParentFilterIds(categories || [],pageRequest.current.categoryId)}
                                 onChange={(result) => setSearchParams(getQueryString(({ ...pageRequest.current, filters: result })))}
                             />
                         </Collapsed>
@@ -83,7 +84,7 @@ const AdvertsPage: React.FC = () => {
                         <AdvertsSection
                             isLoading={isAdvertsLoading}
                             adverts={adverts?.items} />
-                        {adverts && adverts.items.length > 0 &&
+                        {adverts && adverts.total != adverts.items.length  &&
                             <PrimaryButton
                                 onButtonClick={() => { }}
                                 title='Завантажити ще'

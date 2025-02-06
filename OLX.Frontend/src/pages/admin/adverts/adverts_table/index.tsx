@@ -29,7 +29,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     sortKey: searchParams.get("sortKey") || '',
     isDescending: searchParams.get("isDescending") === "true",
     categoryId: searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : undefined,
-    filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : [],
+    filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : [],
     isContractPrice: searchParams.get("isContractPrice") === "true" || undefined,
     search: searchParams.get("search") || '',
     categorySearch: searchParams.get("categorySearch") || '',
@@ -52,7 +52,6 @@ const AdminAdvertTable: React.FC = () => {
     useEffect(() => {
         setPageRequest(updatedPageRequest(searchParams))
     }, [location])
-    console.log('update')
     const getColumnSearchProps = (dataIndex: keyof IAdvertSearchPageData): ColumnType<IAdvert> => ({
         filterDropdown: ({ close }) => (
             <div className="p-3 flex gap-2" style={{ width: 300, padding: 8 }}>

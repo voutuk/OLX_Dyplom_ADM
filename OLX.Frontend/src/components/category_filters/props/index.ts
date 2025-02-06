@@ -1,5 +1,5 @@
 
 export interface CategoryFiltersProps {
-    categoryId?: number
+    categoryFiltersIds?: number[]
     onChange?: (data:any) => void
 }
