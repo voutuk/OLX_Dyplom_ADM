@@ -49,15 +49,15 @@ const AdvertsPage: React.FC = () => {
                         </Collapsed>
 
                         <Collapsed
-                            title="Фільтри"
+                            title="Фільтр"
                             className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
-                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Фільтри</div>
+                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Фільтр</div>
                         </Collapsed>
 
                         <Collapsed
-                            title="Сортування"
+                            title="Сортувати"
                             className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
-                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Сортування</div>
+                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Сортувати</div>
                         </Collapsed>
                     </div>
 
