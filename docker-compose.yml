@@ -25,9 +25,9 @@ services:
 
   app:
     container_name: olx_container
-    image: sashok9203/olx-asp-api
+    image: olx-asp-api
     ports:
-      - "5817:8080"
+      - "8080:8080"
     networks:
      - myAppNetwork
     depends_on:
@@ -41,9 +41,9 @@ services:
   
   client:
     container_name: olx_client_container
-    image: sashok9203/olx-client
+    image: olx-client
     restart: on-failure
     ports:
-      - "5092:80"
+      - "80:80"
       
 
