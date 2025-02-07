@@ -4,12 +4,10 @@ import { CategoryFiltersProps } from "./props"
 import Filter from "../filter"
 import { Button, Form } from "antd"
 
-
-
-const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, onChange }) => {
+const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, onChange, className }) => {
     const [form] = Form.useForm()
     const { data: filters } = useGetAllFilterQuery()
-    const categoryFilters = useMemo(() => filters?.filter(x => categoryFiltersIds?.includes(x.id)) || [], [filters, categoryFiltersIds])
+    
     const onFinish = (data: any) => {
         const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)) as number[][];
         if (onChange) {
@@ -30,22 +28,26 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
         }
     }
 
+    const filterElements = useMemo(() =>
+        filters?.filter(x => categoryFiltersIds?.includes(x.id)).map((filter) =>
+            <Filter
+                key={filter.id}
+                filter={filter}
+                onChange={() => form.submit()}
+                onReset={onReset} /> 
+        ) || [], [filters, categoryFiltersIds])
+
     return (
         <Form
             form={form}
+            className={className}
             onFinish={onFinish}
             layout="vertical">
-            {categoryFilters?.map((filter) =>
-                <Filter
-                    key={filter.id}
-                    filter={filter}
-                    onChange={() => form.submit()}
-                    onReset={onReset} />
-            )}
-            {categoryFilters?.length > 1 &&
+            {...filterElements}
+            {filterElements?.length > 1 &&
                 <Button
                     size="small"
-                    className=" self-start  text-[red]"
+                    className=" self-start text-adaptive-1_6-text text-[red]"
                     type='text'
                     onClick={() => onReset(undefined)} >
                     Очистити всі

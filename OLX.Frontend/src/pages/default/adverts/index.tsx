@@ -1,4 +1,4 @@
-import { useEffect, useMemo} from "react";
+import { useEffect, useMemo } from "react";
 import { IAdvertSearchPageData } from "../../../models/advert";
 import { useSearchParams } from "react-router-dom";
 import CategoryNavigation from "../../../components/category_navigation";
@@ -37,7 +37,7 @@ const AdvertsPage: React.FC = () => {
             : [];
     }, [categories, pageRequest.categoryId]);
     const getPageRequest = useMemo(() => getAdvertPageRequest(pageRequest, categories || []), [pageRequest, categories])
-    const { data: adverts, isLoading: isAdvertsLoading, isUninitialized,refetch: advertRefetch } =
+    const { data: adverts, isLoading: isAdvertsLoading, isUninitialized, refetch: advertRefetch } =
         useGetAdvertPageQuery(getPageRequest, { skip: !pageRequest || !categories || categories.length === 0 });
 
     useEffect(() => {
@@ -46,7 +46,6 @@ const AdvertsPage: React.FC = () => {
         }
     }, [searchParams]);
 
-    console.log('update')
     return (
         <div className="w-[100%] gap-[8vh]  flex flex-col my-[6vh]">
             <div className="mx-[8vw] gap-[8vh] h-full items-start flex  flex-col">
@@ -56,9 +55,9 @@ const AdvertsPage: React.FC = () => {
                     <div className="w-[17%] flex flex-col gap-[3vh] advert-collapse">
                         <Collapsed
                             title="Категорія"
-                            className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
+                            className="text-adaptive-card-price-text  text-[#3A211C] font-unbounded">
 
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto mt-[2vh]">
                                 <CategoryTree
                                     categories={categories}
                                     className="font-montserrat text-nowrap text-adaptive-input-form-text"
@@ -74,8 +73,10 @@ const AdvertsPage: React.FC = () => {
 
                         <Collapsed
                             title="Фільтр"
-                            className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
+                            className="text-adaptive-card-price-text text-[#3A211C] font-unbounded"
+                            isOpen = {filters && filters.length > 0}>
                             <CategoryFilters
+                                className="mt-[2vh]"
                                 categoryFiltersIds={filters}
                                 onChange={(result) => setSearchParams(getQueryString(({ ...pageRequest, filters: result })))}
                             />
@@ -83,7 +84,7 @@ const AdvertsPage: React.FC = () => {
 
                         <Collapsed
                             title="Сортувати"
-                            className="text-adaptive-card-price-text text-[#3A211C] font-unbounded">
+                            className="text-adaptive-card-price-text  text-[#3A211C] font-unbounded">
                             <div className="h-[120px] bg-slate-300 flex items-center justify-center">Сортувати</div>
                         </Collapsed>
                     </div>
@@ -103,9 +104,7 @@ const AdvertsPage: React.FC = () => {
                                 fontColor='white'
                                 brColor='#9B7A5B' />
                         }
-
                     </div>
-
                 </div>
             </div>
         </div>

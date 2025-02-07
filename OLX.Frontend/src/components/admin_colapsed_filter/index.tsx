@@ -79,6 +79,25 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
         onCategoryChange(undefined)
     }
 
+    const categoryFilters = useMemo(()=>categoryFiltersData.filters.map(filter =>
+        <Form.Item
+            noStyle
+            key={filter.id}
+            name={filter.id}
+            initialValue={initFilter(filter)}
+        >
+            <Select
+                style={{ width: `${categoryFiltersData.filterWidth}%` }}
+                allowClear
+                mode= 'tags' 
+                maxTagCount='responsive'
+                options={filter.values.map(value => ({ value: value.id.toString(), label: value.value }))}
+                placeholder={filter.name}
+                onChange={() => form.submit()}
+            />
+        </Form.Item>
+    ),[categoryFiltersData.filters])
+
     return (
         <Collapse
             size='small'
@@ -143,24 +162,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                                         <>
                                             <span>Фільтри</span>
                                             <div className=" flex flex-wrap gap-[.5vw] w-full border rounded-xl p-3">
-                                                {categoryFiltersData.filters.map(filter =>
-                                                    <Form.Item
-                                                        noStyle
-                                                        key={filter.id}
-                                                        name={filter.id}
-                                                        initialValue={initFilter(filter)}
-                                                    >
-                                                        <Select
-                                                            style={{ width: `${categoryFiltersData.filterWidth}%` }}
-                                                            allowClear
-                                                            mode= 'tags' 
-                                                            maxTagCount='responsive'
-                                                            options={filter.values.map(value => ({ value: value.id.toString(), label: value.value }))}
-                                                            placeholder={filter.name}
-                                                            onChange={() => form.submit()}
-                                                        />
-                                                    </Form.Item>
-                                                )}
+                                                {...categoryFilters}
                                             </div>
                                         </>
                                     }
