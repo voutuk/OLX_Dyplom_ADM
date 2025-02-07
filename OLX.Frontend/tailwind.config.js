@@ -16,6 +16,7 @@ export default {
         'adaptive-1_9_text': 'clamp(14px, 1.9vh, 36px)',
         'adaptive-1_8_text': 'clamp(14px, 1.8vh, 36px)',
         'adaptive-1_6-text': 'clamp(14px, 1.6vh, 36px)',
+        'adaptive-3_3-text': 'clamp(14px, 3.3vh, 36px)',
         'adaptive-input-form-text': 'clamp(14px, 1.7vh, 36px)',
         'adaptive-card-price-text': 'clamp(14px, 2.1vh, 36px)',
         'adaptive-footer-text': 'clamp(14px, 2.1vh, 36px)',
