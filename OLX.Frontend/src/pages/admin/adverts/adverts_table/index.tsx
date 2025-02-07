@@ -11,7 +11,7 @@ import { APP_ENV } from "../../../../constants/env";
 import { useGetAllCategoriesQuery } from "../../../../redux/api/categoryApi";
 import { formatPrice, getAdvertPageRequest, getDateTime, getQueryString } from "../../../../utilities/common_funct";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Key, useEffect, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { useGetAdvertPageQuery } from "../../../../redux/api/advertApi";
 import { IconButton } from "@mui/material";
 import { ColumnType, TableProps } from "antd/es/table";
@@ -29,7 +29,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     sortKey: searchParams.get("sortKey") || '',
     isDescending: searchParams.get("isDescending") === "true",
     categoryId: searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : undefined,
-    filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : [],
+    filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : [],
     isContractPrice: searchParams.get("isContractPrice") === "true" || undefined,
     search: searchParams.get("search") || '',
     categorySearch: searchParams.get("categorySearch") || '',
@@ -44,15 +44,15 @@ const AdminAdvertTable: React.FC = () => {
     const location  = useLocation()
     const { data: categories } = useGetAllCategoriesQuery()
     const [searchParams, setSearchParams] = useSearchParams('');
-    const [pageRequest, setPageRequest] = useState<IAdvertSearchPageData>(updatedPageRequest(searchParams));
+    const pageRequest = useMemo(() => updatedPageRequest(searchParams), [location]);
+    const getPageRequest = useMemo(() => getAdvertPageRequest(pageRequest, categories || []), [pageRequest, categories])
     const [approveAdvert] = useApproveAdvertMutation();
     const [deleteAdvert] = useDeleteAdvertMutation();
     const [lockAdvert] = useBlockAdvertMutation();
-    const { data: adverts, isLoading, refetch } = useGetAdvertPageQuery(getAdvertPageRequest(pageRequest, categories || []));
+    const { data: adverts, isLoading, refetch } = useGetAdvertPageQuery(getPageRequest);
     useEffect(() => {
-        setPageRequest(updatedPageRequest(searchParams))
+        refetch()
     }, [location])
-    console.log('update')
     const getColumnSearchProps = (dataIndex: keyof IAdvertSearchPageData): ColumnType<IAdvert> => ({
         filterDropdown: ({ close }) => (
             <div className="p-3 flex gap-2" style={{ width: 300, padding: 8 }}>

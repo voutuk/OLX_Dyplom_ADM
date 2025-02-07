@@ -4,5 +4,6 @@ export interface CollpaseProps {
     title?: string,
     className?: string
     children?: ReactNode
-    onOpen?: (e:any) => void
+    onOpen?: (e: any) => void
+    isOpen?: boolean
 }

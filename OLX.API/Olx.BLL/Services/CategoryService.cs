@@ -124,6 +124,10 @@ namespace Olx.BLL.Services
             return mapper.Map<CategoryDto>(category);
         }
 
+        public async Task<CategoryDto> GetById(int id) => 
+            mapper.Map<CategoryDto>( await categoryRepository.GetItemBySpec(new CategorySpecs.GetById(id,CategoryOpt.NoTracking | CategoryOpt.Filters)));
+       
+
         public async Task<IEnumerable<CategoryDto>> GetAllTreeAsync(bool filters = true)
         {
             var categories = await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(filters 
@@ -172,5 +176,7 @@ namespace Olx.BLL.Services
                 Items = page.Items
             };
         }
+
+        
     }
 }

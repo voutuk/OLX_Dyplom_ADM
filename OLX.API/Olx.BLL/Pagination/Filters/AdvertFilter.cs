@@ -17,7 +17,7 @@ namespace Olx.BLL.Pagination.Filters
         public string? EmailSearch { get; init; }
         public string? SettlementSearch { get; init; }
         public IEnumerable<int>? CategoryIds { get; init; }
-        public IEnumerable<int>? Filters { get; init; }
+        public IEnumerable<IEnumerable<int>>? Filters { get; init; }
         public IQueryable<Advert> FilterQuery(IQueryable<Advert> query)
         {
             if (CategoryIds is not null && CategoryIds.Any())
@@ -27,7 +27,10 @@ namespace Olx.BLL.Pagination.Filters
 
             if (Filters is not null && Filters.Any())
             {
-                query = query.Where(x => Filters.All(z => x.FilterValues.Any(v => v.Id == z)));
+                foreach (var filter in Filters) 
+                {
+                    query = query.Where(x => filter.Any(z => x.FilterValues.Any(y => y.Id == z)));
+                }
             }
 
             if (PriceFrom > 0)

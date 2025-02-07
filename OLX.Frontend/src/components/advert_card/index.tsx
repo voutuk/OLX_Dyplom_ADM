@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settlement }) => {
     const navigate = useNavigate();
-
     return (
         <div className="w-[20.5vw] flex-shrink-0 rounded-bl-lg rounded-br-lg border border-[#9b7a5b]/20 p-0 relative">
             <ToggleFavoriteButton advertId={id} className="absolute right-[0px] top-[.5vh]"/>

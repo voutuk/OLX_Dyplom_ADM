@@ -1,7 +1,7 @@
 import { IFilter } from "../../../models/filter"
 
 export interface AdminFilterResultModel {
-    filters: number[]
+    filters: number[][]
     categoryId: number
     priceFrom: number | null | undefined
     priceTo: number | null | undefined
@@ -10,7 +10,7 @@ export interface AdminFilterResultModel {
 
 export interface FilterData {
     filters: IFilter[]
-    filtersValues: number[]
+    filtersValues: number[][]
     filterWidth: number
     isFilterClear: boolean
 }
