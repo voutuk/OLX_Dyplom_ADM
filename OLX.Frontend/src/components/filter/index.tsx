@@ -18,8 +18,7 @@ const Filter: React.FC<FilterProps> = ({ filter, onChange, onReset }) => {
         }
         return undefined;
     }
-    console.log('update - ', filter?.id)
-
+   
     const checkBoxes = useMemo(() => filter?.values.map(x =>
         <Checkbox className="filter-checkbox" style={{ fontSize: 'clamp(14px, 1.7vh, 36px)', fontWeight: 400 }} key={x.id} value={x.id}>{x.value}</Checkbox>
     ) || [], [filter])

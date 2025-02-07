@@ -3,27 +3,30 @@ import { useGetAllFilterQuery } from "../../redux/api/filterApi"
 import { CategoryFiltersProps } from "./props"
 import Filter from "../filter"
 import { Button, Form } from "antd"
+import PriceFilter from "../price_filter"
 
 const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, onChange, className }) => {
     const [form] = Form.useForm()
     const { data: filters } = useGetAllFilterQuery()
-    
     const onFinish = (data: any) => {
-        const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)) as number[][];
+        console.log(data)
+        const result = Object.values(data).filter(x => x !== undefined && Array.isArray(x) && ((x as []).length > 0)) as number[][];
         if (onChange) {
-            onChange(result)
+            onChange(result, data.priceFrom, data.priceTo, data.isContractPrice)
         }
     }
 
     const onReset = (key: number | undefined) => {
         if (onChange) {
             if (key) {
-                form.setFieldValue(key, [])
+                key < 0
+                    ? form.resetFields(['priceFrom', 'priceTo', 'isContractPrice'])
+                    : form.setFieldValue(key, [])
                 form.submit()
             }
             else {
                 form.resetFields()
-                onChange([])
+                onChange([], undefined, undefined, undefined)
             }
         }
     }
@@ -34,7 +37,7 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
                 key={filter.id}
                 filter={filter}
                 onChange={() => form.submit()}
-                onReset={onReset} /> 
+                onReset={onReset} />
         ) || [], [filters, categoryFiltersIds])
 
     return (
@@ -43,6 +46,10 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
             className={className}
             onFinish={onFinish}
             layout="vertical">
+            <PriceFilter
+                className="mb-[2vh]"
+                onChange={() => form.submit()}
+                onReset={onReset} />
             {...filterElements}
             {filterElements?.length > 1 &&
                 <Button

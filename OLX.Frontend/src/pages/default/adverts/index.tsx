@@ -11,7 +11,7 @@ import CategoryFilters from "../../../components/category_filters";
 import AdvertsSection from "../../../components/adverts_section";
 import PrimaryButton from "../../../components/buttons/primary_button";
 import LocationInput from "../../../components/inputs/location_input";
-import { Tree } from "antd";
+
 
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
     priceFrom: Number(searchParams.get("priceFrom")),
@@ -79,7 +79,13 @@ const AdvertsPage: React.FC = () => {
                             <CategoryFilters
                                 className="mt-[2vh]"
                                 categoryFiltersIds={filters}
-                                onChange={(result) => setSearchParams(getQueryString(({ ...pageRequest, filters: result })))}
+                                onChange={(filters, priceFrom, priceTo, isContractPrice) => setSearchParams(getQueryString(({
+                                    ...pageRequest,
+                                    filters: filters,
+                                    priceFrom: priceFrom,
+                                    priceTo: priceTo,
+                                    isContractPrice: isContractPrice
+                                })))}
                             />
                         </Collapsed>
 
@@ -91,7 +97,7 @@ const AdvertsPage: React.FC = () => {
                     </div>
 
                     <div className="flex-1 flex flex-col items-center gap-[8vh]">
-                       {/* Search result */}
+                        {/* Search result */}
                         <div className="flex justify-end items-center gap-[1vw] w-[100%]">
                             <span className="font-unbounded text-[#3a211c]  font-normal text-adaptive-3_3-text mr-auto self-center">Ми знайшли понад 1000 оголошень</span>
                             <LocationInput />
@@ -110,7 +116,7 @@ const AdvertsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* <AdvertsSection
+                        <AdvertsSection
                             isLoading={isAdvertsLoading}
                             adverts={adverts?.items} />
                         {adverts && adverts.total != adverts.items.length &&
@@ -123,7 +129,7 @@ const AdvertsPage: React.FC = () => {
                                 bgColor='#9B7A5B'
                                 fontColor='white'
                                 brColor='#9B7A5B' />
-                        } */}
+                        }
                     </div>
                 </div>
             </div>
