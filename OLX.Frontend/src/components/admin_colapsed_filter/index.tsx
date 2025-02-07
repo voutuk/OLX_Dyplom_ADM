@@ -1,5 +1,5 @@
 import { Collapse, Form, InputNumber, Select, Spin, TreeSelect } from "antd";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useGetAllFilterQuery } from "../../redux/api/filterApi";
 import { useGetAllCategoriesQuery } from "../../redux/api/categoryApi";
 import { buildTree, clamp, getAllParentFilterIds } from "../../utilities/common_funct";
@@ -47,7 +47,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
         onFiltersChange({ filters: result, categoryId: categoryId.current || 0, priceFrom: priceFrom.current, priceTo: priceTo.current })
     }
 
-    const getCategoryTree = useCallback(() => buildTree(categories || []), [categories])
+    const getCategoryTree = useMemo(() => buildTree(categories || []), [categories])
    
     useEffect(() => {
         const categoryParamsId = searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : 0
@@ -111,7 +111,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                                                 className="mb-3"
                                                 style={{ width: '100%', minWidth: 250 }}
                                                 dropdownStyle={{ maxWidth: 400, overflow: 'auto' }}
-                                                treeData={getCategoryTree()}
+                                                treeData={getCategoryTree}
                                                 placeholder="Категорія"
                                                 onChange={onCategoryChange}
                                             />

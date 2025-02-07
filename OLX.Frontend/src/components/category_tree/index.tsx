@@ -1,5 +1,5 @@
 import { Tree } from "antd"
-import { Key, useCallback, useEffect, useState } from "react"
+import { Key, useEffect, useMemo, useState } from "react"
 import { buildTree, getAllParentsIds } from "../../utilities/common_funct"
 import { ICategory } from "../../models/category"
 interface CategoryTreeProps {
@@ -12,23 +12,24 @@ interface CategoryTreeProps {
 const CategoryTree: React.FC<CategoryTreeProps> = ({ categoryId, categories, onSelect, className }) => {
 
     const [expandedCategories, setExpandedCategories] = useState<Key[]>([])
-    const buildCategoryTree = useCallback(() => buildTree(categories || []), [categories])
+    const categoryTree = useMemo(() => buildTree(categories || []), [categories])
+    const allParentsIds = useMemo(() => getAllParentsIds(categories || [], categoryId) as Key[], [categories, categoryId])
     useEffect(() => {
         if (categoryId) {
-            setExpandedCategories(getAllParentsIds(categories || [], categoryId) as Key[]);
+            setExpandedCategories(allParentsIds);
         }
     }, [categoryId]);
     return (
         <Tree
             onExpand={(keys) => setExpandedCategories(keys)}
-            expandedKeys={expandedCategories ? expandedCategories : []}
+            expandedKeys={expandedCategories}
             selectedKeys={[categoryId as Key]}
             onSelect={(element) => {
                 if (element[0] && onSelect) {
                     onSelect(element[0] as number)
                 }
             }}
-            treeData={buildCategoryTree()}
+            treeData={categoryTree}
             className={className} />
     )
 }

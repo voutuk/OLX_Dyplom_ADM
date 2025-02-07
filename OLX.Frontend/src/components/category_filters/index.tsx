@@ -1,14 +1,15 @@
-import { useCallback } from "react"
+import { useMemo } from "react"
 import { useGetAllFilterQuery } from "../../redux/api/filterApi"
 import { CategoryFiltersProps } from "./props"
 import Filter from "../filter"
 import { Button, Form } from "antd"
 
 
+
 const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, onChange }) => {
     const [form] = Form.useForm()
     const { data: filters } = useGetAllFilterQuery()
-    const getCategoryFilters = useCallback(() => filters?.filter(x => categoryFiltersIds?.includes(x.id)) || [], [categoryFiltersIds])
+    const categoryFilters = useMemo(() => filters?.filter(x => categoryFiltersIds?.includes(x.id)) || [], [filters, categoryFiltersIds])
     const onFinish = (data: any) => {
         const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)) as number[][];
         if (onChange) {
@@ -34,14 +35,14 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
             form={form}
             onFinish={onFinish}
             layout="vertical">
-            {getCategoryFilters()?.map((filter) =>
+            {categoryFilters?.map((filter) =>
                 <Filter
                     key={filter.id}
                     filter={filter}
                     onChange={() => form.submit()}
                     onReset={onReset} />
             )}
-            {getCategoryFilters()?.length > 0 &&
+            {categoryFilters?.length > 1 &&
                 <Button
                     size="small"
                     className=" self-start  text-[red]"

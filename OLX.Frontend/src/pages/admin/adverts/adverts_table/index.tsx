@@ -11,7 +11,7 @@ import { APP_ENV } from "../../../../constants/env";
 import { useGetAllCategoriesQuery } from "../../../../redux/api/categoryApi";
 import { formatPrice, getAdvertPageRequest, getDateTime, getQueryString } from "../../../../utilities/common_funct";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Key, useEffect, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { useGetAdvertPageQuery } from "../../../../redux/api/advertApi";
 import { IconButton } from "@mui/material";
 import { ColumnType, TableProps } from "antd/es/table";
@@ -44,13 +44,14 @@ const AdminAdvertTable: React.FC = () => {
     const location  = useLocation()
     const { data: categories } = useGetAllCategoriesQuery()
     const [searchParams, setSearchParams] = useSearchParams('');
-    const [pageRequest, setPageRequest] = useState<IAdvertSearchPageData>(updatedPageRequest(searchParams));
+    const pageRequest = useMemo(() => updatedPageRequest(searchParams), [location]);
+    const getPageRequest = useMemo(() => getAdvertPageRequest(pageRequest, categories || []), [pageRequest, categories])
     const [approveAdvert] = useApproveAdvertMutation();
     const [deleteAdvert] = useDeleteAdvertMutation();
     const [lockAdvert] = useBlockAdvertMutation();
-    const { data: adverts, isLoading, refetch } = useGetAdvertPageQuery(getAdvertPageRequest(pageRequest, categories || []));
+    const { data: adverts, isLoading, refetch } = useGetAdvertPageQuery(getPageRequest);
     useEffect(() => {
-        setPageRequest(updatedPageRequest(searchParams))
+        refetch()
     }, [location])
     const getColumnSearchProps = (dataIndex: keyof IAdvertSearchPageData): ColumnType<IAdvert> => ({
         filterDropdown: ({ close }) => (
