@@ -21,10 +21,10 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     size: Number(searchParams.get("size")) || 15,
     page: Number(searchParams.get("page")) || 1,
     sortKey: searchParams.get("sortKey") || '',
-    isDescending: searchParams.get("isDescending") === "true",
+    isDescending:  searchParams.get("isDescending") === "true",
     categoryId: searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : undefined,
     filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : [],
-    isContractPrice: searchParams.get("isContractPrice") === "true" || undefined,
+    isContractPrice: searchParams.has("isContractPrice") ? searchParams.get("isContractPrice") === "true" : undefined,
     search: searchParams.get("search") || undefined,
 });
 

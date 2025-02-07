@@ -10,6 +10,7 @@ interface PriceFilterProps {
 
 const PriceFilter: React.FC<PriceFilterProps> = ({ className, onChange, onReset: onClear }) => {
     const [searchParams] = useSearchParams('');
+    
     return (
         <div className={` ${className}`}>
             <h5 className="font-unbounded text-adaptive-1_6-text  mb-[1.5vh] "> Ціна</h5>
