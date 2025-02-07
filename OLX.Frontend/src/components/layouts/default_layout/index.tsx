@@ -28,7 +28,7 @@ const DefaultLayout: React.FC = () => {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    if (location.pathname.includes('advert/'))
+    //if (location.pathname.includes('advert/'))
       containerRef.current?.scrollTo({
         top: 0,
         behavior: location.pathname.includes('advert/') ? "auto" : "smooth"

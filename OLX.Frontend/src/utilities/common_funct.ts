@@ -96,6 +96,16 @@ export const getAllParents = (categories: ICategory[], parentId?: number): ICate
   return parentIds;
 };
 
+export const getAllParentsIds = (categories: ICategory[], parentId?: number): number[] => {
+  const parentIds: number[] = [];
+  if (parentId) {
+    const parent = categories.find(x => x.id === parentId)
+    parentIds.push(parentId)
+    parentIds.push(...getAllParentsIds(categories, parent?.parentId))
+  }
+  return parentIds;
+};
+
 
 export const getQueryString = (filter: any): string => {
   var result = '';
