@@ -96,7 +96,7 @@ const AdvertsPage: React.FC = () => {
                         </Collapsed>
                     </div>
 
-                    <div className="flex-1 flex flex-col items-center gap-[8vh]">
+                    <div className="flex-1 flex flex-col  gap-[8vh]">
                         {/* Search result */}
                         <div className="flex justify-end items-center gap-[1vw] w-[100%]">
                             <span className="font-unbounded text-[#3a211c]  font-normal text-adaptive-3_3-text mr-auto self-center">Ми знайшли понад 1000 оголошень</span>
