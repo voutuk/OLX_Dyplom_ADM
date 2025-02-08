@@ -16,8 +16,7 @@ services:
     networks:
       - myAppNetwork
     volumes:
-#       - d:/web/pd322/postgresql:/var/lib/postgresql/data  # Use the volume name msvol here
-        - /data/postgresql/data:/var/lib/postgresql/data
+      - /data/postgresql/data:/var/lib/postgresql/data
     deploy:
       restart_policy:
         condition: on-failure
@@ -25,7 +24,7 @@ services:
 
   app:
     container_name: olx_container
-    image: olx-asp-api:latest
+    image: ${BACKEND_IMAGE}:${BUILD_NUMBER}
     ports:
       - "8080:8080"
     networks:
@@ -33,7 +32,7 @@ services:
     depends_on:
       - postgresServerDb
     volumes:
-     - /volumes/olx-asp/images:/app/uploading  # Use the volume name appvol here
+     - /volumes/olx-asp/images:/app/uploading
     deploy:
       restart_policy:
         condition: on-failure
@@ -41,9 +40,7 @@ services:
   
   client:
     container_name: olx_client_container
-    image: olx-client:latest
+    image: ${FRONTEND_IMAGE}:${BUILD_NUMBER}
     restart: on-failure
     ports:
       - "80:80"
-      
-
