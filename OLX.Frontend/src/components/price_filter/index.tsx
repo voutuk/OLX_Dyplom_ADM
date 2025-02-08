@@ -1,12 +1,7 @@
 import { Button, Form, InputNumber, Radio } from "antd"
 import './style.scss'
 import { useSearchParams } from "react-router-dom"
-
-interface PriceFilterProps {
-    className?: string
-    onChange?: () => void
-    onReset?: (value: any) => void
-}
+import { PriceFilterProps } from "./props"
 
 const PriceFilter: React.FC<PriceFilterProps> = ({ className, onChange, onReset: onClear }) => {
     const [searchParams] = useSearchParams('');
@@ -18,7 +13,8 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ className, onChange, onReset:
             <Form.Item
                 noStyle
                 name="isContractPrice"
-                initialValue={searchParams.has('isContractPrice') ? searchParams.get('isContractPrice') === 'true' : undefined}>
+                initialValue={searchParams.has('isContractPrice') ? searchParams.get('isContractPrice') === 'true' : undefined}
+            >
                 <Radio.Group
                     onChange={onChange}
                     className="mb-[1vh] font-unbounded filter-radio flex flex-col gap-[.3vh]">
@@ -32,7 +28,8 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ className, onChange, onReset:
                 <Form.Item
                     noStyle
                     name="priceFrom"
-                    initialValue={searchParams.get('priceFrom')}>
+                    initialValue={searchParams.get('priceFrom') || undefined}
+                >
 
                     <InputNumber
                         size='small'
@@ -44,7 +41,8 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ className, onChange, onReset:
                 <Form.Item
                     noStyle
                     name="priceTo"
-                    initialValue={searchParams.get('priceTo')}>
+                    initialValue={searchParams.get('priceTo') || undefined}
+                >
                     <InputNumber
                         min={0}
                         size='small'
@@ -58,7 +56,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ className, onChange, onReset:
                 size="small"
                 className=" self-start p-0  text-[red] mt-[1vh]"
                 type='link'
-                onClick={() => { onClear && onClear(-1) }}>
+                onClick={() => onClear && onClear(-1)}>
                 Очистити
             </Button>
         </div>

@@ -5,11 +5,22 @@ import Filter from "../filter"
 import { Button, Form } from "antd"
 import PriceFilter from "../price_filter"
 
+const crearedPariceFilter = {
+    priceFrom: undefined,
+    priceTo: undefined,
+    isContractPrice: undefined
+}
+
 const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, onChange, className }) => {
     const [form] = Form.useForm()
     const { data: filters } = useGetAllFilterQuery()
+
+    const clearedFormFilters = useMemo(() => filters?.map(x => x.id).reduce((acc, key) => {
+        acc[key] = undefined;
+        return acc;
+    }, {} as Record<string, any>), [filters])
+
     const onFinish = (data: any) => {
-        console.log(data)
         const result = Object.values(data).filter(x => x !== undefined && Array.isArray(x) && ((x as []).length > 0)) as number[][];
         if (onChange) {
             onChange(result, data.priceFrom, data.priceTo, data.isContractPrice)
@@ -20,12 +31,12 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
         if (onChange) {
             if (key) {
                 key < 0
-                    ? form.resetFields(['priceFrom', 'priceTo', 'isContractPrice'])
+                    ? form.setFieldsValue(crearedPariceFilter)
                     : form.setFieldValue(key, [])
                 form.submit()
             }
             else {
-                form.resetFields()
+                form.setFieldsValue({ ...crearedPariceFilter, ...clearedFormFilters })
                 onChange([], undefined, undefined, undefined)
             }
         }
@@ -51,7 +62,7 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
                 onChange={() => form.submit()}
                 onReset={onReset} />
             {...filterElements}
-            {filterElements?.length > 1 &&
+            {filterElements?.length > 0 &&
                 <Button
                     size="small"
                     className=" self-start text-adaptive-1_6-text text-[red]"
