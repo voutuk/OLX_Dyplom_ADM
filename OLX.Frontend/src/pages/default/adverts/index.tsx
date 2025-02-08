@@ -11,6 +11,8 @@ import CategoryFilters from "../../../components/category_filters";
 import AdvertsSection from "../../../components/adverts_section";
 import PrimaryButton from "../../../components/buttons/primary_button";
 import LocationInput from "../../../components/inputs/location_input";
+import AdvertSort from "../../../components/advert_sort";
+import { AdvertSortData } from "../../../components/advert_sort/models";
 
 
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
@@ -21,7 +23,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     size: Number(searchParams.get("size")) || 15,
     page: Number(searchParams.get("page")) || 1,
     sortKey: searchParams.get("sortKey") || '',
-    isDescending:  searchParams.get("isDescending") === "true",
+    isDescending: searchParams.get("isDescending") === "true",
     categoryId: searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : undefined,
     filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : [],
     isContractPrice: searchParams.has("isContractPrice") ? searchParams.get("isContractPrice") === "true" : undefined,
@@ -92,7 +94,13 @@ const AdvertsPage: React.FC = () => {
                         <Collapsed
                             title="Сортувати"
                             className="text-adaptive-card-price-text  text-[#3A211C] font-unbounded">
-                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Сортувати</div>
+                            <AdvertSort
+                                className="mt-[2vh]"
+                                onChange={(data: AdvertSortData) => setSearchParams(getQueryString({
+                                    ...pageRequest,
+                                    sortKey: data.sort,
+                                    isDescending: data.desc
+                                }))} />
                         </Collapsed>
                     </div>
 

@@ -122,20 +122,15 @@ namespace Olx.BLL.Services
 
         public async Task<PageResponse<AdvertDto>> GetPageAsync(AdvertPageRequest pageRequest)
         {
-            var query = advertRepository.GetQuery()
-                .Include(x => x.FilterValues)
-                .Include(x => x.Images)
-                .Include(x => x.User)
-                .Include(x => x.Settlement);
-
-            var paginationBuilder = new PaginationBuilder<Advert>(query);
+            var query = mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery());
+            var paginationBuilder = new PaginationBuilder<AdvertDto>(query);
             var filter = mapper.Map<AdvertFilter>(pageRequest);
             var sortData = new AdvertSortData(pageRequest.IsDescending, pageRequest.SortKey);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page, pageRequest.Size, filter, sortData);
             return new()
             {
                 Total = page.Total,
-                Items = mapper.Map<IEnumerable<AdvertDto>>(page.Items)
+                Items = page.Items
             };
         }
 

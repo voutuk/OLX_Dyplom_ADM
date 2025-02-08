@@ -38,7 +38,7 @@ app.UseAuthorization();
 app.MapHub<MessageHub>("/hub");
 //app.UseHttpsRedirection();
 app.MapControllers();
-
+app.AddCultures();
 app.DataBaseMigrate();
 await app.SeedDataAsync();
 await app.RunAsync();

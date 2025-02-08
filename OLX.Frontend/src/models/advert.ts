@@ -15,6 +15,7 @@ export interface IAdvert{
     price: number,
     categoryId: number,
     settlementName: string,
+    categoryName: string,
     filterValues: IFilterValue[],
     images: IAdvertImage[]
 }

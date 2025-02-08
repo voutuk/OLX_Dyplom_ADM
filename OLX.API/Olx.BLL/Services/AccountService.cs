@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
@@ -19,6 +20,7 @@ using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -282,7 +284,6 @@ namespace Olx.BLL.Services
                             var result = await userManager.SetLockoutEndDateAsync(user, userBlockModel.LockoutEndDate.HasValue ? userBlockModel.LockoutEndDate.Value.ToUniversalTime() : DateTime.MaxValue.ToUniversalTime());
                             if (result.Succeeded)
                             {
-
                                 string lockoutEndMessage = userBlockModel.LockoutEndDate is null
                                     ? "На невизначений термін"
                                     : $"Заблокований до {userBlockModel.LockoutEndDate.Value.ToLongDateString()} {userBlockModel.LockoutEndDate.Value.ToLongTimeString()}";
