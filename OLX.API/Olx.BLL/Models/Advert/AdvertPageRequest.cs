@@ -19,6 +19,6 @@ namespace Olx.BLL.Models.Advert
         public bool? Blocked { get; init; }
         public bool? Archived { get; init; }
         public IEnumerable<int>? CategoryIds { get; init; }
-        public IEnumerable<int>? Filters { get; init; }
+        public IEnumerable<IEnumerable<int>>? Filters { get; init; }
     }
 }

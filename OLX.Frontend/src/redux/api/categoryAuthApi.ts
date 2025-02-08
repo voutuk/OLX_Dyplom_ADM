@@ -39,7 +39,7 @@ export const categoryAuthApi = createApi({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(categoryApi.util.invalidateTags(['Categories','CategoriesPage']))
+                    dispatch(categoryApi.util.invalidateTags(['Categories','CategoriesPage','Category']))
                 } catch (error) {
                     console.error('Edit category failed:', error);
                 }
@@ -56,7 +56,7 @@ export const categoryAuthApi = createApi({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(categoryApi.util.invalidateTags(['Categories','CategoriesPage']))
+                    dispatch(categoryApi.util.invalidateTags(['Categories','CategoriesPage','Category']))
                 } catch (error) {
                     console.error('Delete category failed:', error);
                 }
@@ -73,7 +73,7 @@ export const categoryAuthApi = createApi({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(categoryApi.util.invalidateTags(['Categories','CategoriesPage']))
+                    dispatch(categoryApi.util.invalidateTags(['Categories','CategoriesPage','Category']))
                 } catch (error) {
                     console.error('Delete category failed:', error);
                 }

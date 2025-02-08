@@ -110,7 +110,7 @@ export const getAllParentsIds = (categories: ICategory[], parentId?: number): nu
 export const getQueryString = (filter: any): string => {
   var result = '';
   Object.keys(filter).forEach((key) => {
-    if (filter[key] && filter[key]?.length !== 0) {
+    if (filter[key] !== null && filter[key] !== undefined && filter[key].length !== 0) {
       var value = typeof (filter[key]) === "object"
         ? JSON.stringify(filter[key])
         : filter[key];
@@ -153,9 +153,9 @@ export const getFormatDateTime = (date: Date): string => {
 
 export const getAdvertPageRequest = (pageData: IAdvertSearchPageData, categories: ICategory[]): IAdvertPageRequest => {
   const { categoryId, ...rest } = pageData;
-   const result  = {
-    ...rest ,
-    categoryIds: getLastChildrenCategoriesIds(categories, pageData.categoryId) 
+  const result = {
+    ...rest,
+    categoryIds: getLastChildrenCategoriesIds(categories, pageData.categoryId)
   }
-   return result;
+  return result;
 }

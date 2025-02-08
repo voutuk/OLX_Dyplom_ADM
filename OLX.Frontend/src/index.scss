@@ -28,9 +28,16 @@ body {
   min-height: 100vh;
 }
 
+
+
+.filter-checkbox .ant-checkbox-inner {
+  border: 1px solid globalColors.$controlsColor !important;
+  border-radius: 2px;
+  color: #9B7A5B;
+}
+
 .ant-checkbox-inner {
   border: 2px solid globalColors.$controlsColor !important;
-  background-color: transparent !important;
 }
 
 

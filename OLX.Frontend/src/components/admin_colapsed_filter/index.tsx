@@ -1,5 +1,5 @@
 import { Collapse, Form, InputNumber, Select, Spin, TreeSelect } from "antd";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useGetAllFilterQuery } from "../../redux/api/filterApi";
 import { useGetAllCategoriesQuery } from "../../redux/api/categoryApi";
 import { buildTree, clamp, getAllParentFilterIds } from "../../utilities/common_funct";
@@ -32,7 +32,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
         onFiltersChange({ filters: [], categoryId: category || 0, priceFrom: priceFrom.current, priceTo: priceTo.current })
     }
 
-    const updateCategoryFilters = (categoryId: number | undefined, filterValues?: number[]) => {
+    const updateCategoryFilters = (categoryId: number | undefined, filterValues?: number[][]) => {
         const categoryFilters = getAllParentFilterIds(categories || [], categoryId)
         const curentFilters = filters?.filter(x => categoryFilters.includes(x.id)) || []
         let filterWidth = curentFilters.length < columns
@@ -42,18 +42,18 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
     }
 
     const confirm = (data: any) => {
-        const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)).flat() as number[];
+        const result = Object.values(data).filter(x => x !== undefined && ((x as []).length > 0)) as number[][];
         categoryFiltersData.filtersValues = result
         onFiltersChange({ filters: result, categoryId: categoryId.current || 0, priceFrom: priceFrom.current, priceTo: priceTo.current })
     }
 
-    const getCategoryTree = useCallback(() => buildTree(categories || []), [categories])
+    const getCategoryTree = useMemo(() => buildTree(categories || []), [categories])
    
     useEffect(() => {
         const categoryParamsId = searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : 0
         if (categoryParamsId !== 0) {
             categoryId.current = categoryParamsId
-            const filterValues = searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[]) : []
+            const filterValues = searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : []
             updateCategoryFilters(categoryParamsId, filterValues)
         }
         priceFrom.current = Number(searchParams.get("priceFrom"))
@@ -63,7 +63,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
     const initFilter = (filter: IFilter): number[] => {
         if (categoryFiltersData.filtersValues.length > 0) {
             const filterValues = filter.values.map(x => x.id);
-            return categoryFiltersData.filtersValues.filter(item => filterValues.some(x => x == item));
+            return categoryFiltersData.filtersValues.flat().filter(item => filterValues.some(x => x == item));
         }
         return [];
     }
@@ -78,6 +78,25 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
         priceTo.current = 0
         onCategoryChange(undefined)
     }
+
+    const categoryFilters = useMemo(()=>categoryFiltersData.filters.map(filter =>
+        <Form.Item
+            noStyle
+            key={filter.id}
+            name={filter.id}
+            initialValue={initFilter(filter)}
+        >
+            <Select
+                style={{ width: `${categoryFiltersData.filterWidth}%` }}
+                allowClear
+                mode= 'tags' 
+                maxTagCount='responsive'
+                options={filter.values.map(value => ({ value: value.id.toString(), label: value.value }))}
+                placeholder={filter.name}
+                onChange={() => form.submit()}
+            />
+        </Form.Item>
+    ),[categoryFiltersData.filters])
 
     return (
         <Collapse
@@ -111,7 +130,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                                                 className="mb-3"
                                                 style={{ width: '100%', minWidth: 250 }}
                                                 dropdownStyle={{ maxWidth: 400, overflow: 'auto' }}
-                                                treeData={getCategoryTree()}
+                                                treeData={getCategoryTree}
                                                 placeholder="Категорія"
                                                 onChange={onCategoryChange}
                                             />
@@ -143,24 +162,7 @@ const AdminAdvertCollapsedFilters: React.FC<AdminAdvertFiltersProps> = ({ onFilt
                                         <>
                                             <span>Фільтри</span>
                                             <div className=" flex flex-wrap gap-[.5vw] w-full border rounded-xl p-3">
-                                                {categoryFiltersData.filters.map(filter =>
-                                                    <Form.Item
-                                                        noStyle
-                                                        key={filter.id}
-                                                        name={filter.id}
-                                                        initialValue={initFilter(filter)}
-                                                    >
-                                                        <Select
-                                                            style={{ width: `${categoryFiltersData.filterWidth}%` }}
-                                                            allowClear
-                                                            mode={filter.values.length > 2 ? 'tags' : undefined}
-                                                            maxTagCount='responsive'
-                                                            options={filter.values.map(value => ({ value: value.id.toString(), label: value.value }))}
-                                                            placeholder={filter.name}
-                                                            onChange={() => form.submit()}
-                                                        />
-                                                    </Form.Item>
-                                                )}
+                                                {...categoryFilters}
                                             </div>
                                         </>
                                     }

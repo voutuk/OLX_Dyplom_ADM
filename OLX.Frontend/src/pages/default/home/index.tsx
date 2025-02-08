@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
   const [isEnd, setisEnd] = useState(false);
   const { data, isLoading } = useGetAdvertPageQuery({
     page,
-    size: 4,
+    size: 8,
     sortKey: "date",
     isDescending: true,
     priceFrom: 0,
@@ -42,10 +42,12 @@ const HomePage: React.FC = () => {
       <HomePageImageBlock />
       <div className='flex flex-col items-center mx-auto py-[50px] gap-[50px]'>
         <CategoriesSection />
-        <div className='mx-[7vw]'>
+        <div className='mx-[6.9vw]'>
           <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
         </div>
-        <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' disabled={isEnd} isLoading={isLoading} className='w-[23vw] h-[6.4vh] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
+        {!isEnd &&
+          <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' isLoading={isLoading} className='w-[23vw] h-[6.4vh] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
+        }
       </div>
     </div>
   );
