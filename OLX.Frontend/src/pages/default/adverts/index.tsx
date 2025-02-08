@@ -14,13 +14,13 @@ import LocationInput from "../../../components/inputs/location_input";
 import AdvertSort from "../../../components/advert_sort";
 import { AdvertSortData } from "../../../components/advert_sort/models";
 
-
+const advertPageSize: number = 6;
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
     priceFrom: Number(searchParams.get("priceFrom")),
     priceTo: Number(searchParams.get("priceTo")),
     approved: true,
     blocked: false,
-    size: Number(searchParams.get("size")) || 15,
+    size: Number(searchParams.get("size")) || advertPageSize,
     page: Number(searchParams.get("page")) || 1,
     sortKey: searchParams.get("sortKey") || '',
     isDescending: searchParams.get("isDescending") === "true",
@@ -37,7 +37,7 @@ const AdvertsPage: React.FC = () => {
     const filters = useMemo(() => {
         return pageRequest.categoryId && categories
             ? getAllParentFilterIds(categories, pageRequest.categoryId)
-            : [];
+            : []
     }, [categories, pageRequest.categoryId]);
     const getPageRequest = useMemo(() => getAdvertPageRequest(pageRequest, categories || []), [pageRequest, categories])
     const { data: adverts, isLoading: isAdvertsLoading, isUninitialized, refetch: advertRefetch } =
@@ -67,7 +67,7 @@ const AdvertsPage: React.FC = () => {
                                     categoryId={pageRequest.categoryId}
                                     onSelect={(id) => {
                                         if (id) {
-                                            setSearchParams(getQueryString(({ ...pageRequest, categoryId: id })))
+                                            setSearchParams(getQueryString(({ ...pageRequest, categoryId: id, size: advertPageSize })))
                                         }
                                     }}
                                 />
@@ -86,7 +86,8 @@ const AdvertsPage: React.FC = () => {
                                     filters: filters,
                                     priceFrom: priceFrom,
                                     priceTo: priceTo,
-                                    isContractPrice: isContractPrice
+                                    isContractPrice: isContractPrice,
+                                    size: advertPageSize
                                 })))}
                             />
                         </Collapsed>
@@ -102,9 +103,10 @@ const AdvertsPage: React.FC = () => {
                                     isDescending: data.desc
                                 }))} />
                         </Collapsed>
+
                     </div>
 
-                    <div className="flex-1 flex flex-col  gap-[8vh]">
+                    <div className="flex-1 flex flex-col gap-[8vh]">
                         {/* Search result */}
                         <div className="flex justify-end items-center gap-[1vw] w-[100%]">
                             <span className="font-unbounded text-[#3a211c]  font-normal text-adaptive-3_3-text mr-auto self-center">Ми знайшли понад 1000 оголошень</span>
@@ -129,11 +131,17 @@ const AdvertsPage: React.FC = () => {
                             adverts={adverts?.items} />
                         {adverts && adverts.total != adverts.items.length &&
                             <PrimaryButton
-                                onButtonClick={() => { }}
+                                onButtonClick={() => {
+                                    setSearchParams(getQueryString({
+                                        ...pageRequest,
+                                        size: (pageRequest?.size || 0) + advertPageSize
+                                    }))
+                                }}
+                                fontSize="clamp(14px, 2.5vh, 36px)"
                                 title='Завантажити ще'
                                 disabled={false}
                                 isLoading={isAdvertsLoading}
-                                className='w-[19vw] h-[4.5vh] '
+                                className='w-[20vw] h-[4.5vh] mt-[2vh] mb-[4vh] font-light self-center'
                                 bgColor='#9B7A5B'
                                 fontColor='white'
                                 brColor='#9B7A5B' />

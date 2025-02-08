@@ -24,12 +24,10 @@ const HomePage: React.FC = () => {
 
   const [adverts, setAdverts] = useState<IAdvert[]>([]);
   useEffect(() => {
-    if (data?.items) {
-      if (data.total == adverts.length) {
-        setisEnd(true);
-      } else {
-        setAdverts((prev) => [...prev, ...data.items]);
-      }
+    if (data && data?.items.length > 0) {
+       const newAdverts =  [...adverts, ...data.items]
+       setAdverts(newAdverts);
+       setisEnd(data.total === newAdverts.length);
     }
   }, [data]);
 
@@ -46,7 +44,14 @@ const HomePage: React.FC = () => {
           <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
         </div>
         {!isEnd &&
-          <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' isLoading={isLoading} className='w-[23vw] h-[6.4vh] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
+          <PrimaryButton
+            onButtonClick={loadMore}
+            title='Завантажити більше'
+            isLoading={isLoading}
+            className='w-[23vw] h-[6.4vh] p-[8px]'
+            bgColor='#9B7A5B'
+            fontColor='white'
+            brColor='#9B7A5B' />
         }
       </div>
     </div>
