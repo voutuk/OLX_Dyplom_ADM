@@ -1,8 +1,6 @@
 ﻿
-
-using Olx.BLL.Entities;
 using Olx.BLL.DTOs.FilterDtos;
-using AutoMapper;
+
 
 namespace Olx.BLL.DTOs
 {
@@ -20,6 +18,9 @@ namespace Olx.BLL.DTOs
         public bool IsContractPrice { get; set; }
         public decimal Price { get; set; }
         public int CategoryId { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
+        public bool Approved { get; set; } = false;
+        public bool Blocked { get; set; } = false;
         public string SettlementName { get; set; } = string.Empty;
         public ICollection<FilterValueDto> FilterValues { get; set; } = new HashSet<FilterValueDto>();
         public ICollection<AdvertImageDto> Images { get; set; } = new HashSet<AdvertImageDto>();

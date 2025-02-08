@@ -1,24 +1,24 @@
-﻿using Olx.BLL.Entities;
+﻿using Olx.BLL.DTOs;
 using Olx.BLL.Pagination.Interfaces;
 using System.Linq.Expressions;
 
 
 namespace Olx.BLL.Pagination.SortData
 {
-    public class AdvertSortData (bool descending,string sortKey) : IPaginationSortData<Advert>
+    public class AdvertSortData (bool descending,string sortKey) : IPaginationSortData<AdvertDto>
     {
-        public IQueryable<Advert> Sort(IQueryable<Advert> query)
+        public IQueryable<AdvertDto> Sort(IQueryable<AdvertDto> query)
         {
-            Expression<Func<Advert, object?>>? sortExpr =
+            Expression<Func<AdvertDto, object?>>? sortExpr =
                 sortKey switch
                 {
                     "id" => x => x.Id,
                     "price" => x => x.Price,
                     "date" => x => x.Date,
-                    "categoryName" => x => x.Category.Name,
+                    "categoryName" => x => x.CategoryName,
                     "phoneNumber" => x => x.PhoneNumber,
                     "contactEmail" => x => x.ContactEmail,
-                    "settlementName" => x => x.Settlement.Description,
+                    "settlementName" => x => x.SettlementName,
                     "title" => x => x.Title,
                     _ => x => x.Id,
                 };
