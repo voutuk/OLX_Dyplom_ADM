@@ -25,7 +25,7 @@ services:
 
   app:
     container_name: olx_container
-    image: olx-asp-api
+    image: olx-asp-api:latest
     ports:
       - "8080:8080"
     networks:
@@ -41,7 +41,7 @@ services:
   
   client:
     container_name: olx_client_container
-    image: olx-client
+    image: olx-client:latest
     restart: on-failure
     ports:
       - "80:80"
