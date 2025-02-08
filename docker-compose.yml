@@ -15,8 +15,6 @@ services:
       - POSTGRES_DB=olxDb
     networks:
       - myAppNetwork
-    volumes:
-      - /data/postgresql/data:/var/lib/postgresql/data
     deploy:
       restart_policy:
         condition: on-failure
@@ -31,8 +29,6 @@ services:
      - myAppNetwork
     depends_on:
       - postgresServerDb
-    volumes:
-     - /volumes/olx-asp/images:/app/uploading
     deploy:
       restart_policy:
         condition: on-failure
