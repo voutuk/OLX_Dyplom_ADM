@@ -6,7 +6,9 @@ import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
 
 
-const AdvertsPage = React.lazy(() => import( './pages/default/adverts'));
+const UserProfile = React.lazy(() => import( './pages/user/profile'));
+const UserProfileEdit = React.lazy(() => import( './pages/user/edit_profile'));
+const AdvertsPage = React.lazy(() => import('./pages/default/adverts'));
 const AdminAdvertPreview = React.lazy(() => import('./pages/admin/adverts/advert_preview'));
 const AdvertPage = React.lazy(() => import('./pages/default/advert'));
 const AuthLayout = React.lazy(() => import('./components/layouts/auth_layout'));
@@ -42,11 +44,16 @@ function App() {
           <Route path="error" element={<ErrorPage />} />
           <Route path="advert/:id" element={<AdvertPage />} />
           <Route path="adverts" element={<AdvertsPage />} />
+
           <Route element={<ProtectedRoutes requiredRole={"User"} />}>
             <Route path="user">
-              <Route path="userprofile" element={<EmailConfirmationPage />} />
+              <Route path="userprofile">
+                <Route index element= {<UserProfile/>}/>
+                <Route path='edit' element = {<UserProfileEdit/>}/>
+              </Route>
             </Route>
           </Route>
+
         </Route>
       </Route>
 
@@ -81,7 +88,7 @@ function App() {
           <Route path="adverts">
             <Route index element={<AdminAdvertTable />} />
             <Route path='approve' element={<AdminAdvertTable />} />
-            <Route path='preview/:id' element={<AdminAdvertPreview/>}/>
+            <Route path='preview/:id' element={<AdminAdvertPreview />} />
           </Route>
 
           <Route path="categories">
