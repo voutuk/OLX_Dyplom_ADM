@@ -1,0 +1,12 @@
+.profile-tabs {
+    .ant-tabs-tab{
+        padding-bottom: 10px;
+       
+    }
+    .ant-tabs-tab-active {
+        font-weight: 500;
+        .ant-tabs-tab-btn {
+            color: black !important;
+        }
+    }
+}

@@ -30,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
         },
         {
             icon: <SettingOutlined />,
-            label: <Link to={'user/usersettings'}>Налаштування</Link>,
+            label: <Link to={'user/userprofile/edit'}>Налаштування</Link>,
             key: '1',
         },
         {
@@ -50,8 +50,8 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
     useEffect(() => { refetch() }, [user])
 
     return (
-        <div className={`h-[10vh] min-h-[60px] sticky px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50 ${className}`}  >
-            <div className="h-[38%] cursor-pointer">
+        <div className={`h-[9vh] min-h-[60px] sticky px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50 ${className}`}  >
+            <div className="h-[42.5%] cursor-pointer">
                 <img alt="logo" onClick={() => navigator('/')} className="h-full w-full" src={Images.logo} />
             </div>
 
