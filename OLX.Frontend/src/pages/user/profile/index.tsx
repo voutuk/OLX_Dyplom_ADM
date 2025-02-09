@@ -12,7 +12,6 @@ const UserProfile: React.FC = () => {
     const user = useAppSelector(state => state.user.user)
     const { data: userData } = useGetUserQuery(user?.id || 0)
     const navigate = useNavigate()
-    console.log(userData)
     const items: TabsProps['items'] = [
         {
             key: '1',

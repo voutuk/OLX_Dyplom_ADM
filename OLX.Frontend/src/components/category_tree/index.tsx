@@ -2,7 +2,7 @@ import { Tree } from "antd"
 import { Key, useEffect, useMemo, useState } from "react"
 import { buildTree, getAllParentsIds } from "../../utilities/common_funct"
 import { CategoryTreeProps } from "./props"
-
+import './style.scss'
 
 const CategoryTree: React.FC<CategoryTreeProps> = ({ categoryId, categories, onSelect, className }) => {
 
@@ -25,7 +25,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({ categoryId, categories, onS
                 }
             }}
             treeData={categoryTree}
-            className={className} />
+            className={`${className}`} />
     )
 }
 
