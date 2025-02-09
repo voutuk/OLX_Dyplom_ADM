@@ -82,3 +82,24 @@ body {
 .back-button:hover {
   color: globalColors.$controlsColor !important;
 }
+
+.location-input
+.ant-input {
+    font-family: 'Montserrat', sans-serif !important;
+    color: #3A211C !important; 
+}
+
+.location-input::placeholder,
+.ant-input::placeholder {
+    color: #3A211C !important; 
+}
+
+.location-input
+.ant-input-outlined,
+.ant-input-outlined:focus,
+.ant-input-outlined:hover
+.ant-input-outlined:active{
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: rgba(globalColors.$controlsColor, 0.5) !important;
+}
