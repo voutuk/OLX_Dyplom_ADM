@@ -11,7 +11,7 @@ interface UserProfileInfoProps {
 const UserProfileInfo: React.FC<UserProfileInfoProps> = ({ user, className }) => {
     return (
         <div className={`flex items-center gap-[4vw] ${className}`}>
-            <UserAvatar user={user} className=" h-full w-auto aspect-[16/16] " />
+            <UserAvatar user={user} imageSize="400" className=" h-full w-auto aspect-[16/16] " />
 
             <div className="flex flex-col h-full justify-between">
                 <div className="flex flex-col gap-[1vh]">
