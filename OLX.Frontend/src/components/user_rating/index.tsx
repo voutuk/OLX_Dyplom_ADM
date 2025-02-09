@@ -13,7 +13,7 @@ const UserRating: React.FC<IUserRatingProps> = ({ user }) => {
                 <div className="flex flex-col self-center">
                     <span className="font-montserrat text-adaptive-advert-page-price-text">{getUserDescr(user)}</span>
                     <div className="flex gap-2 items-center">
-                        <Rating sx={{ fontSize: "2.2vh" }} className="" value={5} />
+                        <Rating readOnly sx={{ fontSize: "2.2vh" }} className="" value={5} />
                         <span className="font-montserrat text-adaptive-input-form-error-text">55</span>
                     </div>
                 </div>

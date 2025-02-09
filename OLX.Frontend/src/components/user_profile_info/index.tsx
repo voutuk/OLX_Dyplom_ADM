@@ -16,7 +16,7 @@ const UserProfileInfo: React.FC<UserProfileInfoProps> = ({ user, className }) =>
             <div className="flex flex-col h-full justify-between">
                 <div className="flex flex-col gap-[1vh]">
                     <span className="font-montserrat font-medium text-adaptive-button-text">{getUserDescr(user)}</span>
-                    <Rating sx={{ fontSize: "3.5vh" }} className="" value={5} />
+                    <Rating sx={{ fontSize: "3.5vh" }} readOnly className="" value={5} />
                 </div>
                 <div className="flex gap-[1.4vh] flex-col">
                     <span className="font-montserrat text-[#9B7A5B]">Про користувача:</span>
