@@ -7,7 +7,7 @@ import { getFormData } from "../../utilities/common_funct";
 export const userAuthApi = createApi({
     reducerPath: 'userAuthApi',
     baseQuery: createBaseQueryWithAuth('User'),
-    tagTypes: ['Users', 'Admins', 'LockedUsers'],
+    tagTypes: ['Users', 'Admins', 'LockedUsers','User'],
     endpoints: (builder) => ({
 
         getUsers: builder.query<IOlxUser[], void>({
@@ -47,7 +47,7 @@ export const userAuthApi = createApi({
                     method: 'GET',
                 }
             },
-            providesTags: ["Users"]
+            providesTags: ["User"]
         }),
 
         getAdmin: builder.query<IOlxUser, number>({
