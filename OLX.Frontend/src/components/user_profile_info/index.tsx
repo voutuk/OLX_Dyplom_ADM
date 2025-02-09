@@ -1,12 +1,7 @@
 import { Rating } from "@mui/material"
 import { formattedDate, getFormatDateTime, getUserDescr } from "../../utilities/common_funct"
 import UserAvatar from "../user_avatar"
-import { IOlxUser } from "../../models/user"
-interface UserProfileInfoProps {
-    user?: IOlxUser
-    className?: string
-}
-
+import { UserProfileInfoProps } from "./props"
 
 const UserProfileInfo: React.FC<UserProfileInfoProps> = ({ user, className }) => {
     return (
