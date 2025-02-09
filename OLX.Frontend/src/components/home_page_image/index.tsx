@@ -19,9 +19,9 @@ const HomePageImageBlock: React.FC = () => {
                     className='border-2 text-adaptive-button-text  w-[18vw]  h-[7vh]'
                     bgColor='transparent'
                     fontColor='white'
-                   
                     title={'Додати оголошення'}
-                    isLoading={false} />
+                    isLoading={false} 
+                    onButtonClick={()=> navigate('/user/advert/create')}/>
             </div>
         </div>
     );

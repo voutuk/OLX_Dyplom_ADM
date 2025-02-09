@@ -6,31 +6,13 @@ type ProtectedRouteType = "User" | "Admin" | "UnAuth"
 
 const ProtectedRoutes = ({ requiredRole }: { requiredRole?: ProtectedRouteType | ProtectedRouteType[] }) => {
     const { roles, isAuth, location } = useSelector(getAuth);
-    const unAuthAlow = !isAuth && requiredRole?.includes("UnAuth");
-    let routeAlow: boolean | undefined = unAuthAlow;
-    if (requiredRole) {
-        if (Array.isArray(requiredRole)) {
-            routeAlow ||= !isAuth && requiredRole.includes("UnAuth");
-            if (Array.isArray(roles)) {
-                routeAlow ||= roles.some(role => requiredRole.includes(role as ProtectedRouteType))
-            }
-            else {
-                routeAlow ||= requiredRole.includes(roles as ProtectedRouteType)
-            }
-        }
-        else {
-            if (Array.isArray(roles)) {
-                routeAlow ||= roles.includes(requiredRole)
-            }
-            else {
-                routeAlow ||= roles === requiredRole
-            }
-        }
+    const userRoles = Array.isArray(roles) ? roles : [roles];
+    const requiredRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+    if ((!isAuth && requiredRoles.includes("UnAuth")) ||
+        (isAuth && requiredRoles.some(role => userRoles.includes(role || '')))) {
+        return <Outlet />;
     }
-    else {
-        routeAlow = isAuth
-    }
-    return routeAlow ? <Outlet /> : unAuthAlow ? <Navigate to="/auth" replace /> : <Navigate to={location} replace />
+    return <Navigate to={!isAuth ? "/auth" : location} replace />;
 };
 
 export default ProtectedRoutes;
