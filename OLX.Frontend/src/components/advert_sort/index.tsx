@@ -21,23 +21,10 @@ const AdvertSort: React.FC<AdvertSortProps> = ({ onChange, className }) => {
     const [searchParams] = useSearchParams();
     const sortData = useRef<string>(getSearchKey(searchParams) || "newest")
     const change = (sortKey: string) => {
-        let result = undefined;
-        switch (sortKey) {
-            case "oldest":
-                result = { sort: 'date', desc: false }
-                break;
-            case "newest":
-                result = { sort: 'date', desc: true }
-                break;
-            case "smallprice":
-                result = { sort: 'price', desc: false }
-                break;
-            case "bigprice":
-                result = { sort: 'price', desc: true }
-                break;
-            default:
-                result = { sort: 'date', desc: true }
-        }
+        let result = {
+            sort: sortKey === "oldest" || sortKey === "newest" ? 'date' : 'price',
+            desc: sortKey === "newest" || sortKey === "bigprice",
+        };
         sortData.current = sortKey
         onChange && onChange(result)
     }

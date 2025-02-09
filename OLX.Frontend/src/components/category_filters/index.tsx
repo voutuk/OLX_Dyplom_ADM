@@ -15,10 +15,10 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
     const [form] = Form.useForm()
     const { data: filters } = useGetAllFilterQuery()
 
-    const clearedFormFilters = useMemo(() => filters?.map(x => x.id).reduce((acc, key) => {
+    const clearedFormFilters = useMemo(() =>  categoryFiltersIds?.reduce((acc, key) => {
         acc[key] = undefined;
         return acc;
-    }, {} as Record<string, any>), [filters])
+    }, {} as Record<string, any>), [categoryFiltersIds])
 
     const onFinish = (data: any) => {
         const result = Object.values(data).filter(x => x !== undefined && Array.isArray(x) && ((x as []).length > 0)) as number[][];

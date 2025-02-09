@@ -1,13 +1,8 @@
 import { Tree } from "antd"
 import { Key, useEffect, useMemo, useState } from "react"
 import { buildTree, getAllParentsIds } from "../../utilities/common_funct"
-import { ICategory } from "../../models/category"
-interface CategoryTreeProps {
-    categoryId?: number,
-    categories?: ICategory[]
-    onSelect?: (id: number) => void
-    className?: string
-}
+import { CategoryTreeProps } from "./props"
+
 
 const CategoryTree: React.FC<CategoryTreeProps> = ({ categoryId, categories, onSelect, className }) => {
 
