@@ -36,7 +36,7 @@ const UserProfile: React.FC = () => {
                 <div className=" flex w-full items-center justify-between h-[27vh]" >
                     <UserProfileInfo user={userData} className="h-full" />
                     <PrimaryButton
-                        onButtonClick={() => { navigate(`/user/userprofile/edit`) }}
+                        onButtonClick={() => { navigate(`/user/edit`) }}
                         title='Редагувати'
                         isLoading={false}
                         fontSize="clamp(14px,1.9vh,36px)"

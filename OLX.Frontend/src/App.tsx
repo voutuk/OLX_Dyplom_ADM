@@ -5,9 +5,9 @@ import DefaultLayout from './components/layouts/default_layout/index';
 import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
 
-
-const UserProfile = React.lazy(() => import( './pages/user/profile'));
-const UserProfileEdit = React.lazy(() => import( './pages/user/edit_profile'));
+const CreateAdvert = React.lazy(() => import('./pages/user/create_advert'));
+const UserProfile = React.lazy(() => import('./pages/user/profile'));
+const UserProfileEdit = React.lazy(() => import('./pages/user/edit_profile'));
 const AdvertsPage = React.lazy(() => import('./pages/default/adverts'));
 const AdminAdvertPreview = React.lazy(() => import('./pages/admin/adverts/advert_preview'));
 const AdvertPage = React.lazy(() => import('./pages/default/advert'));
@@ -47,10 +47,9 @@ function App() {
 
           <Route element={<ProtectedRoutes requiredRole={"User"} />}>
             <Route path="user">
-              <Route path="userprofile">
-                <Route index element= {<UserProfile/>}/>
-                <Route path='edit' element = {<UserProfileEdit/>}/>
-              </Route>
+              <Route index element={<UserProfile />} />
+              <Route path='edit' element={<UserProfileEdit />} />
+              <Route path='advert/create' element={<CreateAdvert/>}/>
             </Route>
           </Route>
 

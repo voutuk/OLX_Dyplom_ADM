@@ -25,12 +25,12 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
     const items: MenuProps['items'] = [
         {
             icon: <UserOutlined />,
-            label: <Link to={'user/userprofile'}>Профіль</Link>,
+            label: <Link to={'user'}>Профіль</Link>,
             key: '0',
         },
         {
             icon: <SettingOutlined />,
-            label: <Link to={'user/userprofile/edit'}>Налаштування</Link>,
+            label: <Link to={'user/edit'}>Налаштування</Link>,
             key: '1',
         },
         {
