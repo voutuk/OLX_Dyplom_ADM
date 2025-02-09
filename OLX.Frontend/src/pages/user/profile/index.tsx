@@ -27,7 +27,7 @@ const UserProfile: React.FC = () => {
 
             </div>
             <Tabs
-                className="profile-tabs"
+                className="profile-tabs hover:text-black"
                 defaultActiveKey="1"
                 indicator={{ size: 0 }}
                 items={items} />
