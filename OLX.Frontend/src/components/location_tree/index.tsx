@@ -1,13 +1,10 @@
-import React, { useState, useMemo} from "react";
-import { TreeSelect } from "antd";
+import React, { useState, useEffect } from "react";
+import { TreeSelect, TreeSelectProps } from "antd";
 import {
     useGetAreasQuery,
     useGetRegionsByAreaQuery,
     useGetSettlementsByRegionQuery,
 } from "../../redux/api/newPostApi";
-
-
-const { SHOW_PARENT } = TreeSelect;
 
 interface LocationSelectProps {
     onSelect: (value: { regionRef: string; areaRef: string; settlementRef: string }) => void;
@@ -29,92 +26,99 @@ interface Region {
 interface Settlement {
     description: string;
     ref: string;
-    regionRef: string;
+    region: string;
 }
 
 const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
-    const [areaRef, setAreaRef] = useState(null);
-    const [regionRef, setRegionRef] = useState(null);
-    const [selectedValue, setSelectedValue] = useState(null);
+    const { data: areas } = useGetAreasQuery(undefined);
+    const [treeData, setTreeData] = useState<any[]>([]);
+    const [selectedValue, setSelectedValue] = useState<string | undefined>(undefined);
+    const [areaRef, setAreaRef] = useState<string | null>(null);
+    const [regionRef, setRegionRef] = useState<string | null>(null);
+    
+    const { data: regions } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
+    const { data: settlements } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
 
-    const { data: areas, isLoading: areasLoading } = useGetAreasQuery(undefined);
-    const { data: regions, isFetching: regionsLoading } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
-    const { data: settlements, isFetching: settlementsLoading } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
+    useEffect(() => {
+        if (areas) {
+            const formattedAreas = areas.map((area: Area) => ({
+                id: area.ref,
+                pId: null,
+                title: `${area.description} ${area.regionType}`,
+                value: area.ref,
+                isLeaf: false,
+            }));
+            setTreeData(formattedAreas);
+            console.log(treeData);
+        }
+    }, [areas]);
 
-    const treeData = useMemo(() => {
-        return areas?.map((area: Area) => ({
-            title: `${area.description} ${area.regionType}`,
-            value: area.ref,
-            key: area.ref,
-            isLeaf: false,
-            children: regions?.filter((r: Region) => r.areaRef === area.ref).map((region: Region) => ({
+    useEffect(() => {
+        if (regions) {
+            const formattedRegions = regions.map((region: Region) => ({
+                id: region.ref,
+                pId: region.areaRef,
                 title: `${region.description} ${region.regionType}`,
                 value: region.ref,
-                key: region.ref,
                 isLeaf: false,
-                children: settlements?.filter((s: Settlement) => s.regionRef === region.ref).map((settlement: Settlement) => ({
-                    title: settlement.description,
-                    value: settlement.ref,
-                    key: settlement.ref,
-                    isLeaf: true,
-                })) || []
-            })) || []
-        })) || [];
-    }, [areas, regions, settlements]);
-
-
-    const handleSelect = (value: any) => {
-        setSelectedValue(value);
-        let area = null;
-        let region = null;
-        let settlement = null;
-
-        if (areas?.some((a: Area) => a.ref === value)) {
-            area = areas.find((a: Area) => a.ref === value);
-            setAreaRef(area.ref);
-            setRegionRef(null);
-        } else if (regions?.some((r: Region) => r.ref === value)) {
-            region = regions.find((r: Region) => r.ref === value);
-            setRegionRef(region.ref);
-        } else {
-            settlement = settlements?.find((s: Settlement) => s.ref === value);
+            }));
+            setTreeData((prevData) => [...prevData, ...formattedRegions]);
+            console.log(treeData);
         }
+    }, [regions]);
 
-        onSelect({
-            areaRef: area?.ref || "",
-            regionRef: region?.ref || "",
-            settlementRef: settlement?.ref || ""
+    useEffect(() => {
+        if (settlements) {
+            const formattedSettlements = settlements.map((settlement: Settlement) => ({
+                id: settlement.ref,
+                pId: settlement.region,
+                title: settlement.description,
+                value: settlement.ref,
+                isLeaf: true,
+            }));
+            setTreeData((prevData) => [...prevData, ...formattedSettlements]);
+            console.log(treeData);
+        }
+    }, [settlements]);
+
+    const onLoadData: TreeSelectProps['loadData'] = ({ id }) => {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                if (areas?.some((area: Area) => area.ref === id)) {
+                    setAreaRef(id);
+                } else if (regions?.some((region: Region) => region.ref === id)) {
+                    setRegionRef(id);
+                }
+                resolve(undefined);
+            }, 300);
+           
         });
     };
 
-    const onLoadData = ({ key }: any) =>
-        new Promise<void>((resolve) => {
-            const area = areas?.find((a: Area) => a.ref === key);
-            if (area) {
-                setAreaRef(area.ref);
-            }
-            const region = regions?.find((r: Region) => r.ref === key);
-            if (region) {
-                setRegionRef(region.ref);
-            }
-            resolve();
+    const handleSelect = (value: string) => {
+        setSelectedValue(value);
+        
+        const selectedArea = areas?.find((a: Area) => a.ref === value);
+        const selectedRegion = regions?.find((r: Region) => r.ref === value);
+        const selectedSettlement = settlements?.find((s: Settlement) => s.ref === value);
+
+        onSelect({
+            areaRef: selectedArea?.ref || "",
+            regionRef: selectedRegion?.ref || "",
+            settlementRef: selectedSettlement?.ref || ""
         });
+    };
 
     return (
         <TreeSelect
-            showSearch
+            treeDataSimpleMode
             style={{ width: "100%" }}
             value={selectedValue}
             dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-            placeholder="Оберіть населений пункт"
-            treeDefaultExpandAll
+            placeholder="Уся Україна"
             treeData={treeData}
-            onSelect={handleSelect}
-            loading={areasLoading || regionsLoading || settlementsLoading}
-            allowClear
-            treeCheckable={false}
-            showCheckedStrategy={SHOW_PARENT}
             loadData={onLoadData}
+            onSelect={handleSelect}
         />
     );
 };
