@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Upload, Image, UploadProps, UploadFile } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove, useSortable } from "@dnd-kit/sortable";
-import './style.scss'
-import { FileType, getBase64 } from "../../utilities/common_funct";
+import { FileType } from "../../utilities/common_funct";
+import imageCompression from "browser-image-compression";
+import { PlusOutlined } from '@ant-design/icons';
 
 
 interface UploadWithDndProps {
@@ -14,13 +14,19 @@ interface UploadWithDndProps {
     defaultCount?: number
 }
 
-
 const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, className, maxCount = 5, defaultCount = 4 }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
+    const uploadRef = useRef<any>(null);
 
-    const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+    const onChange: UploadProps['onChange'] = async ({ fileList: newFileList }) => {
+        for (let index = 0; index < newFileList.length; index++) {
+            if (!newFileList[index].thumbUrl) {
+                const smallFile = await imageCompression(newFileList[index].originFileObj as FileType, { maxWidthOrHeight: 200 })
+                newFileList[index].thumbUrl = URL.createObjectURL(smallFile)
+            }
+        }
         setFileList(newFileList);
     }
 
@@ -30,67 +36,85 @@ const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, className, ma
     };
 
     const handleDragEnd = (event: any) => {
+        console.log(event)
+        console.log('prev: ', fileList)
         const { active, over } = event;
+        if (!over || !fileList.some((item) => item.uid === active.id)) {
+            return;
+        }
+       
         if (active.id !== over.id) {
             const oldIndex = fileList.findIndex((item) => item.uid === active.id);
             const newIndex = fileList.findIndex((item) => item.uid === over.id);
+            console.log('after: ', arrayMove(fileList, oldIndex, newIndex))
             setFileList(arrayMove(fileList, oldIndex, newIndex));
+        }
+            
+    };
+
+
+
+    const onRemove = (uid: string | undefined) => {
+        setFileList((prev) => prev.filter(x => x.uid !== uid));
+    }
+
+    const openFileDialog = () => {
+        if (uploadRef.current) {
+            uploadRef.current?.upload.uploader.fileInput.click();
         }
     };
 
-    const onRemove = (uid: string | undefined) => {
-        setFileList(fileList.filter(x => x.uid !== uid));
-    }
+    const defaultLoaders = useMemo(() => {
+        const loaders = fileList.length < defaultCount
+            ? Array.from({ length: defaultCount - fileList.length }).map((_, index) =>
+                <div onClick={openFileDialog} key={index} className={`flex  flex-shrink-0 bg-white items-center cursor-pointer justify-center border border-[#9B7A5B] border-opacity-50 rounded-lg h-[21vh] w-[21vh]`} style={{ width: uploadSize, height: uploadSize }}>
+                    <PlusOutlined className="font-montserrat text-[#9B7A5B] text-opacity-50 text-adaptive-advert-page-price-text" />
+                </div>) : []
+        const loader = fileList.length < maxCount && (
+            <div onClick={openFileDialog} className={`flex flex-col flex-shrink-0 gap-0 justify-center cursor-pointer text-center bg-[#9B7A5B] bg-opacity-20 rounded-lg h-[21vh] w-[21vh]`} style={{ width: uploadSize, height: uploadSize }}>
+                <span className="font-montserrat  text-adaptive-1_7_text">Додати ще</span>
+                <span className="font-montserrat  text-adaptive-1_7_text">фото</span>
+            </div>)
 
-    const defaultUploads = useMemo(() => {
-        if (fileList.length < defaultCount) {
-            return Array.from({ length: defaultCount - fileList.length }).map((_, index) =>
-                <div key={index} className={`flex flex-shrink-0 bg-white items-center justify-center border border-[#9B7A5B] border-opacity-50 rounded-lg h-[21vh] w-[21vh]`} style={{ width: uploadSize, height: uploadSize }}>
-                    <span className="font-montserrat text-[#9B7A5B] text-opacity-50 text-adaptive-4-text">+</span>
-                </div>)
-        }
-        else {
-            return []
-        }
-    }, [fileList.length, defaultCount])
+        return [
+            ...loaders,
+            loader
+        ]
+    }, [fileList, defaultCount, maxCount])
+
+    const uploadedImages = useMemo(() => {
+        const images = fileList.length > 0 ? fileList.map(file => <SortableItem
+            onDelete={onRemove}
+            onPreview={handlePreview}
+            key={file?.uid}
+            file={file}
+            uploadSize={uploadSize} />) : []
+
+        return [
+            ...images,
+            ...defaultLoaders
+        ]
+    }, [fileList])
+
+
 
     return (
         <>
+            <Upload
+                ref={uploadRef}
+                fileList={fileList}
+                multiple
+                accept=".jpg,.png,.webp,.jpeg"
+                onChange={onChange}
+                beforeUpload={() => false}
+                showUploadList={false}
+            />
+
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                <SortableContext items={fileList.map((file) => file.uid)}>
-                    <Upload
-                        listType="picture-card"
-                        fileList={fileList}
-                        multiple
-                        accept=".jpg,.png,.webp,.jpeg"
-                        onChange={onChange}
-                        beforeUpload={() => false}
-                        className={`custom-upload ${className}`}
-                        itemRender={(_originNode, file) =>
-                            <SortableItem
-                                onDelete={onRemove}
-                                onPreview={handlePreview}
-                                key={file.uid}
-                                file={file}
-                                uploadSize={uploadSize} />
-                        }
-                    >
-                        <div className="w-full flex-grow flex gap-[2.4%]">
-
-                            {...defaultUploads}
-
-                            {
-                                fileList.length < maxCount && (
-                                    <div className={`flex flex-col flex-shrink-0 gap-0 justify-center text-center bg-[#9B7A5B] bg-opacity-20 rounded-lg h-[21vh] w-[21vh]`} style={{ width: uploadSize, height: uploadSize }}>
-                                        <span className="font-montserrat  text-adaptive-1_7_text">Додати ще</span>
-                                        <span className="font-montserrat  text-adaptive-1_7_text">фото</span>
-                                    </div>
-                                )
-                            }
-                        </div>
-
-                    </Upload>
-
+                <SortableContext items={fileList.map((file) => file?.uid)}>
+                    <div className={`flex flex-wrap ${className}`}>
+                        {...uploadedImages}
+                    </div>
                 </SortableContext>
             </DndContext >
 
@@ -117,8 +141,7 @@ interface SortableItemProps {
     uploadSize?: number,
 }
 const SortableItem: React.FC<SortableItemProps> = ({ file, uploadSize, onDelete, onPreview }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: file.uid });
-
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: file?.uid });
     const style: React.CSSProperties = {
         transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
         transition,
@@ -127,13 +150,13 @@ const SortableItem: React.FC<SortableItemProps> = ({ file, uploadSize, onDelete,
     };
 
     const onPrevievClick = async () => {
-        onPreview && onPreview(file?.url || await getBase64(file?.originFileObj as FileType))
+        onPreview && onPreview(file?.url || URL.createObjectURL(file?.originFileObj as FileType))
     }
 
     return (
-        <div ref={setNodeRef} className={`h-[21vh] w-[21vh]`} style={style} {...attributes} {...listeners}>
-            <div className={`relative  h-full w-auto]`} >
-                <img className="w-full  rounded-lg object-cover aspect-[1/1]" src={file?.thumbUrl || file?.url} />
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+            <div className={`relative h-[21vh] w-[21vh]`} >
+                <img className="h-full  rounded-lg object-cover w-full" src={file.thumbUrl} />
                 <div className="transition-opacity duration-500 w-full  rounded-lg h-full absolute bg-black top-0 opacity-0  hover:opacity-50" >
                     <div className=" flex gap-[15%] justify-center my-[42.5%] w-full h-[15%] absolute  top-0 " >
                         <svg onMouseDown={onPrevievClick} className="h-full w-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
