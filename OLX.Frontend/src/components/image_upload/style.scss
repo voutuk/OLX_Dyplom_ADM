@@ -1,0 +1,28 @@
+.custom-upload {
+    --width: 2.2%;
+
+    .ant-upload-list-item-container {
+        height: 100% !important;
+        width: auto !important;
+        margin-bottom: var(--width) !important;
+    }
+
+    .ant-upload-list,
+    .ant-upload-list-picture-card {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: var(--width) !important;
+        width: inherit !important;
+        height: inherit !important;
+    }
+    
+
+    .ant-upload,
+    .ant-upload:hover {
+        height: 100% !important;
+        width: auto !important;
+        border: none !important;
+        margin-bottom: var(--width) !important;
+        background-color: transparent !important;
+    }
+}

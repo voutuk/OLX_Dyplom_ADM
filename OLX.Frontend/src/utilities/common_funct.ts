@@ -2,6 +2,17 @@ import { IUser } from "../models/account"
 import { IOlxUser, IShortOlxUser } from "../models/user";
 import { ICategory, ICategoryShort, ICategoryTreeElementModel } from "../models/category";
 import { IAdvertPageRequest, IAdvertSearchPageData } from "../models/advert";
+import { GetProp, UploadProps } from "antd";
+
+export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+export const getBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 
 
 export const getUserDescr = (user: IUser | IOlxUser | IShortOlxUser | null | undefined): string => {
