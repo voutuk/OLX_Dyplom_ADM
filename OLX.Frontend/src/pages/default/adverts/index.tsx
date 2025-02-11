@@ -12,7 +12,7 @@ import AdvertsSection from "../../../components/adverts_section";
 import PrimaryButton from "../../../components/buttons/primary_button";
 import AdvertSort from "../../../components/advert_sort";
 import { AdvertSortData } from "../../../components/advert_sort/models";
-import { Input } from "antd";
+import LocationSelect from "../../../components/location_tree";
 
 const advertPageSize: number = 6;
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
@@ -28,7 +28,9 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : [],
     isContractPrice: searchParams.has("isContractPrice") ? searchParams.get("isContractPrice") === "true" : undefined,
     search: searchParams.get("search") || undefined,
-    settlementSearch: searchParams.get("settlementSearch") || undefined
+    areaRef: searchParams.get("areaRef") || undefined,
+    regionRef: searchParams.get("regionRef") || undefined,
+    settlementRef: searchParams.get("settlementRef") || undefined
 });
 
 const AdvertsPage: React.FC = () => {
@@ -111,7 +113,7 @@ const AdvertsPage: React.FC = () => {
                         {/* Search result */}
                         <div className="flex justify-end items-center gap-[1vw] w-[100%]">
                             <span className="font-unbounded text-[#3a211c]  font-normal text-adaptive-3_3-text mr-auto self-center">Ми знайшли понад 1000 оголошень</span>
-                            <div className='location-input'>
+                            {/*<div className='location-input'>
                                 <Input placeholder="Уся Україна"
                                     className='text-[#3a211c] font-montserrat text-base font-normal leading-normal w-[20.16vw] h-11 p-2.5 rounded-lg border border-[#9b7a5b]/50 justify-start items-center inline-flex'
                                     prefix={<svg className='cursor-pointer mr-2'  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -125,7 +127,13 @@ const AdvertsPage: React.FC = () => {
                                         }))
                                     }}
                                 />
-                            </div>
+                            </div>*/}
+                            <LocationSelect onSelect={(value) => setSearchParams(getQueryString({
+                                ...pageRequest,
+                                areaRef: value.areaRef,
+                                regionRef: value.regionRef,
+                                settlementRef: value.settlementRef
+                            }))} />
                             <div className="h-8 justify-start items-center gap-6 inline-flex">
                                 <div className="flex-col">
                                     <svg className="mb-0.5" xmlns="http://www.w3.org/2000/svg" width="24" height="11" viewBox="0 0 24 11" fill="none">
