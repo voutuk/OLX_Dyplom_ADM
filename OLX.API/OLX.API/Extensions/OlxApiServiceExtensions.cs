@@ -107,7 +107,7 @@ namespace OLX.API.Extensions
                 options.AddPolicy("AllowOrigins",
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:5173","https://gosell.itstep.click", "https://dev.pluton.pp.ua")
+                    builder.WithOrigins("http://localhost:5173","https://gosell.itstep.click", "https://dev.pluton.pp.ua",  "https://olxapi.itstep.click")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();
