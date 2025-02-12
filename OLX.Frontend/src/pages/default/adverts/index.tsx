@@ -45,7 +45,7 @@ const AdvertsPage: React.FC = () => {
     const getPageRequest = useMemo(() => getAdvertPageRequest(pageRequest, categories || []), [pageRequest, categories])
     const { data: adverts, isLoading: isAdvertsLoading, isUninitialized, refetch: advertRefetch } =
         useGetAdvertPageQuery(getPageRequest, { skip: !pageRequest || !categories || categories.length === 0 });
-    
+
     useEffect(() => {
         if (!isUninitialized) {
             advertRefetch();
@@ -128,12 +128,13 @@ const AdvertsPage: React.FC = () => {
                                     }}
                                 />
                             </div>*/}
-                            <LocationSelect onSelect={(value) => setSearchParams(getQueryString({
-                                ...pageRequest,
-                                areaRef: value.areaRef,
-                                regionRef: value.regionRef,
-                                settlementRef: value.settlementRef
-                            }))} />
+                            <LocationSelect
+                                onSelect={(value) => setSearchParams(getQueryString({
+                                    ...pageRequest,
+                                    areaRef: value.areaRef,
+                                    regionRef: value.regionRef,
+                                    settlementRef: value.settlementRef
+                                }))} />
                             <div className="h-8 justify-start items-center gap-6 inline-flex">
                                 <div className="flex-col">
                                     <svg className="mb-0.5" xmlns="http://www.w3.org/2000/svg" width="24" height="11" viewBox="0 0 24 11" fill="none">
