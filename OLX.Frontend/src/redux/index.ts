@@ -14,6 +14,7 @@ import { categoryApi } from "./api/categoryApi";
 import { categoryAuthApi } from "./api/categoryAuthApi";
 import { advertApi } from "./api/advertApi";
 import { advertAuthApi } from "./api/advertAuthApi";
+import { newPostApi } from "./api/newPostApi";
 
 
 export const store = configureStore({
@@ -30,6 +31,7 @@ export const store = configureStore({
         [accountApiAuth.reducerPath]: accountApiAuth.reducer,
         [advertApi.reducerPath]: advertApi.reducer,
         [advertAuthApi.reducerPath]: advertAuthApi.reducer,
+        [newPostApi.reducerPath]: newPostApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -43,6 +45,7 @@ export const store = configureStore({
             filterAuthApi.middleware,
             advertApi.middleware,
             advertAuthApi.middleware,
+            newPostApi.middleware,
             errorMiddleware)
 })
 setupListeners(store.dispatch);

@@ -16,6 +16,9 @@ namespace Olx.BLL.Pagination.Filters
         public string? PhoneSearch { get; init; }
         public string? EmailSearch { get; init; }
         public string? SettlementSearch { get; init; }
+        public string? SettlementRef { get; init; }
+        public string? RegionRef { get; init; }
+        public string? AreaRef { get; init; }
         public IEnumerable<int>? CategoryIds { get; init; }
         public IEnumerable<IEnumerable<int>>? Filters { get; init; }
         public IQueryable<AdvertDto> FilterQuery(IQueryable<AdvertDto> query)
@@ -61,6 +64,18 @@ namespace Olx.BLL.Pagination.Filters
             if (!String.IsNullOrWhiteSpace(SettlementSearch))
             {
                 query = query.Where(x => x.SettlementName.ToLower().Contains(SettlementSearch.ToLower()));
+            }
+            if (!String.IsNullOrWhiteSpace(SettlementRef))
+            {
+                query = query.Where(x => x.SettlementRef == SettlementRef);
+            }
+            if (!String.IsNullOrWhiteSpace(RegionRef))
+            {
+                query = query.Where(x => x.RegionRef == RegionRef);
+            }
+            if (!String.IsNullOrWhiteSpace(AreaRef))
+            {
+                query = query.Where(x => x.AreaRef == AreaRef);
             }
             if (IsContractPrice.HasValue)
             {
