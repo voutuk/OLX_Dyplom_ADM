@@ -67,7 +67,6 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
                 isLeaf: false,
             }));
             setTreeData((prevData) => [...prevData, ...formattedRegions]);
-            console.log(treeData);
         }
     }, [regions]);
 
@@ -81,7 +80,6 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
                 isLeaf: true,
             }));
             setTreeData((prevData) => [...prevData, ...formattedSettlements]);
-            console.log(treeData);
         }
     }, [settlements]);
 
@@ -95,7 +93,6 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
                 }
                 resolve(undefined);
             }, 300);
-
         });
     };
 
