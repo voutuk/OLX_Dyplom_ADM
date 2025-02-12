@@ -4,7 +4,7 @@ import { createBaseQuery } from "./baseQuery";
 export const newPostApi = createApi({
   reducerPath: "newPostApi",
   baseQuery: createBaseQuery("NewPost"),
-  tagTypes: ["NewPost"],
+  tagTypes: ["NewPost", "Areas", "Regions", "Settlements"],
 
   endpoints: (builder) => ({
     getAreas: builder.query({
@@ -13,7 +13,8 @@ export const newPostApi = createApi({
           url: `areas`,
           method: "GET",
         };
-      }
+      },
+      providesTags: ["Areas"],
     }),
 
     getRegionsByArea: builder.query({
@@ -23,6 +24,7 @@ export const newPostApi = createApi({
           method: "GET",
         };
       },
+      providesTags: ["Regions"],
     }),
 
     getSettlementsByRegion: builder.query({
@@ -32,6 +34,7 @@ export const newPostApi = createApi({
           method: "GET",
         };
       },
+      providesTags: ["Settlements"],
     }),
   }),
 });
