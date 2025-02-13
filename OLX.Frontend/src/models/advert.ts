@@ -1,3 +1,4 @@
+import { UploadFile } from "antd";
 import { IFilterValue } from "./filter";
 import { IShortOlxUser, PageRequest } from "./user";
 
@@ -50,6 +51,7 @@ export interface IAdvertCreationModel {
     contactEmail: string,
     title: string,
     description: string,
+    contactPersone: string
     isContractPrice: boolean,
     settlementRef: string,
     price: number,

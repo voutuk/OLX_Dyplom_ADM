@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQueryWithAuth } from "./baseQuery";
 import { IAdvert, IAdvertCreationModel } from "../../models/advert";
 import { advertApi } from "./advertApi";
+import { getFormData } from "../../utilities/common_funct";
 
 export const advertAuthApi = createApi({
     reducerPath: "advertAuthApi",
@@ -13,7 +14,7 @@ export const advertAuthApi = createApi({
             query: (creationModel) => ({
                 url: `create`,
                 method: "PUT",
-                body: creationModel,
+                body: getFormData(creationModel),
             }),
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
@@ -29,7 +30,7 @@ export const advertAuthApi = createApi({
             query: (creationModel) => ({
                 url: `update`,
                 method: "POST",
-                body: creationModel,
+                body: getFormData(creationModel),
             }),
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {

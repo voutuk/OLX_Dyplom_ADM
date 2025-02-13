@@ -38,11 +38,9 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex-1 flex flex-col justify-center">
       <HomePageImageBlock />
-      <div className='flex flex-col items-center mx-auto py-[50px] gap-[50px]'>
+      <div className='flex flex-col items-center mx-[6.9vw] py-[10vh] gap-[10vh]'>
         <CategoriesSection />
-        <div className='mx-[6.9vw]'>
-          <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
-        </div>
+        <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
         {!isEnd &&
           <PrimaryButton
             onButtonClick={loadMore}
