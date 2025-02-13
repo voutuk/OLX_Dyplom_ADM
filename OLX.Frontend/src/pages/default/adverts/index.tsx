@@ -10,9 +10,9 @@ import CategoryTree from "../../../components/category_tree";
 import CategoryFilters from "../../../components/category_filters";
 import AdvertsSection from "../../../components/adverts_section";
 import PrimaryButton from "../../../components/buttons/primary_button";
-import LocationInput from "../../../components/inputs/location_input";
 import AdvertSort from "../../../components/advert_sort";
 import { AdvertSortData } from "../../../components/advert_sort/models";
+import LocationSelect from "../../../components/location_tree";
 
 const advertPageSize: number = 6;
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
@@ -28,6 +28,9 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : [],
     isContractPrice: searchParams.has("isContractPrice") ? searchParams.get("isContractPrice") === "true" : undefined,
     search: searchParams.get("search") || undefined,
+    areaRef: searchParams.get("areaRef") || undefined,
+    regionRef: searchParams.get("regionRef") || undefined,
+    settlementRef: searchParams.get("settlementRef") || undefined
 });
 
 const AdvertsPage: React.FC = () => {
@@ -107,7 +110,28 @@ const AdvertsPage: React.FC = () => {
                         {/* Search result */}
                         <div className="flex justify-end items-center gap-[1vw] w-[100%]">
                             <span className="font-unbounded text-[#3a211c]  font-normal text-adaptive-3_3-text mr-auto self-center">Ми знайшли понад 1000 оголошень</span>
-                            <LocationInput />
+                            {/*<div className='location-input'>
+                                <Input placeholder="Уся Україна"
+                                    className='text-[#3a211c] font-montserrat text-base font-normal leading-normal w-[20.16vw] h-11 p-2.5 rounded-lg border border-[#9b7a5b]/50 justify-start items-center inline-flex'
+                                    prefix={<svg className='cursor-pointer mr-2'  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM7 9C7 6.24 9.24 4 12 4C14.76 4 17 6.24 17 9C17 11.88 14.12 16.19 12 18.88C9.92 16.21 7 11.85 7 9Z" fill="#9B7A5B" />
+                                        <path d="M12 11.5C13.3807 11.5 14.5 10.3807 14.5 9C14.5 7.61929 13.3807 6.5 12 6.5C10.6193 6.5 9.5 7.61929 9.5 9C9.5 10.3807 10.6193 11.5 12 11.5Z" fill="#9B7A5B" />
+                                    </svg>}
+                                    onChange={(e) => {
+                                        setSearchParams(getQueryString({
+                                            ...pageRequest,
+                                            settlementSearch: e.target.value
+                                        }))
+                                    }}
+                                />
+                            </div>*/}
+                            <LocationSelect
+                                onSelect={(value) => setSearchParams(getQueryString({
+                                    ...pageRequest,
+                                    areaRef: value.areaRef,
+                                    regionRef: value.regionRef,
+                                    settlementRef: value.settlementRef
+                                }))} />
                             <div className="h-8 justify-start items-center gap-6 inline-flex">
                                 <div className="flex-col">
                                     <svg className="mb-0.5" xmlns="http://www.w3.org/2000/svg" width="24" height="11" viewBox="0 0 24 11" fill="none">

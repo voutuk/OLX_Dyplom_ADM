@@ -22,6 +22,9 @@ namespace Olx.BLL.DTOs
         public bool Approved { get; set; } = false;
         public bool Blocked { get; set; } = false;
         public string SettlementName { get; set; } = string.Empty;
+        public string SettlementRef { get; set; } = string.Empty;
+        public string RegionRef { get; set; } = string.Empty;
+        public string AreaRef { get; set; } = string.Empty;
         public ICollection<FilterValueDto> FilterValues { get; set; } = new HashSet<FilterValueDto>();
         public ICollection<AdvertImageDto> Images { get; set; } = new HashSet<AdvertImageDto>();
     }

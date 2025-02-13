@@ -14,6 +14,9 @@ namespace Olx.BLL.Models.Advert
         public string? PhoneSearch { get; init; }
         public string? EmailSearch { get; init; }
         public string? SettlementSearch { get; init; }
+        public string? SettlementRef { get; init; }
+        public string? RegionRef { get; init; }
+        public string? AreaRef { get; init; }
         public bool? IsContractPrice { get; init; } 
         public bool? Approved { get; init; } 
         public bool? Blocked { get; init; }
