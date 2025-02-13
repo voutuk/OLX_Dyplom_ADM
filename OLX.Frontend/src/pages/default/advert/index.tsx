@@ -4,7 +4,6 @@ import CategoryNavigation from "../../../components/category_navigation";
 import { Divider } from "antd";
 import AdvertViewer from "../../../components/advert_viewer";
 import SimilarAdverts from "../../../components/similar_adverts";
-import { IAdvert } from "../../../models/advert";
 import { useEffect } from "react";
 import ViewedAdverts from "../../../components/viewed_adverts";
 import { APP_ENV } from "../../../constants/env";
@@ -13,13 +12,14 @@ import { APP_ENV } from "../../../constants/env";
 const AdvertPage: React.FC = () => {
     const { id } = useParams();
     const { data: advert, isLoading } = useGetAdvertByIdQuery(Number(id))
+    
 
     useEffect(() => {
         if (advert) {
-            const viewedAdverts: IAdvert[] = sessionStorage.getItem(APP_ENV.VIEWED_KEY)
+            const viewedAdverts: number[] = sessionStorage.getItem(APP_ENV.VIEWED_KEY)
                 ? JSON.parse(sessionStorage.getItem(APP_ENV.VIEWED_KEY) as string) : [];
-            if (!viewedAdverts.some(x => x.id === advert.id)) {
-                viewedAdverts.push(advert)
+            if (!viewedAdverts.some(x => x === advert.id)) {
+                viewedAdverts.push(advert.id)
                 sessionStorage.setItem(APP_ENV.VIEWED_KEY, JSON.stringify(viewedAdverts));
             }
         }
