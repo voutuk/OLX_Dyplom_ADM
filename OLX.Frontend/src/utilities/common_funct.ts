@@ -61,7 +61,7 @@ export const getFormData = (data: any): FormData => {
   return formData;
 }
 
-export const buildTree = (categories: ICategory[], parentId?: number, disabled?: number[], disableParent: boolean = false): ICategoryTreeElementModel[] => {
+export const buildTree = (categories: ICategory[], parentId?: number, disabled?: number[], disableParent?: boolean ): ICategoryTreeElementModel[] => {
   return categories
     .filter(x => x.parentId == parentId)
     .map(x => {
@@ -70,7 +70,7 @@ export const buildTree = (categories: ICategory[], parentId?: number, disabled?:
         title: x.name,
         value: x.id,
         key: x.id,
-        disabled: disabled?.includes(x.id) || (disableParent === (children.length !== 0)),
+        disabled: disabled?.includes(x.id) || (disableParent !== undefined && disableParent === (children.length !== 0)),
         children: children
       };
     });

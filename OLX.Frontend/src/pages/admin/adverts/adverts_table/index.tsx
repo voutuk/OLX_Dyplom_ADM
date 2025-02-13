@@ -196,7 +196,7 @@ const AdminAdvertTable: React.FC = () => {
             render: (_, advert: IAdvert) =>
                 <div className='flex justify-around'>
                     <Tooltip title="Показати">
-                        <IconButton onClick={() => { navigate(`preview/${advert.id}`) }} color="success" size="small">
+                        <IconButton onClick={() => { navigate(`/admin/adverts/preview/${advert.id}`) }} color="success" size="small">
                             <Info />
                         </IconButton>
                     </Tooltip>

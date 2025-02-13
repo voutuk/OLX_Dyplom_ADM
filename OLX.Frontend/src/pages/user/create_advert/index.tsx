@@ -1,15 +1,20 @@
-import { Checkbox, Form, Input, InputNumber, Select, TreeSelect, UploadFile } from "antd"
+import { Checkbox, Form, Input, InputNumber, Select, TreeSelect, TreeSelectProps, UploadFile } from "antd"
 import { BackButton } from "../../../components/buttons/back_button"
 import UploadWithDnd from "../../../components/image_upload"
 import TextArea from "antd/es/input/TextArea"
 import './style.scss'
 import { useGetAllCategoriesQuery } from "../../../redux/api/categoryApi"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { buildTree, getAllParentFilterIds } from "../../../utilities/common_funct"
 import { useGetAllFilterQuery } from "../../../redux/api/filterApi"
 import { IAdvertCreationModel } from "../../../models/advert"
 import { useAppSelector } from "../../../redux"
 import PrimaryButton from "../../../components/buttons/primary_button"
+import { useGetAreasQuery, useGetRegionsByAreaQuery, useGetSettlementsByRegionQuery } from "../../../redux/api/newPostApi"
+import { IArea, IRegion, ISettlement } from "../../../models/newPost"
+import { useCreateAdvertMutation } from "../../../redux/api/advertAuthApi"
+import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 
 
 const CreateAdvert: React.FC = () => {
@@ -18,7 +23,68 @@ const CreateAdvert: React.FC = () => {
     const { data: filters } = useGetAllFilterQuery();
     const user = useAppSelector(state => state.user.user);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
-    const onFinish = (data: any) => {
+    const [areaRef, setAreaRef] = useState<string | null>(null);
+    const [regionRef, setRegionRef] = useState<string | null>(null);
+    const [locationTreeData, setLocationTreeData] = useState<any[]>([])
+    const { data: areas } = useGetAreasQuery(undefined);
+    const { data: regions } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
+    const { data: settlements } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
+    const [createAdvert, { isLoading: isAdvertCreation }] = useCreateAdvertMutation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (areas) {
+            const formattedAreas = areas.map((area: IArea) => ({
+                id: area.ref,
+                disabled: true,
+                pId: null,
+                title: `${area.description} ${area.regionType}`,
+                value: area.ref,
+                isLeaf: false,
+            }));
+            setLocationTreeData(formattedAreas);
+        }
+    }, [areas]);
+
+    useEffect(() => {
+        if (regions) {
+            const formattedRegions = regions.map((region: IRegion) => ({
+                id: region.ref,
+                disabled: true,
+                pId: region.areaRef,
+                title: `${region.description} ${region.regionType}`,
+                value: region.ref,
+                isLeaf: false,
+            }));
+            setLocationTreeData((prevData) => [...prevData, ...formattedRegions]);
+        }
+    }, [regions]);
+
+    useEffect(() => {
+        if (settlements) {
+            const formattedSettlements = settlements.map((settlement: ISettlement) => ({
+                id: settlement.ref,
+                pId: settlement.region,
+                title: settlement.description,
+                value: settlement.ref,
+                isLeaf: true,
+            }));
+            setLocationTreeData((prevData) => [...prevData, ...formattedSettlements]);
+        }
+    }, [settlements]);
+
+    const onLoadData: TreeSelectProps['loadData'] = ({ id }) => {
+        return new Promise<void>((resolve) => {
+            if (areas?.some((area: IArea) => area.ref === id)) {
+                setAreaRef(id);
+            } else if (regions?.some((region: IRegion) => region.ref === id)) {
+                setRegionRef(id);
+            }
+            resolve(undefined);
+        });
+    };
+
+    const onFinish = async (data: any) => {
         const filterValues = Object.entries(data).filter(x => !isNaN(Number(x[0])) && x[1]).map(x => x[1])
         const imageFiles = data.files.map((x: UploadFile) => x?.originFileObj as Blob)
         const advertCreationModel: IAdvertCreationModel = {
@@ -36,7 +102,13 @@ const CreateAdvert: React.FC = () => {
             imageFiles: imageFiles,
             contactPersone: `${data.contactSurname} ${data.contactName}`
         }
-        console.log(advertCreationModel)
+        const result = await createAdvert(advertCreationModel);
+        if (!result.error) {
+            toast("Оголошення успішно опубліковане", {
+                type: "success"
+            })
+            navigate('/user')
+        }
     }
 
     const categoryFilters = useMemo(() => {
@@ -71,7 +143,10 @@ const CreateAdvert: React.FC = () => {
                     name="advertForm"
                     onFinish={onFinish}
                     layout="vertical"
-                    className=" w-full flex flex-col gap-[4.2vh]" >
+                    className=" w-full flex flex-col gap-[4.2vh]"
+                    initialValues={{
+                        isContractPrice: false
+                    }} >
 
                     <div className="flex flex-col mx-[8vw] gap-[5.3vh] ">
                         <div className="flex flex-col gap-[0.7vh]">
@@ -295,15 +370,16 @@ const CreateAdvert: React.FC = () => {
                             ]}
                         >
                             <TreeSelect
+                                treeDataSimpleMode
                                 popupClassName="create-advert-select-popup"
                                 allowClear
                                 showSearch
                                 loading={false}
                                 style={{ height: '5vh', width: '47.3vw' }}
                                 className="create-advert-select"
-                                treeData={undefined}
+                                treeData={locationTreeData}
                                 placeholder="Місцезнаходження"
-                                onChange={() => {}}
+                                loadData={onLoadData}
                             />
                         </Form.Item>
                     </div>
@@ -311,18 +387,13 @@ const CreateAdvert: React.FC = () => {
                     <PrimaryButton
                         title="Завантажити"
                         htmlType="submit"
-                        isLoading={false}
+                        isLoading={isAdvertCreation}
                         className="w-[15vw]  ml-[8vw] h-[4.6vh] mt-[3vh]"
                         fontColor="white"
                         fontSize="clamp(14px,1.9vh,36px)"
                         bgColor="#9B7A5B"
                         brColor="#9B7A5B" />
                 </Form>
-
-
-
-
-
             </div>
         </>)
 }

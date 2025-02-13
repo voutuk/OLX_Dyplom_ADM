@@ -25,7 +25,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
         const initialArea = searchParams.get('areaRef') || undefined;
         const initialRegion = searchParams.get('regionRef') || undefined;
         const initialSettlement = searchParams.get('settlementRef') || undefined;
-       
+
         if (initialSettlement) {
             setSelectedValue(initialSettlement);
         } else if (initialRegion) {
@@ -85,21 +85,19 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
 
     const onLoadData: TreeSelectProps['loadData'] = ({ id }) => {
         return new Promise<void>((resolve) => {
-            setTimeout(() => {
-                if (areas?.some((area: IArea) => area.ref === id)) {
-                    setAreaRef(id);
-                } else if (regions?.some((region: IRegion) => region.ref === id)) {
-                    setRegionRef(id);
-                }
-                resolve(undefined);
-            }, 300);
+            if (areas?.some((area: IArea) => area.ref === id)) {
+                setAreaRef(id);
+            } else if (regions?.some((region: IRegion) => region.ref === id)) {
+                setRegionRef(id);
+            }
+            resolve(undefined);
         });
     };
 
     const handleSelect = (value: string) => {
         setSelectedValue(value);
 
-        if(value == 'all-ukraine'){
+        if (value == 'all-ukraine') {
             onSelect({
                 areaRef: "",
                 regionRef: "",
