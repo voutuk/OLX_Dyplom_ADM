@@ -23,7 +23,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
             src={APP_ENV.IMAGES_200_URL + image}
             onMouseDown={() => { setImagesData({ ...imagesData, currentImage: image }) }} />
 
-    )) || [], [imagesData.images])
+    )) || [], [imagesData.images,imagesData.currentImage])
 
     const imagesPaths = useMemo(() => imagesData.images.map(x => APP_ENV.IMAGES_1200_URL + x) || [], [imagesData.images])
 

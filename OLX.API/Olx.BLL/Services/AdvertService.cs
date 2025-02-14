@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Olx.BLL.Exstensions;
 using Olx.BLL.Entities.NewPost;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
 
 
 namespace Olx.BLL.Services
@@ -25,6 +26,7 @@ namespace Olx.BLL.Services
         IRepository<Advert> advertRepository,
         IRepository<Category> categorytRepository,
         IRepository<Settlement> settlementRepository,
+        IRepository<AdvertImage> imageRepository,
         UserManager<OlxUser> userManager,
         IFilterValueService filterValueService,
         IImageService imageService,
@@ -78,23 +80,15 @@ namespace Olx.BLL.Services
             await advertRepository.SaveAsync();
         }
 
-        public async Task<IEnumerable<AdvertDto>> GetRangeAsync(IEnumerable<int> ids)
-        {
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByIds(ids,AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues | AdvertOpt.Settlement));
-            return adverts.Any() ? mapper.Map<IEnumerable<AdvertDto>>(adverts) : [];  
-        }
-
-        public async Task<IEnumerable<AdvertDto>> GetAllAsync()
-        {
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetAll(AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues | AdvertOpt.Settlement ));
-            return adverts.Any() ? mapper.Map<IEnumerable<AdvertDto>>(adverts) : [];
-        }
-
+        public async Task<IEnumerable<AdvertDto>> GetRangeAsync(IEnumerable<int> ids) =>
+            await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => ids.Contains(x.Id))).ToArrayAsync();
+        
+        public async Task<IEnumerable<AdvertDto>> GetAllAsync() => await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery()).ToArrayAsync();
+      
         public async Task<IEnumerable<AdvertDto>> GetUserAdverts()
         {
-            var curentUser = await userManager.UpdateUserActivityAsync(httpContext); 
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByUserId(curentUser.Id, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues | AdvertOpt.Settlement));
-            return adverts.Any() ? mapper.Map<IEnumerable<AdvertDto>>(adverts) : [];
+            var curentUser = await userManager.UpdateUserActivityAsync(httpContext);
+            return await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.UserId == curentUser.Id)).ToArrayAsync();
         }
 
         public async Task<IEnumerable<AdvertDto>> GetByUserId(int userId)
@@ -102,24 +96,19 @@ namespace Olx.BLL.Services
             await userManager.UpdateUserActivityAsync(httpContext);
             var user = userManager.FindByIdAsync(userId.ToString())
                 ?? throw new HttpException(Errors.InvalidUserId,HttpStatusCode.BadRequest);
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByUserId(user.Id, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues | AdvertOpt.Settlement));
-            return adverts.Any() ? mapper.Map<IEnumerable<AdvertDto>>(adverts) : [];
+            return await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.UserId == userId)).ToArrayAsync();
         }
 
         public async Task<AdvertDto> GetByIdAsync(int id)
         {
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images | AdvertOpt.FilterValues | AdvertOpt.UserSettlement | AdvertOpt.Settlement))
+            var advert = await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.Id == id)).FirstOrDefaultAsync()
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
-            return mapper.Map<AdvertDto>(advert);
+            return advert;
         }
 
-        public async Task<IEnumerable<AdvertImageDto>> GetImagesAsync(int id)
-        {
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(id, AdvertOpt.NoTracking | AdvertOpt.Images ))
-                ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
-            return mapper.Map<IEnumerable<AdvertImageDto>>(advert.Images);
-        }
-
+        public async Task<IEnumerable<AdvertImageDto>> GetImagesAsync(int id) =>
+            await mapper.ProjectTo<AdvertImageDto>(imageRepository.GetQuery().Where(x => x.AdvertId == id)).ToArrayAsync();
+       
         public async Task<PageResponse<AdvertDto>> GetPageAsync(AdvertPageRequest pageRequest)
         {
             var query = mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery());
@@ -143,7 +132,7 @@ namespace Olx.BLL.Services
                 throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
             }
 
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetUserAdvertById(curentUser.Id,advertModel.Id, AdvertOpt.Images))
+            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetUserAdvertById(curentUser.Id,advertModel.Id, AdvertOpt.Images | AdvertOpt.FilterValues))
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             if (!await categorytRepository.AnyAsync(x => x.Id == advertModel.CategoryId))
             {
@@ -160,34 +149,41 @@ namespace Olx.BLL.Services
             {
                 image.Advert = null;
             }
-
+            List<Task> tasks = [];
             if (advertModel.ImageFiles.Count != 0)
             {
-                advertModel.ImageFiles.Select((x,index) => new {file = x , index }).AsParallel().ForAll(async (item) => 
+                var priorityFiles = advertModel.ImageFiles.Select((x, index) => new { file = x, index });
+                
+                foreach (var file in priorityFiles)
                 {
-                    if (item.file.ContentType == "image/existing")
+                   
+                    if (file.file.ContentType == "image/existing")
                     {
-                        var oldImage = advert.Images.FirstOrDefault(x => x.Name == item.file.FileName)!;
-                        oldImage.Priority = item.index;
+                        var oldImage = advert.Images.FirstOrDefault(x => x.Name == file.file.FileName)!;
+                        oldImage.Priority = file.index;
                     }
                     else
                     {
-                        var imageName = await imageService.SaveImageAsync(item.file);
-                        advert.Images.Add(new AdvertImage
+                        tasks.Add(Task.Run(async () =>
                         {
-                            Name = imageName,
-                            Priority = item.index
-                        });
+                            var imageName = await imageService.SaveImageAsync(file.file);
+                            advert.Images.Add(new AdvertImage
+                            {
+                                Name = imageName,
+                                Priority = file.index
+                            });
+                        }));
                     }
-                });
-            }
-
+                   
+                }
+             }
             if (advertModel.FilterValueIds.Count != 0)
             {
                 var values = await filterValueService.GetByIdsAsync(advertModel.FilterValueIds);
                 advert.FilterValues = values.ToList();
             }
-
+            advert.Approved = false;
+            await Task.WhenAll(tasks);
             await advertRepository.SaveAsync();
             return mapper.Map<AdvertDto>(advert);
         }

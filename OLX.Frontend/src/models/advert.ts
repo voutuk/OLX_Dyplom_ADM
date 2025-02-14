@@ -15,6 +15,7 @@ export interface IAdvert{
     price: number,
     categoryId: number,
     settlementName: string,
+    settlementRef: string,
     categoryName: string,
     filterValues: IFilterValue[],
     images: IAdvertImage[]
@@ -53,6 +54,7 @@ export interface IAdvertCreationModel {
     contactEmail: string,
     title: string,
     description: string,
+    contactPersone: string
     isContractPrice: boolean,
     settlementRef: string,
     price: number,

@@ -5,7 +5,7 @@ import Filter from "../filter"
 import { Button, Form } from "antd"
 import PriceFilter from "../price_filter"
 
-const crearedPariceFilter = {
+const clearedPariceFilter = {
     priceFrom: undefined,
     priceTo: undefined,
     isContractPrice: undefined
@@ -31,12 +31,12 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
         if (onChange) {
             if (key) {
                 key < 0
-                    ? form.setFieldsValue(crearedPariceFilter)
+                    ? form.setFieldsValue(clearedPariceFilter)
                     : form.setFieldValue(key, [])
                 form.submit()
             }
             else {
-                form.setFieldsValue({ ...crearedPariceFilter, ...clearedFormFilters })
+                form.setFieldsValue({ ...clearedPariceFilter, ...clearedFormFilters })
                 onChange([], undefined, undefined, undefined)
             }
         }

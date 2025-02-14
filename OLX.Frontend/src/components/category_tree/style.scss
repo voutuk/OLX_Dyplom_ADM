@@ -14,12 +14,13 @@
 
      /* Колір доріжки (фон скролбару) */
      &::-webkit-scrollbar-track {
-         background: #9B7A5B;
+         background: lightgray;
          border-radius: 4px;
      }
 
      &::-webkit-scrollbar {
-         height: 5px;
+         height: 4px;
+         width: 4px;
          /* Товщина скролбару */
      }
  }
@@ -37,7 +38,6 @@
      .ant-tree-indent-unit {
          width: 10px !important;
      }
-
 
      .ant-tree-node-content-wrapper:hover {
          background-color: transparent !important;

@@ -13,18 +13,22 @@ const CategoriesSection = () => {
       key={category.id}
       title={category.name}
       isLoading={false}
+      fontSize="clamp(14px,2.2vh,30px)"
       bgColor="transparent"
       brColor="#9B7A5B"
       fontColor="black"
-      className={`mb-[5vh] w-[13vw] h-[5vh] ${(index + 1) % 2 === 0 ? "mx-[4vw]" : ""}`} />
+      className={`w-[11.5vw] h-[4.2vh] `} />
   )) || [], [categories])
 
 
   return (
-    <div className="my-[40px]">
-      <h2 className='text-[#3A211C] mb-[6vh] font-unbounded text-adaptive-login-header-text font-normal text-center'>Популярні категорії</h2>
-      <div className="flex flex-wrap gap-2 justify-center">
-        {...categoryButtons}
+    <div className="my-[40px] w-full  gap-[6vh] flex flex-col">
+      <h2 className='text-[#3A211C] font-unbounded text-adaptive-login-header-text font-normal text-center'>Популярні категорії</h2>
+      <div className="flex  w-[100%]  justify-between">
+        {...categoryButtons.slice(0,5)}
+      </div>
+      <div className="w-[100%] px-[6vw]  flex justify-around ">
+        {...categoryButtons.slice(5,9)}
       </div>
     </div>
   )

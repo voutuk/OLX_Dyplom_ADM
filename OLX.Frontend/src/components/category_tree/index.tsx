@@ -25,7 +25,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({ categoryId, categories, onS
                 }
             }}
             treeData={categoryTree}
-            className={`${className}`} />
+            className={`custom-scrollbar custom-tree ${className}`} />
     )
 }
 

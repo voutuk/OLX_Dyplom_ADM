@@ -18,7 +18,7 @@ const advertPageSize: number = 6;
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
     priceFrom: Number(searchParams.get("priceFrom")),
     priceTo: Number(searchParams.get("priceTo")),
-    approved: true,
+   // approved: true,
     blocked: false,
     size: Number(searchParams.get("size")) || advertPageSize,
     page: Number(searchParams.get("page")) || 1,
@@ -82,19 +82,16 @@ const AdvertsPage: React.FC = () => {
                         <Collapsed
                             title="Категорія"
                             className="text-adaptive-card-price-text  text-[#3A211C] font-unbounded">
-
-                            <div className="custom-scrollbar custom-tree overflow-x-auto mt-[2vh]">
-                                <CategoryTree
-                                    categories={categories}
-                                    className="font-montserrat text-nowrap  text-adaptive-input-form-text"
-                                    categoryId={pageRequest.categoryId}
-                                    onSelect={(id) => {
-                                        if (id) {
-                                            setSearchParams(getQueryString(({ ...pageRequest, categoryId: id, size: advertPageSize })))
-                                        }
-                                    }}
-                                />
-                            </div>
+                            <CategoryTree
+                                categories={categories}
+                                className="font-montserrat overflow-x-auto overflow-y-auto  mt-[2vh] h-[45vh] text-adaptive-input-form-text"//text-wrap
+                                categoryId={pageRequest.categoryId}
+                                onSelect={(id) => {
+                                    if (id) {
+                                        setSearchParams(getQueryString(({ ...pageRequest, categoryId: id, size: advertPageSize })))
+                                    }
+                                }}
+                            />
                         </Collapsed>
 
                         <Collapsed
