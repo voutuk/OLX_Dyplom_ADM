@@ -89,10 +89,11 @@ export const advertAuthApi = createApi({
             },
         }),
 
-        getUserAdverts: builder.query<IAdvert[], void>({
-            query: () => ({
+        getUserAdverts: builder.query<IAdvert[], number>({
+            query: (userId) => ({
                 url: `get/user`,
                 method: "GET",
+                params: { userId },
             }),
             providesTags: ["UserAdvert"],
         }),
