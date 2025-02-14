@@ -1,4 +1,3 @@
-import { UploadFile } from "antd";
 import { IFilterValue } from "./filter";
 import { IShortOlxUser, PageRequest } from "./user";
 
@@ -16,6 +15,7 @@ export interface IAdvert{
     price: number,
     categoryId: number,
     settlementName: string,
+    settlementRef: string,
     categoryName: string,
     filterValues: IFilterValue[],
     images: IAdvertImage[]

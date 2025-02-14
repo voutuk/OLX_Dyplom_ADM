@@ -18,7 +18,7 @@ const advertPageSize: number = 6;
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
     priceFrom: Number(searchParams.get("priceFrom")),
     priceTo: Number(searchParams.get("priceTo")),
-    approved: true,
+   // approved: true,
     blocked: false,
     size: Number(searchParams.get("size")) || advertPageSize,
     page: Number(searchParams.get("page")) || 1,

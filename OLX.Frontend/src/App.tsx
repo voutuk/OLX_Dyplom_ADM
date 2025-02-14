@@ -50,6 +50,7 @@ function App() {
               <Route index element={<UserProfile />} />
               <Route path='edit' element={<UserProfileEdit />} />
               <Route path='advert/create' element={<CreateAdvert/>}/>
+              <Route path='advert/edit/:id' element={<CreateAdvert/>}/>
             </Route>
           </Route>
 
@@ -82,7 +83,7 @@ function App() {
             <AdminLayout />
           </Suspense>}>
           <Route index element={<UsersPage />} />
-          
+
           <Route path="adverts">
             <Route index element={<AdminAdvertTable />} />
             <Route path='approve' element={<AdminAdvertTable />} />

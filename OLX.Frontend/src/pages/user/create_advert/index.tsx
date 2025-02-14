@@ -5,21 +5,26 @@ import TextArea from "antd/es/input/TextArea"
 import './style.scss'
 import { useGetAllCategoriesQuery } from "../../../redux/api/categoryApi"
 import { useEffect, useMemo, useState } from "react"
-import { buildTree, getAllParentFilterIds } from "../../../utilities/common_funct"
+import { buildTree, getAllParentFilterIds, getUserDescr } from "../../../utilities/common_funct"
 import { useGetAllFilterQuery } from "../../../redux/api/filterApi"
-import { IAdvertCreationModel } from "../../../models/advert"
+import { IAdvertCreationModel, IAdvertImage } from "../../../models/advert"
 import { useAppSelector } from "../../../redux"
 import PrimaryButton from "../../../components/buttons/primary_button"
 import { useGetAreasQuery, useGetRegionsByAreaQuery, useGetSettlementsByRegionQuery } from "../../../redux/api/newPostApi"
 import { IArea, IRegion, ISettlement } from "../../../models/newPost"
-import { useCreateAdvertMutation } from "../../../redux/api/advertAuthApi"
-import { useNavigate } from "react-router-dom"
+import { useCreateAdvertMutation, useUpdateAdvertMutation } from "../../../redux/api/advertAuthApi"
+import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "react-toastify"
+import { useGetAdvertByIdQuery } from "../../../redux/api/advertApi"
+import { APP_ENV } from "../../../constants/env"
+
+
 
 
 const CreateAdvert: React.FC = () => {
+    const { id } = useParams();
+    const { data: advert } = useGetAdvertByIdQuery(Number(id), { skip: isNaN(Number(id)) || Number(id) === 0 })
     const { data: categories, isLoading: isCategoriesLoading } = useGetAllCategoriesQuery()
-    const getCategoryTree = useMemo(() => buildTree(categories || [], undefined, undefined, true), [categories])
     const { data: filters } = useGetAllFilterQuery();
     const user = useAppSelector(state => state.user.user);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
@@ -30,7 +35,11 @@ const CreateAdvert: React.FC = () => {
     const { data: regions } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
     const { data: settlements } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
     const [createAdvert, { isLoading: isAdvertCreation }] = useCreateAdvertMutation();
+    const [updateAdvert, { isLoading: isAdvertEdition }] = useUpdateAdvertMutation();
     const navigate = useNavigate();
+    const [form] = Form.useForm();
+
+    const getCategoryTree = useMemo(() => buildTree(categories || [], undefined, undefined, true), [categories])
 
     useEffect(() => {
         if (areas) {
@@ -88,7 +97,7 @@ const CreateAdvert: React.FC = () => {
         const filterValues = Object.entries(data).filter(x => !isNaN(Number(x[0])) && x[1]).map(x => x[1])
         const imageFiles = data.files.map((x: UploadFile) => x?.originFileObj as Blob)
         const advertCreationModel: IAdvertCreationModel = {
-            id: 0,
+            id: Number(id) || 0,
             userId: user?.id || 0,
             phoneNumber: data.phoneNumber,
             contactEmail: data.contactEmail,
@@ -100,11 +109,12 @@ const CreateAdvert: React.FC = () => {
             categoryId: data.categoryId,
             filterValueIds: filterValues as [],
             imageFiles: imageFiles,
-            contactPersone: `${data.contactSurname} ${data.contactName}`
+            contactPersone: data.contactPersone
         }
-        const result = await createAdvert(advertCreationModel);
+        
+        const result = id ? await updateAdvert(advertCreationModel) : await createAdvert(advertCreationModel);
         if (!result.error) {
-            toast("Оголошення успішно опубліковане", {
+            toast(`Оголошення успішно ${id ? 'оновлено' : 'опубліковане'}`, {
                 type: "success"
             })
             navigate('/user')
@@ -122,7 +132,7 @@ const CreateAdvert: React.FC = () => {
                     <Select
                         popupClassName="create-advert-select-popup"
                         allowClear
-                        options={filter.values.map(value => ({ value: value.id.toString(), label: value.value }))}
+                        options={filter.values.map(value => ({ value: value.id, label: value.value }))}
                         placeholder={filter.name}
                         style={{ height: '5vh', width: '23vw' }}
                         className="create-advert-select"
@@ -133,20 +143,53 @@ const CreateAdvert: React.FC = () => {
 
     }, [filters, selectedCategoryId])
 
+    useEffect(() => {
+        if (advert) {
+            setSelectedCategoryId(advert.categoryId)
+            const formInitData = {
+                isContractPrice: advert?.isContractPrice || false,
+                files: advertFiles,
+                title: advert?.title || '',
+                description: advert?.description || '',
+                categoryId: advert?.categoryId,
+                phoneNumber: advert?.phoneNumber || user?.phone || '',
+                contactEmail: advert?.contactEmail || user?.email || '',
+                settlementRef: advert?.settlementRef || '',
+                price: advert?.price,
+                contactPersone: advert?.contactPersone || getUserDescr(user) || '',
+                ...clearedFormFilters
+            }
+            form.setFieldsValue(formInitData)
+        }
+    }, [advert])
+
+    const advertFiles = useMemo(() =>
+        advert
+            ? advert?.images.slice()
+                .sort((a: IAdvertImage, b: IAdvertImage) => a.priority - b.priority)
+                .map(x => ({ url: APP_ENV.IMAGES_1200_URL + x.name, originFileObj: new File([new Blob([''])], x.name, { type: 'image/existing' }) }) as UploadFile)
+            : []
+        , [advert])
+
+    const clearedFormFilters = useMemo(() => {
+        return  advert?.filterValues.reduce((acc, key) => {
+            acc[key.filterId] = key.id
+            return acc;
+        }, {} as Record<string, any>)
+    }, [advert, filters])
+    
     return (
         <>
             <div className="flex w-[100%] items-start flex-col  gap-[5vh]  mb-[18vh]">
                 <BackButton className="text-adaptive-1_9_text ml-[9vw] font-medium mt-[7.9vh]" title="Назад" />
-                <h1 className=" mt-[7vh]  ml-[8vw] font-unbounded text-adaptive-3_35-text">Створити оголошення</h1>
+                <h1 className=" mt-[7vh]  ml-[8vw] font-unbounded text-adaptive-3_35-text">{id ? "Змінити" : "Створити"} оголошення</h1>
 
                 <Form
+                    form={form}
                     name="advertForm"
                     onFinish={onFinish}
                     layout="vertical"
-                    className=" w-full flex flex-col gap-[4.2vh]"
-                    initialValues={{
-                        isContractPrice: false
-                    }} >
+                    className=" w-full flex flex-col gap-[4.2vh]">
 
                     <div className="flex flex-col mx-[8vw] gap-[5.3vh] ">
                         <div className="flex flex-col gap-[0.7vh]">
@@ -284,39 +327,22 @@ const CreateAdvert: React.FC = () => {
                     {categoryFilters}
                     <hr className="mb-[2vh]" />
                     <div className="flex flex-col gap-[2.5vh] ml-[8vw]">
-                        <div className="flex gap-[1.8vw]">
-                            <Form.Item
-                                name="contactSurname"
-                                label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Прізвище</div>}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: <span className="font-montserrat text-adaptive-input-form-error-text">Введіть прізвище контактної особи</span>
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    className="h-[5vh] w-[22.9vw] font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
-                                    placeholder="Прізвище" />
 
-                            </Form.Item>
+                        <Form.Item
+                            name="contactPersone"
+                            label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Контактна персона</div>}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: <span className="font-montserrat text-adaptive-input-form-error-text">Введіть контактну персону</span>
+                                },
+                            ]}
+                        >
+                            <Input
+                                className="h-[5vh] w-[47.3vw] font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
+                                placeholder="Контактна персона" />
 
-                            <Form.Item
-                                name="contactName"
-                                label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Ім'я</div>}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: <span className="font-montserrat text-adaptive-input-form-error-text">Введіть ім'я контактної особи</span>
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    className="h-[5vh] w-[22.8vw] font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
-                                    placeholder="Ім'я" />
-
-                            </Form.Item>
-                        </div>
+                        </Form.Item>
 
                         <Form.Item
                             name="phoneNumber"
@@ -385,9 +411,9 @@ const CreateAdvert: React.FC = () => {
                     </div>
 
                     <PrimaryButton
-                        title="Завантажити"
+                        title={id ? 'Зберегти' : 'Завантажити'}
                         htmlType="submit"
-                        isLoading={isAdvertCreation}
+                        isLoading={isAdvertCreation || isAdvertEdition}
                         className="w-[15vw]  ml-[8vw] h-[4.6vh] mt-[3vh]"
                         fontColor="white"
                         fontSize="clamp(14px,1.9vh,36px)"

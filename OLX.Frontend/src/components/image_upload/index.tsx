@@ -19,7 +19,7 @@ const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, images = [], 
             newFileList = newFileList.slice(0,maxCount)
         }
         for (let index = 0; index < newFileList.length; index++) {
-            if (!newFileList[index].thumbUrl) {
+            if ( !newFileList[index].url && !newFileList[index].thumbUrl  ) {
                 const smallFile = await imageCompression(newFileList[index].originFileObj as FileType, { maxWidthOrHeight: 200 })
                 newFileList[index].thumbUrl = URL.createObjectURL(smallFile)
             }
