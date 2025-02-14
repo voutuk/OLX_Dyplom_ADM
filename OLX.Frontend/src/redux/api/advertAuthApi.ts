@@ -7,7 +7,7 @@ import { getFormData } from "../../utilities/common_funct";
 export const advertAuthApi = createApi({
     reducerPath: "advertAuthApi",
     baseQuery: createBaseQueryWithAuth("Advert"),
-    tagTypes: ["Adverts","UserAdvert"],
+    tagTypes: ["UserAdverts","UserAdvert"],
 
     endpoints: (builder) => ({
         createAdvert: builder.mutation<void, IAdvertCreationModel>({
@@ -19,11 +19,12 @@ export const advertAuthApi = createApi({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(advertApi.util.invalidateTags(["NotApproved"]))
+                    dispatch(advertApi.util.invalidateTags(["Adverts","Locked","NotApproved"]))
                 } catch (error) {
                     console.error('Create advert failed:', error);
                 }
             },
+            invalidatesTags:["UserAdvert","UserAdverts"]
         }),
 
         updateAdvert: builder.mutation<void, IAdvertCreationModel>({
@@ -40,7 +41,7 @@ export const advertAuthApi = createApi({
                     console.error('Update advert failed:', error);
                 }
             },
-            invalidatesTags:["UserAdvert"]
+            invalidatesTags:["UserAdvert","UserAdverts"]
         }),
 
         deleteAdvert: builder.mutation<void, number>({
@@ -56,7 +57,7 @@ export const advertAuthApi = createApi({
                     console.error('Delete advert failed:', error);
                 }
             },
-            invalidatesTags:["UserAdvert"]
+            invalidatesTags:["UserAdvert","UserAdverts"]
         }),
 
         blockAdvert: builder.mutation<void, { advertId: number; status: boolean }>({
@@ -96,7 +97,7 @@ export const advertAuthApi = createApi({
                 method: "GET",
                 params: { userId },
             }),
-            providesTags: ["UserAdvert"],
+            providesTags: ["UserAdverts"],
         }),
 
         getAdvertsByUserId: builder.query<IAdvert[], number>({

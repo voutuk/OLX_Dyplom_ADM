@@ -111,7 +111,7 @@ const CreateAdvert: React.FC = () => {
             imageFiles: imageFiles,
             contactPersone: data.contactPersone
         }
-        
+        console.log(advertCreationModel)
         const result = id ? await updateAdvert(advertCreationModel) : await createAdvert(advertCreationModel);
         if (!result.error) {
             toast(`Оголошення успішно ${id ? 'оновлено' : 'опубліковане'}`, {
@@ -172,12 +172,12 @@ const CreateAdvert: React.FC = () => {
         , [advert])
 
     const clearedFormFilters = useMemo(() => {
-        return  advert?.filterValues.reduce((acc, key) => {
+        return advert?.filterValues.reduce((acc, key) => {
             acc[key.filterId] = key.id
             return acc;
         }, {} as Record<string, any>)
     }, [advert, filters])
-    
+
     return (
         <>
             <div className="flex w-[100%] items-start flex-col  gap-[5vh]  mb-[18vh]">
@@ -189,7 +189,10 @@ const CreateAdvert: React.FC = () => {
                     name="advertForm"
                     onFinish={onFinish}
                     layout="vertical"
-                    className=" w-full flex flex-col gap-[4.2vh]">
+                    className=" w-full flex flex-col gap-[4.2vh]"
+                    initialValues={{
+                        isContractPrice: advert?.isContractPrice || false
+                    }}>
 
                     <div className="flex flex-col mx-[8vw] gap-[5.3vh] ">
                         <div className="flex flex-col gap-[0.7vh]">
