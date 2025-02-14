@@ -7,7 +7,7 @@ const CategoriesSection = () => {
   const { data: categories } = useGetAllCategoriesQuery();
   const navigate = useNavigate();
 
-  const categoryButtons = useMemo(() => categories?.filter(i => i.id != 4).slice(0, 9).map((category, index) => (
+  const categoryButtons = useMemo(() => categories?.filter(i => i.id != 4).slice(0, 9).map((category) => (
     <PrimaryButton
       onButtonClick={() => { navigate(`/adverts?categoryId=${category.id}`) }}
       key={category.id}
@@ -25,10 +25,10 @@ const CategoriesSection = () => {
     <div className="my-[40px] w-full  gap-[6vh] flex flex-col">
       <h2 className='text-[#3A211C] font-unbounded text-adaptive-login-header-text font-normal text-center'>Популярні категорії</h2>
       <div className="flex  w-[100%]  justify-between">
-        {...categoryButtons.slice(0,5)}
+        {...categoryButtons.slice(0, 5)}
       </div>
       <div className="w-[100%] px-[6vw]  flex justify-around ">
-        {...categoryButtons.slice(5,9)}
+        {...categoryButtons.slice(5, 9)}
       </div>
     </div>
   )

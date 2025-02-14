@@ -16,6 +16,7 @@ using Olx.BLL.Pagination.Filters;
 using Olx.BLL.Pagination.SortData;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
+using Org.BouncyCastle.Crypto;
 using System.Net;
 
 
@@ -43,14 +44,12 @@ namespace Olx.BLL.Services
         public async Task<IEnumerable<Filter>> GetByIds(IEnumerable<int> ids) =>
             await filterRepository.GetListBySpec(new FilterSpecs.GetByIds(ids, FilterOpt.Values));
 
-        public async Task<IEnumerable<FilterDto>> GetDtoByIds(IEnumerable<int> ids)
-        {
-            var filters = await filterRepository.GetListBySpec(new FilterSpecs.GetByIds(ids, FilterOpt.Values | FilterOpt.NoTracking));
-            return mapper.Map<IEnumerable<FilterDto>>(filters);
-        }
+        public async Task<IEnumerable<FilterDto>> GetDtoByIds(IEnumerable<int> ids) =>
+            await mapper.ProjectTo<FilterDto>(filterRepository.GetQuery().Where(x => ids.Contains(x.Id))).ToArrayAsync();
+        
 
         public async Task<IEnumerable<FilterDto>> GetAll() =>
-            mapper.Map<IEnumerable<FilterDto>>(await filterRepository.GetListBySpec(new FilterSpecs.GetAll(FilterOpt.Values | FilterOpt.NoTracking)));
+            await mapper.ProjectTo<FilterDto>(filterRepository.GetQuery()).ToArrayAsync();
 
         public async Task RemoveAsync(int id)
         {
@@ -93,15 +92,15 @@ namespace Olx.BLL.Services
 
         public async Task<PageResponse<FilterDto>> GetPageAsync(FilterPageRequest pageRequest)
         {
-            var query = filterRepository.GetQuery().Include(x => x.Values);
-            var paginationBuilder = new PaginationBuilder<Filter>(query);
+            var query = mapper.ProjectTo<FilterDto>(filterRepository.GetQuery());
+            var paginationBuilder = new PaginationBuilder<FilterDto>(query);
             var filter = new FiltersFilter(pageRequest.SearchName);
             var sortData =  new FilterSortData(pageRequest.IsDescending,pageRequest.SortKey);
             var page = await paginationBuilder.GetPageAsync(pageRequest.Page,pageRequest.Size, filter, sortData);
             return new()
             {
                 Total = page.Total,
-                Items = mapper.Map<IEnumerable<FilterDto>>(page.Items)
+                Items = page.Items
             };
         }
     }

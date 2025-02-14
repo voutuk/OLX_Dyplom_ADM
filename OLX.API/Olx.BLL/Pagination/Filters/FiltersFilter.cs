@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Pagination.Interfaces;
 
 namespace Olx.BLL.Pagination.Filters
 {
-    public class FiltersFilter(string? searchString) : IPaginationFilter<Filter>
+    public class FiltersFilter(string? searchString) : IPaginationFilter<FilterDto>
     {
-        public IQueryable<Filter> FilterQuery(IQueryable<Filter> query)
+        public IQueryable<FilterDto> FilterQuery(IQueryable<FilterDto> query)
         {
             if (!string.IsNullOrWhiteSpace(searchString))
             {

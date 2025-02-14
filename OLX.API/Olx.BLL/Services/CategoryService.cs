@@ -30,8 +30,7 @@ namespace Olx.BLL.Services
         IHttpContextAccessor httpContext) : ICategoryService
     {
 
-        public async Task<IEnumerable<CategoryDto>> Get() => mapper.Map<IEnumerable<CategoryDto>>(
-               await categoryRepository.GetListBySpec(new CategorySpecs.GetAll(CategoryOpt.NoTracking | CategoryOpt.Filters)));
+        public async Task<IEnumerable<CategoryDto>> Get() => await mapper.ProjectTo<CategoryDto>(categoryRepository.GetQuery()).ToArrayAsync();
      
         public async Task<CategoryDto> CreateAsync(CategoryCreationModel creationModel)
         {
@@ -124,8 +123,9 @@ namespace Olx.BLL.Services
             return mapper.Map<CategoryDto>(category);
         }
 
-        public async Task<CategoryDto> GetById(int id) => 
-            mapper.Map<CategoryDto>( await categoryRepository.GetItemBySpec(new CategorySpecs.GetById(id,CategoryOpt.NoTracking | CategoryOpt.Filters)));
+        public async Task<CategoryDto> GetById(int id) =>
+            await mapper.ProjectTo<CategoryDto>(categoryRepository.GetQuery().Where(x => x.Id == id)).FirstOrDefaultAsync()
+            ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
        
 
         public async Task<IEnumerable<CategoryDto>> GetAllTreeAsync(bool filters = true)

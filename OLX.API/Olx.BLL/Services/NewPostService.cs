@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Olx.BLL.DTOs.NewPost;
@@ -119,8 +120,7 @@ namespace Olx.BLL.Services
                 .Select(z => z.First());
         }
 
-        public async Task<IEnumerable<AreaDto>> GetAreasAsync() => 
-            mapper.Map<IEnumerable<AreaDto>>(await areaRepository.GetListBySpec(new NewPostDataSpecs.GetAreas()));
+        public async Task<IEnumerable<AreaDto>> GetAreasAsync() =>  await mapper.ProjectTo<AreaDto>(areaRepository.GetQuery()).ToArrayAsync();
 
         public async Task<IEnumerable<WarehousDto>> GetWarehousesBySettlementAsync(string settlementRef)
         {
@@ -128,7 +128,7 @@ namespace Olx.BLL.Services
             {
                 throw new HttpException(Errors.InvalidSettlementRef,HttpStatusCode.BadRequest);
             }
-            return mapper.Map<IEnumerable<WarehousDto>>(await warehousRepository.GetListBySpec(new NewPostDataSpecs.GetWarehousesBySettlement(settlementRef)));
+            return await mapper.ProjectTo<WarehousDto>(warehousRepository.GetQuery().Where(x => x.SettlementRef == settlementRef)).ToArrayAsync();
         }
 
         public async Task<IEnumerable<SettlementDto>> GetSettlementsByRegionAsync(string regionRef) 
@@ -137,12 +137,12 @@ namespace Olx.BLL.Services
             {
                 throw new HttpException(Errors.InvalidRegionRef, HttpStatusCode.BadRequest);
             }
-            return mapper.Map<IEnumerable<SettlementDto>>(await settlementRepository.GetListBySpec(new NewPostDataSpecs.GetSettlementsByRegion(regionRef)));
+            return await mapper.ProjectTo<SettlementDto>(settlementRepository.GetQuery().Where(x => x.Region == regionRef)).ToArrayAsync();
         }
             
 
         public async Task<IEnumerable<RegionDto>> GetRegionsAsync() =>
-            mapper.Map<IEnumerable<RegionDto>>(await regionRepository.GetListBySpec(new NewPostDataSpecs.GetRegions()));
+           await  mapper.ProjectTo<RegionDto>(regionRepository.GetQuery()).ToArrayAsync();
 
         public async Task<IEnumerable<RegionDto>> GetRegionsByAreaAsync(string areaRef) 
         {
@@ -150,7 +150,7 @@ namespace Olx.BLL.Services
             {
                 throw new HttpException(Errors.InvalidAreaRef, HttpStatusCode.BadRequest);
             }
-            return mapper.Map<IEnumerable<RegionDto>>(await regionRepository.GetListBySpec(new NewPostDataSpecs.GetRegionsByArea(areaRef)));
+            return await mapper.ProjectTo<RegionDto>(regionRepository.GetQuery().Where(x => x.AreaRef == areaRef)).ToArrayAsync();
         }
             
 
