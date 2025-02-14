@@ -61,7 +61,7 @@ namespace Olx.BLL.Services
 
         public async Task<AdminMessageDto> GetById(int id)
         {
-            var message = await mapper.ProjectTo<AdminMessageDto>(adminMessageRepo.GetQuery().Where(x => x.Id == id && !x.Deleted)).FirstOrDefaultAsync()
+            var message = await mapper.ProjectTo<AdminMessageDto>(adminMessageRepo.GetQuery().Where(x => x.Id == id && !x.Deleted)).SingleOrDefaultAsync()
                 ?? throw new HttpException(Errors.InvalidAdminMessageId, HttpStatusCode.BadRequest);
             return message;
         }

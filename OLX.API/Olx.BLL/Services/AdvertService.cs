@@ -101,7 +101,7 @@ namespace Olx.BLL.Services
 
         public async Task<AdvertDto> GetByIdAsync(int id)
         {
-            var advert = await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.Id == id)).FirstOrDefaultAsync()
+            var advert = await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.Id == id)).SingleOrDefaultAsync()
                 ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             return advert;
         }

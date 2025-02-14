@@ -46,7 +46,7 @@ namespace Olx.BLL.Services
 
         public async Task<OlxUserDto> Get(int id, bool isAdmin = false) 
         {
-            var userDto = await mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery().Where(x => x.Id == id)).FirstOrDefaultAsync();
+            var userDto = await mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery().Where(x => x.Id == id)).SingleOrDefaultAsync();
             if (userDto is not null)
             {
                 var user = await userRepo.GetByIDAsync(id);

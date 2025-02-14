@@ -124,7 +124,7 @@ namespace Olx.BLL.Services
         }
 
         public async Task<CategoryDto> GetById(int id) =>
-            await mapper.ProjectTo<CategoryDto>(categoryRepository.GetQuery().Where(x => x.Id == id)).FirstOrDefaultAsync()
+            await mapper.ProjectTo<CategoryDto>(categoryRepository.GetQuery().Where(x => x.Id == id)).SingleOrDefaultAsync()
             ?? throw new HttpException(Errors.InvalidCategoryId,HttpStatusCode.BadRequest);
        
 
