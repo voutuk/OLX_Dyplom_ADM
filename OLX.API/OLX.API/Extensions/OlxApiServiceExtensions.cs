@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.FileProviders;
 using OLX.API.Helpers.CustomJsonConverters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -107,7 +107,7 @@ namespace OLX.API.Extensions
                 options.AddPolicy("AllowOrigins",
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:5173","https://gosell.itstep.click", "https://dev.pluton.pp.ua",  "https://olxapi.itstep.click")
+                    builder.WithOrigins("http://localhost:8080","http://localhost","https://gosell.itstep.click", "https://dev.pluton.pp.ua",  "https://apidev.pluton.pp.ua", "https://dev.pluton.pp.ua", "https://api.pluton.pp.ua")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();
