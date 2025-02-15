@@ -37,7 +37,7 @@ export const SignalRProvider: React.FC<{ children: ReactNode | ReactNode[] }> = 
             if (token) {
                 const signaConnection = new HubConnectionBuilder()
                     .withUrl(`${APP_ENV.SERVER_HOST}/hub`, {
-                        accessTokenFactory: () =>  token || ""
+                        accessTokenFactory: () => token || ""
                     })
                     .withAutomaticReconnect()
                     .build();

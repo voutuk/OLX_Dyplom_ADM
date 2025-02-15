@@ -111,7 +111,6 @@ const CreateAdvert: React.FC = () => {
             imageFiles: imageFiles,
             contactPersone: data.contactPersone
         }
-        console.log(advertCreationModel)
         const result = id ? await updateAdvert(advertCreationModel) : await createAdvert(advertCreationModel);
         if (!result.error) {
             toast(`Оголошення успішно ${id ? 'оновлено' : 'опубліковане'}`, {
@@ -157,7 +156,7 @@ const CreateAdvert: React.FC = () => {
                 settlementRef: advert?.settlementRef || '',
                 price: advert?.price,
                 contactPersone: advert?.contactPersone || getUserDescr(user) || '',
-                ...clearedFormFilters
+                ...filterFommValues
             }
             form.setFieldsValue(formInitData)
         }
@@ -171,7 +170,7 @@ const CreateAdvert: React.FC = () => {
             : []
         , [advert])
 
-    const clearedFormFilters = useMemo(() => {
+    const filterFommValues = useMemo(() => {
         return advert?.filterValues.reduce((acc, key) => {
             acc[key.filterId] = key.id
             return acc;

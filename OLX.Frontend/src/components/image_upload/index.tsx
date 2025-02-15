@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { Upload, Image, UploadProps } from "antd";
 import { DndContext, closestCenter } from "@dnd-kit/core";
-import { SortableContext, arrayMove} from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { FileType } from "../../utilities/common_funct";
 import imageCompression from "browser-image-compression";
 import { PlusOutlined } from '@ant-design/icons';
@@ -9,17 +9,18 @@ import { UploadWithDndProps } from "./props";
 import SortableImage from "./sortable_image";
 
 
-const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, images = [], onChange = ()=>{} , className, maxCount = 5, defaultCount = 4 ,columns = 5 ,rowHeight = 10}) => {
+const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, images = [], onChange = () => { }, className, maxCount = 5, defaultCount = 4, columns = 5, rowHeight = 10 }) => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const uploadRef = useRef<any>(null);
 
     const onFilesChange: UploadProps['onChange'] = async ({ fileList: newFileList }) => {
-        if(newFileList.length > maxCount){
-            newFileList = newFileList.slice(0,maxCount)
+        if (newFileList.length > maxCount) {
+            newFileList = newFileList.slice(0, maxCount)
         }
+
         for (let index = 0; index < newFileList.length; index++) {
-            if ( !newFileList[index].url && !newFileList[index].thumbUrl  ) {
+            if (!newFileList[index].url && !newFileList[index].thumbUrl) {
                 const smallFile = await imageCompression(newFileList[index].originFileObj as FileType, { maxWidthOrHeight: 200 })
                 newFileList[index].thumbUrl = URL.createObjectURL(smallFile)
             }
@@ -46,7 +47,7 @@ const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, images = [], 
     };
 
     const onRemove = (uid: string | undefined) => {
-         onChange(images.filter(x => x.uid !== uid));
+        onChange(images.filter(x => x.uid !== uid));
     }
 
     const openFileDialog = () => {
@@ -70,15 +71,15 @@ const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, images = [], 
 
         return [...loaders, loader]
     }, [images.length, defaultCount, maxCount])
-    
+
     const uploadedImages = useMemo(() => {
-        const newImages = images.length > 0 ? images.map(file => 
-        <SortableImage
-            onDelete={onRemove}
-            onPreview={handlePreview}
-            key={file?.uid}
-            file={file}
-            uploadSize={uploadSize} />) : []
+        const newImages = images.length > 0 ? images.map(file =>
+            <SortableImage
+                onDelete={onRemove}
+                onPreview={handlePreview}
+                key={file?.uid}
+                file={file}
+                uploadSize={uploadSize} />) : []
 
         return [...newImages, ...defaultLoaders]
     }, [images])
@@ -118,8 +119,5 @@ const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, images = [], 
         </>
     );
 };
-
-
-
 
 export default UploadWithDnd;

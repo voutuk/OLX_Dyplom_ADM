@@ -222,4 +222,7 @@
   <data name="InvalidParentCategoryId" xml:space="preserve">
     <value>Invalid parent category id</value>
   </data>
+  <data name="MultipleRefresh" xml:space="preserve">
+    <value>Multiple refresh</value>
+  </data>
 </root>

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Olx.BLL.Interfaces;
 using System.Linq.Expressions;
 using Olx.DAL.Data;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace Olx.DAL.Repositories
 {
@@ -91,5 +93,8 @@ namespace Olx.DAL.Repositories
         public async Task<int> CountAsync(Expression<Func<TEntity, bool>> exp) => await dbSet.CountAsync(exp);
 
         public async Task<int> CountAsync() => await dbSet.CountAsync();
+
+        public Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) => context.Database.BeginTransactionAsync(isolationLevel);
+        
     }
 }

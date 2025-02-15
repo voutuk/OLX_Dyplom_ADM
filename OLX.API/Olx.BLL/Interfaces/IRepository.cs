@@ -1,5 +1,7 @@
 ﻿using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 using System.Linq.Expressions;
 
 
@@ -7,6 +9,8 @@ namespace Olx.BLL.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {
+
+        Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel);
         IQueryable<TEntity> GetQuery(QueryTrackingBehavior tracking = QueryTrackingBehavior.NoTracking);
         Task<TEntity?> GetByIDAsync(object id);
         Task<bool> AnyAsync();

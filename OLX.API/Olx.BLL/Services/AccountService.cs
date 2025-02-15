@@ -19,7 +19,7 @@ using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
-using System.Globalization;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -43,6 +43,7 @@ namespace Olx.BLL.Services
         IValidator<UserCreationModel> userCreationModelValidator,
         IValidator<UserEditModel> userEditModelValidator) : IAccountService
     {
+        private static readonly ConcurrentDictionary<int, SemaphoreSlim> _userSemaphores = new();
         private async Task<string> CreateRefreshToken(int userId)
         {
             var refeshToken = jwtService.GetRefreshToken();
@@ -55,21 +56,6 @@ namespace Olx.BLL.Services
             await tokenRepository.AddAsync(refreshTokenEntity);
             await tokenRepository.SaveAsync();
             return refeshToken;
-        }
-
-        private async Task<RefreshToken> CheckRefreshTokenAsync(string refreshToken)
-        {
-            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
-            if (token is not null)
-            {
-                if (token.ExpirationDate.ToUniversalTime() > DateTime.UtcNow)
-                {
-                    return token;
-                }
-                await tokenRepository.DeleteAsync(token.Id);
-                await tokenRepository.SaveAsync();
-            }
-            throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
 
         private async Task CreateUserAsync(OlxUser user,string? password = null, bool isAdmin = false)
@@ -213,11 +199,31 @@ namespace Olx.BLL.Services
 
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
         {
-            var token = await CheckRefreshTokenAsync(refreshToken);
-            var user = userManager.Users.AsNoTracking().FirstOrDefault(x => x.Id == token.OlxUserId)
-                  ?? throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
-            await tokenRepository.DeleteAsync(token.Id);
-            return await GetAuthTokens(user);
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
+            if (token is not null)
+            {
+                if (token.ExpirationDate.ToUniversalTime() > DateTime.UtcNow)
+                {
+                    var user = userManager.Users.AsNoTracking().FirstOrDefault(x => x.Id == token.OlxUserId);
+                    if (user is not null)
+                    {
+                        var semaphore = _userSemaphores.GetOrAdd(user.Id, _ => new SemaphoreSlim(1, 1));
+                        await semaphore.WaitAsync();
+                        if (await tokenRepository.AnyAsync(x => x.Id == token.Id))
+                        {
+                            await tokenRepository.DeleteAsync(token.Id);
+                            var tokens = await GetAuthTokens(user);
+                            semaphore.Release();
+                            _userSemaphores.TryRemove(user.Id, out _);
+                            return tokens;
+                        }
+                         semaphore.Release();
+                        _userSemaphores.TryRemove(user.Id, out _);
+                        throw new HttpException(Errors.MultipleRefresh, HttpStatusCode.Conflict);
+                    }
+                }
+            }
+            throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
 
         public async Task LogoutAsync(string refreshToken)
