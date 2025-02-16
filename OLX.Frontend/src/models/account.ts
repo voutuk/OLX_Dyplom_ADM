@@ -8,7 +8,8 @@ export interface IUser {
     photo: string
     exp: number
     roles: string[],
-    phone: string
+    phone: string,
+    settlement:string
 }
 
 export interface IUserState {

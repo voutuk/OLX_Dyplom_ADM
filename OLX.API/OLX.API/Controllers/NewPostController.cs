@@ -22,6 +22,9 @@ namespace OLX.API.Controllers
         [HttpGet("settlements/warehouses")]
         public async Task<ActionResult> GetWarehouses([FromQuery] string settlementRef) => Ok(await newPostService.GetWarehousesBySettlementAsync(settlementRef));
 
+        [HttpGet("settlements")]
+        public async Task<ActionResult> GetSettlement([FromQuery] string settlementRef) => Ok(await newPostService.GetSettlement(settlementRef));
+
         [HttpPost("update")]
         public async Task<ActionResult> UpdateData()
         {

@@ -120,6 +120,8 @@ namespace Olx.BLL.Services
                 .Select(z => z.First());
         }
 
+
+
         public async Task<IEnumerable<AreaDto>> GetAreasAsync() =>  await mapper.ProjectTo<AreaDto>(areaRepository.GetQuery()).ToArrayAsync();
 
         public async Task<IEnumerable<WarehousDto>> GetWarehousesBySettlementAsync(string settlementRef)
@@ -283,5 +285,11 @@ namespace Olx.BLL.Services
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        public async Task<SettlementDto> GetSettlement(string settlementRef) =>
+            await mapper.ProjectTo<SettlementDto>(settlementRepository.GetQuery().Where(x => x.Ref == settlementRef)).FirstOrDefaultAsync()
+            ?? throw new HttpException(Errors.InvalidSettlementRef,HttpStatusCode.BadRequest);
+
+
     }
 }

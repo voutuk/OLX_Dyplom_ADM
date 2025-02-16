@@ -16,6 +16,7 @@ export interface IAdvert{
     categoryId: number,
     settlementName: string,
     settlementRef: string,
+    regionRef:string,
     categoryName: string,
     filterValues: IFilterValue[],
     images: IAdvertImage[]

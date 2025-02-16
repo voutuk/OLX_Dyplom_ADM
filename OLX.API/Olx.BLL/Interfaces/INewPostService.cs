@@ -14,6 +14,7 @@ namespace Olx.BLL.Interfaces
         Task<IEnumerable<SettlementDto>> GetSettlementsByRegionAsync(string regionRef);
         Task<IEnumerable<RegionDto>> GetRegionsAsync();
         Task<IEnumerable<RegionDto>> GetRegionsByAreaAsync(string areaRef);
+        Task<SettlementDto> GetSettlement(string settlementRef);
         Task UpdateNewPostData();
     }
 }

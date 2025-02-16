@@ -11,14 +11,21 @@ import './style.scss'
 const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId, backRoute }) => {
     const { data: categories, isLoading } = useGetAllCategoriesQuery()
     const items = useMemo(() => {
-        if (categories && categoryId) {
-            const tree = getAllParents(categories || [], categoryId).reverse()
+        if (categories) {
+            const tree = categoryId ? getAllParents(categories || [], categoryId).reverse() : []
             const newItems = tree.map(x => ({
                 title: <Link style={{ color: '#3A211C' }}
                     className=" breadcrumb-link"
                     to={`/adverts?categoryId=${x.id}`}>{x.name}</Link>,
             }))
-            return [{ title: <Link style={{ color: '#3A211C' }} className=" breadcrumb-link" to="/">Головна</Link> }, ...newItems]
+            return [
+                {
+                    title: <Link style={{ color: '#3A211C' }} className=" breadcrumb-link" to="/">Головна</Link>
+                },
+                {
+                    title: <Link style={{ color: '#3A211C' }} className=" breadcrumb-link" to="/adverts">Каталог</Link>
+                },
+                ...newItems]
         }
         else {
             return []

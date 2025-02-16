@@ -12,7 +12,8 @@ export const jwtParse = (token: string): IUser | null => {
       exp: data['exp'],
       photo: data['photo'],
       roles: data['roles'] || [],
-      phone:data['phoneNumber']
+      phone:data['phoneNumber'],
+      settlement:data['settlement']
     }
   }
   catch (error) {

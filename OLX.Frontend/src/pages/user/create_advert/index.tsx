@@ -10,7 +10,7 @@ import { useGetAllFilterQuery } from "../../../redux/api/filterApi"
 import { IAdvertCreationModel, IAdvertImage } from "../../../models/advert"
 import { useAppSelector } from "../../../redux"
 import PrimaryButton from "../../../components/buttons/primary_button"
-import { useGetAreasQuery, useGetRegionsByAreaQuery, useGetSettlementsByRegionQuery } from "../../../redux/api/newPostApi"
+import { useGetAreasQuery, useGetRegionsByAreaQuery, useGetSettlementsByIdQuery, useGetSettlementsByRegionQuery } from "../../../redux/api/newPostApi"
 import { IArea, IRegion, ISettlement } from "../../../models/newPost"
 import { useCreateAdvertMutation, useUpdateAdvertMutation } from "../../../redux/api/advertAuthApi"
 import { useNavigate, useParams } from "react-router-dom"
@@ -23,15 +23,16 @@ import { APP_ENV } from "../../../constants/env"
 
 const CreateAdvert: React.FC = () => {
     const { id } = useParams();
-    const { data: advert } = useGetAdvertByIdQuery(Number(id), { skip: isNaN(Number(id)) || Number(id) === 0 })
+    const user = useAppSelector(state => state.user.user);
+    const { data: settlement,isLoading:isSettlementLoading } = useGetSettlementsByIdQuery(user?.settlement || '', { skip: !user?.settlement })
+    const { data: advert, isLoading: isAdvertLoading } = useGetAdvertByIdQuery(Number(id), { skip: isNaN(Number(id)) || Number(id) === 0 })
     const { data: categories, isLoading: isCategoriesLoading } = useGetAllCategoriesQuery()
     const { data: filters } = useGetAllFilterQuery();
-    const user = useAppSelector(state => state.user.user);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
     const [areaRef, setAreaRef] = useState<string | null>(null);
-    const [regionRef, setRegionRef] = useState<string | null>(null);
+    const [regionRef, setRegionRef] = useState<string | null | undefined>(null);
     const [locationTreeData, setLocationTreeData] = useState<any[]>([])
-    const { data: areas } = useGetAreasQuery(undefined);
+    const { data: areas } = useGetAreasQuery();
     const { data: regions } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
     const { data: settlements } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
     const [createAdvert, { isLoading: isAdvertCreation }] = useCreateAdvertMutation();
@@ -40,47 +41,37 @@ const CreateAdvert: React.FC = () => {
     const [form] = Form.useForm();
 
     const getCategoryTree = useMemo(() => buildTree(categories || [], undefined, undefined, true), [categories])
+    console.log("update")
+    const formattedAreas = useMemo(() => areas ? areas.map((area: IArea) => ({
+        id: area.ref,
+        disabled: true,
+        pId: null,
+        title: `${area.description} ${area.regionType}`,
+        value: area.ref,
+        isLeaf: false,
+    })) : [], [areas])
+
+    const formattedRegions = useMemo(() => regions ? regions.map((region: IRegion) => ({
+        id: region.ref,
+        disabled: true,
+        pId: region.areaRef,
+        title: `${region.description} ${region.regionType}`,
+        value: region.ref,
+        isLeaf: false,
+    })) : [], [regions]);
+
+    const formattedSettlements = useMemo(() => settlements ? settlements.map((settlement: ISettlement) => ({
+        id: settlement.ref,
+        pId: settlement.region,
+        title: settlement.description,
+        value: settlement.ref,
+        isLeaf: true,
+    })) : [], [settlements])
 
     useEffect(() => {
-        if (areas) {
-            const formattedAreas = areas.map((area: IArea) => ({
-                id: area.ref,
-                disabled: true,
-                pId: null,
-                title: `${area.description} ${area.regionType}`,
-                value: area.ref,
-                isLeaf: false,
-            }));
-            setLocationTreeData(formattedAreas);
-        }
-    }, [areas]);
+        setLocationTreeData([...formattedAreas, ...formattedRegions, ...formattedSettlements]);
+    }, [areas, settlements, regions]);
 
-    useEffect(() => {
-        if (regions) {
-            const formattedRegions = regions.map((region: IRegion) => ({
-                id: region.ref,
-                disabled: true,
-                pId: region.areaRef,
-                title: `${region.description} ${region.regionType}`,
-                value: region.ref,
-                isLeaf: false,
-            }));
-            setLocationTreeData((prevData) => [...prevData, ...formattedRegions]);
-        }
-    }, [regions]);
-
-    useEffect(() => {
-        if (settlements) {
-            const formattedSettlements = settlements.map((settlement: ISettlement) => ({
-                id: settlement.ref,
-                pId: settlement.region,
-                title: settlement.description,
-                value: settlement.ref,
-                isLeaf: true,
-            }));
-            setLocationTreeData((prevData) => [...prevData, ...formattedSettlements]);
-        }
-    }, [settlements]);
 
     const onLoadData: TreeSelectProps['loadData'] = ({ id }) => {
         return new Promise<void>((resolve) => {
@@ -135,7 +126,6 @@ const CreateAdvert: React.FC = () => {
                         placeholder={filter.name}
                         style={{ height: '5vh', width: '23vw' }}
                         className="create-advert-select"
-
                     />
                 </Form.Item>)}
         </div>
@@ -145,28 +135,43 @@ const CreateAdvert: React.FC = () => {
     useEffect(() => {
         if (advert) {
             setSelectedCategoryId(advert.categoryId)
+            setRegionRef(advert.regionRef)
             const formInitData = {
                 isContractPrice: advert?.isContractPrice || false,
                 files: advertFiles,
                 title: advert?.title || '',
                 description: advert?.description || '',
                 categoryId: advert?.categoryId,
-                phoneNumber: advert?.phoneNumber || user?.phone || '',
-                contactEmail: advert?.contactEmail || user?.email || '',
+                phoneNumber: advert?.phoneNumber || '',
+                contactEmail: advert?.contactEmail || '',
                 settlementRef: advert?.settlementRef || '',
                 price: advert?.price,
-                contactPersone: advert?.contactPersone || getUserDescr(user) || '',
+                contactPersone: advert?.contactPersone || '',
                 ...filterFommValues
             }
             form.setFieldsValue(formInitData)
         }
-    }, [advert])
+        if (!advert && !isAdvertLoading && settlement && !isSettlementLoading) {
+            setRegionRef(settlement.region)
+            const formInitData = {
+                phoneNumber: user?.phone || '',
+                contactEmail: user?.email || '',
+                contactPersone: getUserDescr(user) || '',
+                settlementRef: user?.settlement || '',
+            }
+            form.setFieldsValue(formInitData)
+        }
+    }, [advert, settlement])
 
     const advertFiles = useMemo(() =>
         advert
             ? advert?.images.slice()
                 .sort((a: IAdvertImage, b: IAdvertImage) => a.priority - b.priority)
-                .map(x => ({ url: APP_ENV.IMAGES_1200_URL + x.name, originFileObj: new File([new Blob([''])], x.name, { type: 'image/existing' }) }) as UploadFile)
+                .map(x => ({
+                    thumbUrl: APP_ENV.IMAGES_200_URL + x.name,
+                    url: APP_ENV.IMAGES_1200_URL + x.name,
+                    originFileObj: new File([new Blob([''])], x.name, { type: 'image/existing' })
+                }) as UploadFile)
             : []
         , [advert])
 
@@ -190,7 +195,11 @@ const CreateAdvert: React.FC = () => {
                     layout="vertical"
                     className=" w-full flex flex-col gap-[4.2vh]"
                     initialValues={{
-                        isContractPrice: advert?.isContractPrice || false
+                        isContractPrice: false,
+                        phoneNumber: user?.phone || '',
+                        contactEmail: user?.email || '',
+                        contactPersone: getUserDescr(user) || '',
+                        settlementRef: user?.settlement || '',
                     }}>
 
                     <div className="flex flex-col mx-[8vw] gap-[5.3vh] ">

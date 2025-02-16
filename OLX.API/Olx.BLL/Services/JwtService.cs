@@ -48,7 +48,8 @@ namespace Olx.BLL.Services
                 new ("lastName", user.LastName ?? string.Empty),
                 new ("email", user.Email!),
                 new ("phoneNumber", user.PhoneNumber ?? string.Empty),
-                new ("photo", user.Photo ?? string.Empty)
+                new ("photo", user.Photo ?? string.Empty),
+                new ("settlement", user.SettlementRef ?? string.Empty)
             };
             var roles = await userManager.GetRolesAsync(user);
             claims.AddRange(roles.Select(role => new Claim("roles", role)));
