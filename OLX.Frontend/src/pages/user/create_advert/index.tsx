@@ -1,4 +1,4 @@
-import { Checkbox, Form, Input, InputNumber, Select, TreeSelect, TreeSelectProps, UploadFile } from "antd"
+import { Checkbox, Form, Input, InputNumber, Select, TreeSelect, UploadFile } from "antd"
 import { BackButton } from "../../../components/buttons/back_button"
 import UploadWithDnd from "../../../components/image_upload"
 import TextArea from "antd/es/input/TextArea"
@@ -10,79 +10,28 @@ import { useGetAllFilterQuery } from "../../../redux/api/filterApi"
 import { IAdvertCreationModel, IAdvertImage } from "../../../models/advert"
 import { useAppSelector } from "../../../redux"
 import PrimaryButton from "../../../components/buttons/primary_button"
-import { useGetAreasQuery, useGetRegionsByAreaQuery, useGetSettlementsByIdQuery, useGetSettlementsByRegionQuery } from "../../../redux/api/newPostApi"
-import { IArea, IRegion, ISettlement } from "../../../models/newPost"
 import { useCreateAdvertMutation, useUpdateAdvertMutation } from "../../../redux/api/advertAuthApi"
 import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "react-toastify"
 import { useGetAdvertByIdQuery } from "../../../redux/api/advertApi"
 import { APP_ENV } from "../../../constants/env"
-
+import LocationSelector from "../../../components/location_selector"
 
 
 
 const CreateAdvert: React.FC = () => {
     const { id } = useParams();
     const user = useAppSelector(state => state.user.user);
-    const { data: settlement,isLoading:isSettlementLoading } = useGetSettlementsByIdQuery(user?.settlement || '', { skip: !user?.settlement })
-    const { data: advert, isLoading: isAdvertLoading } = useGetAdvertByIdQuery(Number(id), { skip: isNaN(Number(id)) || Number(id) === 0 })
+    const { data: advert } = useGetAdvertByIdQuery(Number(id), { skip: isNaN(Number(id)) || Number(id) === 0 })
     const { data: categories, isLoading: isCategoriesLoading } = useGetAllCategoriesQuery()
     const { data: filters } = useGetAllFilterQuery();
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
-    const [areaRef, setAreaRef] = useState<string | null>(null);
-    const [regionRef, setRegionRef] = useState<string | null | undefined>(null);
-    const [locationTreeData, setLocationTreeData] = useState<any[]>([])
-    const { data: areas } = useGetAreasQuery();
-    const { data: regions } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
-    const { data: settlements } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
     const [createAdvert, { isLoading: isAdvertCreation }] = useCreateAdvertMutation();
     const [updateAdvert, { isLoading: isAdvertEdition }] = useUpdateAdvertMutation();
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
     const getCategoryTree = useMemo(() => buildTree(categories || [], undefined, undefined, true), [categories])
-    console.log("update")
-    const formattedAreas = useMemo(() => areas ? areas.map((area: IArea) => ({
-        id: area.ref,
-        disabled: true,
-        pId: null,
-        title: `${area.description} ${area.regionType}`,
-        value: area.ref,
-        isLeaf: false,
-    })) : [], [areas])
-
-    const formattedRegions = useMemo(() => regions ? regions.map((region: IRegion) => ({
-        id: region.ref,
-        disabled: true,
-        pId: region.areaRef,
-        title: `${region.description} ${region.regionType}`,
-        value: region.ref,
-        isLeaf: false,
-    })) : [], [regions]);
-
-    const formattedSettlements = useMemo(() => settlements ? settlements.map((settlement: ISettlement) => ({
-        id: settlement.ref,
-        pId: settlement.region,
-        title: settlement.description,
-        value: settlement.ref,
-        isLeaf: true,
-    })) : [], [settlements])
-
-    useEffect(() => {
-        setLocationTreeData([...formattedAreas, ...formattedRegions, ...formattedSettlements]);
-    }, [areas, settlements, regions]);
-
-
-    const onLoadData: TreeSelectProps['loadData'] = ({ id }) => {
-        return new Promise<void>((resolve) => {
-            if (areas?.some((area: IArea) => area.ref === id)) {
-                setAreaRef(id);
-            } else if (regions?.some((region: IRegion) => region.ref === id)) {
-                setRegionRef(id);
-            }
-            resolve(undefined);
-        });
-    };
 
     const onFinish = async (data: any) => {
         const filterValues = Object.entries(data).filter(x => !isNaN(Number(x[0])) && x[1]).map(x => x[1])
@@ -135,7 +84,6 @@ const CreateAdvert: React.FC = () => {
     useEffect(() => {
         if (advert) {
             setSelectedCategoryId(advert.categoryId)
-            setRegionRef(advert.regionRef)
             const formInitData = {
                 isContractPrice: advert?.isContractPrice || false,
                 files: advertFiles,
@@ -151,17 +99,7 @@ const CreateAdvert: React.FC = () => {
             }
             form.setFieldsValue(formInitData)
         }
-        if (!advert && !isAdvertLoading && settlement && !isSettlementLoading) {
-            setRegionRef(settlement.region)
-            const formInitData = {
-                phoneNumber: user?.phone || '',
-                contactEmail: user?.email || '',
-                contactPersone: getUserDescr(user) || '',
-                settlementRef: user?.settlement || '',
-            }
-            form.setFieldsValue(formInitData)
-        }
-    }, [advert, settlement])
+    }, [advert])
 
     const advertFiles = useMemo(() =>
         advert
@@ -199,7 +137,8 @@ const CreateAdvert: React.FC = () => {
                         phoneNumber: user?.phone || '',
                         contactEmail: user?.email || '',
                         contactPersone: getUserDescr(user) || '',
-                        settlementRef: user?.settlement || '',
+                        settlementRef: user?.settlement || ''
+
                     }}>
 
                     <div className="flex flex-col mx-[8vw] gap-[5.3vh] ">
@@ -406,18 +345,10 @@ const CreateAdvert: React.FC = () => {
                                 },
                             ]}
                         >
-                            <TreeSelect
-                                treeDataSimpleMode
-                                popupClassName="create-advert-select-popup"
-                                allowClear
-                                showSearch
-                                loading={false}
-                                style={{ height: '5vh', width: '47.3vw' }}
-                                className="create-advert-select"
-                                treeData={locationTreeData}
+                            <LocationSelector
                                 placeholder="Місцезнаходження"
-                                loadData={onLoadData}
-                            />
+                                height="5vh"
+                                width="47.3vw" />
                         </Form.Item>
                     </div>
 
