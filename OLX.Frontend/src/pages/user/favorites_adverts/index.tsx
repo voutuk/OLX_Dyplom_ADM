@@ -24,7 +24,7 @@ const FavoritesAdverts = () => {
 
     return (
         <div className="w-[100%] my-[4vh]">
-            <BackButton title="Назад" className="mb-[9vh] ml-[8vw]" />
+            <BackButton title="Назад" className="mb-[9vh] ml-[8vw] text-adaptive-1_9_text  font-medium self-start" />
             <h2 className='text-[#3A211C] font-unbounded text-adaptive-login-header-text font-normal ml-[8vw]'>Обране</h2>
             {favorites && favorites.length > 0 ?
                 <div className="my-[4vh] mx-[8vw]">

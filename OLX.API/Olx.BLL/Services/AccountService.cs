@@ -442,9 +442,12 @@ namespace Olx.BLL.Services
         {
             var user = await GetCurrentUser();
             if (user.FavoriteAdverts.Count == 0)
+            {
                 return [];
-            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByIds(user.FavoriteAdverts.Select(a => a.Id), AdvertOpt.Images | AdvertOpt.Settlement));
-            return mapper.Map<IEnumerable<AdvertDto>>(adverts);
+            }
+            var favoriteAdvertsIds = user.FavoriteAdverts.Select(a => a.Id);
+            var adverts = await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => favoriteAdvertsIds.Contains(x.Id))).ToArrayAsync();
+            return adverts;
         }
     }
 }
