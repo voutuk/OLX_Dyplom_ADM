@@ -1,4 +1,3 @@
-
 import { Avatar } from "antd";
 import { IUserAvatarProps } from "./props";
 import { getUserDescr, stringToColor } from "../../utilities/common_funct";
@@ -7,9 +6,10 @@ import { useMemo } from "react";
 
 
 
+
 const UserAvatar: React.FC<IUserAvatarProps> = ({ user, size, className, imageSize }) => {
 
-    const getImage = useMemo(():string => {
+    const getImage = useMemo((): string => {
         let size = ''
         switch (imageSize) {
             case "200":
@@ -24,8 +24,8 @@ const UserAvatar: React.FC<IUserAvatarProps> = ({ user, size, className, imageSi
             case "1200":
                 size = APP_ENV.IMAGES_1200_URL
                 break;
-                default:
-                    size = APP_ENV.IMAGES_100_URL
+            default:
+                size = APP_ENV.IMAGES_100_URL
         }
         return size
     }, [imageSize])
@@ -44,8 +44,8 @@ const UserAvatar: React.FC<IUserAvatarProps> = ({ user, size, className, imageSi
             avatarDesc = userStrings[0][0] + userStrings[1][0];
         }
         const color = stringToColor(userDesc);
-        return <Avatar size={size} className={className} style={{ backgroundColor: color, verticalAlign: 'middle', flexShrink: 0 }} >
-            {avatarDesc.toUpperCase()}
+        return <Avatar size={size} className={`${className}`} style={{ backgroundColor: color, verticalAlign: 'middle', flexShrink: 0 }} >
+            <div  className="h-full w-full p-[10vh] text-[50vh] font-montserrat">{avatarDesc.toUpperCase()}</div>
         </Avatar>
     }
     return null;

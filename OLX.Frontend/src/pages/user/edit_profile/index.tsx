@@ -1,16 +1,46 @@
-const UserProfileEdit: React.FC = () => {
-    return (
-        <div className="w-[100%] gap-[5vh] mx-[8vw]   flex flex-col my-[22vh]">
-            <h1 className="font-unbounded text-adaptive-3_35-text">Мої налаштування</h1>
-            <div className="flex">
-                <div className="w-[44%]  h-[500px] bg-slate-100">
-                    Content
-                </div>
-                <div className="flex-1 h-[500px] bg-slate-200">
-                    Content
-                </div>
+import { Tabs } from "antd";
+import './style.scss'
+import { BackButton } from "../../../components/buttons/back_button";
+import UserEdit from "../../../components/user_settings/profile_edit";
 
-            </div>
+const UserProfileEdit: React.FC = () => {
+
+    const items = [
+        {
+            key: "1",
+            label: "Основна інформація",
+            children:<UserEdit/>
+        },
+        {
+            key: "2",
+            label: "Історія платежів",
+            children:
+                <div className="w-full h-[500px] bg-slate-400">
+                    Історія платежів
+                </div>
+        },
+        {
+            key: "3",
+            label: "Налаштування конфіденційності",
+            children:
+                <div className="w-full h-[500px] bg-slate-400">
+                    Налаштування конфіденційності
+                </div>
+        },
+    ];
+    return (
+        <div className="w-[100%] gap-[5vh] mx-[8vw]   flex flex-col">
+            <BackButton className="text-adaptive-1_9_text mt-[5vh] font-medium self-start" title="Назад" />
+            <h1 className="font-unbounded text-adaptive-3_35-text mt-[9.3vh]">Мої налаштування</h1>
+            <Tabs
+                className="settings-tabs w-full font-montserrat"
+                defaultActiveKey="1"
+                tabPosition="left"
+                tabBarStyle={{ width: '42%' }}
+                animated={true}
+                tabBarGutter={0}
+                items={items}
+            />
         </div>
     )
 }

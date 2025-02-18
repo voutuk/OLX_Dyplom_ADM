@@ -3,7 +3,6 @@ import { formattedDate, getFormatDateTime } from "../../utilities/common_funct";
 import { IUserInfoProps } from "./props";
 
 const UserInfo: React.FC<IUserInfoProps> = ({ user }) => {
-    console.log(user)
     return (
         <div className="flex gap-[1vh] flex-col">
             <span className="font-montserrat text-adaptive-input-form-text">На GoSell з {formattedDate(new Date(user?.createdDate || '')).slice(2)}</span>

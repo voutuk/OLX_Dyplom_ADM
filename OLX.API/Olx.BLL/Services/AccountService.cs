@@ -345,11 +345,15 @@ namespace Olx.BLL.Services
             }
         }
 
-        public async Task RemoveAccountAsync(string email)
+        public async Task RemoveAccountAsync(int id)
         {
-            await userManager.UpdateUserActivityAsync(httpContext);
-            var user = await userManager.FindByEmailAsync(email) 
+           
+            var user = await userManager.FindByIdAsync(id.ToString()) 
                 ?? throw new HttpException(Errors.InvalidUserEmail, HttpStatusCode.BadRequest);
+            if (id != (await GetCurrentUser()).Id) 
+            {
+                 await userManager.UpdateUserActivityAsync(httpContext);
+            }
             if (await userManager.IsInRoleAsync(user, Roles.Admin))
             {
                 var adminsCount =  await userManager.GetUsersInRoleAsync(Roles.Admin);
@@ -370,7 +374,7 @@ namespace Olx.BLL.Services
             else throw new HttpException(Errors.UserRemoveError, HttpStatusCode.InternalServerError);
         }
 
-        public async Task EditUserAsync(UserEditModel userEditModel, bool isAdmin)
+        public async Task<string> EditUserAsync(UserEditModel userEditModel, bool isAdmin)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             var user = await userManager.FindByIdAsync(userEditModel.Id.ToString())
@@ -382,23 +386,33 @@ namespace Olx.BLL.Services
             }
 
             userEditModelValidator.ValidateAndThrow(userEditModel);
-            
-            var result = await userManager.ChangePasswordAsync(user, userEditModel.OldPassword!, userEditModel.Password!);
-            if (!result.Succeeded)
+            if (userEditModel.OldPassword is not null) 
             {
-                throw new HttpException(Errors.CurrentPasswordIsNotValid, HttpStatusCode.BadRequest);
+                var result = await userManager.ChangePasswordAsync(user, userEditModel.OldPassword!, userEditModel.Password!);
+                if (!result.Succeeded)
+                {
+                    throw new HttpException(Errors.CurrentPasswordIsNotValid, HttpStatusCode.BadRequest);
+                }
             }
             
+            
             mapper.Map(userEditModel,user);
-            if (userEditModel.ImageFile is not null)
+            if (userEditModel.ImageFile is null || userEditModel.ImageFile.ContentType != "image/existing")
             {
                 if (user.Photo is not null)
                 {
                     imageService.DeleteImageIfExists(user.Photo);
+                    user.Photo = null;
                 }
-                user.Photo =  await imageService.SaveImageAsync(userEditModel.ImageFile);
+                if (userEditModel.ImageFile is not null)
+                {
+                    user.Photo = await imageService.SaveImageAsync(userEditModel.ImageFile);
+                }
             }
+            
             await userManager.UpdateAsync(user);
+
+            return jwtService.CreateToken(await jwtService.GetClaimsAsync(user));
         }
 
 

@@ -12,7 +12,6 @@ using Olx.BLL.Pagination;
 using Olx.BLL.Pagination.Filters;
 using Olx.BLL.Pagination.SortData;
 using Olx.BLL.Resources;
-using Olx.BLL.Specifications;
 using System.Net;
 
 
