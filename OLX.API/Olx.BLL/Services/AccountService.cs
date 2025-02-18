@@ -441,9 +441,10 @@ namespace Olx.BLL.Services
         public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync()
         {
             var user = await GetCurrentUser();
-            return user.FavoriteAdverts.Count > 0
-                ? mapper.Map<IEnumerable<AdvertDto>>(user.FavoriteAdverts)
-                : [];
+            if (user.FavoriteAdverts.Count == 0)
+                return [];
+            var adverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetByIds(user.FavoriteAdverts.Select(a => a.Id), AdvertOpt.Images | AdvertOpt.Settlement));
+            return mapper.Map<IEnumerable<AdvertDto>>(adverts);
         }
     }
 }
