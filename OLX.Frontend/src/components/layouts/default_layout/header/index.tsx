@@ -61,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
                     <MessageOutlined className='text-adaptive-icons text-amber-950 cursor-pointer animate-wiggle' />
                 </Badge>}
 
-                <HeartOutlined className='text-adaptive-icons text-amber-950 cursor-pointer' />
+                <HeartOutlined onClick={() => navigator('/user/favorites')} className='text-adaptive-icons text-amber-950 cursor-pointer' />
 
                 {user && <Badge count={unreadMesssageCount} size='small' className={unreadMesssageCount > 0 ? "animate-pulse" : ''} >
                     <BellOutlined className='text-adaptive-icons text-amber-950 cursor-pointer' />
