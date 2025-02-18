@@ -15,5 +15,5 @@ export interface ISettlement {
     description: string;
     ref: string;
     region: string;
-    area:string
+    area: string
 }

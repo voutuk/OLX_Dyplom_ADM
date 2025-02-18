@@ -18,8 +18,8 @@ namespace Olx.BLL.Interfaces
         Task ResetPasswordAsync(ResetPasswordModel resetPasswordModel);
         Task BlockUserAsync(UserBlockModel userBlockModel);
         Task AddUserAsync(UserCreationModel userModel,bool isAdmin = false);
-        Task RemoveAccountAsync(string email);
-        Task EditUserAsync(UserEditModel userEditModel,bool isAdmin = false);
+        Task RemoveAccountAsync(int id);
+        Task<string> EditUserAsync(UserEditModel userEditModel,bool isAdmin = false);
         Task AddToFavoritesAsync(int advertId);
         Task RemoveFromFavoritesAsync(int advertId);
         Task<IEnumerable<AdvertDto>> GetFavoritesAsync();

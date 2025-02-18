@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Olx.BLL.Helpers;
 using Olx.BLL.Interfaces;
 using Olx.BLL.Models;
@@ -107,16 +108,16 @@ namespace OLX.API.Controllers
         [HttpPost("edit/user")]
         public async Task<IActionResult> EditUser([FromForm] UserEditModel userEditModel)
         {
-            await accountService.EditUserAsync(userEditModel);
-            return Ok();
+             var token = await accountService.EditUserAsync(userEditModel);
+             return Ok( new UserEditResponse() { AccessToken = token} );
         }
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("edit/admin")]
         public async Task<IActionResult> EditAdmin([FromForm] UserEditModel userEditModel)
         {
-            await accountService.EditUserAsync(userEditModel,true);
-            return Ok();
+            var token = await accountService.EditUserAsync(userEditModel,true);
+            return Ok(new UserEditResponse() { AccessToken = token });
         }
 
         [Authorize(Roles = Roles.Admin)]
@@ -158,11 +159,11 @@ namespace OLX.API.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize]
         [HttpDelete("delete")]
-        public async Task<IActionResult> RemoveAccount([FromQuery] string email)
+        public async Task<IActionResult> RemoveAccount([FromQuery] int id)
         {
-            await accountService.RemoveAccountAsync(email);
+            await accountService.RemoveAccountAsync(id);
             return Ok();
         }
 

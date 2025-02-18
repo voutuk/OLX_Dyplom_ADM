@@ -1,20 +1,13 @@
 import { TreeSelect, TreeSelectProps } from "antd"
 import { IArea, IRegion, ISettlement } from "../../models/newPost";
 import { useGetAreasQuery, useGetRegionsByAreaQuery, useGetSettlementsByIdQuery, useGetSettlementsByRegionQuery } from "../../redux/api/newPostApi";
-import { useEffect, useMemo, useState } from "react";
-
-interface LocationSelectorProps {
-    value?: string | undefined
-    onChange?: () => void
-    placeholder?:string
-    width?:string
-    height?:string
-}
+import { useEffect, useMemo, useRef, useState } from "react";
+import { LocationSelectorProps } from "./props";
 
 
-const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width,height,placeholder, onChange = () => { } }) => {
-   
-    const { data: settlement } = useGetSettlementsByIdQuery(value || '', { skip: !value })
+const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width, height, placeholder, onChange = () => { } }) => {
+    const init = useRef<boolean>(true)
+    const { data: settlement,isLoading } = useGetSettlementsByIdQuery(value || '', { skip: !value && init.current })
     const [areaRef, setAreaRef] = useState<any>()
     const [regionRef, setRegionRef] = useState<any>()
     const [locationTreeData, setLocationTreeData] = useState<any[]>([])
@@ -22,11 +15,13 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width,height
     const { data: regions, isLoading: isRegionsLoading } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
     const { data: settlements, isLoading: isSettlementsLoading } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
 
-
     useEffect(() => {
-        setAreaRef(settlement?.area)
-        setRegionRef(settlement?.region)
-    }, [settlement])
+        if (init.current && value && settlement) {
+            setAreaRef(settlement?.area)
+            setRegionRef(settlement?.region)
+            init.current = false;
+        }
+    }, [isLoading])
 
     const formattedAreas = useMemo(() => areas ? areas.map((area: IArea) => ({
         id: area.ref,

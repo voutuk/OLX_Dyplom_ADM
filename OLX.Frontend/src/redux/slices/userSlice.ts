@@ -43,13 +43,14 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
+
         setCredentials: (state, action: { payload: { token: string, refreshToken: string, remember: boolean | undefined } }) => {
             const { token, refreshToken, remember } = action.payload
             state.user = getUserFromToken(token)
             state.token = token
             state.refreshToken = refreshToken
             state.auth = getUserAuth(state.user, remember)
-            
+
             if (state.user !== null) {
                 if (state.user.roles.includes('User') && remember) {
                     localStorage.setItem(APP_ENV.ACCESS_KEY, token);
@@ -61,6 +62,21 @@ const userSlice = createSlice({
                 }
             }
         },
+
+        updateAccessToken: (state, action: { payload: { token: string } }) => {
+            const { token } = action.payload
+            state.user = getUserFromToken(token)
+            state.token = token
+            if (state.user !== null) {
+                if (state.user.roles.includes('User') && state.auth.remember) {
+                    localStorage.setItem(APP_ENV.ACCESS_KEY, token);
+                }
+                else {
+                    sessionStorage.setItem(APP_ENV.ACCESS_KEY, token);
+                }
+            }
+        },
+
         logOut: (state) => {
             localStorage.removeItem(APP_ENV.ACCESS_KEY);
             sessionStorage.removeItem(APP_ENV.ACCESS_KEY)
@@ -99,5 +115,5 @@ export const getRefreshToken = (state: RootState) => state.user.refreshToken
 export const getUnreadedCount = (state: RootState) => state.user.messages.filter(x => !x.readed).length;
 export const getMessages = (state: RootState) => state.user.messages;
 
-export const { setCredentials, logOut, addMessage, removeMessage, setReaded, clearMessages, setMessages } = userSlice.actions
+export const { setCredentials,updateAccessToken, logOut, addMessage, removeMessage, setReaded, clearMessages, setMessages } = userSlice.actions
 export default userSlice.reducer

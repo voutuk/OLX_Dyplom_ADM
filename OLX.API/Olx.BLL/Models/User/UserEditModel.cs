@@ -17,6 +17,7 @@ namespace Olx.BLL.Models.User
         public string? LastName { get; init; }
         public IFormFile? ImageFile { get; init; }
         public string? WebSite { get; init; }
+        public string? SettlementRef { get; init; }
         public string? About { get; init; }
         public string? PhoneNumber { get; init; }
     }

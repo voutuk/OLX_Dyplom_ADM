@@ -16,6 +16,7 @@ import { toast } from "react-toastify"
 import { useGetAdvertByIdQuery } from "../../../redux/api/advertApi"
 import { APP_ENV } from "../../../constants/env"
 import LocationSelector from "../../../components/location_selector"
+import { app_regex } from "../../../constants/regex"
 
 
 
@@ -303,7 +304,7 @@ const CreateAdvert: React.FC = () => {
                                     message: <span className="font-montserrat text-adaptive-input-form-error-text">Введіть номер телефону</span>
                                 },
                                 {
-                                    pattern: RegExp('^\\d{3}[-\\s]{1}\\d{3}[-\\s]{1}\\d{2}[-\\s]{0,1}\\d{2}$'),
+                                    pattern: RegExp(app_regex.phone),
                                     message: <span className="font-montserrat text-adaptive-input-form-error-text">Невірно введений телефон!(xxx-xxx-xx-xx) (xxx xxx xx xx) (xxx xxx xxxx) (xxx-xxx-xxxx)</span>
                                 },
                             ]}
