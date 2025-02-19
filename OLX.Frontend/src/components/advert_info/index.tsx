@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { formatPrice, formattedDate, getFormatDateTime } from "../../utilities/common_funct"
 import PrimaryButton from "../buttons/primary_button"
 import ToggleFavoriteButton from "../buttons/toggle_favorite_button"
@@ -6,6 +7,7 @@ import { IAdvertInfoProps } from "./props"
 
 
 const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
+    const navigate = useNavigate();
     return (
         <div className=" flex flex-1 flex-col justify-between gap-[8vh]">
             <div className=" flex flex-col gap-[8vh]">
@@ -34,7 +36,8 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                             fontColor="white"
                             fontSize="clamp(14px, 2.1vh, 36px)"
                             isLoading={false}
-                            className="h-[4.6vh] w-[22vw] " />
+                            className="h-[4.6vh] w-[22vw] "
+                            onButtonClick={()=>navigate(`/user/advert/buy/${advert?.id}`)} />
                         <PrimaryButton
                             title={"Написати продавцю"}
                             isLoading={false}

@@ -4,8 +4,10 @@ import './App.scss'
 import DefaultLayout from './components/layouts/default_layout/index';
 import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
-import FavoritesAdverts from './pages/user/favorites_adverts';
 
+
+const FavoritesAdverts  = React.lazy(() => import('./pages/user/favorites_adverts'));
+const BuyAdvertPage = React.lazy(() => import( './pages/user/buy'));
 const CreateAdvert = React.lazy(() => import('./pages/user/create_advert'));
 const UserProfile = React.lazy(() => import('./pages/user/profile'));
 const UserProfileEdit = React.lazy(() => import('./pages/user/edit_profile'));
@@ -53,6 +55,7 @@ function App() {
               <Route path='advert/create' element={<CreateAdvert/>}/>
               <Route path='advert/edit/:id' element={<CreateAdvert/>}/>
               <Route path='favorites' element={<FavoritesAdverts />} />
+              <Route path='advert/buy/:id' element={<BuyAdvertPage />} />
             </Route>
           </Route>
 
