@@ -3,6 +3,7 @@ import { IArea, IRegion, ISettlement } from "../../models/newPost";
 import { useGetAreasQuery, useGetRegionsByAreaQuery, useGetSettlementsByIdQuery, useGetSettlementsByRegionQuery } from "../../redux/api/newPostApi";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LocationSelectorProps } from "./props";
+import '../../pages/user/create_advert/style.scss'
 
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width, height, placeholder, onChange = () => { } }) => {

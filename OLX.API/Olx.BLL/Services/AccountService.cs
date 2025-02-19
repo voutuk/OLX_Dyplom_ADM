@@ -419,11 +419,10 @@ namespace Olx.BLL.Services
         public async Task AddToFavoritesAsync(int advertId)
         {
             var user = await GetCurrentUser();
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(advertId))
-                ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
-
             if (user.FavoriteAdverts.All(a => a.Id != advertId))
             {
+                var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(advertId))
+                    ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
                 user.FavoriteAdverts.Add(advert);
             }
             await userManager.UpdateAsync(user);

@@ -5,4 +5,5 @@ export interface AdvertCardProps{
     price: number,
     settlement: string,
     isEditable?: boolean,
+    isFavorite?: boolean,
 }

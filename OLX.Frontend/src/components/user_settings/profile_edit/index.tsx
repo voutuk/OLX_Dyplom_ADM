@@ -37,34 +37,34 @@ const UserEdit: React.FC = () => {
 
     const deleteAccount = () => {
         Modal.confirm({
-          centered:true,
-          closable:true,
-          destroyOnClose:true,
-          maskClosable:true,
-          keyboard:true,
-          okType:'danger',
-          width:'auto',
-          title: <span className="font-unbounded font-medium text-adaptive-1_7_text text-[red]">Видалення облікового запису</span>,
-          content: <div className="font-montserrat text-adaptive-1_7_text my-[2vh] mr-[1.5vw]">Ви впевненні що хочете видалити свій акаунт?</div>,
-          cancelText:'Скасувати',
-          okText:'Видалити',
-          footer: (_, { OkBtn, CancelBtn }) => (
-            <>
-              
-              <CancelBtn />
-              <OkBtn />
-            </>
-          ),
-          onOk:async () =>{
-            var result = await deleteUser(user?.id || 0);
-            if(!result.error){
-               dispatcher(logOut());
-               toast(`Ваш акаунт успішно видало`, {
-                   type: "success"
-               })
+            centered: true,
+            closable: true,
+            destroyOnClose: true,
+            maskClosable: true,
+            keyboard: true,
+            okType: 'danger',
+            width: 'auto',
+            title: <span className="font-unbounded font-medium text-adaptive-1_7_text text-[red]">Видалення облікового запису</span>,
+            content: <div className="font-montserrat text-adaptive-1_7_text my-[2vh] mr-[1.5vw]">Ви впевненні що хочете видалити свій акаунт?</div>,
+            cancelText: 'Скасувати',
+            okText: 'Видалити',
+            footer: (_, { OkBtn, CancelBtn }) => (
+                <>
+
+                    <CancelBtn />
+                    <OkBtn />
+                </>
+            ),
+            onOk: async () => {
+                var result = await deleteUser(user?.id || 0);
+                if (!result.error) {
+                    dispatcher(logOut());
+                    toast(`Ваш акаунт успішно видало`, {
+                        type: "success"
+                    })
+                }
             }
-        }
-      }) 
+        })
     }
 
     return (
@@ -74,7 +74,7 @@ const UserEdit: React.FC = () => {
                 className="flex flex-col w-full mb-[23vh]"
                 onFinish={onFinish}
                 initialValues={{
-                    imageFile:user?.photo? ({
+                    imageFile: user?.photo ? ({
                         thumbUrl: APP_ENV.IMAGES_200_URL + user?.photo, url: APP_ENV.IMAGES_1200_URL + user?.photo, originFileObj: new File([new Blob([''])], user?.photo || '', { type: 'image/existing' })
                     }) as UploadFile : undefined,
                     firstName: user?.firstName,
