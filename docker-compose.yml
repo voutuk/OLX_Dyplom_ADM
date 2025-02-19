@@ -1,28 +1,36 @@
-version: "3.9"
 networks:
   myAppNetwork:
     driver: bridge
 
 services:
   postgresServerDb:
-    container_name: container-postgres
+    profiles: ['db-only', 'full', "back"]
+    container_name: postgresDB
     image: postgres:latest
     ports:
-      - "5022:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=olxapi
       - POSTGRES_PASSWORD=*dmUntdOidd3d_#WTi4B9ZoZp%rSDj4Imds07djc*
       - POSTGRES_DB=olxDb
     networks:
       - myAppNetwork
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
     deploy:
       restart_policy:
         condition: on-failure
         max_attempts: 5
 
   app:
+    profiles: ['api-only', 'full', "back"]
     container_name: olx_container
-    image: ${BACKEND_IMAGE}:${BUILD_NUMBER}
+    build:
+      context: ./OLX.API
+      dockerfile: Dockerfile
+    image: voutuk/olx-api:latest
+    volumes:
+      - ./images:/app/uploading
     ports:
       - "8080:8080"
     networks:
@@ -35,8 +43,12 @@ services:
         max_attempts: 5
   
   client:
+    profiles: ['client-only', 'full', "front"]
     container_name: olx_client_container
-    image: ${FRONTEND_IMAGE}:${BUILD_NUMBER}
+    build:
+      context: ./OLX.Frontend
+      dockerfile: Dockerfile
+    image: voutuk/olx-client:latest
     restart: on-failure
     ports:
       - "80:80"
