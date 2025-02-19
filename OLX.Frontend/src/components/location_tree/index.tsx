@@ -6,6 +6,7 @@ import { LocationSelectProps } from "./props";
 import {
     useGetAreasQuery,
     useGetRegionsByAreaQuery,
+    useGetSettlementsByIdQuery,
     useGetSettlementsByRegionQuery,
 } from "../../redux/api/newPostApi";
 import { useSearchParams } from "react-router-dom";
@@ -18,22 +19,32 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
     const [areaRef, setAreaRef] = useState<string | null>(null);
     const [regionRef, setRegionRef] = useState<string | null>(null);
     const [searchParams] = useSearchParams('');
+
+    const initialArea = searchParams.get('areaRef') || undefined;
+    const initialRegion = searchParams.get('regionRef') || undefined;
+    const initialSettlement = searchParams.get('settlementRef') || undefined;
+    
     const { data: regions } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
     const { data: settlements } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
+    const { data: selectedSettlement } = useGetSettlementsByIdQuery(initialSettlement!, { skip: !initialSettlement });
 
+    
     useEffect(() => {
-        const initialArea = searchParams.get('areaRef') || undefined;
-        const initialRegion = searchParams.get('regionRef') || undefined;
-        const initialSettlement = searchParams.get('settlementRef') || undefined;
-
-        if (initialSettlement) {
+        if (initialSettlement && selectedSettlement) {
             setSelectedValue(initialSettlement);
+            setRegionRef(selectedSettlement.region || null);
+            setAreaRef(selectedSettlement.area || null);
         } else if (initialRegion) {
             setSelectedValue(initialRegion);
+            setRegionRef(initialRegion);
+            const areaFromSettlements = settlements?.find((s: ISettlement) => s.region === initialRegion)?.area || null;
+            setAreaRef(areaFromSettlements);
         } else if (initialArea) {
             setSelectedValue(initialArea);
+            setAreaRef(initialArea);
         }
-    }, []);
+    }, [selectedSettlement, initialRegion, initialArea, settlements]);
+
 
     useEffect(() => {
         if (areas) {

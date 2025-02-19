@@ -1,6 +1,6 @@
 import { Badge, Dropdown, MenuProps } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { BellOutlined, HeartOutlined, LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { BellOutlined, LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
 import { Images } from "../../../../constants/images";
 import { getRefreshToken, getUnreadedCount, getUser } from "../../../../redux/slices/userSlice";
@@ -9,6 +9,7 @@ import { useLogoutMutation } from "../../../../redux/api/accountApi";
 import { useAppSelector } from "../../../../redux";
 import { useGetUserMessagesQuery } from "../../../../redux/api/adminMessageApi";
 import { useEffect} from "react";
+import FavoriteButton from "../../../buttons/favorites_button";
 import { useSignalR } from "../../../hendlers/signalR/signalRContext";
 import SearchInput from "../../../inputs/search_input";
 import { HeaderProps } from "./props";
@@ -61,8 +62,8 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
                     <MessageOutlined className='text-adaptive-icons text-amber-950 cursor-pointer animate-wiggle' />
                 </Badge>}
 
-                <HeartOutlined onClick={() => navigator('/user/favorites')} className='text-adaptive-icons text-amber-950 cursor-pointer' />
-
+                <FavoriteButton />
+                
                 {user && <Badge count={unreadMesssageCount} size='small' className={unreadMesssageCount > 0 ? "animate-pulse" : ''} >
                     <BellOutlined className='text-adaptive-icons text-amber-950 cursor-pointer' />
                 </Badge>}
