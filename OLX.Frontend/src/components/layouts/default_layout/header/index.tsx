@@ -1,6 +1,6 @@
 import { Badge, Dropdown, MenuProps } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { BellOutlined, HeartOutlined, LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { BellOutlined, LogoutOutlined, MessageOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
 import { Images } from "../../../../constants/images";
 import { getRefreshToken, getUnreadedCount, getUser } from "../../../../redux/slices/userSlice";
@@ -82,5 +82,3 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
         </div>
     )
 }
-
-//<HeartOutlined onClick={() => navigator('/user/favorites')} className='text-adaptive-icons text-amber-950 cursor-pointer' />
