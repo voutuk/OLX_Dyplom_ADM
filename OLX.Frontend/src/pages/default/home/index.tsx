@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
       <HomePageImageBlock />
       <div className='flex flex-col items-center mx-[8vw] py-[10vh] gap-[10vh]'>
         <CategoriesSection />
-        <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
+        <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} columns={4} />
         {!isEnd &&
           <PrimaryButton
             onButtonClick={loadMore}

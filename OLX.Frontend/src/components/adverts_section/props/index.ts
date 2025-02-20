@@ -5,4 +5,5 @@ export interface AdvertsSectionProps {
     adverts?: IAdvert[]
     isLoading: boolean
     className?: string
+    columns?:number
 }
