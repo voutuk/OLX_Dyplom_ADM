@@ -1,16 +1,15 @@
-import {useMemo } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_ENV } from "../../../constants/env";
 import AdvertCard from "../../../components/advert_card";
 import { useGetFavoritesQuery } from "../../../redux/api/accountAuthApi";
 import PrimaryButton from "../../../components/buttons/primary_button";
-import ScrolledContainer from "../../../components/scrolled_container";
 import { BackButton } from "../../../components/buttons/back_button";
 
 const FavoritesAdverts = () => {
     const { data: favorites } = useGetFavoritesQuery();
     const navigate = useNavigate();
-   
+
     const advertsCards = useMemo(() => favorites?.map(advert => (
         <AdvertCard
             key={advert.id}
@@ -23,16 +22,12 @@ const FavoritesAdverts = () => {
     )) || [], [favorites])
 
     return (
-        <div className="w-[100%] my-[4vh]">
-            <BackButton title="Назад" className="mb-[9vh] ml-[8vw] text-adaptive-1_9_text  font-medium self-start" />
-            <h2 className='text-[#3A211C] font-unbounded text-adaptive-login-header-text font-normal ml-[8vw]'>Обране</h2>
+        <div className="w-[100%] my-[8vh]">
+            <BackButton title="Назад" className="mb-[12vh] ml-[9vw] text-adaptive-1_9_text font-medium self-start" />
+            <h2 className='text-[#3A211C] font-unbounded text-adaptive-3_5-text font-normal  ml-[8vw]'>Обране</h2>
             {favorites && favorites.length > 0 ?
-                <div className="my-[4vh] mx-[8vw]">
-                    <ScrolledContainer>
-                        <div className="flex gap-[0.3vw]">
-                            {...advertsCards}
-                        </div>
-                    </ScrolledContainer>
+                <div className='grid grid-cols-4 gap-y-[2.5vh]  gap-x-[2.5vh] my-[6vh] mx-[8vw]'>
+                    {...advertsCards}
                 </div>
                 :
                 <div className="w-[100%] py-[10vh] px-[8vw] h-[400px] flex-col justify-start items-center inline-flex">
