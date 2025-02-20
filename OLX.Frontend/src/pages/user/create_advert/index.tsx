@@ -277,10 +277,10 @@ const CreateAdvert: React.FC = () => {
 
                     {categoryFilters}
                     <hr className="mb-[2vh]" />
-                    <div className="flex flex-col gap-[2.5vh] ml-[8vw]">
-
-                        <Form.Item
+                    <div className='grid grid-cols-2 gap-y-[1.2vw] ml-[8vw] w-[47.3vw]  gap-x-[2.1vw]'>
+                    <Form.Item
                             name="contactPersone"
+                            className="w-full"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Контактна персона</div>}
                             rules={[
                                 {
@@ -290,13 +290,14 @@ const CreateAdvert: React.FC = () => {
                             ]}
                         >
                             <Input
-                                className="h-[5vh] w-[47.3vw] font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
+                                className="h-[5vh]  font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
                                 placeholder="Контактна персона" />
 
                         </Form.Item>
 
                         <Form.Item
                             name="phoneNumber"
+                            className="w-full"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Номер телефону</div>}
                             rules={[
                                 {
@@ -310,13 +311,14 @@ const CreateAdvert: React.FC = () => {
                             ]}
                         >
                             <Input
-                                className="h-[5vh] w-[47.3vw] font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
+                                className="h-[5vh] font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
                                 placeholder="Номер телефону" />
 
                         </Form.Item>
 
                         <Form.Item
                             name="contactEmail"
+                            className="w-full"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Електронна пошта</div>}
                             rules={[
                                 {
@@ -331,13 +333,14 @@ const CreateAdvert: React.FC = () => {
                             ]}
                         >
                             <Input
-                                className="h-[5vh] w-[47.3vw] font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
+                                className="h-[5vh] font-montserrat text-adaptive-1_6-text border-[#9B7A5B]"
                                 placeholder="Електронна пошта" />
 
                         </Form.Item>
 
                         <Form.Item
                             name="settlementRef"
+                            className="w-full"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Місцезнаходження</div>}
                             rules={[
                                 {
@@ -349,9 +352,9 @@ const CreateAdvert: React.FC = () => {
                             <LocationSelector
                                 placeholder="Місцезнаходження"
                                 height="5vh"
-                                width="47.3vw" />
+                                width="100%" />
                         </Form.Item>
-                    </div>
+                        </div>
 
                     <PrimaryButton
                         title={id ? 'Зберегти' : 'Завантажити'}
