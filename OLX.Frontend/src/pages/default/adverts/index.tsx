@@ -84,7 +84,7 @@ const AdvertsPage: React.FC = () => {
                             className="text-adaptive-card-price-text  text-[#3A211C] font-unbounded">
                             <CategoryTree
                                 categories={categories}
-                                className="font-montserrat overflow-x-auto overflow-y-auto  mt-[2vh] h-[45vh] text-adaptive-input-form-text"//text-wrap
+                                className="font-montserrat overflow-x-auto overflow-y-auto text-nowrap  mt-[2vh] h-[45vh] text-adaptive-input-form-text"//text-wrap
                                 categoryId={pageRequest.categoryId}
                                 onSelect={(id) => {
                                     if (id) {
