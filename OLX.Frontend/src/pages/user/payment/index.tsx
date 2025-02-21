@@ -21,7 +21,7 @@ const PaymentPage = () => {
     return (
         <div className="w-[100%] mx-[8vw] flex flex-col">
             <BackButton className="text-adaptive-1_9_text my-[7.5vh] ml-[1vw] font-medium self-start" title="Назад" />
-            <div className="flex gap-[8vw] mb-[15vh]">
+            <div className="flex gap-[8vw] mt-[5vh] mb-[15vh]">
                 <AdvertCard
                     id={Number(id)}
                     image={APP_ENV.IMAGES_400_URL + advert?.images.find(x => x.priority === 0)?.name}
