@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
 
     return (
         <div className={`h-[9vh] min-h-[60px] sticky px-[8vw] top-0 items-center bg-white flex-shrink-0 flex justify-between z-50 ${className}`}  >
-            <div className="h-[42.5%] cursor-pointer">
+            <div className="h-[42.5%] cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.05] hover:rotate-1">
                 <img alt="logo" onClick={() => navigator('/')} className="h-full w-full" src={Images.logo} />
             </div>
 
@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
                     ?
                     <Dropdown menu={{ items }} trigger={['click']} className='px-3 cursor-pointer  flex-shrink-0 flex gap-2 justify-center items-center'>
                         <div>
-                            <UserAvatar user={user} size={40} className="transition-all duration-300 ease-in-out hover:scale-[1.1]" />
+                            <UserAvatar user={user} size={40} className="transition-all duration-300 ease-in-out hover:scale-[1.2]" />
                         </div>
                     </Dropdown>
                     :
