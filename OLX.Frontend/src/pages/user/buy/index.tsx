@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AdvertCard from "../../../components/advert_card";
 import { BackButton } from "../../../components/buttons/back_button"
 import { APP_ENV } from "../../../constants/env";
@@ -14,8 +14,10 @@ const BuyAdvertPage: React.FC = () => {
     const user = useAppSelector(state => state.user.user)
     const { id } = useParams();
     const { data: advert } = useGetAdvertByIdQuery(Number(id))
+    const navigate = useNavigate();
     const onFinish = (data: any) => {
-        console.log(data)
+        console.log(data);
+        navigate( `/user/advert/payment/${id}`);
     }
     return (
         <div className="w-[100%] gap-[5vh] mx-[8vw] flex flex-col">
