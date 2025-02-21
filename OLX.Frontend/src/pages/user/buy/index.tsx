@@ -17,12 +17,12 @@ const BuyAdvertPage: React.FC = () => {
     const navigate = useNavigate();
     const onFinish = (data: any) => {
         console.log(data);
-        navigate( `/user/advert/payment/${id}`);
+        navigate(`/user/advert/payment/${id}`);
     }
     return (
         <div className="w-[100%] gap-[5vh] mx-[8vw] flex flex-col">
             <BackButton className="text-adaptive-1_9_text my-[7.5vh] ml-[1vw] font-medium self-start" title="Назад" />
-            <div className="flex gap-[8vw]">
+            <div className="grid grid-cols-[20.5vw,47.5vw] gap-[8vw]">
                 <AdvertCard
                     id={Number(id)}
                     image={APP_ENV.IMAGES_400_URL + advert?.images.find(x => x.priority === 0)?.name}
@@ -31,7 +31,7 @@ const BuyAdvertPage: React.FC = () => {
                     settlement={advert?.settlementName || ''}
                     isFavorite={false}
                 />
-                <div className="flex flex-col w-[47.3vw]">
+                <div className="flex flex-col ">
                     <h1 className="font-unbounded text-adaptive-3_35-text mb-[7vh]">Купити з доставкою</h1>
                     <div className="flex flex-col gap-[.6vh]">
                         <span className="font-unbounded font-medium text-adaptive-1_7_text">Контактні дані</span>

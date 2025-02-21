@@ -21,7 +21,7 @@ const PaymentPage = () => {
     return (
         <div className="w-[100%] mx-[8vw] flex flex-col">
             <BackButton className="text-adaptive-1_9_text my-[7.5vh] ml-[1vw] font-medium self-start" title="Назад" />
-            <div className="flex gap-[8vw] mt-[5vh] mb-[15vh]">
+            <div className="grid grid-cols-[20.5vw,34.4vw] gap-[8vw] mt-[5vh] mb-[15vh]">
                 <AdvertCard
                     id={Number(id)}
                     image={APP_ENV.IMAGES_400_URL + advert?.images.find(x => x.priority === 0)?.name}
@@ -30,7 +30,7 @@ const PaymentPage = () => {
                     settlement={advert?.settlementName || ''}
                     isFavorite={false}
                 />
-                <div className="flex flex-col w-[34.4vw] relative">
+                <div className="flex flex-col relative">
                     <h1 className="font-unbounded text-adaptive-3_35-text mb-[1.4vh]">Оплата</h1>
                     <span className="font-montserrat text-adaptive-1_7_text">Оберіть зручний спосіб оплати</span>
                     <Form
