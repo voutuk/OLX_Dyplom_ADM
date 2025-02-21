@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settlement, isEditable = false, isFavorite = true ,className}) => {
     const navigate = useNavigate();
     return (
-        <div className={`${isEditable ? "w-[14vw]" : "w-auto"} h-fit rounded-bl-lg rounded-br-lg border border-[#9b7a5b]/20 p-0 relative transition-all duration-300 ease-in-out hover:border-[#9b7a5b]/80 hover:shadow-2xl ${className}`}>
+        <div className={`${isEditable ? "w-[14vw]" : "w-auto"} rounded-bl-lg rounded-br-lg border border-[#9b7a5b]/20 p-0 relative transition-all duration-300 ease-in-out hover:border-[#9b7a5b]/80 hover:shadow-2xl ${className}`}>
             {
                 isEditable ?
                     <EditButton className="absolute right-[0.5vh] top-[0.5vh] w-[30px] h-[30px] cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.1]" id={id} />
