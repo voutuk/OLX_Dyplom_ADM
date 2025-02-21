@@ -6,5 +6,5 @@ export interface AdvertCardProps{
     settlement: string,
     isEditable?: boolean,
     isFavorite?: boolean,
-    className?:string
-}
+    className?:string,
+ }

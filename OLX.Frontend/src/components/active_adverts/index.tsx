@@ -17,6 +17,7 @@ const ActiveAdverts: React.FC<IActiveAdvertsProps> = ({ adverts }) => {
             price={advert.price}
             settlement={advert.settlementName}
             isEditable={true}
+            className="min-w-[14vw] max-w-[14vw]"
         />
     )) || [], [adverts])
 

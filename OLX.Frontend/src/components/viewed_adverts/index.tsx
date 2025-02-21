@@ -14,7 +14,12 @@ const ViewedAdverts: React.FC<ViewedAdvertsProps> = ({ advert, className }) => {
     return (
         <>
             {adverts && adverts.length > 0 &&
-                <ScrolledAdvertsSection  title='Нещодавно переглянуті' adverts={adverts} advertId={advert?.id} className={className} />}
+                <ScrolledAdvertsSection
+                    title='Нещодавно переглянуті'
+                    adverts={adverts}
+                    advertId={advert?.id}
+                    className={className}
+                    cardClassName="min-w-[20.5vw] max-w-[20.5vw]" />}
         </>
     )
 }
