@@ -4,6 +4,7 @@ import './App.scss'
 import DefaultLayout from './components/layouts/default_layout/index';
 import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
+import PaymentPage from './pages/user/payment';
 
 
 const FavoritesAdverts  = React.lazy(() => import('./pages/user/favorites_adverts'));
@@ -56,6 +57,7 @@ function App() {
               <Route path='advert/edit/:id' element={<CreateAdvert/>}/>
               <Route path='favorites' element={<FavoritesAdverts />} />
               <Route path='advert/buy/:id' element={<BuyAdvertPage />} />
+              <Route path='advert/payment/:id' element={<PaymentPage />} />
             </Route>
           </Route>
 
