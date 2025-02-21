@@ -222,5 +222,14 @@ namespace Olx.BLL.Services
             }
             return completedAdverts.Count();
         }
+
+        public async Task SetCompletedAsync(int advertId)
+        {
+            await userManager.UpdateUserActivityAsync(httpContext);
+            var advertToComplete = await advertRepository.GetByIDAsync(advertId)
+                ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
+            advertToComplete.Completed = true;
+            await advertRepository.SaveAsync();
+        }
     }
 }

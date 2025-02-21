@@ -19,5 +19,6 @@ namespace Olx.BLL.Interfaces
         Task DeleteAsync(int id);
         Task ApproveAsync(int id);
         Task SetBlockedStatusAsync(int advertId,bool status);
+        Task SetCompletedAsync(int advertId);
     }
 }

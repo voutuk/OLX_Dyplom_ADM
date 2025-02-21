@@ -62,7 +62,17 @@ namespace OLX.API.Controllers
         [Authorize(Roles = Roles.User)]
         [HttpPost("update")]
         public async Task<IActionResult> Update([FromForm] AdvertCreationModel creationModel) => Ok(await advertService.UpdateAsync(creationModel));
-        
+
+
+        [Authorize(Roles = Roles.User)]
+        [HttpPost("complete/{advertId:int}")]
+        public async Task<IActionResult> CompleteAdvert([FromRoute] int advertId) 
+        {
+            await advertService.SetCompletedAsync(advertId);
+            return  Ok();
+        } 
+
+
         [Authorize(Roles = Roles.User)]
         [HttpPut("create")]
         public async Task<IActionResult> Create([FromForm] AdvertCreationModel creationModel) => Ok(await advertService.CreateAsync(creationModel));
@@ -76,7 +86,7 @@ namespace OLX.API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpDelete("user/delete/completed/all")]
+        [HttpDelete("delete/completed/all")]
         public async Task<IActionResult> DeleteCompleted() => Ok( await advertService.RemoveCompletedAsync());
        
     }
