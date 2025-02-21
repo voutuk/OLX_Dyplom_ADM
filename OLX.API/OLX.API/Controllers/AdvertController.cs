@@ -20,7 +20,15 @@ namespace OLX.API.Controllers
 
         [Authorize(Roles = Roles.User)]
         [HttpGet("get/user")]
-        public async Task<IActionResult> GetUserAdverts([FromRoute] int id) => Ok(await advertService.GetUserAdverts());
+        public async Task<IActionResult> GetUserAdverts() => Ok(await advertService.GetUserAdverts());
+
+        [Authorize(Roles = Roles.User)]
+        [HttpGet("get/user/locked")]
+        public async Task<IActionResult> GetLockedUserAdverts() => Ok(await advertService.GetUserAdverts(locked:true));
+
+        [Authorize(Roles = Roles.User)]
+        [HttpGet("get/user/completed")]
+        public async Task<IActionResult> GetCompletedUserAdverts() => Ok(await advertService.GetUserAdverts(completed:true));
 
         [Authorize(Roles = Roles.Admin)]
         [HttpGet("get/user/{id:int}")]
@@ -65,6 +73,11 @@ namespace OLX.API.Controllers
         {
             await advertService.DeleteAsync(id);
             return Ok();
-        }  
+        }
+
+        [Authorize(Roles = Roles.User)]
+        [HttpDelete("user/delete/completed/all")]
+        public async Task<IActionResult> DeleteCompleted() => Ok( await advertService.RemoveCompletedAsync());
+       
     }
 }

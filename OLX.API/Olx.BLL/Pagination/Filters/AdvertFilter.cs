@@ -12,6 +12,7 @@ namespace Olx.BLL.Pagination.Filters
         public bool? IsContractPrice { get; init; }
         public bool? Approved { get; init; }
         public bool? Blocked { get; init; }
+        public bool? Completed { get; init; }
         public string? CategorySearch { get; init; }
         public string? PhoneSearch { get; init; }
         public string? EmailSearch { get; init; }
@@ -88,6 +89,10 @@ namespace Olx.BLL.Pagination.Filters
             if (Blocked.HasValue)
             {
                 query = query.Where(x => x.Blocked == Blocked);
+            }
+            if (Completed.HasValue)
+            {
+                query = query.Where(x => x.Completed == Completed);
             }
 
             return query;

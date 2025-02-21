@@ -20,6 +20,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     priceTo: Number(searchParams.get("priceTo")),
    // approved: true,
     blocked: false,
+    completed:false,
     size: Number(searchParams.get("size")) || advertPageSize,
     page: Number(searchParams.get("page")) || 1,
     sortKey: searchParams.get("sortKey") || '',

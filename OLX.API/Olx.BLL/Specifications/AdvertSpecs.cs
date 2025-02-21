@@ -74,5 +74,14 @@ namespace Olx.BLL.Specifications
                 Query.Where(x => x.Id == id);
             }
         }
+
+        public class GetCompleted : Specification<Advert>
+        {
+            public GetCompleted(int userId, AdvertOpt? options = null)
+            {
+                SetOptions(Query, options);
+                Query.Where(x => x.UserId == userId && x.Completed);
+            }
+        }
     }
 }

@@ -24,6 +24,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     priceTo: Number(searchParams.get("priceTo")),
     approved: location.pathname === '/admin/adverts',
     blocked: false,
+    completed:false,
     size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
     page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
     sortKey: searchParams.get("sortKey") || '',

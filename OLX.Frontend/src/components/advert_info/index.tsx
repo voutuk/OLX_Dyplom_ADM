@@ -16,7 +16,7 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                         <span className="font-unbounded text-adaptive-advert-page-price-text font-medium">{formatPrice(advert?.price || 0)} грн.</span>
                         <span className="font-unbounded text-adaptive-card-price-text font-medium">{advert?.title}</span>
                     </div>
-                    {buttons &&
+                    {buttons && !advert?.completed &&
                         <ToggleFavoriteButton
                             advertId={advert?.id || 0}
                             isAdvertPage 
@@ -29,7 +29,9 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                 </div>
             </div>
             <div className=" flex flex-col gap-[6vh]">
-                {buttons &&
+                {
+                !advert?.completed
+                ? buttons &&
                     <div className="flex flex-col gap-[2.4vh]">
                         <PrimaryButton
                             title={"Купити зараз"}
@@ -48,7 +50,12 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                             fontSize="clamp(14px, 2.1vh, 36px)"
                             className="h-[4.6vh] w-[22vw] border-2" />
                     </div>
-                }
+                
+                :<div className="h-[6vh] content-center rounded-sm bg-slate-100 text-center text-slate-400 font-unbounded text-adaptive-card-price-text">
+                     Завершено
+                </div>
+            }
+                
                 <div className="flex flex-col gap-[3vh] w-[22vw]">
                     <UserRating user={advert?.user} />
                     <div className="flex gap-[1vh] flex-col">

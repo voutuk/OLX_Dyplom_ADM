@@ -20,6 +20,7 @@ const HomePage: React.FC = () => {
     priceTo: 0,
     approved: true,
     blocked: false,
+    completed:false
   });
 
   const [adverts, setAdverts] = useState<IAdvert[]>([]);

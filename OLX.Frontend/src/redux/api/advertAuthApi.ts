@@ -91,14 +91,38 @@ export const advertAuthApi = createApi({
             },
         }),
 
-        getUserAdverts: builder.query<IAdvert[], number>({
-            query: (userId) => ({
+        getUserAdverts: builder.query<IAdvert[], void>({
+            query: () => ({
                 url: `get/user`,
                 method: "GET",
-                params: { userId },
             }),
             providesTags: ["UserAdverts"],
         }),
+
+        getCompletedUserAdverts: builder.query<IAdvert[], void>({
+            query: () => ({
+                url: `get/user/completed`,
+                method: "GET",
+            }),
+            providesTags: ["UserAdverts"],
+        }),
+
+        deleteCompletedUserAdverts: builder.mutation<number, void>({
+            query: () => ({
+                url: `user/delete/completed/all`,
+                method: "DELETE",
+            }),
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(advertApi.util.invalidateTags(["Adverts","Locked","NotApproved","Advert"]))
+                } catch (error) {
+                    console.error('Delete completed advert failed:', error);
+                }
+            },
+            invalidatesTags:["UserAdvert","UserAdverts"]
+        }),
+
 
         getAdvertsByUserId: builder.query<IAdvert[], number>({
             query: (userId) => ({
@@ -118,4 +142,6 @@ export const {
     useApproveAdvertMutation,
     useGetUserAdvertsQuery,
     useGetAdvertsByUserIdQuery,
+    useGetCompletedUserAdvertsQuery,
+    useDeleteCompletedUserAdvertsMutation
 } = advertAuthApi;

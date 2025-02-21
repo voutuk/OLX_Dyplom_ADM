@@ -278,7 +278,7 @@ const CreateAdvert: React.FC = () => {
                     {categoryFilters}
                     <hr className="mb-[2vh]" />
                     <div className='grid grid-cols-2 gap-y-[1.2vw] ml-[8vw] w-[47.3vw]  gap-x-[2.1vw]'>
-                    <Form.Item
+                        <Form.Item
                             name="contactPersone"
                             className="w-full"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Контактна персона</div>}
@@ -354,10 +354,10 @@ const CreateAdvert: React.FC = () => {
                                 height="5vh"
                                 width="100%" />
                         </Form.Item>
-                        </div>
+                    </div>
 
                     <PrimaryButton
-                        title={id ? 'Зберегти' : 'Завантажити'}
+                        title={id ? advert?.completed ? 'Завантажити повторно' : 'Зберегти' : 'Завантажити'}
                         htmlType="submit"
                         isLoading={isAdvertCreation || isAdvertEdition}
                         className="w-[15vw]  ml-[8vw] h-[4.6vh] mt-[3vh]"

@@ -21,6 +21,7 @@ namespace Olx.BLL.DTOs
         public string CategoryName { get; set; } = string.Empty;
         public bool Approved { get; set; } = false;
         public bool Blocked { get; set; } = false;
+        public bool Completed { get; set; } = false;
         public string SettlementName { get; set; } = string.Empty;
         public string SettlementRef { get; set; } = string.Empty;
         public string RegionRef { get; set; } = string.Empty;

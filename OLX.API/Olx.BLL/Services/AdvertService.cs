@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Identity;
 using Olx.BLL.Exstensions;
 using Olx.BLL.Entities.NewPost;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Crypto;
 
 
 namespace Olx.BLL.Services
@@ -81,14 +80,15 @@ namespace Olx.BLL.Services
         }
 
         public async Task<IEnumerable<AdvertDto>> GetRangeAsync(IEnumerable<int> ids) =>
-            await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => ids.Contains(x.Id))).ToArrayAsync();
+            await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => ids.Contains(x.Id) && !x.Blocked && !x.Completed)).ToArrayAsync();
         
-        public async Task<IEnumerable<AdvertDto>> GetAllAsync() => await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery()).ToArrayAsync();
+        public async Task<IEnumerable<AdvertDto>> GetAllAsync() =>
+            await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => !x.Blocked && !x.Completed)).ToArrayAsync();
       
-        public async Task<IEnumerable<AdvertDto>> GetUserAdverts()
+        public async Task<IEnumerable<AdvertDto>> GetUserAdverts(bool locked = false,bool completed = false)
         {
             var curentUser = await userManager.UpdateUserActivityAsync(httpContext);
-            return await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.UserId == curentUser.Id)).ToArrayAsync();
+            return await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.UserId == curentUser.Id && x.Blocked == locked && x.Completed == completed)).ToArrayAsync();
         }
 
         public async Task<IEnumerable<AdvertDto>> GetByUserId(int userId)
@@ -96,7 +96,7 @@ namespace Olx.BLL.Services
             await userManager.UpdateUserActivityAsync(httpContext);
             var user = userManager.FindByIdAsync(userId.ToString())
                 ?? throw new HttpException(Errors.InvalidUserId,HttpStatusCode.BadRequest);
-            return await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.UserId == userId)).ToArrayAsync();
+            return await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => x.UserId == userId && !x.Blocked && !x.Completed)).ToArrayAsync();
         }
 
         public async Task<AdvertDto> GetByIdAsync(int id)
@@ -183,6 +183,7 @@ namespace Olx.BLL.Services
                 advert.FilterValues = values.ToList();
             }
             advert.Approved = false;
+            advert.Completed = false;
             await Task.WhenAll(tasks);
             await advertRepository.SaveAsync();
             return mapper.Map<AdvertDto>(advert);
@@ -208,6 +209,18 @@ namespace Olx.BLL.Services
                  ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
             advert.Blocked = status;
             await advertRepository.SaveAsync();
-        }  
+        }
+
+        public  async Task<int> RemoveCompletedAsync()
+        {
+            var user = await userManager.UpdateUserActivityAsync(httpContext);
+            var completedAdverts = await advertRepository.GetListBySpec(new AdvertSpecs.GetCompleted(user.Id));
+            if (completedAdverts.Any()) 
+            {
+                advertRepository.DeleteRange(completedAdverts);
+                await advertRepository.SaveAsync();
+            }
+            return completedAdverts.Count();
+        }
     }
 }

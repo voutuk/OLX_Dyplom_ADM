@@ -6,9 +6,10 @@ namespace Olx.BLL.Interfaces
 {
     public interface IAdvertService
     {
+        Task<int> RemoveCompletedAsync();
         Task<PageResponse<AdvertDto>> GetPageAsync(AdvertPageRequest pageRequest);
         Task<IEnumerable<AdvertDto>> GetAllAsync();
-        Task<IEnumerable<AdvertDto>> GetUserAdverts();
+        Task<IEnumerable<AdvertDto>> GetUserAdverts(bool locked = false,bool completed = false);
         Task<IEnumerable<AdvertDto>> GetByUserId(int userId);
         Task<AdvertDto> GetByIdAsync(int id);
         Task<IEnumerable<AdvertDto>> GetRangeAsync(IEnumerable<int> ids);

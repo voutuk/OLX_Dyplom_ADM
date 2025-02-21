@@ -445,7 +445,7 @@ namespace Olx.BLL.Services
                 return [];
             }
             var favoriteAdvertsIds = user.FavoriteAdverts.Select(a => a.Id);
-            var adverts = await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => favoriteAdvertsIds.Contains(x.Id))).ToArrayAsync();
+            var adverts = await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => favoriteAdvertsIds.Contains(x.Id) && !x.Blocked && !x.Completed)).ToArrayAsync();
             return adverts;
         }
     }

@@ -29,6 +29,7 @@ namespace Olx.BLL.Entities
         public decimal Price { get; set; }
         public bool Approved { get; set; } = false;
         public bool Blocked { get; set; } = false;
+        public bool Completed { get; set; } = false;
 
         [StringLength(36)]
         [Unicode(false)]
