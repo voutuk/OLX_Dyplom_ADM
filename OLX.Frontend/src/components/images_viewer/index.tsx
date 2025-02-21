@@ -19,7 +19,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
 
     const images = useMemo(() => imagesData.images.map((image, index) => (
         <img loading="lazy" key={index}
-            className={`${image === imagesData.currentImage ? 'border-2 border-red-600' : ''}  aspect-[16/19] flex-shrink-0 object-cover transition-all duration-300 ease-in-out hover:-translate-y-1`}
+            className={`${image === imagesData.currentImage ? 'border-2 border-red-600' : ''}  aspect-[16/19] flex-shrink-0 object-cover transition-transform duration-300 ease-in-out hover:-translate-x-1`}
             src={APP_ENV.IMAGES_200_URL + image}
             onMouseDown={() => { setImagesData({ ...imagesData, currentImage: image }) }} />
 
@@ -35,7 +35,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
                         scrollDir="vertical"
                         className="aspect-[100/590] h-[100%] w-[17%]"
                     >
-                        <div className="flex flex-col gap-[3.5vh]">
+                        <div className="flex flex-col ml-1 gap-[3.5vh]">
                             {...images}
                         </div>
                     </ScrolledContainer>
