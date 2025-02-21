@@ -11,7 +11,7 @@ const FavoritesButton = () => {
     }, [location.pathname]);
 
     return (
-        <div className="text-adaptive-icons text-amber-950 cursor-pointer">
+        <div className="text-adaptive-icons text-amber-950 cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.1]">
             {isFavoritesPage ? (
                 <svg onClick={() => navigate('/user/favorites')} xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
                     <path d="M17.0007 30.2458L14.9465 28.3758C7.65065 21.76 2.83398 17.3967 2.83398 12.0417C2.83398 7.67833 6.26232 4.25 10.6257 4.25C13.0907 4.25 15.4565 5.3975 17.0007 7.21083C18.5448 5.3975 20.9107 4.25 23.3757 4.25C27.739 4.25 31.1673 7.67833 31.1673 12.0417C31.1673 17.3967 26.3507 21.76 19.0548 28.39L17.0007 30.2458Z" fill="#3A211C" />

@@ -4,15 +4,15 @@ import ToggleFavoriteButton from "../buttons/toggle_favorite_button";
 import { AdvertCardProps } from "./props"
 import { useNavigate } from "react-router-dom";
 
-const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settlement, isEditable = false, isFavorite = true }) => {
+const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settlement, isEditable = false, isFavorite = true ,className}) => {
     const navigate = useNavigate();
     return (
-        <div className={`${isEditable ? "w-[14vw]" : "w-auto"} h-fit rounded-bl-lg rounded-br-lg border border-[#9b7a5b]/20 p-0 relative`}>
+        <div className={`${isEditable ? "w-[14vw]" : "w-auto"} h-fit rounded-bl-lg rounded-br-lg border border-[#9b7a5b]/20 p-0 relative transition-all duration-300 ease-in-out hover:border-[#9b7a5b]/80 hover:shadow-2xl ${className}`}>
             {
                 isEditable ?
-                    <EditButton className="absolute right-[0.5vh] top-[0.5vh] w-[30px] h-[30px] cursor-pointer" id={id} />
+                    <EditButton className="absolute right-[0.5vh] top-[0.5vh] w-[30px] h-[30px] cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.1]" id={id} />
                     : isFavorite ?
-                        <ToggleFavoriteButton advertId={id} className="absolute right-[0px] top-[.5vh]" />
+                        <ToggleFavoriteButton advertId={id} className="absolute right-[0px] top-[.5vh] transition-all duration-300 ease-in-out hover:scale-[1.1]" />
                         : <></>
             }
             <img className=" object-cover w-[100%] aspect-[12/13]" src={image} />

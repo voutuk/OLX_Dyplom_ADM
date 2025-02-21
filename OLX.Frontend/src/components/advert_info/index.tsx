@@ -19,7 +19,8 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                     {buttons &&
                         <ToggleFavoriteButton
                             advertId={advert?.id || 0}
-                            isAdvertPage />
+                            isAdvertPage 
+                            className="transition-all duration-300 ease-in-out hover:scale-[1.1]"/>
                     }
                 </div>
                 <div className="flex flex-col w-[28vw] gap-[1vh]">

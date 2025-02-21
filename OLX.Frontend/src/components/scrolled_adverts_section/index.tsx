@@ -16,6 +16,7 @@ const ScrolledAdvertsSection: React.FC<IScrolledAdvertsSectionProps> = ({ title,
         image={APP_ENV.IMAGES_400_URL + advert.images.find(img => img.priority === 0)?.name}
         price={advert.price}
         settlement={advert.settlementName}
+        className="flex-shrink-0"
       />
     )) || [], [adverts, advertId])
 

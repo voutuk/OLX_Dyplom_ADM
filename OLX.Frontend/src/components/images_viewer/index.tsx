@@ -19,7 +19,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({ className, advertImages }) =
 
     const images = useMemo(() => imagesData.images.map((image, index) => (
         <img loading="lazy" key={index}
-            className={`${image === imagesData.currentImage ? 'border-2 border-red-600' : ''}  aspect-[16/19] flex-shrink-0 object-cover`}
+            className={`${image === imagesData.currentImage ? 'border-2 border-red-600' : ''}  aspect-[16/19] flex-shrink-0 object-cover transition-all duration-300 ease-in-out hover:-translate-y-1`}
             src={APP_ENV.IMAGES_200_URL + image}
             onMouseDown={() => { setImagesData({ ...imagesData, currentImage: image }) }} />
 

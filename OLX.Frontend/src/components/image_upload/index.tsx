@@ -59,12 +59,12 @@ const UploadWithDnd: React.FC<UploadWithDndProps> = ({ uploadSize, images = [], 
     const defaultLoaders = useMemo(() => {
         const loaders = images.length < defaultCount
             ? Array.from({ length: defaultCount - images.length }).map((_, index) =>
-                <div onClick={openFileDialog} key={index} className={`flex  flex-shrink-0 bg-white items-center cursor-pointer justify-center border border-[#9B7A5B] border-opacity-50 rounded-lg h-[100%] aspect-[16/16]`} style={{ width: uploadSize, height: uploadSize }}>
+                <div onClick={openFileDialog} key={index} className={`flex  flex-shrink-0 bg-white items-center cursor-pointer justify-center border border-[#9B7A5B] border-opacity-50 rounded-lg h-[100%] aspect-[16/16] transition-all duration-300 ease-in-out hover:scale-[1.05]`} style={{ width: uploadSize, height: uploadSize }}>
                     <PlusOutlined className="font-montserrat text-[#9B7A5B] text-opacity-50 text-adaptive-advert-page-price-text" />
                 </div>)
             : []
         const loader = images.length < maxCount &&
-            <div onClick={openFileDialog} className={`flex flex-col flex-shrink-0 gap-0 justify-center cursor-pointer text-center bg-[#9B7A5B] bg-opacity-20 rounded-lg h-[100%] aspect-[16/16]`} style={{ width: uploadSize, height: uploadSize }}>
+            <div onClick={openFileDialog} className={`flex flex-col flex-shrink-0 gap-0 justify-center cursor-pointer text-center bg-[#9B7A5B] bg-opacity-20 rounded-lg h-[100%] aspect-[16/16] transition-all duration-300 ease-in-out hover:scale-[1.05]`} style={{ width: uploadSize, height: uploadSize }}>
                 <span className="font-montserrat  text-adaptive-1_7_text">Додати ще</span>
                 <span className="font-montserrat  text-adaptive-1_7_text">фото</span>
             </div>

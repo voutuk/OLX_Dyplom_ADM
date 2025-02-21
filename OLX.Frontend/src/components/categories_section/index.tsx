@@ -17,7 +17,7 @@ const CategoriesSection = () => {
       bgColor="transparent"
       brColor="#9B7A5B"
       fontColor="black"
-      className={`w-[11.5vw] h-[4.2vh] `} />
+      className={`w-[11.5vw] h-[4.2vh] transition-all duration-300 ease-in-out hover:scale-[1.1]  hover:shadow-xl`} />
   )) || [], [categories])
 
 

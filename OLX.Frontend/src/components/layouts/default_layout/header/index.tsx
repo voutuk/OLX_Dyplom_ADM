@@ -59,20 +59,20 @@ export const Header: React.FC<HeaderProps> = ({className}) => {
             <SearchInput />
             <div className='flex gap-10  items-center text-[clamp(1rem, 2vh, 1.5rem)]'>
                 {user && <Badge count={data?.length} size='small'>
-                    <MessageOutlined className='text-adaptive-icons text-amber-950 cursor-pointer animate-wiggle' />
+                    <MessageOutlined className='text-adaptive-icons text-amber-950 cursor-pointer animate-wiggle transition-all duration-300 ease-in-out hover:scale-[1.1]' />
                 </Badge>}
 
-                <FavoriteButton />
+                <FavoriteButton/>
                 
                 {user && <Badge count={unreadMesssageCount} size='small' className={unreadMesssageCount > 0 ? "animate-pulse" : ''} >
-                    <BellOutlined className='text-adaptive-icons text-amber-950 cursor-pointer' />
+                    <BellOutlined className='text-adaptive-icons text-amber-950 cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.1]' />
                 </Badge>}
 
                 {user
                     ?
                     <Dropdown menu={{ items }} trigger={['click']} className='px-3 cursor-pointer  flex-shrink-0 flex gap-2 justify-center items-center'>
                         <div>
-                            <UserAvatar user={user} size={40} />
+                            <UserAvatar user={user} size={40} className="transition-all duration-300 ease-in-out hover:scale-[1.1]" />
                         </div>
                     </Dropdown>
                     :
