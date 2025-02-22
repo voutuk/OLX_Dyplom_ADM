@@ -155,12 +155,6 @@ const UserEdit: React.FC = () => {
                         name="settlementRef"
                         className="ml-[1vw]"
                         label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Місто/Населений пункт</div>}
-                        rules={[
-                            {
-                                required: true,
-                                message: <span className="font-montserrat text-adaptive-input-form-error-text">Оберіть населений пункт</span>
-                            }
-                        ]}
                     >
                         <LocationSelector
                             height="5vh"

@@ -23,12 +23,12 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
     const initialArea = searchParams.get('areaRef') || undefined;
     const initialRegion = searchParams.get('regionRef') || undefined;
     const initialSettlement = searchParams.get('settlementRef') || undefined;
-    
+
     const { data: regions } = useGetRegionsByAreaQuery(areaRef, { skip: !areaRef });
     const { data: settlements } = useGetSettlementsByRegionQuery(regionRef, { skip: !regionRef });
     const { data: selectedSettlement } = useGetSettlementsByIdQuery(initialSettlement!, { skip: !initialSettlement });
 
-    
+
     useEffect(() => {
         if (initialSettlement && selectedSettlement) {
             setSelectedValue(initialSettlement);
@@ -48,13 +48,15 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
 
     useEffect(() => {
         if (areas) {
-            const formattedAreas = areas.map((area: IArea) => ({
-                id: area.ref,
-                pId: null,
-                title: `${area.description} ${area.regionType}`,
-                value: area.ref,
-                isLeaf: false,
-            }));
+            const formattedAreas = areas.slice()
+                .sort((a: IArea, b: IArea) => a.description.localeCompare(b.description))
+                .map((area: IArea) => ({
+                    id: area.ref,
+                    pId: null,
+                    title: `${area.description} ${area.regionType}`,
+                    value: area.ref,
+                    isLeaf: false,
+                }));
             setTreeData([
                 {
                     id: "all-ukraine",
@@ -70,26 +72,30 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
 
     useEffect(() => {
         if (regions) {
-            const formattedRegions = regions.map((region: IRegion) => ({
-                id: region.ref,
-                pId: region.areaRef,
-                title: `${region.description} ${region.regionType}`,
-                value: region.ref,
-                isLeaf: false,
-            }));
+            const formattedRegions = regions.slice()
+                .sort((a: IRegion, b: IRegion) => a.description.localeCompare(b.description))
+                .map((region: IRegion) => ({
+                    id: region.ref,
+                    pId: region.areaRef,
+                    title: `${region.description} ${region.regionType}`,
+                    value: region.ref,
+                    isLeaf: false,
+                }));
             setTreeData((prevData) => [...prevData, ...formattedRegions]);
         }
     }, [regions]);
 
     useEffect(() => {
         if (settlements) {
-            const formattedSettlements = settlements.map((settlement: ISettlement) => ({
-                id: settlement.ref,
-                pId: settlement.region,
-                title: settlement.description,
-                value: settlement.ref,
-                isLeaf: true,
-            }));
+            const formattedSettlements = settlements.slice()
+                .sort((a: ISettlement, b: ISettlement) => a.description.localeCompare(b.description))
+                .map((settlement: ISettlement) => ({
+                    id: settlement.ref,
+                    pId: settlement.region,
+                    title: settlement.description,
+                    value: settlement.ref,
+                    isLeaf: true,
+                }));
             setTreeData((prevData) => [...prevData, ...formattedSettlements]);
         }
     }, [settlements]);
@@ -105,9 +111,18 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
         });
     };
 
+    const onClear = () =>{
+        setSelectedValue('all-ukraine');
+        onSelect({
+            areaRef: "",
+            regionRef: "",
+            settlementRef: ""
+        });
+    }
+
     const handleSelect = (value: string) => {
         setSelectedValue(value);
-
+        
         if (value == 'all-ukraine') {
             onSelect({
                 areaRef: "",
@@ -130,6 +145,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
 
     return (
         <TreeSelect
+            allowClear
             treeDataSimpleMode
             value={selectedValue}
             className="location-select text-[#3a211c] font-montserrat text-base font-normal leading-normal w-[20.16vw] h-11 p-2.5 rounded-lg border border-[#9b7a5b]/50 justify-start items-center inline-flex text-adaptive-input-form-text"
@@ -142,6 +158,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onSelect }) => {
             treeData={treeData}
             loadData={onLoadData}
             onSelect={handleSelect}
+            onClear={onClear}
         />
     );
 };

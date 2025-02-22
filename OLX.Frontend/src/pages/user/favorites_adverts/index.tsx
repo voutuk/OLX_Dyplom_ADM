@@ -8,14 +8,14 @@ const FavoritesAdverts = () => {
     const { data: favorites, isLoading: isFavoriteLoading } = useGetFavoritesQuery();
     const navigate = useNavigate();
     return (
-        <div className="w-[100%] my-[8vh]">
-            <BackButton title="Назад" className="mb-[12vh] ml-[9vw] text-adaptive-1_9_text font-medium self-start" />
-            <h2 className='text-[#3A211C] font-unbounded text-adaptive-3_5-text font-normal  ml-[8vw]'>Обране</h2>
+        <div className="w-[100%] my-[8vh] mx-[8vw]">
+            <BackButton title="Назад" className="mb-[12vh] ml-[1vw] text-adaptive-1_9_text font-medium self-start" />
+            <h2 className='text-[#3A211C] font-unbounded text-adaptive-3_5-text font-normal '>Обране</h2>
             {favorites && favorites.length > 0 ?
                 <AdvertsSection
                     adverts={favorites}
                     columns={4}
-                    className="gap-y-[2.5vh]  gap-x-[2.5vh] my-[6vh] mx-[8vw]"
+                    className="gap-y-[2.5vh]  gap-x-[2.5vh] my-[6vh] "
                     isLoading={isFavoriteLoading} />
                 :
                 <div className="w-[100%] py-[10vh] px-[8vw] h-[400px] flex-col justify-start items-center inline-flex">

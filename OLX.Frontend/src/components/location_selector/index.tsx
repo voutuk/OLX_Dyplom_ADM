@@ -24,31 +24,37 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width, heigh
         }
     }, [settlement])
 
-    const formattedAreas = useMemo(() => areas ? areas.map((area: IArea) => ({
-        id: area.ref,
-        disabled: true,
-        pId: null,
-        title: `${area.description} ${area.regionType}`,
-        value: area.ref,
-        isLeaf: false,
-    })) : [], [areas])
+    const formattedAreas = useMemo(() => areas?.length
+        ? areas.slice().sort((a: IArea, b: IArea) => a.description.localeCompare(b.description))
+            .map((area: IArea) => ({
+                id: area.ref,
+                disabled: true,
+                pId: null,
+                title: `${area.description} ${area.regionType}`,
+                value: area.ref,
+                isLeaf: false,
+            })) : [], [areas])
 
-    const formattedRegions = useMemo(() => regions ? regions.map((region: IRegion) => ({
-        id: region.ref,
-        disabled: true,
-        pId: region.areaRef,
-        title: `${region.description} ${region.regionType}`,
-        value: region.ref,
-        isLeaf: false,
-    })) : [], [regions]);
+    const formattedRegions = useMemo(() => regions
+        ? regions.slice().sort((a: IRegion, b: IRegion) => a.description.localeCompare(b.description))
+            .map((region: IRegion) => ({
+                id: region.ref,
+                disabled: true,
+                pId: region.areaRef,
+                title: `${region.description} ${region.regionType}`,
+                value: region.ref,
+                isLeaf: false,
+            })) : [], [regions]);
 
-    const formattedSettlements = useMemo(() => settlements ? settlements.map((settlement: ISettlement) => ({
-        id: settlement.ref,
-        pId: settlement.region,
-        title: settlement.description,
-        value: settlement.ref,
-        isLeaf: true,
-    })) : [], [settlements])
+    const formattedSettlements = useMemo(() => settlements
+        ? settlements.slice().sort((a: ISettlement, b: ISettlement) => a.description.localeCompare(b.description))
+            .map((settlement: ISettlement) => ({
+                id: settlement.ref,
+                pId: settlement.region,
+                title: settlement.description,
+                value: settlement.ref,
+                isLeaf: true,
+            })) : [], [settlements])
 
     useEffect(() => {
         setLocationTreeData([...locationTreeData, ...formattedAreas, ...formattedRegions, ...formattedSettlements]);
@@ -72,7 +78,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width, heigh
             treeDataSimpleMode
             popupClassName="create-advert-select-popup"
             allowClear
-            showSearch
             loading={isAreasLoading || isRegionsLoading || isSettlementsLoading}
             style={{ height: height, width: width }}
             className="create-advert-select"
