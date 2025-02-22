@@ -84,6 +84,7 @@ const UserProfile: React.FC = () => {
                 indicator={{ size: 0 }}
                 items={items}
                 onChange={setActiveKey}
+                destroyInactiveTabPane
                 tabBarExtraContent={
                     (activeKey == '1' && adverts && adverts.length > 0) ||
                         (activeKey == '3' && completedAdverts && completedAdverts.length > 0)

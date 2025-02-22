@@ -76,7 +76,6 @@ export const createBaseQueryWithAuth = (endpoint: string) => {
 
             return await baseQuery(args, api, extraOptions);
         }
-
         return {
             status: 401,
             data: {

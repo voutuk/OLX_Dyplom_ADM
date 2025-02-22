@@ -6,9 +6,9 @@ import { APP_ENV } from "../../constants/env"
 import { useNavigate } from "react-router-dom"
 import { IAdvert } from "../../models/advert"
 
-const ActiveAdverts: React.FC<{adverts:IAdvert[]}> = ({adverts}) => {
+const ActiveAdverts: React.FC<{adverts:IAdvert[]}> = ({adverts = []}) => {
     const navigate = useNavigate();
-    const advertsCards = useMemo(() => adverts?.map(advert => (
+    const advertsCards = useMemo(() =>adverts.length ? adverts?.map(advert => (
         <AdvertCard
             key={advert.id}
             id={advert.id}
@@ -19,7 +19,7 @@ const ActiveAdverts: React.FC<{adverts:IAdvert[]}> = ({adverts}) => {
             isEditable={true}
             className="min-w-[14vw] max-w-[14vw]"
         />
-    )) || [], [adverts])
+    )) : [], [adverts])
 
     return (
         <>
