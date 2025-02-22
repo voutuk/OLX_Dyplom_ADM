@@ -115,5 +115,5 @@ export const getRefreshToken = (state: RootState) => state.user.refreshToken
 export const getUnreadedCount = (state: RootState) => state.user.messages.filter(x => !x.readed).length;
 export const getMessages = (state: RootState) => state.user.messages;
 
-export const { setCredentials,updateAccessToken, logOut, addMessage, removeMessage, setReaded, clearMessages, setMessages } = userSlice.actions
+export const { setCredentials, updateAccessToken, logOut, addMessage, removeMessage, setReaded, clearMessages, setMessages } = userSlice.actions
 export default userSlice.reducer

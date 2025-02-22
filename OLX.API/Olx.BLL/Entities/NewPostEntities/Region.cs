@@ -17,6 +17,8 @@ namespace Olx.BLL.Entities.NewPost
         [Unicode(false)]
         public string AreaRef { get; set; }
 
+        public string? AreasCenter { get; set; } 
+
         [JsonIgnore]
         public Area Area { get; set; }
 
