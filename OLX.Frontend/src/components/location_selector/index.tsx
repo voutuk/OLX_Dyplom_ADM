@@ -8,7 +8,7 @@ import '../../pages/user/create_advert/style.scss'
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width, height, placeholder, onChange = () => { } }) => {
     const init = useRef<boolean>(true)
-    const { data: settlement } = useGetSettlementsByIdQuery(value || '', { skip: !value && init.current })
+    const { data: settlement } = useGetSettlementsByIdQuery(value || '', { skip: !value || !init.current })
     const [areaRef, setAreaRef] = useState<any>()
     const [regionRef, setRegionRef] = useState<any>()
     const [locationTreeData, setLocationTreeData] = useState<any[]>([])
@@ -22,7 +22,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width, heigh
             setRegionRef(settlement?.region)
             init.current = false;
         }
-    }, [value])
+    }, [settlement])
 
     const formattedAreas = useMemo(() => areas ? areas.map((area: IArea) => ({
         id: area.ref,
@@ -67,7 +67,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, width, heigh
 
 
     return (
-
         <TreeSelect
             value={value}
             treeDataSimpleMode

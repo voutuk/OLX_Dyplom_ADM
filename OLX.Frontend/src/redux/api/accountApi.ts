@@ -71,6 +71,8 @@ export const accountApi = createApi({
                     if (result.data && result.data.accessToken) {
                         dispatch(setCredentials({ token: result.data.accessToken, refreshToken: result.data.refreshToken, remember: arg.remember }))
                         dispatch(accountApiAuth.util.invalidateTags(["Favorites"]));
+                        dispatch(advertApi.util.invalidateTags(["Advert","Adverts","Locked","NotApproved","AdvertImages"]));
+                        dispatch(advertAuthApi.util.invalidateTags(["UserAdvert","UserAdverts"]));
                     }
                 } catch (error) {
                     console.error('Google login failed:', error);

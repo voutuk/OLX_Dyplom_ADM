@@ -138,7 +138,7 @@ const CreateAdvert: React.FC = () => {
                         phoneNumber: user?.phone || '',
                         contactEmail: user?.email || '',
                         contactPersone: getUserDescr(user) || '',
-                        settlementRef: user?.settlement || ''
+                        settlementRef: !id ? user?.settlement : undefined
 
                     }}>
 
