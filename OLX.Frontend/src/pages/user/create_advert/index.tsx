@@ -135,9 +135,9 @@ const CreateAdvert: React.FC = () => {
                     className=" w-full flex flex-col gap-[4.2vh]"
                     initialValues={{
                         isContractPrice: false,
-                        phoneNumber: user?.phone || '',
-                        contactEmail: user?.email || '',
-                        contactPersone: getUserDescr(user) || '',
+                        phoneNumber: !id ? user?.phone : undefined,
+                        contactEmail: !id ? user?.email : undefined,
+                        contactPersone: !id ? getUserDescr(user) : undefined,
                         settlementRef: !id ? user?.settlement : undefined
 
                     }}>
