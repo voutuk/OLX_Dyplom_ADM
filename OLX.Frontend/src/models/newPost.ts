@@ -15,5 +15,12 @@ export interface ISettlement {
     description: string;
     ref: string;
     region: string;
-    area: string
+    area: string;
+}
+
+export interface IWirehouse{
+    ref:string;
+    description:string;
+    settlementRef:string;
+    phone:string;
 }

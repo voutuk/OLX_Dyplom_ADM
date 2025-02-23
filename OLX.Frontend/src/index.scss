@@ -82,3 +82,11 @@ body {
 .back-button:hover {
   color: globalColors.$controlsColor !important;
 }
+
+.custom-form-item{
+  .ant-form-item-required::before {
+    font-size: clamp(14px,2vh,30px) !important;
+    align-self: baseline !important; 
+    color: #3A211C !important;
+  }
+}

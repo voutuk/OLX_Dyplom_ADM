@@ -3,7 +3,7 @@ import { APP_ENV } from '../../constants/env';
 import { RootState } from '..';
 import { BaseQueryApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query';
 import { IAuthResponse } from '../../models/account';
-import { setCredentials } from '../slices/userSlice';
+import { logOut, setCredentials } from '../slices/userSlice';
 
 export const createBaseQuery = (endpoint: string) =>
     fetchBaseQuery({
@@ -34,6 +34,7 @@ const refreshTokens = async (api: BaseQueryApi, extraOptions: any, endpoint: str
                     api.dispatch(setCredentials({ token: newToken, refreshToken, remember }));
                     return newToken;
                 } else {
+                    api.dispatch(logOut())
                     return null;
                 }
             } finally {

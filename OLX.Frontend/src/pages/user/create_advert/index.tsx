@@ -150,6 +150,7 @@ const CreateAdvert: React.FC = () => {
                         <Form.Item
                             name="files"
                             valuePropName="images"
+                            className="custom-form-item"
                             rules={[
                                 {
                                     required: true,
@@ -172,7 +173,7 @@ const CreateAdvert: React.FC = () => {
                         <Form.Item
                             name="title"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Назва</div>}
-                            className="ml-[8vw]"
+                            className="ml-[8vw] custom-form-item"
                             rules={[
                                 {
                                     required: true,
@@ -192,7 +193,7 @@ const CreateAdvert: React.FC = () => {
                                     <span className="font-unbounded font-medium text-adaptive-1_7_text">Опис</span>
                                     <span className="font-montserrat text-adaptive-1_7_text">Введіть щонайменше 40 символів</span>
                                 </div>}
-                            className="ml-[8vw]"
+                            className="ml-[8vw] custom-form-item"
                             rules={[
                                 {
                                     required: true,
@@ -220,7 +221,7 @@ const CreateAdvert: React.FC = () => {
                         <Form.Item
                             name="categoryId"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Оберіть категорію</div>}
-                            className="ml-[8vw]"
+                            className="ml-[8vw] custom-form-item"
                             rules={[
                                 {
                                     required: true,
@@ -247,6 +248,7 @@ const CreateAdvert: React.FC = () => {
                     <div className="flex flex-col ml-[8vw]">
                         <Form.Item
                             name="price"
+                            className="custom-form-item"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text">Ціна</div>}
                             rules={[
                                 {
@@ -280,7 +282,7 @@ const CreateAdvert: React.FC = () => {
                     <div className='grid grid-cols-2 gap-y-[1.2vw] ml-[8vw] w-[47.3vw]  gap-x-[2.1vw]'>
                         <Form.Item
                             name="contactPersone"
-                            className="w-full"
+                            className="w-full custom-form-item"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Контактна персона</div>}
                             rules={[
                                 {
@@ -297,7 +299,7 @@ const CreateAdvert: React.FC = () => {
 
                         <Form.Item
                             name="phoneNumber"
-                            className="w-full"
+                            className="w-full custom-form-item"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Номер телефону</div>}
                             rules={[
                                 {
@@ -318,7 +320,7 @@ const CreateAdvert: React.FC = () => {
 
                         <Form.Item
                             name="contactEmail"
-                            className="w-full"
+                            className="w-full custom-form-item"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Електронна пошта</div>}
                             rules={[
                                 {
@@ -340,7 +342,7 @@ const CreateAdvert: React.FC = () => {
 
                         <Form.Item
                             name="settlementRef"
-                            className="w-full"
+                            className="w-full custom-form-item"
                             label={<div className="font-unbounded font-medium text-adaptive-1_7_text mb-[0.5vh]">Місцезнаходження</div>}
                             rules={[
                                 {

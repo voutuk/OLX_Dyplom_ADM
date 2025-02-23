@@ -109,6 +109,7 @@ namespace Olx.BLL.Services
             });
 
             return settlements.AsParallel()
+                .Where(x => x.Warehouse > 0)
                 .GroupBy(x => x.Ref)
                 .Select(z => z.First());
         }
@@ -244,34 +245,34 @@ namespace Olx.BLL.Services
                 }
                 await settlementRepository.SaveAsync();
 
-                //Console.WriteLine("Start warehouses update ...");
-                //var warehousesData = await GetWarehousesDataAsync(areasData.Select(x => x.Ref));
-                //var warehouses = await warehousRepository.GetListBySpec(new NewPostDataSpecs.GetWarehouses(true));
-                //if (warehouses.Any())
-                //{
-                //    foreach (var warehousData in warehousesData)
-                //    {
-                //        var warehous = warehouses.AsParallel().FirstOrDefault(x => x.Ref == warehousData.Ref);
-                //        if (warehous is not null)
-                //        {
-                //            mapper.Map(warehousData, warehous);
-                //        }
-                //        else
-                //        {
-                //            await warehousRepository.AddAsync(warehousData);
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    await warehousRepository.AddRangeAsync(warehousesData);
-                //}
-                //await warehousRepository.SaveAsync();
+                Console.WriteLine("Start warehouses update ...");
+                var warehousesData = await GetWarehousesDataAsync(areasData.Select(x => x.Ref));
+                var warehouses = await warehousRepository.GetListBySpec(new NewPostDataSpecs.GetWarehouses(true));
+                if (warehouses.Any())
+                {
+                    foreach (var warehousData in warehousesData)
+                    {
+                        var warehous = warehouses.AsParallel().FirstOrDefault(x => x.Ref == warehousData.Ref);
+                        if (warehous is not null)
+                        {
+                            mapper.Map(warehousData, warehous);
+                        }
+                        else
+                        {
+                            await warehousRepository.AddAsync(warehousData);
+                        }
+                    }
+                }
+                else
+                {
+                    await warehousRepository.AddRangeAsync(warehousesData);
+                }
+                await warehousRepository.SaveAsync();
                 Console.WriteLine("Update successfuly completed ...");
                 Console.WriteLine($"Areas - {areas.Count()}");
                 Console.WriteLine($"Regions - {regions.Count()}");
                 Console.WriteLine($"Settlements - {settlements.Count()}");
-              //  Console.WriteLine($"Warehouses - {warehouses.Count()}");
+                Console.WriteLine($"Warehouses - {warehouses.Count()}");
             }
             catch(Exception e) 
             {

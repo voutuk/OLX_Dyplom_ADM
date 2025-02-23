@@ -3,6 +3,7 @@ import { ToggleFavoriteButtonProps } from "./props"
 import { useAddToFavoritesMutation, useGetFavoritesQuery, useRemoveFromFavoritesMutation } from "../../../redux/api/accountAuthApi";
 import { useSelector } from "react-redux";
 import { getUser } from "../../../redux/slices/userSlice";
+import { APP_ENV } from "../../../constants/env";
 
 const ToggleFavoriteButton: React.FC<ToggleFavoriteButtonProps> = ({ className, advertId, isAdvertPage = false }) => {
     const [addToFavorites] = useAddToFavoritesMutation();
@@ -13,22 +14,22 @@ const ToggleFavoriteButton: React.FC<ToggleFavoriteButtonProps> = ({ className, 
 
     useEffect(() => {
         if (user != null) {
-            setIsFavorite(favorites?.some(fav => fav.id === advertId) || false);
+            setIsFavorite(favorites?.length && favorites?.some(fav => fav.id === advertId) || false);
         } else {
-            const localFavorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+            const localFavorites = JSON.parse(localStorage.getItem(APP_ENV.FAVORITES_KEY) || "[]");
             setIsFavorite(localFavorites.includes(advertId));
         }
     }, [favorites, advertId, user]);
 
     const toggleButton = async () => {
         if (!user) {
-            const localFavorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+            const localFavorites = JSON.parse(localStorage.getItem(APP_ENV.FAVORITES_KEY) || "[]");
             if (isFavorite) {
                 const updatedFavorites = localFavorites.filter((id: number) => id !== advertId);
-                localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+                localStorage.setItem(APP_ENV.FAVORITES_KEY, JSON.stringify(updatedFavorites));
             } else {
                 localFavorites.push(advertId);
-                localStorage.setItem("favorites", JSON.stringify(localFavorites));
+                localStorage.setItem(APP_ENV.FAVORITES_KEY, JSON.stringify(localFavorites));
             }
 
             setIsFavorite(!isFavorite);

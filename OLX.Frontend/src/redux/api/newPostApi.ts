@@ -1,11 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQuery } from "./baseQuery";
-import { ISettlement } from "../../models/newPost";
+import { ISettlement, IWirehouse } from "../../models/newPost";
 
 export const newPostApi = createApi({
   reducerPath: "newPostApi",
   baseQuery: createBaseQuery("NewPost"),
-  tagTypes: ["NewPost", "Areas", "Regions", "Settlements", "Settlement"],
+  tagTypes: ["NewPost", "Areas", "Regions", "Settlements", "Settlement","Wirehouses"],
 
   endpoints: (builder) => ({
     getAreas: builder.query<any[], void>({
@@ -38,6 +38,16 @@ export const newPostApi = createApi({
       providesTags: ["Settlements"],
     }),
 
+    getWirehouses: builder.query<IWirehouse[],string>({
+      query: (settlementRef) => {
+        return {
+          url: `settlements/warehouses?settlementRef=${settlementRef}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Wirehouses"],
+    }),
+
     getSettlementsById: builder.query<ISettlement, string>({
       query: (settlementsId) => {
         return {
@@ -54,5 +64,7 @@ export const {
   useGetAreasQuery,
   useGetRegionsByAreaQuery,
   useGetSettlementsByRegionQuery,
-  useGetSettlementsByIdQuery
+  useGetSettlementsByIdQuery,
+  useGetWirehousesQuery
+  
 } = newPostApi;

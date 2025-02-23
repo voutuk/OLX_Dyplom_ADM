@@ -1,6 +1,6 @@
 export interface LocationSelectorProps {
     value?: string | undefined
-    onChange?: () => void
+    onChange?: (value: string) => void
     placeholder?: string
     width?: string
     height?: string
