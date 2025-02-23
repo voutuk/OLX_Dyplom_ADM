@@ -2,14 +2,21 @@ import { useNavigate } from "react-router-dom";
 import { useGetAllCategoriesQuery } from "../../redux/api/categoryApi"
 import PrimaryButton from "../buttons/primary_button";
 import { useMemo } from "react";
+import { useAppDispatch } from "../../redux";
+import { scrollTop } from "../../redux/slices/appSlice";
 
 const CategoriesSection = () => {
   const { data: categories } = useGetAllCategoriesQuery();
+  const dispather = useAppDispatch()
   const navigate = useNavigate();
+  const onClick = (id: number) => {
+    navigate(`/adverts?categoryId=${id}`)
+    dispather(scrollTop())
+  }
 
   const categoryButtons = useMemo(() => categories?.filter(i => i.id != 4).slice(0, 9).map((category) => (
     <PrimaryButton
-      onButtonClick={() => { navigate(`/adverts?categoryId=${category.id}`) }}
+      onButtonClick={() => onClick(category.id)}
       key={category.id}
       title={category.name}
       isLoading={false}
