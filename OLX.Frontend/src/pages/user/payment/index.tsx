@@ -30,12 +30,12 @@ const PaymentPage = () => {
                     settlement={advert?.settlementName || ''}
                     isFavorite={false}
                 />
-                <div className="flex flex-col relative">
+                <div className="flex flex-col">
                     <h1 className="font-unbounded text-adaptive-3_35-text mb-[1.4vh]">Оплата</h1>
                     <span className="font-montserrat text-adaptive-1_7_text">Оберіть зручний спосіб оплати</span>
                     <Form
                         layout="vertical"
-                        className="payment-form"
+                        className="payment-form flex flex-col h-full "
                         onFinish={onFinish}
                     >
                         <Form.Item name="payment-method" className="my-[4.6vh]">
@@ -88,7 +88,8 @@ const PaymentPage = () => {
                                     placeholder="Номер карти"
                                 />
                             </Form.Item>
-                            <Form.Item name="expiry-date"
+                            <Form.Item
+                                name="expiry-date"
                                 rules={[
                                     {
                                         required: paymentMethod === "bank-card",
@@ -105,7 +106,8 @@ const PaymentPage = () => {
                                     picker="month"
                                 />
                             </Form.Item>
-                            <Form.Item name="verification-code"
+                            <Form.Item
+                                name="verification-code"
                                 rules={[
                                     {
                                         required: paymentMethod === "bank-card",
@@ -141,7 +143,7 @@ const PaymentPage = () => {
                             title="Продовжити"
                             htmlType="submit"
                             isLoading={false}
-                            className="w-full h-[4.6vh] absolute bottom-0"
+                            className="w-full h-[4.6vh] mt-auto"
                             fontColor="white"
                             fontSize="clamp(14px,1.9vh,36px)"
                             bgColor="#9B7A5B"
