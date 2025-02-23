@@ -37,10 +37,12 @@ const PaymentPage = () => {
                         layout="vertical"
                         className="payment-form flex flex-col h-full "
                         onFinish={onFinish}
+                        initialValues={{
+                            payment: "bank-card"
+                        }}
                     >
-                        <Form.Item name="payment-method" className="my-[4.6vh]">
+                        <Form.Item name="payment" className="my-[4.6vh]">
                             <Radio.Group
-                                defaultValue="bank-card"
                                 value={paymentMethod}
                                 onChange={(e) => setPaymentMethod(e.target.value)}
                             >
@@ -128,7 +130,7 @@ const PaymentPage = () => {
                             </Form.Item>
                         </div>
 
-                        <Form.Item name="payment-method" className="mt-[7vh]">
+                        <Form.Item name="payment" className="mt-[7vh]">
                             <Radio.Group
                                 value={paymentMethod}
                                 onChange={(e) => setPaymentMethod(e.target.value)}

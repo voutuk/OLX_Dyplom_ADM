@@ -63,7 +63,8 @@ const BuyAdvertPage: React.FC = () => {
                             firstName: user?.firstName,
                             phoneNumber: user?.phone,
                             email: user?.email,
-                            settlementRef: user?.settlement
+                            settlementRef: user?.settlement,
+                            delivery: "Укрпошта"
                         }}>
                         <div className='grid grid-cols-2 gap-y-[1.2vw]  gap-x-[2.1vw] mt-[2.8vh]'>
                             <Form.Item
@@ -149,7 +150,7 @@ const BuyAdvertPage: React.FC = () => {
                             name='delivery'
                             noStyle
                         >
-                            <Radio.Group defaultValue={"Укрпошта"} onChange={(e) => setDelivery(e.target.value)} className="flex gap-[3.3vw] mt-[4vh] ">
+                            <Radio.Group onChange={(e) => setDelivery(e.target.value)} className="flex gap-[3.3vw] mt-[4vh] ">
                                 <div className="flex flex-col gap-[.5vh] ">
                                     <Radio className="big-radio" style={{ fontSize: 'clamp(14px, 1.9vh, 36px)', fontWeight: 500 }} key={"Укрпошта"} value={"Укрпошта"}>Укрпошта</Radio>
                                     <div className="font-montserrat text-adaptive-1_7_text ml-[1.7vw]">Безкоштовна доставка</div>
@@ -205,7 +206,7 @@ const BuyAdvertPage: React.FC = () => {
                                             placeholder="Відділення" />
 
                                     </Form.Item>
-                                </div> )}
+                                </div>)}
 
                         </div>
                         <div className="font-montserrat text-adaptive-1_7_text">*Поля обов’язкові для заповнення</div>
