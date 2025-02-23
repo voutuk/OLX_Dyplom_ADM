@@ -1,3 +1,5 @@
+import { useAppDispatch } from "../../redux";
+import { scrollTop } from "../../redux/slices/appSlice";
 import { formatPrice } from "../../utilities/common_funct";
 import EditButton from "../buttons/edit_button";
 import ToggleFavoriteButton from "../buttons/toggle_favorite_button";
@@ -6,6 +8,11 @@ import { useNavigate } from "react-router-dom";
 
 const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settlement, isEditable = false, isFavorite = true ,className}) => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch()
+    const onClick  = ()=>{
+        navigate(`/advert/${id}`)
+        dispatch(scrollTop())
+    }
     return (
         <div className={`rounded-bl-lg h-fit rounded-br-lg border border-[#9b7a5b]/20 p-0 relative transition-all duration-300 ease-in-out hover:border-[#9b7a5b]/80 hover:shadow-2xl ${className}`}>
             {
@@ -16,7 +23,7 @@ const AdvertCard: React.FC<AdvertCardProps> = ({ id, image, title, price, settle
                         : <></>
             }
             <img className=" object-cover w-[100%] aspect-[12/13]" src={image} />
-            <div className="p-2.5 mb-[16px] mt-[16px] cursor-pointer" onClick={() => { navigate(`/advert/${id}`) }}>
+            <div className="p-2.5 mb-[16px] mt-[16px] cursor-pointer" onClick={onClick}>
                 <h4 className="font-unbounded text-[#3a211c] text-adaptive-card-price-text font-medium mb-[10px] hover:underline truncate">{title}</h4>
                 <p className="text-[#3a211c] text-adaptive-card-price-text font-medium font-montserrat">{formatPrice(price)} грн</p>
             </div>

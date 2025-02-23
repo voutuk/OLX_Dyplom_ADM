@@ -6,18 +6,26 @@ import { IError } from "../../models/еrrors";
 export interface IAppState {
     error: IError | null
     redirect: string | null
+    scroll: boolean
 }
 
 const initialState: IAppState = {
     error: null,
-    redirect: null
+    redirect: null,
+    scroll: false
 };
 
 const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
-        setError: (state, action: { payload:  IError | null  }) => {
+        scrollTop: (state) => {
+            state.scroll = true
+        },
+        resetScroll: (state) => {
+            state.scroll = false
+        },
+        setError: (state, action: { payload: IError | null }) => {
             state.error = action.payload
         },
         clearError: (state) => {
@@ -31,7 +39,9 @@ const appSlice = createSlice({
         },
     },
 })
+
+export const getScroll = (state: RootState) => state.app.scroll;
 export const getError = (state: RootState) => state.app.error;
 export const getRedirect = (state: RootState) => state.app.redirect;
-export const { setError, clearError,setRedirect, clearRedirect} = appSlice.actions
+export const { setError, scrollTop, resetScroll, clearError, setRedirect, clearRedirect } = appSlice.actions
 export default appSlice.reducer

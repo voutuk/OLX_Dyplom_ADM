@@ -4,6 +4,8 @@ import { CategoryFiltersProps } from "./props"
 import Filter from "../filter"
 import { Button, Form } from "antd"
 import PriceFilter from "../price_filter"
+import { useAppDispatch } from "../../redux"
+import { scrollTop } from "../../redux/slices/appSlice"
 
 const clearedPariceFilter = {
     priceFrom: undefined,
@@ -14,6 +16,7 @@ const clearedPariceFilter = {
 const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, onChange, className }) => {
     const [form] = Form.useForm()
     const { data: filters } = useGetAllFilterQuery()
+    const dispatch = useAppDispatch()
 
     const clearedFormFilters = useMemo(() =>  categoryFiltersIds?.reduce((acc, key) => {
         acc[key] = undefined;
@@ -39,6 +42,7 @@ const CategoryFilters: React.FC<CategoryFiltersProps> = ({ categoryFiltersIds, o
                 form.setFieldsValue({ ...clearedPariceFilter, ...clearedFormFilters })
                 onChange([], undefined, undefined, undefined)
             }
+            dispatch(scrollTop())
         }
     }
 

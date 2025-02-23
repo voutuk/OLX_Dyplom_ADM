@@ -13,14 +13,16 @@ import PrimaryButton from "../../../components/buttons/primary_button";
 import AdvertSort from "../../../components/advert_sort";
 import { AdvertSortData } from "../../../components/advert_sort/models";
 import LocationSelect from "../../../components/location_tree";
+import { useAppDispatch } from "../../../redux";
+import { scrollTop } from "../../../redux/slices/appSlice";
 
 const advertPageSize: number = 6;
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
     priceFrom: Number(searchParams.get("priceFrom")),
     priceTo: Number(searchParams.get("priceTo")),
-   // approved: true,
+    // approved: true,
     blocked: false,
-    completed:false,
+    completed: false,
     size: Number(searchParams.get("size")) || advertPageSize,
     page: Number(searchParams.get("page")) || 1,
     sortKey: searchParams.get("sortKey") || '',
@@ -35,6 +37,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
 });
 
 const AdvertsPage: React.FC = () => {
+    const dispatch = useAppDispatch()
     const [searchParams, setSearchParams] = useSearchParams('');
     const { data: categories } = useGetAllCategoriesQuery();
     const pageRequest = useMemo(() => updatedPageRequest(searchParams), [searchParams]);
@@ -55,10 +58,10 @@ const AdvertsPage: React.FC = () => {
 
     function getAdCountText(count: number | undefined): string {
         if (!count) return '0 оголошень';
-        
+
         if (count >= 1000) {
-            const magnitude = Math.pow(10, Math.floor(Math.log10(count))); 
-            const rounded = Math.floor(count / magnitude) * magnitude; 
+            const magnitude = Math.pow(10, Math.floor(Math.log10(count)));
+            const rounded = Math.floor(count / magnitude) * magnitude;
             return `понад ${rounded.toLocaleString('uk-UA')} оголошень`;
         }
 
@@ -71,6 +74,22 @@ const AdvertsPage: React.FC = () => {
         }
 
         return `${count} оголошень`;
+    }
+
+    const onCategoryChange = (id: number) => {
+        if (id) {
+            setSearchParams(getQueryString(({ ...pageRequest, categoryId: id, size: advertPageSize })))
+        }
+        dispatch(scrollTop())
+    }
+
+    const onSort = (data: AdvertSortData) => {
+        setSearchParams(getQueryString({
+            ...pageRequest,
+            sortKey: data.sort,
+            isDescending: data.desc
+        }))
+        dispatch(scrollTop())
     }
 
     return (
@@ -87,11 +106,7 @@ const AdvertsPage: React.FC = () => {
                                 categories={categories}
                                 className="font-montserrat overflow-x-auto overflow-y-auto text-nowrap  mt-[2vh] h-[45vh] text-adaptive-input-form-text"//text-wrap
                                 categoryId={pageRequest.categoryId}
-                                onSelect={(id) => {
-                                    if (id) {
-                                        setSearchParams(getQueryString(({ ...pageRequest, categoryId: id, size: advertPageSize })))
-                                    }
-                                }}
+                                onSelect={onCategoryChange}
                             />
                         </Collapsed>
 
@@ -118,11 +133,7 @@ const AdvertsPage: React.FC = () => {
                             className="text-adaptive-card-price-text  text-[#3A211C] font-unbounded">
                             <AdvertSort
                                 className="mt-[2vh]"
-                                onChange={(data: AdvertSortData) => setSearchParams(getQueryString({
-                                    ...pageRequest,
-                                    sortKey: data.sort,
-                                    isDescending: data.desc
-                                }))} />
+                                onChange={onSort} />
                         </Collapsed>
 
                     </div>
