@@ -6,19 +6,33 @@ import { useMemo } from "react"
 import { getAllParents } from "../../utilities/common_funct"
 import { CategoryNavigationProps } from "./props"
 import './style.scss'
+import { useAppDispatch } from "../../redux"
+import { scrollTop } from "../../redux/slices/appSlice"
 
 
 const CategoryNavigation: React.FC<CategoryNavigationProps> = ({ categoryId, backRoute }) => {
     const { data: categories, isLoading } = useGetAllCategoriesQuery()
+    const dispatch = useAppDispatch()
+    const onClick = () => {
+        dispatch(scrollTop())
+    }
     const items = useMemo(() => {
-        if (categories && categoryId) {
-            const tree = getAllParents(categories || [], categoryId).reverse()
+        if (categories) {
+            const tree = categoryId ? getAllParents(categories || [], categoryId).reverse() : []
             const newItems = tree.map(x => ({
                 title: <Link style={{ color: '#3A211C' }}
                     className=" breadcrumb-link"
-                    to={`/adverts?categoryId=${x.id}`}>{x.name}</Link>,
+                    to={`/adverts?categoryId=${x.id}`}
+                    onClick={onClick}>{x.name}</Link>,
             }))
-            return [{ title: <Link style={{ color: '#3A211C' }} className=" breadcrumb-link" to="/">Головна</Link> }, ...newItems]
+            return [
+                {
+                    title: <Link style={{ color: '#3A211C' }} className=" breadcrumb-link" to="/" onClick={onClick}>Головна</Link>
+                },
+                {
+                    title: <Link style={{ color: '#3A211C' }} className=" breadcrumb-link" to="/adverts" onClick={onClick}>Каталог</Link>
+                },
+                ...newItems]
         }
         else {
             return []

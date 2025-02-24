@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { formatPrice, formattedDate, getFormatDateTime } from "../../utilities/common_funct"
 import PrimaryButton from "../buttons/primary_button"
 import ToggleFavoriteButton from "../buttons/toggle_favorite_button"
@@ -6,6 +7,7 @@ import { IAdvertInfoProps } from "./props"
 
 
 const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
+    const navigate = useNavigate();
     return (
         <div className=" flex flex-1 flex-col justify-between gap-[8vh]">
             <div className=" flex flex-col gap-[8vh]">
@@ -14,10 +16,11 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                         <span className="font-unbounded text-adaptive-advert-page-price-text font-medium">{formatPrice(advert?.price || 0)} грн.</span>
                         <span className="font-unbounded text-adaptive-card-price-text font-medium">{advert?.title}</span>
                     </div>
-                    {buttons &&
+                    {buttons && !advert?.completed &&
                         <ToggleFavoriteButton
                             advertId={advert?.id || 0}
-                            isAdvertPage />
+                            isAdvertPage 
+                            className="transition-all duration-300 ease-in-out hover:scale-[1.1]"/>
                     }
                 </div>
                 <div className="flex flex-col w-[28vw] gap-[1vh]">
@@ -26,7 +29,9 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                 </div>
             </div>
             <div className=" flex flex-col gap-[6vh]">
-                {buttons &&
+                {
+                !advert?.completed
+                ? buttons &&
                     <div className="flex flex-col gap-[2.4vh]">
                         <PrimaryButton
                             title={"Купити зараз"}
@@ -34,7 +39,8 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                             fontColor="white"
                             fontSize="clamp(14px, 2.1vh, 36px)"
                             isLoading={false}
-                            className="h-[4.6vh] w-[22vw] " />
+                            className="h-[4.6vh] w-[22vw] "
+                            onButtonClick={()=>navigate(`/user/advert/buy/${advert?.id}`)} />
                         <PrimaryButton
                             title={"Написати продавцю"}
                             isLoading={false}
@@ -44,7 +50,12 @@ const AdvertInfo: React.FC<IAdvertInfoProps> = ({ advert, buttons = true }) => {
                             fontSize="clamp(14px, 2.1vh, 36px)"
                             className="h-[4.6vh] w-[22vw] border-2" />
                     </div>
-                }
+                
+                :<div className="h-[6vh] content-center rounded-sm bg-slate-100 text-center text-slate-400 font-unbounded text-adaptive-card-price-text">
+                     Завершено
+                </div>
+            }
+                
                 <div className="flex flex-col gap-[3vh] w-[22vw]">
                     <UserRating user={advert?.user} />
                     <div className="flex gap-[1vh] flex-col">

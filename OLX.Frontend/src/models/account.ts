@@ -8,7 +8,9 @@ export interface IUser {
     photo: string
     exp: number
     roles: string[],
-    phone: string
+    phone: string,
+    settlement: string,
+    website?: string
 }
 
 export interface IUserState {
@@ -19,12 +21,12 @@ export interface IUserState {
     messages: IAdminMesssage[]
 }
 
-export interface IRegisterRequest{
-    email:string
-    password:string
-    passwordConfirmation:string
-    action:string
-    recapthcaToken:string
+export interface IRegisterRequest {
+    email: string
+    password: string
+    passwordConfirmation: string
+    action: string
+    recapthcaToken: string
 }
 
 export interface IUserAuth {
@@ -68,10 +70,27 @@ export interface IResetPasswordModel {
     password: string
 }
 
-export interface IUserLockModel{
-    userIds:number[]
-    lock:boolean
-    lockoutEndDate?:string
-    lockReason?:string
+export interface IUserLockModel {
+    userIds: number[]
+    lock: boolean
+    lockoutEndDate?: string
+    lockReason?: string
 }
+
+export interface IUserEditResponse {
+    accessToken: string;
+}
+
+export interface IUserEditModel {
+    id:number
+    email: string
+    firstName?: string
+    imageFile?: File
+    lastName?: string
+    phoneNumber?: string
+    settlementRef?: string
+    website?: string
+}
+
+
 

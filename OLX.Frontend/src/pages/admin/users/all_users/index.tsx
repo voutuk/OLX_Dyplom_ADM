@@ -28,7 +28,7 @@ import { useGetUserPageQuery } from "../../../../redux/api/userAuthApi";
 
 const updatedPageRequest = (searchParams: URLSearchParams) => ({
     isAdmin: location.pathname === '/admin/admins',
-    isLocked:location.pathname === '/admin/blocked',
+    isLocked:location.pathname === '/admin/adverts/blocked',
     size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
     page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
     sortKey: searchParams.get("sortKey") || '',
@@ -69,9 +69,9 @@ const UsersPage: React.FC = () => {
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title={location.pathname !== '/admin/blocked' ? "Блокувати" : "Розблокувати"}>
-                        <IconButton onClick={() => location.pathname !== '/admin/blocked' ? lockUser(user.id) : unLockUser(user.id)} color="warning" size="small">
-                            {location.pathname !== '/admin/blocked' ? <LockOutlined /> : <LockOpen />}
+                    <Tooltip title={location.pathname !== '/admin/adverts/blocked' ? "Блокувати" : "Розблокувати"}>
+                        <IconButton onClick={() => location.pathname !== '/admin/adverts/blocked' ? lockUser(user.id) : unLockUser(user.id)} color="warning" size="small">
+                            {location.pathname !== '/admin/adverts/blocked' ? <LockOutlined /> : <LockOpen />}
                         </IconButton>
                     </Tooltip>
                 </>
@@ -223,10 +223,10 @@ const UsersPage: React.FC = () => {
             disabled={selectedUsers.length === 0} />,
         <PageHeaderButton
             key='block_users'
-            onButtonClick={location.pathname !== '/admin/blocked' ? onGroupeLockUsers : onGroupeUnLockUsers}
+            onButtonClick={location.pathname !== '/admin/adverts/blocked' ? onGroupeLockUsers : onGroupeUnLockUsers}
             className="w-[35px] h-[35px] bg-yellow-700"
-            buttonIcon={location.pathname !== '/admin/blocked' ? <LockOutlined className="text-lg" /> : <LockOpen className="text-lg" />}
-            tooltipMessage={location.pathname !== '/admin/blocked' ? "Блокувати акаунт" : "Розблокувати акаунт"}
+            buttonIcon={location.pathname !== '/admin/adverts/blocked' ? <LockOutlined className="text-lg" /> : <LockOpen className="text-lg" />}
+            tooltipMessage={location.pathname !== '/admin/adverts/blocked' ? "Блокувати акаунт" : "Розблокувати акаунт"}
             tooltipColor="gray"
             disabled={selectedUsers.length === 0 || location.pathname === '/admin/admins'} />,
         <PageHeaderButton

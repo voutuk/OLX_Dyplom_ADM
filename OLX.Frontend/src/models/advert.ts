@@ -1,10 +1,10 @@
 import { IFilterValue } from "./filter";
 import { IShortOlxUser, PageRequest } from "./user";
 
-export interface IAdvert{
+export interface IAdvert {
     id: number,
     userId: number,
-    user:IShortOlxUser | undefined,
+    user: IShortOlxUser | undefined,
     phoneNumber: string,
     contactEmail: string,
     contactPersone: string,
@@ -15,31 +15,40 @@ export interface IAdvert{
     price: number,
     categoryId: number,
     settlementName: string,
+    settlementRef: string,
+    completed:boolean,
+    regionRef: string,
+    areaRef: string,
+    categoryName: string,
     filterValues: IFilterValue[],
     images: IAdvertImage[]
 }
 
-export interface IAdvertPageRequest extends IAdvertPageData{
-       categoryIds?: number[]
+export interface IAdvertPageRequest extends IAdvertPageData {
+    categoryIds?: number[]
 }
 
-export interface IAdvertSearchPageData extends IAdvertPageData{
+export interface IAdvertSearchPageData extends IAdvertPageData {
     categoryId?: number
 }
 
-export interface IAdvertPageData extends PageRequest{
+export interface IAdvertPageData extends PageRequest {
     priceFrom: number,
     priceTo: number,
     search?: string,
-    categorySearch?:string,
-    phoneSearch?:string,
-    emailSearch?:string,
-    settlementSearch?:string,
+    categorySearch?: string,
+    phoneSearch?: string,
+    emailSearch?: string,
+    settlementSearch?: string,
     isContractPrice?: boolean,
     approved?: boolean,
     blocked?: boolean,
+    completed?: boolean,
     archived?: boolean,
-    filters?: number[][]
+    filters?: number[][],
+    areaRef?: string,
+    regionRef?: string,
+    settlementRef?: string
 }
 
 export interface IAdvertCreationModel {
@@ -49,6 +58,7 @@ export interface IAdvertCreationModel {
     contactEmail: string,
     title: string,
     description: string,
+    contactPersone: string
     isContractPrice: boolean,
     settlementRef: string,
     price: number,
@@ -57,7 +67,7 @@ export interface IAdvertCreationModel {
     imageFiles: File[]
 }
 
-export interface IAdvertImage{
+export interface IAdvertImage {
     id: number,
     name: string,
     advertId: number,

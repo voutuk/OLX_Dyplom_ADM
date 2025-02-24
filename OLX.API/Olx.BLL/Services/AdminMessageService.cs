@@ -56,35 +56,34 @@ namespace Olx.BLL.Services
         public async Task<IEnumerable<AdminMessageDto>> GetAdminMessages()
         {
             await userManager.UpdateUserActivityAsync(httpContext);
-            var messages = await adminMessageRepo.GetListBySpec(new AdminMessageSpecs.GetMessagesForAdmin());
-            return messages.Any() ? mapper.Map<IEnumerable<AdminMessageDto>>(messages) : [];
+            return await mapper.ProjectTo<AdminMessageDto>(adminMessageRepo.GetQuery().Where(x => x.User == null && !x.Deleted)).ToArrayAsync();
         }
 
         public async Task<AdminMessageDto> GetById(int id)
         {
-            var message = await adminMessageRepo.GetItemBySpec(new AdminMessageSpecs.GetById(id))
+            var message = await mapper.ProjectTo<AdminMessageDto>(adminMessageRepo.GetQuery().Where(x => x.Id == id && !x.Deleted)).SingleOrDefaultAsync()
                 ?? throw new HttpException(Errors.InvalidAdminMessageId, HttpStatusCode.BadRequest);
-            return  mapper.Map<AdminMessageDto>(message);
+            return message;
         }
 
         public async Task<IEnumerable<AdminMessageDto>> GetDeleted()
         {
             await userManager.UpdateUserActivityAsync(httpContext);
-            var messages = await adminMessageRepo.GetListBySpec(new AdminMessageSpecs.GetDeleted());
-            return messages.Any() ? mapper.Map<IEnumerable<AdminMessageDto>>(messages) : [];
+            var messages = await mapper.ProjectTo<AdminMessageDto>(adminMessageRepo.GetQuery().Where(x => x.Deleted)).ToArrayAsync();
+            return messages;
         }
 
         public async Task<IEnumerable<AdminMessageDto>> GetUserMessages()
         {
             var currentUser = await userManager.UpdateUserActivityAsync(httpContext);
-            var messages = await adminMessageRepo.GetListBySpec(new AdminMessageSpecs.GetMessagesForUser(currentUser.Id));
-            return messages.Any() ? mapper.Map<IEnumerable<AdminMessageDto>>(messages) : [];
+            var messages = await mapper.ProjectTo<AdminMessageDto>(adminMessageRepo.GetQuery().Where(x => x.User != null && !x.Deleted && x.User.Id == currentUser.Id)).ToArrayAsync();
+            return messages;
         }
 
         public async Task SoftDelete(int id)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
-            var message = await adminMessageRepo.GetItemBySpec(new AdminMessageSpecs.GetById(id,true))
+            var message = await adminMessageRepo.GetByIDAsync(id)
                 ?? throw new HttpException(Errors.InvalidAdminMessageId, HttpStatusCode.BadRequest);
             message.Deleted = true;
             await adminMessageRepo.SaveAsync();

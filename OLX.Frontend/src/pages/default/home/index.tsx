@@ -20,16 +20,15 @@ const HomePage: React.FC = () => {
     priceTo: 0,
     approved: true,
     blocked: false,
+    completed:false
   });
 
   const [adverts, setAdverts] = useState<IAdvert[]>([]);
   useEffect(() => {
-    if (data?.items) {
-      if (data.total == adverts.length) {
-        setisEnd(true);
-      } else {
-        setAdverts((prev) => [...prev, ...data.items]);
-      }
+    if (data && data?.items.length > 0) {
+       const newAdverts =  [...adverts, ...data.items]
+       setAdverts(newAdverts);
+       setisEnd(data.total === newAdverts.length);
     }
   }, [data]);
 
@@ -40,13 +39,18 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex-1 flex flex-col justify-center">
       <HomePageImageBlock />
-      <div className='flex flex-col items-center mx-auto py-[50px] gap-[50px]'>
+      <div className='flex flex-col items-center mx-[8vw] py-[10vh] gap-[10vh]'>
         <CategoriesSection />
-        <div className='mx-[6.9vw]'>
-          <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} />
-        </div>
+        <AdvertsSection title='Рекомендовані оголошення' adverts={adverts} isLoading={isLoading} columns={4} />
         {!isEnd &&
-          <PrimaryButton onButtonClick={loadMore} title='Завантажити більше' isLoading={isLoading} className='w-[23vw] h-[6.4vh] p-[8px]' bgColor='#9B7A5B' fontColor='white' brColor='#9B7A5B' />
+          <PrimaryButton
+            onButtonClick={loadMore}
+            title='Завантажити більше'
+            isLoading={isLoading}
+            className='w-[23vw] h-[6.4vh] p-[8px]'
+            bgColor='#9B7A5B'
+            fontColor='white'
+            brColor='#9B7A5B' />
         }
       </div>
     </div>

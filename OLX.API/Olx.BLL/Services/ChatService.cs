@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Olx.BLL.DTOs;
 using Olx.BLL.Entities;
 using Olx.BLL.Entities.ChatEntities;
@@ -55,8 +56,8 @@ namespace Olx.BLL.Services
         public async Task<IEnumerable<ChatDto>> GetUserChatsAsync()
         {
             var user =  await userManager.UpdateUserActivityAsync(httpContext);
-            var chats = await chatRepository.GetListBySpec(new ChatSpecs.GetUserChats(user.Id, ChatOpt.NoTracking | ChatOpt.Advert_Images | ChatOpt.Buyer | ChatOpt.Seller));
-            return mapper.Map<IEnumerable<ChatDto>>(chats);
+            var chats = await mapper.ProjectTo<ChatDto>(chatRepository.GetQuery().Where(x => x.Buyer.Id == user.Id || x.Seller.Id == user.Id)).ToArrayAsync();
+            return chats;
         }
 
         public async Task Remove(int chatId)

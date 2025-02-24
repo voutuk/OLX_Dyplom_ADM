@@ -24,6 +24,7 @@ const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageDat
     priceTo: Number(searchParams.get("priceTo")),
     approved: location.pathname === '/admin/adverts',
     blocked: false,
+    completed:false,
     size: Number(searchParams.get("size")) || paginatorConfig.pagination.defaultPageSize,
     page: Number(searchParams.get("page")) || paginatorConfig.pagination.defaultCurrent,
     sortKey: searchParams.get("sortKey") || '',
@@ -196,7 +197,7 @@ const AdminAdvertTable: React.FC = () => {
             render: (_, advert: IAdvert) =>
                 <div className='flex justify-around'>
                     <Tooltip title="Показати">
-                        <IconButton onClick={() => { navigate(`preview/${advert.id}`) }} color="success" size="small">
+                        <IconButton onClick={() => { navigate(`/admin/adverts/preview/${advert.id}`) }} color="success" size="small">
                             <Info />
                         </IconButton>
                     </Tooltip>

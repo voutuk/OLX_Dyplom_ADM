@@ -1,14 +1,15 @@
-﻿using Olx.BLL.Entities.FilterEntities;
+﻿using Olx.BLL.DTOs.FilterDtos;
+using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Pagination.Interfaces;
 using System.Linq.Expressions;
 
 namespace Olx.BLL.Pagination.SortData
 {
-    public class FilterSortData(bool descending, string sortKey) : IPaginationSortData<Filter>
+    public class FilterSortData(bool descending, string sortKey) : IPaginationSortData<FilterDto>
     {
-        public IQueryable<Filter> Sort(IQueryable<Filter> query)
+        public IQueryable<FilterDto> Sort(IQueryable<FilterDto> query)
         {
-            Expression<Func<Filter, object?>>? sortExpr =
+            Expression<Func<FilterDto, object?>>? sortExpr =
                 sortKey switch
                 {
                     "id" => x => x.Id,

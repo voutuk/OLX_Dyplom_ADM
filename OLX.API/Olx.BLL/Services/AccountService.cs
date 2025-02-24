@@ -19,6 +19,7 @@ using Olx.BLL.Models.Authentication;
 using Olx.BLL.Models.User;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -42,6 +43,7 @@ namespace Olx.BLL.Services
         IValidator<UserCreationModel> userCreationModelValidator,
         IValidator<UserEditModel> userEditModelValidator) : IAccountService
     {
+        private static readonly ConcurrentDictionary<int, SemaphoreSlim> _userSemaphores = new();
         private async Task<string> CreateRefreshToken(int userId)
         {
             var refeshToken = jwtService.GetRefreshToken();
@@ -54,21 +56,6 @@ namespace Olx.BLL.Services
             await tokenRepository.AddAsync(refreshTokenEntity);
             await tokenRepository.SaveAsync();
             return refeshToken;
-        }
-
-        private async Task<RefreshToken> CheckRefreshTokenAsync(string refreshToken)
-        {
-            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
-            if (token is not null)
-            {
-                if (token.ExpirationDate.ToUniversalTime() > DateTime.UtcNow)
-                {
-                    return token;
-                }
-                await tokenRepository.DeleteAsync(token.Id);
-                await tokenRepository.SaveAsync();
-            }
-            throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
 
         private async Task CreateUserAsync(OlxUser user,string? password = null, bool isAdmin = false)
@@ -212,11 +199,31 @@ namespace Olx.BLL.Services
 
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
         {
-            var token = await CheckRefreshTokenAsync(refreshToken);
-            var user = userManager.Users.AsNoTracking().FirstOrDefault(x => x.Id == token.OlxUserId)
-                  ?? throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
-            await tokenRepository.DeleteAsync(token.Id);
-            return await GetAuthTokens(user);
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
+            if (token is not null)
+            {
+                if (token.ExpirationDate.ToUniversalTime() > DateTime.UtcNow)
+                {
+                    var user = userManager.Users.AsNoTracking().FirstOrDefault(x => x.Id == token.OlxUserId);
+                    if (user is not null)
+                    {
+                        var semaphore = _userSemaphores.GetOrAdd(user.Id, _ => new SemaphoreSlim(1, 1));
+                        await semaphore.WaitAsync();
+                        if (await tokenRepository.AnyAsync(x => x.Id == token.Id))
+                        {
+                            await tokenRepository.DeleteAsync(token.Id);
+                            var tokens = await GetAuthTokens(user);
+                            semaphore.Release();
+                            _userSemaphores.TryRemove(user.Id, out _);
+                            return tokens;
+                        }
+                         semaphore.Release();
+                        _userSemaphores.TryRemove(user.Id, out _);
+                        throw new HttpException(Errors.MultipleRefresh, HttpStatusCode.Conflict);
+                    }
+                }
+            }
+            throw new HttpException(Errors.InvalidToken, HttpStatusCode.Unauthorized);
         }
 
         public async Task LogoutAsync(string refreshToken)
@@ -282,7 +289,6 @@ namespace Olx.BLL.Services
                             var result = await userManager.SetLockoutEndDateAsync(user, userBlockModel.LockoutEndDate.HasValue ? userBlockModel.LockoutEndDate.Value.ToUniversalTime() : DateTime.MaxValue.ToUniversalTime());
                             if (result.Succeeded)
                             {
-
                                 string lockoutEndMessage = userBlockModel.LockoutEndDate is null
                                     ? "На невизначений термін"
                                     : $"Заблокований до {userBlockModel.LockoutEndDate.Value.ToLongDateString()} {userBlockModel.LockoutEndDate.Value.ToLongTimeString()}";
@@ -339,11 +345,15 @@ namespace Olx.BLL.Services
             }
         }
 
-        public async Task RemoveAccountAsync(string email)
+        public async Task RemoveAccountAsync(int id)
         {
-            await userManager.UpdateUserActivityAsync(httpContext);
-            var user = await userManager.FindByEmailAsync(email) 
+           
+            var user = await userManager.FindByIdAsync(id.ToString()) 
                 ?? throw new HttpException(Errors.InvalidUserEmail, HttpStatusCode.BadRequest);
+            if (id != (await GetCurrentUser()).Id) 
+            {
+                 await userManager.UpdateUserActivityAsync(httpContext);
+            }
             if (await userManager.IsInRoleAsync(user, Roles.Admin))
             {
                 var adminsCount =  await userManager.GetUsersInRoleAsync(Roles.Admin);
@@ -364,7 +374,7 @@ namespace Olx.BLL.Services
             else throw new HttpException(Errors.UserRemoveError, HttpStatusCode.InternalServerError);
         }
 
-        public async Task EditUserAsync(UserEditModel userEditModel, bool isAdmin)
+        public async Task<string> EditUserAsync(UserEditModel userEditModel, bool isAdmin)
         {
             await userManager.UpdateUserActivityAsync(httpContext);
             var user = await userManager.FindByIdAsync(userEditModel.Id.ToString())
@@ -376,34 +386,43 @@ namespace Olx.BLL.Services
             }
 
             userEditModelValidator.ValidateAndThrow(userEditModel);
-            
-            var result = await userManager.ChangePasswordAsync(user, userEditModel.OldPassword!, userEditModel.Password!);
-            if (!result.Succeeded)
+            if (userEditModel.OldPassword is not null) 
             {
-                throw new HttpException(Errors.CurrentPasswordIsNotValid, HttpStatusCode.BadRequest);
+                var result = await userManager.ChangePasswordAsync(user, userEditModel.OldPassword!, userEditModel.Password!);
+                if (!result.Succeeded)
+                {
+                    throw new HttpException(Errors.CurrentPasswordIsNotValid, HttpStatusCode.BadRequest);
+                }
             }
             
+            
             mapper.Map(userEditModel,user);
-            if (userEditModel.ImageFile is not null)
+            if (userEditModel.ImageFile is null || userEditModel.ImageFile.ContentType != "image/existing")
             {
                 if (user.Photo is not null)
                 {
                     imageService.DeleteImageIfExists(user.Photo);
+                    user.Photo = null;
                 }
-                user.Photo =  await imageService.SaveImageAsync(userEditModel.ImageFile);
+                if (userEditModel.ImageFile is not null)
+                {
+                    user.Photo = await imageService.SaveImageAsync(userEditModel.ImageFile);
+                }
             }
+            
             await userManager.UpdateAsync(user);
+
+            return jwtService.CreateToken(await jwtService.GetClaimsAsync(user));
         }
 
 
         public async Task AddToFavoritesAsync(int advertId)
         {
             var user = await GetCurrentUser();
-            var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(advertId))
-                ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
-
             if (user.FavoriteAdverts.All(a => a.Id != advertId))
             {
+                var advert = await advertRepository.GetItemBySpec(new AdvertSpecs.GetById(advertId))
+                    ?? throw new HttpException(Errors.InvalidAdvertId, HttpStatusCode.BadRequest);
                 user.FavoriteAdverts.Add(advert);
             }
             await userManager.UpdateAsync(user);
@@ -421,9 +440,13 @@ namespace Olx.BLL.Services
         public async Task<IEnumerable<AdvertDto>> GetFavoritesAsync()
         {
             var user = await GetCurrentUser();
-            return user.FavoriteAdverts.Count > 0
-                ? mapper.Map<IEnumerable<AdvertDto>>(user.FavoriteAdverts)
-                : [];
+            if (user.FavoriteAdverts.Count == 0)
+            {
+                return [];
+            }
+            var favoriteAdvertsIds = user.FavoriteAdverts.Select(a => a.Id);
+            var adverts = await mapper.ProjectTo<AdvertDto>(advertRepository.GetQuery().Where(x => favoriteAdvertsIds.Contains(x.Id) && !x.Blocked && !x.Completed)).ToArrayAsync();
+            return adverts;
         }
     }
 }

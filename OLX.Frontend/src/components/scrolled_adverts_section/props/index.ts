@@ -4,5 +4,6 @@ export interface IScrolledAdvertsSectionProps {
     title: string,
     adverts: IAdvert[],
     advertId: number | undefined,
-    className?: string
+    className?: string,
+    cardClassName?:string
 }

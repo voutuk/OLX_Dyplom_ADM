@@ -4,7 +4,7 @@ import AdvertCard from "../advert_card"
 import ScrolledContainer from "../scrolled_container"
 import { IScrolledAdvertsSectionProps } from "./props"
 
-const ScrolledAdvertsSection: React.FC<IScrolledAdvertsSectionProps> = ({ title, adverts, advertId, className }) => {
+const ScrolledAdvertsSection: React.FC<IScrolledAdvertsSectionProps> = ({ title, adverts, advertId, className ,cardClassName}) => {
 
   const advertsCards = useMemo(() => adverts
     .filter((advert) => advert.id !== advertId)
@@ -16,6 +16,7 @@ const ScrolledAdvertsSection: React.FC<IScrolledAdvertsSectionProps> = ({ title,
         image={APP_ENV.IMAGES_400_URL + advert.images.find(img => img.priority === 0)?.name}
         price={advert.price}
         settlement={advert.settlementName}
+        className={cardClassName}
       />
     )) || [], [adverts, advertId])
 

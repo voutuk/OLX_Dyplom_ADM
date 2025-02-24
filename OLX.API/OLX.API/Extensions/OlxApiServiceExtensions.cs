@@ -139,5 +139,17 @@ namespace OLX.API.Extensions
             });
 
         }
+
+        public static void AddCultures(this WebApplication app)
+        {
+            var supportedCultures = new[] { "en-US", "uk-UA", "ru-RU" };
+            var localizationOptions = new RequestLocalizationOptions()
+                .SetDefaultCulture("en-US")
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+
+            app.UseRequestLocalization(localizationOptions);
+
+        }
     }
 }

@@ -1,10 +1,10 @@
 ﻿
-using Olx.BLL.Entities;
+using Olx.BLL.DTOs;
 using Olx.BLL.Pagination.Interfaces;
 
 namespace Olx.BLL.Pagination.Filters
 {
-    public class AdvertFilter : IPaginationFilter<Advert>
+    public class AdvertFilter : IPaginationFilter<AdvertDto>
     {
         public decimal PriceFrom { get; init; }
         public decimal PriceTo { get; init; }
@@ -12,13 +12,17 @@ namespace Olx.BLL.Pagination.Filters
         public bool? IsContractPrice { get; init; }
         public bool? Approved { get; init; }
         public bool? Blocked { get; init; }
+        public bool? Completed { get; init; }
         public string? CategorySearch { get; init; }
         public string? PhoneSearch { get; init; }
         public string? EmailSearch { get; init; }
         public string? SettlementSearch { get; init; }
+        public string? SettlementRef { get; init; }
+        public string? RegionRef { get; init; }
+        public string? AreaRef { get; init; }
         public IEnumerable<int>? CategoryIds { get; init; }
         public IEnumerable<IEnumerable<int>>? Filters { get; init; }
-        public IQueryable<Advert> FilterQuery(IQueryable<Advert> query)
+        public IQueryable<AdvertDto> FilterQuery(IQueryable<AdvertDto> query)
         {
             if (CategoryIds is not null && CategoryIds.Any())
             {
@@ -48,7 +52,7 @@ namespace Olx.BLL.Pagination.Filters
             }
             if (!String.IsNullOrWhiteSpace(CategorySearch))
             {
-                query = query.Where(x => x.Category.Name.ToLower().Contains(CategorySearch.ToLower()));
+                query = query.Where(x => x.CategoryName.ToLower().Contains(CategorySearch.ToLower()));
             }
             if (!String.IsNullOrWhiteSpace(PhoneSearch))
             {
@@ -60,7 +64,19 @@ namespace Olx.BLL.Pagination.Filters
             }
             if (!String.IsNullOrWhiteSpace(SettlementSearch))
             {
-                query = query.Where(x => x.Settlement.Description.ToLower().Contains(SettlementSearch.ToLower()));
+                query = query.Where(x => x.SettlementName.ToLower().Contains(SettlementSearch.ToLower()));
+            }
+            if (!String.IsNullOrWhiteSpace(SettlementRef))
+            {
+                query = query.Where(x => x.SettlementRef == SettlementRef);
+            }
+            if (!String.IsNullOrWhiteSpace(RegionRef))
+            {
+                query = query.Where(x => x.RegionRef == RegionRef);
+            }
+            if (!String.IsNullOrWhiteSpace(AreaRef))
+            {
+                query = query.Where(x => x.AreaRef == AreaRef);
             }
             if (IsContractPrice.HasValue)
             {
@@ -73,6 +89,10 @@ namespace Olx.BLL.Pagination.Filters
             if (Blocked.HasValue)
             {
                 query = query.Where(x => x.Blocked == Blocked);
+            }
+            if (Completed.HasValue)
+            {
+                query = query.Where(x => x.Completed == Completed);
             }
 
             return query;

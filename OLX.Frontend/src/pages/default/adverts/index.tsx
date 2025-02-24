@@ -10,32 +10,41 @@ import CategoryTree from "../../../components/category_tree";
 import CategoryFilters from "../../../components/category_filters";
 import AdvertsSection from "../../../components/adverts_section";
 import PrimaryButton from "../../../components/buttons/primary_button";
-import LocationInput from "../../../components/inputs/location_input";
+import AdvertSort from "../../../components/advert_sort";
+import { AdvertSortData } from "../../../components/advert_sort/models";
+import LocationSelect from "../../../components/location_tree";
+import { useAppDispatch } from "../../../redux";
+import { scrollTop } from "../../../redux/slices/appSlice";
 
-
+const advertPageSize: number = 6;
 const updatedPageRequest = (searchParams: URLSearchParams): IAdvertSearchPageData => ({
     priceFrom: Number(searchParams.get("priceFrom")),
     priceTo: Number(searchParams.get("priceTo")),
-    approved: true,
+    // approved: true,
     blocked: false,
-    size: Number(searchParams.get("size")) || 15,
+    completed: false,
+    size: Number(searchParams.get("size")) || advertPageSize,
     page: Number(searchParams.get("page")) || 1,
     sortKey: searchParams.get("sortKey") || '',
-    isDescending:  searchParams.get("isDescending") === "true",
+    isDescending: searchParams.get("isDescending") === "true",
     categoryId: searchParams.has("categoryId") ? Number(searchParams.get("categoryId")) : undefined,
     filters: searchParams.has("filters") ? (JSON.parse(searchParams.get("filters") || '') as number[][]) : [],
     isContractPrice: searchParams.has("isContractPrice") ? searchParams.get("isContractPrice") === "true" : undefined,
     search: searchParams.get("search") || undefined,
+    areaRef: searchParams.get("areaRef") || undefined,
+    regionRef: searchParams.get("regionRef") || undefined,
+    settlementRef: searchParams.get("settlementRef") || undefined
 });
 
 const AdvertsPage: React.FC = () => {
+    const dispatch = useAppDispatch()
     const [searchParams, setSearchParams] = useSearchParams('');
     const { data: categories } = useGetAllCategoriesQuery();
     const pageRequest = useMemo(() => updatedPageRequest(searchParams), [searchParams]);
     const filters = useMemo(() => {
         return pageRequest.categoryId && categories
             ? getAllParentFilterIds(categories, pageRequest.categoryId)
-            : [];
+            : []
     }, [categories, pageRequest.categoryId]);
     const getPageRequest = useMemo(() => getAdvertPageRequest(pageRequest, categories || []), [pageRequest, categories])
     const { data: adverts, isLoading: isAdvertsLoading, isUninitialized, refetch: advertRefetch } =
@@ -47,6 +56,42 @@ const AdvertsPage: React.FC = () => {
         }
     }, [searchParams]);
 
+    function getAdCountText(count: number | undefined): string {
+        if (!count) return '0 оголошень';
+
+        if (count >= 1000) {
+            const magnitude = Math.pow(10, Math.floor(Math.log10(count)));
+            const rounded = Math.floor(count / magnitude) * magnitude;
+            return `понад ${rounded.toLocaleString('uk-UA')} оголошень`;
+        }
+
+        const lastDigit = count % 10;
+        const lastTwoDigits = count % 100;
+
+        if (lastDigit === 1 && lastTwoDigits !== 11) return `${count} оголошення`;
+        if ([2, 3, 4].includes(lastDigit) && ![12, 13, 14].includes(lastTwoDigits)) {
+            return `${count} оголошення`;
+        }
+
+        return `${count} оголошень`;
+    }
+
+    const onCategoryChange = (id: number) => {
+        if (id) {
+            setSearchParams(getQueryString(({ ...pageRequest, categoryId: id, size: advertPageSize })))
+        }
+        dispatch(scrollTop())
+    }
+
+    const onSort = (data: AdvertSortData) => {
+        setSearchParams(getQueryString({
+            ...pageRequest,
+            sortKey: data.sort,
+            isDescending: data.desc
+        }))
+        dispatch(scrollTop())
+    }
+
     return (
         <div className="w-[100%] gap-[8vh]  flex flex-col my-[6vh]">
             <div className="mx-[8vw] gap-[8vh] h-full items-start flex  flex-col">
@@ -57,19 +102,12 @@ const AdvertsPage: React.FC = () => {
                         <Collapsed
                             title="Категорія"
                             className="text-adaptive-card-price-text  text-[#3A211C] font-unbounded">
-
-                            <div className="overflow-x-auto mt-[2vh]">
-                                <CategoryTree
-                                    categories={categories}
-                                    className="font-montserrat text-nowrap text-adaptive-input-form-text"
-                                    categoryId={pageRequest.categoryId}
-                                    onSelect={(id) => {
-                                        if (id) {
-                                            setSearchParams(getQueryString(({ ...pageRequest, categoryId: id })))
-                                        }
-                                    }}
-                                />
-                            </div>
+                            <CategoryTree
+                                categories={categories}
+                                className="font-montserrat overflow-x-auto overflow-y-auto text-nowrap  mt-[2vh] h-[45vh] text-adaptive-input-form-text"//text-wrap
+                                categoryId={pageRequest.categoryId}
+                                onSelect={onCategoryChange}
+                            />
                         </Collapsed>
 
                         <Collapsed
@@ -84,7 +122,8 @@ const AdvertsPage: React.FC = () => {
                                     filters: filters,
                                     priceFrom: priceFrom,
                                     priceTo: priceTo,
-                                    isContractPrice: isContractPrice
+                                    isContractPrice: isContractPrice,
+                                    size: advertPageSize
                                 })))}
                             />
                         </Collapsed>
@@ -92,15 +131,24 @@ const AdvertsPage: React.FC = () => {
                         <Collapsed
                             title="Сортувати"
                             className="text-adaptive-card-price-text  text-[#3A211C] font-unbounded">
-                            <div className="h-[120px] bg-slate-300 flex items-center justify-center">Сортувати</div>
+                            <AdvertSort
+                                className="mt-[2vh]"
+                                onChange={onSort} />
                         </Collapsed>
+
                     </div>
 
-                    <div className="flex-1 flex flex-col  gap-[8vh]">
+                    <div className="flex-1 flex flex-col gap-[8vh]">
                         {/* Search result */}
                         <div className="flex justify-end items-center gap-[1vw] w-[100%]">
-                            <span className="font-unbounded text-[#3a211c]  font-normal text-adaptive-3_3-text mr-auto self-center">Ми знайшли понад 1000 оголошень</span>
-                            <LocationInput />
+                            <span className="font-unbounded text-[#3a211c]  font-normal text-adaptive-3_3-text mr-auto self-center">Ми знайшли {getAdCountText(adverts?.total)}</span>
+                            <LocationSelect
+                                onSelect={(value) => setSearchParams(getQueryString({
+                                    ...pageRequest,
+                                    areaRef: value.areaRef,
+                                    regionRef: value.regionRef,
+                                    settlementRef: value.settlementRef
+                                }))} />
                             <div className="h-8 justify-start items-center gap-6 inline-flex">
                                 <div className="flex-col">
                                     <svg className="mb-0.5" xmlns="http://www.w3.org/2000/svg" width="24" height="11" viewBox="0 0 24 11" fill="none">
@@ -121,11 +169,17 @@ const AdvertsPage: React.FC = () => {
                             adverts={adverts?.items} />
                         {adverts && adverts.total != adverts.items.length &&
                             <PrimaryButton
-                                onButtonClick={() => { }}
+                                onButtonClick={() => {
+                                    setSearchParams(getQueryString({
+                                        ...pageRequest,
+                                        size: (pageRequest?.size || 0) + advertPageSize
+                                    }))
+                                }}
+                                fontSize="clamp(14px, 2.5vh, 36px)"
                                 title='Завантажити ще'
                                 disabled={false}
                                 isLoading={isAdvertsLoading}
-                                className='w-[19vw] h-[4.5vh] '
+                                className='w-[20vw] h-[4.5vh] mt-[2vh] mb-[4vh] font-light self-center'
                                 bgColor='#9B7A5B'
                                 fontColor='white'
                                 brColor='#9B7A5B' />

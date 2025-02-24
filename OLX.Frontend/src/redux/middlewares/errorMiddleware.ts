@@ -33,6 +33,7 @@ const errorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) =
                 }
                 break;
             case 401:
+                console.log('401')
                 if ((api.getState() as RootState).user) {
                     api.dispatch(logOut())
                 }

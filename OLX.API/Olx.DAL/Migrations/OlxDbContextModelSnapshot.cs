@@ -272,6 +272,9 @@ namespace Olx.DAL.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("ContactEmail")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -525,6 +528,9 @@ namespace Olx.DAL.Migrations
                         .IsUnicode(false)
                         .HasColumnType("character varying(36)");
 
+                    b.Property<string>("AreasCenter")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -563,6 +569,9 @@ namespace Olx.DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Warehouse")
+                        .HasColumnType("integer");
 
                     b.HasKey("Ref");
 

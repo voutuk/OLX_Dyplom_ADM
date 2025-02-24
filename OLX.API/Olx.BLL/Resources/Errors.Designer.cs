@@ -331,6 +331,15 @@ namespace Olx.BLL.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Multiple refresh.
+        /// </summary>
+        internal static string MultipleRefresh {
+            get {
+                return ResourceManager.GetString("MultipleRefresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на New post data update error.
         /// </summary>
         internal static string NewPostDataUpdateError {

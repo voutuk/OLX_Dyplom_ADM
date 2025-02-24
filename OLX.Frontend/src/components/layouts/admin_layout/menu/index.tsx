@@ -36,7 +36,7 @@ const items: MenuItem[] = [
                 label: <span className='text-sm font-medium'>Всі</span>,
             },
             {
-                key: "/admin/blocked",
+                key: "/admin/adverts/blocked",
                 icon: <LockOutlined style={{ fontSize: 16 }} />,
                 label: <span className='text-sm font-medium'>Заблковані</span>,
             }

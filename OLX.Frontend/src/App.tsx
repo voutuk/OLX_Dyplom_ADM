@@ -4,9 +4,15 @@ import './App.scss'
 import DefaultLayout from './components/layouts/default_layout/index';
 import ProtectedRoutes from './components/protected_routes';
 import GlobalFallback from './components/global_fallback';
+import PaymentPage from './pages/user/payment';
 
 
-const AdvertsPage = React.lazy(() => import( './pages/default/adverts'));
+const FavoritesAdverts  = React.lazy(() => import('./pages/user/favorites_adverts'));
+const BuyAdvertPage = React.lazy(() => import( './pages/user/buy'));
+const CreateAdvert = React.lazy(() => import('./pages/user/create_advert'));
+const UserProfile = React.lazy(() => import('./pages/user/profile'));
+const UserProfileEdit = React.lazy(() => import('./pages/user/edit_profile'));
+const AdvertsPage = React.lazy(() => import('./pages/default/adverts'));
 const AdminAdvertPreview = React.lazy(() => import('./pages/admin/adverts/advert_preview'));
 const AdvertPage = React.lazy(() => import('./pages/default/advert'));
 const AuthLayout = React.lazy(() => import('./components/layouts/auth_layout'));
@@ -42,11 +48,19 @@ function App() {
           <Route path="error" element={<ErrorPage />} />
           <Route path="advert/:id" element={<AdvertPage />} />
           <Route path="adverts" element={<AdvertsPage />} />
+
           <Route element={<ProtectedRoutes requiredRole={"User"} />}>
             <Route path="user">
-              <Route path="userprofile" element={<EmailConfirmationPage />} />
+              <Route index element={<UserProfile />} />
+              <Route path='edit' element={<UserProfileEdit />} />
+              <Route path='advert/create' element={<CreateAdvert/>}/>
+              <Route path='advert/edit/:id' element={<CreateAdvert/>}/>
+              <Route path='favorites' element={<FavoritesAdverts />} />
+              <Route path='advert/buy/:id' element={<BuyAdvertPage />} />
+              <Route path='advert/payment/:id' element={<PaymentPage />} />
             </Route>
           </Route>
+
         </Route>
       </Route>
 
@@ -76,12 +90,12 @@ function App() {
             <AdminLayout />
           </Suspense>}>
           <Route index element={<UsersPage />} />
-          <Route path="blocked" element={<UsersPage />} />
 
           <Route path="adverts">
             <Route index element={<AdminAdvertTable />} />
             <Route path='approve' element={<AdminAdvertTable />} />
-            <Route path='preview/:id' element={<AdminAdvertPreview/>}/>
+            <Route path='preview/:id' element={<AdminAdvertPreview />} />
+            <Route path="blocked" element={<UsersPage />} />
           </Route>
 
           <Route path="categories">

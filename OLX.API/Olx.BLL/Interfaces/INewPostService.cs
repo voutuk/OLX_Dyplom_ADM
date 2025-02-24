@@ -7,13 +7,14 @@ namespace Olx.BLL.Interfaces
     {
         Task<IEnumerable<Area>> GetAreasDataAsync() ;
         Task<IEnumerable<Warehous>> GetWarehousesDataAsync(IEnumerable<string> areaRefs);
-        Task<IEnumerable<Settlement>> GetSettlementsDataAsync();
+        Task<IEnumerable<Settlement>> GetSettlementsDataAsync(IEnumerable<Region> regions);
         Task<IEnumerable<Region>> GetRegionsDataAsync(IEnumerable<string> areaRefs);
         Task<IEnumerable<AreaDto>> GetAreasAsync();
         Task<IEnumerable<WarehousDto>> GetWarehousesBySettlementAsync(string settlementRef);
         Task<IEnumerable<SettlementDto>> GetSettlementsByRegionAsync(string regionRef);
         Task<IEnumerable<RegionDto>> GetRegionsAsync();
         Task<IEnumerable<RegionDto>> GetRegionsByAreaAsync(string areaRef);
+        Task<SettlementDto> GetSettlement(string settlementRef);
         Task UpdateNewPostData();
     }
 }

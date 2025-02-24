@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Olx.BLL.DTOs.NewPost;
@@ -8,8 +9,10 @@ using Olx.BLL.Interfaces;
 using Olx.BLL.Models.NewPost;
 using Olx.BLL.Resources;
 using Olx.BLL.Specifications;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Olx.BLL.Services
 {
@@ -27,9 +30,9 @@ namespace Olx.BLL.Services
         private readonly string _newPostKey = configuration.GetValue<string>("NewPostApiKey")!;
         private readonly string _newPostUrl = configuration.GetValue<string>("NewPostApiUrl")!;
 
-        private async Task<IEnumerable<T>> GetNewPostData<T>(string modelName, string calledMethod,int page = 1 , int limit = 200, string areaRef = "") where T : NewPostBaseEntity
+        private async Task<IEnumerable<T>> GetNewPostData<T>(string modelName, string calledMethod,int page = 1 , int limit = 200, string areaRef = "",string region = "") where T : NewPostBaseEntity
         {
-            NewPostRequestModel postModel = new(_newPostKey, modelName, calledMethod, page, limit, areaRef);
+            NewPostRequestModel postModel = new(_newPostKey, modelName, calledMethod, page, limit, areaRef,region);
             string json = JsonConvert.SerializeObject(postModel);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _httpClient.PostAsync(_newPostUrl, content);
@@ -80,21 +83,33 @@ namespace Olx.BLL.Services
                 .Select(z => z.First());
         }
 
-        public async Task<IEnumerable<Settlement>> GetSettlementsDataAsync()
+        public async Task<IEnumerable<Settlement>> GetSettlementsDataAsync(IEnumerable<Region> regions)
         {
-            List<Settlement> settlement = [];
+            List<Settlement> settlements = [];
             int page = 1;
-
             while (true)
             {
                 var result = await GetNewPostData<Settlement>("Address", "getSettlements", page++);
                 if (result.Any())
                 {
-                    settlement.AddRange(result);
+                    settlements.AddRange(result);
                 }
-                else break;
+                else
+                {
+                    break;
+                }
             };
-            return settlement.AsParallel()
+            
+            settlements.AsParallel().ForAll(settlement => 
+            {
+                if (String.IsNullOrWhiteSpace(settlement.Region)) 
+                {
+                    settlement.Region = regions.FirstOrDefault(region => region.AreasCenter == settlement.Ref)?.Ref;
+                }
+            });
+
+            return settlements.AsParallel()
+                .Where(x => x.Warehouse > 0)
                 .GroupBy(x => x.Ref)
                 .Select(z => z.First());
         }
@@ -107,10 +122,7 @@ namespace Olx.BLL.Services
                 var regions = await GetNewPostData<Region>("Address", "getSettlementCountryRegion", areaRef: areaRef);
                 if (regions.Any())
                 {
-                    foreach (var region in regions) 
-                    {
-                        region.AreaRef = areaRef;
-                    }
+                    regions.AsParallel().ForAll(region => region.AreaRef = areaRef);
                     result.AddRange(regions);
                 }
             }
@@ -119,8 +131,9 @@ namespace Olx.BLL.Services
                 .Select(z => z.First());
         }
 
-        public async Task<IEnumerable<AreaDto>> GetAreasAsync() => 
-            mapper.Map<IEnumerable<AreaDto>>(await areaRepository.GetListBySpec(new NewPostDataSpecs.GetAreas()));
+
+
+        public async Task<IEnumerable<AreaDto>> GetAreasAsync() =>  await mapper.ProjectTo<AreaDto>(areaRepository.GetQuery()).ToArrayAsync();
 
         public async Task<IEnumerable<WarehousDto>> GetWarehousesBySettlementAsync(string settlementRef)
         {
@@ -128,7 +141,7 @@ namespace Olx.BLL.Services
             {
                 throw new HttpException(Errors.InvalidSettlementRef,HttpStatusCode.BadRequest);
             }
-            return mapper.Map<IEnumerable<WarehousDto>>(await warehousRepository.GetListBySpec(new NewPostDataSpecs.GetWarehousesBySettlement(settlementRef)));
+            return await mapper.ProjectTo<WarehousDto>(warehousRepository.GetQuery().Where(x => x.SettlementRef == settlementRef)).ToArrayAsync();
         }
 
         public async Task<IEnumerable<SettlementDto>> GetSettlementsByRegionAsync(string regionRef) 
@@ -137,12 +150,12 @@ namespace Olx.BLL.Services
             {
                 throw new HttpException(Errors.InvalidRegionRef, HttpStatusCode.BadRequest);
             }
-            return mapper.Map<IEnumerable<SettlementDto>>(await settlementRepository.GetListBySpec(new NewPostDataSpecs.GetSettlementsByRegion(regionRef)));
+            return await mapper.ProjectTo<SettlementDto>(settlementRepository.GetQuery().Where(x => x.Region == regionRef)).ToArrayAsync();
         }
             
 
         public async Task<IEnumerable<RegionDto>> GetRegionsAsync() =>
-            mapper.Map<IEnumerable<RegionDto>>(await regionRepository.GetListBySpec(new NewPostDataSpecs.GetRegions()));
+           await  mapper.ProjectTo<RegionDto>(regionRepository.GetQuery()).ToArrayAsync();
 
         public async Task<IEnumerable<RegionDto>> GetRegionsByAreaAsync(string areaRef) 
         {
@@ -150,7 +163,7 @@ namespace Olx.BLL.Services
             {
                 throw new HttpException(Errors.InvalidAreaRef, HttpStatusCode.BadRequest);
             }
-            return mapper.Map<IEnumerable<RegionDto>>(await regionRepository.GetListBySpec(new NewPostDataSpecs.GetRegionsByArea(areaRef)));
+            return await mapper.ProjectTo<RegionDto>(regionRepository.GetQuery().Where(x => x.AreaRef == areaRef)).ToArrayAsync();
         }
             
 
@@ -208,7 +221,8 @@ namespace Olx.BLL.Services
                 await regionRepository.SaveAsync();
 
                 Console.WriteLine("Start settlements update ...");
-                var settlementsData = await GetSettlementsDataAsync();
+
+                var settlementsData = await GetSettlementsDataAsync(regionsData);
                 var settlements = await settlementRepository.GetListBySpec(new NewPostDataSpecs.GetSettlements(true));
                 if (settlements.Any())
                 {
@@ -231,34 +245,34 @@ namespace Olx.BLL.Services
                 }
                 await settlementRepository.SaveAsync();
 
-                //Console.WriteLine("Start warehouses update ...");
-                //var warehousesData = await GetWarehousesDataAsync(areasData.Select(x => x.Ref));
-                //var warehouses = await warehousRepository.GetListBySpec(new NewPostDataSpecs.GetWarehouses(true));
-                //if (warehouses.Any())
-                //{
-                //    foreach (var warehousData in warehousesData)
-                //    {
-                //        var warehous = warehouses.AsParallel().FirstOrDefault(x => x.Ref == warehousData.Ref);
-                //        if (warehous is not null)
-                //        {
-                //            mapper.Map(warehousData, warehous);
-                //        }
-                //        else
-                //        {
-                //            await warehousRepository.AddAsync(warehousData);
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    await warehousRepository.AddRangeAsync(warehousesData);
-                //}
-                //await warehousRepository.SaveAsync();
+                Console.WriteLine("Start warehouses update ...");
+                var warehousesData = await GetWarehousesDataAsync(areasData.Select(x => x.Ref));
+                var warehouses = await warehousRepository.GetListBySpec(new NewPostDataSpecs.GetWarehouses(true));
+                if (warehouses.Any())
+                {
+                    foreach (var warehousData in warehousesData)
+                    {
+                        var warehous = warehouses.AsParallel().FirstOrDefault(x => x.Ref == warehousData.Ref);
+                        if (warehous is not null)
+                        {
+                            mapper.Map(warehousData, warehous);
+                        }
+                        else
+                        {
+                            await warehousRepository.AddAsync(warehousData);
+                        }
+                    }
+                }
+                else
+                {
+                    await warehousRepository.AddRangeAsync(warehousesData);
+                }
+                await warehousRepository.SaveAsync();
                 Console.WriteLine("Update successfuly completed ...");
                 Console.WriteLine($"Areas - {areas.Count()}");
                 Console.WriteLine($"Regions - {regions.Count()}");
                 Console.WriteLine($"Settlements - {settlements.Count()}");
-              //  Console.WriteLine($"Warehouses - {warehouses.Count()}");
+                Console.WriteLine($"Warehouses - {warehouses.Count()}");
             }
             catch(Exception e) 
             {
@@ -283,5 +297,11 @@ namespace Olx.BLL.Services
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        public async Task<SettlementDto> GetSettlement(string settlementRef) =>
+            await mapper.ProjectTo<SettlementDto>(settlementRepository.GetQuery().Where(x => x.Ref == settlementRef)).FirstOrDefaultAsync()
+            ?? throw new HttpException(Errors.InvalidSettlementRef,HttpStatusCode.BadRequest);
+
+
     }
 }

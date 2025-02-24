@@ -2,6 +2,17 @@ import { IUser } from "../models/account"
 import { IOlxUser, IShortOlxUser } from "../models/user";
 import { ICategory, ICategoryShort, ICategoryTreeElementModel } from "../models/category";
 import { IAdvertPageRequest, IAdvertSearchPageData } from "../models/advert";
+import { GetProp, UploadProps } from "antd";
+
+export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+export const getBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 
 
 export const getUserDescr = (user: IUser | IOlxUser | IShortOlxUser | null | undefined): string => {
@@ -35,7 +46,7 @@ export const getFormData = (data: any): FormData => {
   const formData = new FormData();
   Object.keys(data).forEach(function (key) {
     if (Array.isArray(data[key])) {
-      if (typeof data[key][0] === 'object' && !(data[key] instanceof File)) {
+      if (typeof data[key][0] === 'object' && !(data[key][0] instanceof File)) {
         formData.append(key, JSON.stringify(data[key]));
       } else {
         data[key].forEach((item: any) => formData.append(key, item));
@@ -50,15 +61,19 @@ export const getFormData = (data: any): FormData => {
   return formData;
 }
 
-export const buildTree = (categories: ICategory[], parentId?: number, disabled?: number[]): ICategoryTreeElementModel[] => {
-  return categories.filter(x => x.parentId == parentId)
-    .map(x => ({
-      title: x.name,
-      value: x.id,
-      key: x.id,
-      disabled: disabled?.includes(x.id),
-      children: buildTree(categories, x.id, disabled)
-    }))
+export const buildTree = (categories: ICategory[], parentId?: number, disabled?: number[], disableParent?: boolean ): ICategoryTreeElementModel[] => {
+  return categories
+    .filter(x => x.parentId == parentId)
+    .map(x => {
+      const children = buildTree(categories, x.id, disabled, disableParent);
+      return {
+        title: x.name,
+        value: x.id,
+        key: x.id,
+        disabled: disabled?.includes(x.id) || (disableParent !== undefined && disableParent === (children.length !== 0)),
+        children: children
+      };
+    });
 };
 
 export const getAllParentFilterIds = (categories: ICategory[], parentId?: number): number[] => {

@@ -3,5 +3,8 @@ export interface AdvertCardProps{
     image: string,
     title: string,
     price: number,
-    settlement: string
-}
+    settlement: string,
+    isEditable?: boolean,
+    isFavorite?: boolean,
+    className?:string,
+ }

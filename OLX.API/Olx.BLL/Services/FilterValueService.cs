@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Olx.BLL.DTOs.FilterDtos;
 using Olx.BLL.Entities.FilterEntities;
 using Olx.BLL.Interfaces;
@@ -17,9 +18,8 @@ namespace Olx.BLL.Services
             await valueRepository.GetListBySpec(new FilterValueSpecs.GetByIds(ids, true));
 
         public async Task<IEnumerable<FilterValueDto>> GetDtoByIdsAsync(IEnumerable<int> ids) =>
-              mapper.Map<IEnumerable<FilterValueDto>>(await valueRepository.GetListBySpec(new FilterValueSpecs.GetByIds(ids)));
+            await mapper.ProjectTo<FilterValueDto>(valueRepository.GetQuery().Where(x=>ids.Contains(x.Id))).ToArrayAsync();
 
-        public async Task<IEnumerable<FilterValueDto>> GetAllAsync() =>
-            mapper.Map<IEnumerable<FilterValueDto>>(await valueRepository.GetListBySpec(new FilterValueSpecs.GetAll()));
+        public async Task<IEnumerable<FilterValueDto>> GetAllAsync() => await mapper.ProjectTo<FilterValueDto>(valueRepository.GetQuery()).ToArrayAsync();
     }
 }

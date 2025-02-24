@@ -14,6 +14,7 @@ namespace Olx.BLL.Entities.NewPost
         [StringLength(36)]
         [Unicode(false)]
         public string? Region { get; set; }
+        public int Warehouse { get; set; }
         public Region? SettlementRegion { get; set; }
         public ICollection<Warehous> Warehous { get; set; } = new HashSet<Warehous>();
         public ICollection<OlxUser> Users { get; set; } = new HashSet<OlxUser>();

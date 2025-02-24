@@ -20,7 +20,15 @@ namespace OLX.API.Controllers
 
         [Authorize(Roles = Roles.User)]
         [HttpGet("get/user")]
-        public async Task<IActionResult> GetUserAdverts([FromRoute] int id) => Ok(await advertService.GetUserAdverts());
+        public async Task<IActionResult> GetUserAdverts() => Ok(await advertService.GetUserAdverts());
+
+        [Authorize(Roles = Roles.User)]
+        [HttpGet("get/user/locked")]
+        public async Task<IActionResult> GetLockedUserAdverts() => Ok(await advertService.GetUserAdverts(locked:true));
+
+        [Authorize(Roles = Roles.User)]
+        [HttpGet("get/user/completed")]
+        public async Task<IActionResult> GetCompletedUserAdverts() => Ok(await advertService.GetUserAdverts(completed:true));
 
         [Authorize(Roles = Roles.Admin)]
         [HttpGet("get/user/{id:int}")]
@@ -54,7 +62,17 @@ namespace OLX.API.Controllers
         [Authorize(Roles = Roles.User)]
         [HttpPost("update")]
         public async Task<IActionResult> Update([FromForm] AdvertCreationModel creationModel) => Ok(await advertService.UpdateAsync(creationModel));
-        
+
+
+        [Authorize(Roles = Roles.User)]
+        [HttpPost("complete/{advertId:int}")]
+        public async Task<IActionResult> CompleteAdvert([FromRoute] int advertId) 
+        {
+            await advertService.SetCompletedAsync(advertId);
+            return  Ok();
+        } 
+
+
         [Authorize(Roles = Roles.User)]
         [HttpPut("create")]
         public async Task<IActionResult> Create([FromForm] AdvertCreationModel creationModel) => Ok(await advertService.CreateAsync(creationModel));
@@ -65,6 +83,11 @@ namespace OLX.API.Controllers
         {
             await advertService.DeleteAsync(id);
             return Ok();
-        }  
+        }
+
+        [Authorize(Roles = Roles.User)]
+        [HttpDelete("delete/completed/all")]
+        public async Task<IActionResult> DeleteCompleted() => Ok( await advertService.RemoveCompletedAsync());
+       
     }
 }

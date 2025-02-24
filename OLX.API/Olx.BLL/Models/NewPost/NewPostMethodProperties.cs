@@ -18,5 +18,7 @@ namespace Olx.BLL.Models.NewPost
         /// Посилання на область
         /// </summary>
         public string AreaRef { get; init; } = string.Empty;
+
+        public string RegionRef { get; init; } = string.Empty;
     }
 }

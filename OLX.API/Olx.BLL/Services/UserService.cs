@@ -12,7 +12,6 @@ using Olx.BLL.Pagination;
 using Olx.BLL.Pagination.Filters;
 using Olx.BLL.Pagination.SortData;
 using Olx.BLL.Resources;
-using Olx.BLL.Specifications;
 using System.Net;
 
 
@@ -39,7 +38,6 @@ namespace Olx.BLL.Services
         {
             var adminsIds = await _getAdminsIds();
             var users = await mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery()
-                .AsNoTracking()
                 .Where(x => isAdmin == adminsIds.Contains(x.Id)))
                 .ToListAsync();
             return users;
@@ -47,12 +45,16 @@ namespace Olx.BLL.Services
 
         public async Task<OlxUserDto> Get(int id, bool isAdmin = false) 
         {
-            var user = await  userRepo.GetItemBySpec(new OlxUserSpecs.GetById(id, UserOpt.Settlement | UserOpt.NoTracking | UserOpt.Adverts | UserOpt.FavoriteAdverts));
-            if (user == null || !(await userManager.IsInRoleAsync(user, Roles.Admin) ^ !isAdmin))
+            var userDto = await mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery().Where(x => x.Id == id)).SingleOrDefaultAsync();
+            if (userDto is not null)
             {
-                throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
+                var user = await userRepo.GetByIDAsync(id);
+                if (user is not null && (await userManager.IsInRoleAsync(user, Roles.Admin)) == isAdmin)
+                {
+                    return userDto;
+                }
             }
-            return mapper.Map<OlxUserDto>(user);
+            throw new HttpException(Errors.InvalidUserId, HttpStatusCode.BadRequest);
         }
         
 
@@ -73,11 +75,7 @@ namespace Olx.BLL.Services
             };
         }
 
-        public async Task<IEnumerable<OlxUserDto>> GetLocked() 
-        {
-            var users = await userRepo.GetListBySpec( new OlxUserSpecs.GetLocked(UserOpt.Settlement | UserOpt.NoTracking | UserOpt.Adverts | UserOpt.FavoriteAdverts));
-            return mapper.Map<IEnumerable<OlxUserDto>>(users);
-        } 
-        
+        public async Task<IEnumerable<OlxUserDto>> GetLocked() =>
+            await mapper.ProjectTo<OlxUserDto>(userRepo.GetQuery().Where(x => x.LockoutEnd != null && x.LockoutEnd > DateTime.Now)).ToArrayAsync();
     }
 }
