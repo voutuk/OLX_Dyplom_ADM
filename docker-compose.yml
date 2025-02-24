@@ -28,11 +28,11 @@ services:
     build:
       context: ./OLX.API
       dockerfile: Dockerfile
-    image: voutuk/olx-api:latest
+    image: voutuk/olx-api
     volumes:
       - ./images:/app/uploading
     ports:
-      - "8080:8080"
+      - "3000:8080"
     networks:
      - myAppNetwork
     depends_on:
@@ -44,6 +44,37 @@ services:
   
   client:
     profiles: ['client-only', 'full', "front"]
+    container_name: olx_client_container
+    build:
+      context: ./OLX.Frontend
+      dockerfile: Dockerfile.stage
+    image: voutuk/olx-client
+    restart: on-failure
+    ports:
+      - "80:80"
+
+  app-prod:
+    profiles: ['prod']
+    container_name: olx_container
+    build:
+      context: ./OLX.API
+      dockerfile: Dockerfile
+    image: voutuk/olx-api:latest
+    volumes:
+      - ./images:/app/uploading
+    ports:
+      - "3000:8080"
+    networks:
+     - myAppNetwork
+    depends_on:
+      - postgresServerDb
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  client-prod:
+    profiles: ['prod']
     container_name: olx_client_container
     build:
       context: ./OLX.Frontend
