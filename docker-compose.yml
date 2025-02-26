@@ -3,7 +3,7 @@ networks:
     driver: bridge
 
 services:
-  postgres:
+  postgres-service:
     profiles: ['db-only', 'full', "back"]
     container_name: postgresDB
     image: postgres:latest
@@ -36,7 +36,7 @@ services:
     networks:
      - myAppNetwork
     depends_on:
-      - postgres
+      - postgres-service
     deploy:
       restart_policy:
         condition: on-failure
