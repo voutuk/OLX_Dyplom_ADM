@@ -3,7 +3,7 @@ networks:
     driver: bridge
 
 services:
-  postgresServerDb:
+  postgres:
     profiles: ['db-only', 'full', "back"]
     container_name: postgresDB
     image: postgres:latest
@@ -36,7 +36,7 @@ services:
     networks:
      - myAppNetwork
     depends_on:
-      - postgresServerDb
+      - postgres
     deploy:
       restart_policy:
         condition: on-failure
@@ -60,18 +60,6 @@ services:
       context: ./OLX.API
       dockerfile: Dockerfile
     image: voutuk/olx-api:latest
-    volumes:
-      - ./images:/app/uploading
-    ports:
-      - "3000:8080"
-    networks:
-     - myAppNetwork
-    depends_on:
-      - postgresServerDb
-    deploy:
-      restart_policy:
-        condition: on-failure
-        max_attempts: 5
 
   client-prod:
     profiles: ['prod']
@@ -80,6 +68,3 @@ services:
       context: ./OLX.Frontend
       dockerfile: Dockerfile
     image: voutuk/olx-client:latest
-    restart: on-failure
-    ports:
-      - "80:80"
