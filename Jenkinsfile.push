@@ -2,6 +2,9 @@ pipeline {
     agent {
         label 'az-plug' 
     }
+    environment {
+        DISCORD_WEBHOOK = credentials('discord-webhook') // Підставляємо секрет
+    }
 
     options {
         ansiColor('xterm')
@@ -39,6 +42,36 @@ pipeline {
     }
 
     post {
+        success {
+            discordSend(
+                description: "✅ Build #${env.BUILD_NUMBER} успішно завершено!",
+                footer: "Jen / BublikDEV",
+                link: env.BUILD_URL,
+                result: "🟢 SUCCESS",
+                title: env.JOB_NAME,
+                webhookURL: DISCORD_WEBHOOK
+            )
+        }
+        failure {
+            discordSend(
+                description: "❌ Build #${env.BUILD_NUMBER} провалився!",
+                footer: "Jen / BublikDEV",
+                link: env.BUILD_URL,
+                result: "🔴 FAILURE",
+                title: env.JOB_NAME,
+                webhookURL: DISCORD_WEBHOOK
+            )
+        }
+        unstable {
+            discordSend(
+                description: "⚠️ Build #${env.BUILD_NUMBER} нестабільний!",
+                footer: "Jen / BublikDEV",
+                link: env.BUILD_URL,
+                result: "🟡 UNSTABLE",
+                title: env.JOB_NAME,
+                webhookURL: DISCORD_WEBHOOK
+            )
+        }
         always {
             cleanWs()
         }
