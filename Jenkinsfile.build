@@ -56,7 +56,7 @@ pipeline {
                 }
             }
         }
-        stage('Manual Approval') {
+        stage('⏸️ Manual Approval') {
             steps {
                 script {
                     timeout(time: 1, unit: 'DAYS') { 
