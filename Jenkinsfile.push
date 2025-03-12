@@ -14,7 +14,7 @@ pipeline {
     }
 
     stages {
-        stage('🔧 Setup Environment') {
+        stage('🔍 USE ') {
             steps {
                 node('az-plug') {
                     sh '''
@@ -24,12 +24,6 @@ pipeline {
                             echo "Azure CLI installed successfully"
                         }
                     '''
-                }
-            }
-        }
-        stage('🔍 USE ') {
-            steps {
-                node('az-plug') {
                     sh 'ls -la'
                     withCredentials([azureServicePrincipal('az-service-principal')]) {
                         sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID'
