@@ -24,6 +24,7 @@ pipeline {
                             echo "Azure CLI installed successfully"
                         }
                     '''
+                    git url: 'https://github.com/voutuk/OLX_Dyplom_ADM', branch: 'main'
                     sh 'ls -la'
                     withCredentials([azureServicePrincipal('az-service-principal')]) {
                         sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID'
