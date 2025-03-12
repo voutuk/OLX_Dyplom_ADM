@@ -42,12 +42,3 @@ app.AddCultures();
 app.DataBaseMigrate();
 await app.SeedDataAsync();
 await app.RunAsync();
-
-// FIXME: DELETE ME THIS IS JUST A TEST PIPELINE ERROR
-public class Program
-{
-    public static void Main(string[] args)
-    {
-        Console.WriteLine("Hello, World!")
-    }
-}

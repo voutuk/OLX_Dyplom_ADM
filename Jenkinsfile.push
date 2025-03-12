@@ -2,6 +2,7 @@ pipeline {
     agent {
         label 'az-plug' 
     }
+
     environment {
         DISCORD_WEBHOOK = credentials('discord-webhook') // Підставляємо секрет
     }
@@ -32,6 +33,11 @@ pipeline {
                         sh 'az acr build --registry gosellsquarevervet --resource-group gosell-storage --image olx-api:latest --file ./OLX.API/Dockerfile ./OLX.API/'
                     }
                 }
+                step([$class: 'GitHubCommitStatusSetter',
+                     statusResultSource: [$class: 'ConditionalStatusResultSource',
+                     results: [[$class: 'AnyBuildResult', 
+                               message: 'Pipeline Proceeded', 
+                               state: 'PENDING']]]])
             }
         }             
     }
@@ -46,6 +52,11 @@ pipeline {
                 title: env.JOB_NAME,
                 webhookURL: DISCORD_WEBHOOK
             )
+            step([$class: 'GitHubCommitStatusSetter',
+                         statusResultSource: [$class: 'ConditionalStatusResultSource',
+                         results: [[$class: 'AnyBuildResult', 
+                                   message: 'Deployed', 
+                                   state: 'SUCCESS']]]])
         }
         failure {
             discordSend(
@@ -56,6 +67,11 @@ pipeline {
                 title: env.JOB_NAME,
                 webhookURL: DISCORD_WEBHOOK
             )
+            step([$class: 'GitHubCommitStatusSetter',
+                         statusResultSource: [$class: 'ConditionalStatusResultSource',
+                         results: [[$class: 'AnyBuildResult', 
+                                   message: 'Failed', 
+                                   state: 'FAILURE']]]])
         }
         unstable {
             discordSend(
@@ -66,6 +82,11 @@ pipeline {
                 title: env.JOB_NAME,
                 webhookURL: DISCORD_WEBHOOK
             )
+            step([$class: 'GitHubCommitStatusSetter',
+                         statusResultSource: [$class: 'ConditionalStatusResultSource',
+                         results: [[$class: 'AnyBuildResult', 
+                                   message: 'Unstable',
+                                   state: 'FAILURE']]]]) 
         }
         always {
             cleanWs()
