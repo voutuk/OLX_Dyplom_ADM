@@ -5,7 +5,6 @@ using OLX.API.Extensions;
 using OLX.API.Middlewares;
 using System.Globalization;
 
-
 var defaultCulture = CultureInfo.InvariantCulture;
 CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
 CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
@@ -19,9 +18,13 @@ builder.Services.AddOlxApiConfigurations(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
-
+builder.Services.AddHealthChecks(); // Adding standard health check
 
 var app = builder.Build();
+
+// Important: UseRouting should come early in the pipeline
+app.UseRouting();
+
 app.UseCors("AllowOrigins");
 app.AddStaticFiles();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
@@ -35,9 +38,16 @@ app.UseSwaggerUI();
 //});
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<MessageHub>("/hub");
+
+// Configure endpoints after middleware that modifies routing
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHealthChecks("/healthz");
+    endpoints.MapHub<MessageHub>("/hub");
+    endpoints.MapControllers();
+});
+
 //app.UseHttpsRedirection();
-app.MapControllers();
 app.AddCultures();
 app.DataBaseMigrate();
 await app.SeedDataAsync();
