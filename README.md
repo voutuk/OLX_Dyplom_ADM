@@ -14,4 +14,4 @@ Publish with Docker-Compose
 
 `docker compose --profile prod build` - білд
 
-## Ресурси на використання
+## Ресурси на використання 
