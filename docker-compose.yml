@@ -67,4 +67,4 @@ services:
     build:
       context: ./OLX.Frontend
       dockerfile: Dockerfile
-    image: voutuk/olx-client:latest
+    image: voutuk/olx-client:latest 
